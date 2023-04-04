@@ -1,5 +1,6 @@
 testvids/
 t_env/
+venv/
 n_env/
 *.mp4
 *.webm

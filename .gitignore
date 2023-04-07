@@ -8,7 +8,7 @@ n_env/
 *.avi
 *mp4.part*
 *mp4.ytdl*
-
+**/__pycache__/
 *.env
 *.vscode
 node_modules/

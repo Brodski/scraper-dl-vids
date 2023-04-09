@@ -1,12 +1,14 @@
 from __future__ import unicode_literals
 from flask import Flask
-from  routes.testz import test_bp
+from routes.testz import test_bp
+from routes.downloadRoutes import download_bp
 # from bs4 import BeautifulSoup
 
 # import youtube_dl
 
 app = Flask(__name__)
 app.register_blueprint(test_bp, url_prefix='/test')
+app.register_blueprint(download_bp)
 
 @app.route('/')
 def home():
@@ -21,6 +23,8 @@ def home():
         <li><a href="/download/date">/download/date  </a></li>
         <li><a href="/test/yt1"> hard coded (dl from arr of vids) </a></li>
         <li><a href="/test/yt2"> hard coded (get meta)  </a></li>
+        <li><a href="/channel/lolgeranimo"> /channel/<lolgeranimo>  </a></li>
+        <li><a href="/channel/getAll"> /channel/getAll  </a></li>
         <hr/>
         <li><a href="/gera">/gera gera stuff RIP </a></li>
         <li><a href="/test">/test (scrapes ycombinator) RIP </a></li>

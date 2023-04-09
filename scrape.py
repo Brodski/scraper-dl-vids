@@ -72,18 +72,15 @@ async def gera():
     for tag in vids:
         allHrefs.append(tag['href'])
         print ("tag['href']=" + tag['href'])
-    # allHrefs.sort()
+
     hrefsSet = set()
     for href in allHrefs:
         match = re.search(r'(/videos/\d+)(\?.*)', href)
         if match:
-            print (match.group(1))
             hrefsSet.add(match.group(1))
 
     print ("hrefsSet")
-    print ("hrefsSet")
     [print (hrefsSet) for hrefsSet in enumerate(hrefsSet)]
-# [print('\n', vid.'href')) for vid  in enumerate(vids)]
 
     return "links"
 

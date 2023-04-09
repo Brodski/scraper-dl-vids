@@ -20,6 +20,7 @@ $ python -m pip install yt_dlp
 $ python -m pip install selenium  
 $ python -m pip install Flask  
 $ python -m pip install -U openai-whisper
+$ python -m pip install flask[async]
 $ choco install ffmpeg
 
 (recall)

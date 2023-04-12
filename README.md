@@ -21,6 +21,7 @@ $ python -m pip install selenium
 $ python -m pip install Flask  
 $ python -m pip install -U openai-whisper
 $ python -m pip install flask[async]
+$ python -m pip install boto3
 $ choco install ffmpeg
 
 (recall)

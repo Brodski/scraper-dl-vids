@@ -33,23 +33,19 @@ async def getVidPaths(name=""):
         return   
     return await scrapePage(name)
 
-    
+@download_bp.route('/saveTopChannels')
+def saveTopChannels_Route():
+    return saveTopChannels(None)
 
-@download_bp.route('/channel/uploadChannelsJsonToS3')
-def uploadChannelsJsonToS3_Route():
-    #                                                                 type3=most watched
-    #                                                   /30days/0?/#clicks?/type/desc/start/get100streams
-    #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/1/3/desc/0/100
-    #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/2/3/desc/100/100
-    #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/200/100
-    #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/4/3/desc/300/100
-    #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/1/5/desc/0/100
+@download_bp.route('/getTopChannels')
+def getTopChannels_Route():
+    return getTopChannels()
 
-                                                # type6=avg-viewers
-    # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/11/6/desc/0/100
+@download_bp.route('/getTopChannelsAndSave')
+def getTopChannelsAndSave_Route():
+    return getTopChannelsAndSave()
 
-    return uploadChannelsJsonToS3()
 
-@download_bp.route('/date')
-def download_date():
-    return 'Blog Date'
+@download_bp.route('/initScrape')
+def initScrape_Route():
+    return initScrape()

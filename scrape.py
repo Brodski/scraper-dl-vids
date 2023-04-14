@@ -44,6 +44,7 @@ browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
 async def gera():
     channel = "lolgeranimo"
+    channel = "midbeast"
     url = f'https://www.twitch.tv/{channel}/videos?filter=archives&sort=time'
     # session = HTMLSession()
     # res = session.get(url)    
@@ -67,9 +68,23 @@ async def gera():
     browser.quit()
     vids = soup.select("a[href^='/videos/']")
     print ("vids")
-    print (vids)
+    # print (vids)
     allHrefs = []
     for tag in vids:
+        # print ("tag.innerText: " )
+        # print ( tag)
+        print ( "------------tag.text")
+        print ( tag.text)
+        print ( "tag.select(img)")
+        loadingImg = tag.select("img[src*='404_processing']")
+        if tag.select("img[src*='404_processing']"):
+            print ("NOT NULL")
+        if 'hours ago' in tag.text.lower() or 'minutes ago' in tag.text.lower() or loadingImg:
+            print ("has hours")
+            print ("has hours")
+            print ("has hours!")
+            continue
+        
         allHrefs.append(tag['href'])
         print ("tag['href']=" + tag['href'])
 

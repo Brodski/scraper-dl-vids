@@ -2,12 +2,24 @@ from flask import Blueprint, current_app
 import yt_dlp
 import time
 
+import boto3
+import json
+import datetime
+
+import os
+
+current_week = str(datetime.date.today().isocalendar()[1])
+current_year = str(datetime.date.today().isocalendar()[0])
+s3_key_test = "channels/test/raw/" + current_year + "-" + current_week + "/"
+BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
+directory_name = 'mydirectory' # this directory legit exists in this bucket ^
+directory_name_real = "channels/ranking/raw" 
 
 test_bp = Blueprint('test', __name__)
 vidUrl = 'https://www.twitch.tv/videos/1783465374' # pro leauge
-vidUrl = 'https://www.twitch.tv/videos/1791750006' # lolgera
-# vidUrl = 'https://www.twitch.tv/videos/1792255936' # sub only
-vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
+# vidUrl = 'https://www.twitch.tv/videos/1791750006' # lolgera
+# # vidUrl = 'https://www.twitch.tv/videos/1792255936' # sub only
+# vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
 
 # Download
 #  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
@@ -19,7 +31,10 @@ def test_editor():
         'output': '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path),
         "verbose": True
     }
-
+    # local storage, "mature=true"
+    print ("getMeta vidUrl=")
+    print ("getMeta vid.output=" + '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path))
+    print (vidUrl)
     start_time = time.time()
     # Inferior alterative to yt_dlp is youtube_dl
         # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -92,16 +107,126 @@ def test_yt_dlp():
 def test_date():
     return 'Blog Date'
 
+@test_bp.route('/getAllS3Jsons')
+def getAllS3Jsons():
+    # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+    # obj['Key']          = channels/ranking/raw/2023-15/100.json
+    # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+    s3 = boto3.client('s3')
+    objList = []
+    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name_real)
+    print ("objects")
+    print (objects)
+    print (objects.get('Contents'))
+    if objects.get('Contents') is None:
+        return "NOTHIGN!"
+    objects = objects['Contents']
+
+    for obj in objects:
+        objList.append(obj)
+    sorted_objects = sorted(objList, key=lambda obj: obj['LastModified'])
+    print ("objList")
+    print ("objList")
+    print (objList)
+    print("-----SORTED----")
+    for obj in sorted_objects:
+        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+
+        
+    x = datetime.datetime(2023, 4, 11, 6, 54, 39, 0, tzinfo=datetime.timezone.utc)
+    filtered_objects = filter(lambda obj: obj['LastModified'] > x, sorted_objects)
+    print("-----FILTER ----")
+    print (x)
+    for obj in filtered_objects:
+        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+        
+    return objects
 
 
 
 
+@test_bp.route('/getAllS3Jsons')
+def uploadJsonToS3Test():
+    s3 = boto3.client('s3')
+    myJsonStff = { 
+        "someArry": [
+            { 
+                "hello": "hello dude",
+                "goodbye": "get out of here"
+            },
+            { 
+                "party": "party hard",
+                "gottaRock": "I wanna rock n roll",
+                "gottaRock2": "I wanna rock n roll all night!"
+            }
+        ],
+        "bangbang": "Pop boom bang! ka bam!"
+    }
+    json_object = myJsonStff
+    s3.put_object(
+        Body=json.dumps(json_object),
+        Bucket=BUCKET_NAME,
+        Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json
+        # Key=s3_key
+    )
+    return "done: \n" + str(myJsonStff)
 
 
 
+@test_bp.route('/doS3Stuff')
+def doS3Stuff():
+    s3Aws = os.environ.get('BUCKET_NAME')
+    s3local = os.environ.get('BUCKET_NAME_LOCAL')
+    print(f'AWS_BUCKET Key: {s3Aws}')
+    print(f'BUCKET_NAME_LOCAL Key: {s3local}')
+
+    s3 = boto3.client('s3')
+    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name)['Contents']
+
+    for obj in objects:
+        print(obj['Key'])
+    response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name) 
+    print (response)
+    print('================')
+    print('================')
+    print('================')
+    print('================')
+    for content in response.get('Contents', []):
+        object_key = content.get('Key')
+        print (object_key)
+        # local_file_path = 'local/path/to/save/' + object_key.split('/')[-1]
+        # s3.download_file(BUCKET_NAME, object_key, local_file_path)
+    print('================')
+    responseGetObj = s3.get_object(
+            Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',
+            # Key = 'mydirectory/twitch-stuff.json'
+            Key = 'mydirectory/testiq.png'
+        )
+    dataz = responseGetObj['Body'].read()
+    print("len(dataz)=" + str(len(dataz)))
+    return s3local
 
 
+@test_bp.route('/testGetTop500Channels_NameCompleted')
+def testGetTop500Channels_NameCompleted():
+    json_files = ['./mocks/0to100channels.json', './mocks/100to200channels.json']
 
+    # Read and parse JSON files
+    json_data = []
+    for json_file in json_files:
+        with open(json_file, 'r', encoding="utf8") as file:
+            data = json.load(file)
+            print(f"Contents length of file data = {len(data.get('data'))}:")
+        print(data.get('thisdoesnotexist'))
+        json_data.extend(data.get('data'))
+        # print(f"Contents of {json_file}:")
+        # print(data)
+    print (';;;;;;;;;;;;;;;;;;')
+    print (';;;;;;;;;;;;;;;;;;')
+    print (';;;;;;;;;;;;;;;;;;')
+    for dude in json_data:
+        print (dude.get("displayname"))
+    return json_data
 
 
 #####

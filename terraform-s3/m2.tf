@@ -1,3 +1,8 @@
+# use terraform to satisfy these: 
+# build an s3 bucket, this s3 bucket should only be accessible by me and my apps, 
+# build a python lambda function from an uploaded zip file, 
+# runs this lambda once a week on monday, 
+# and only me and the lambda function could access the s3 bucket.
 provider "aws" {
   region = "us-west-2"
 }

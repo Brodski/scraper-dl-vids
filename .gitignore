@@ -12,3 +12,6 @@ n_env/
 *.env
 *.vscode
 node_modules/
+**.srt
+**.vtt
+**.mhtml

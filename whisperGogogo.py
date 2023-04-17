@@ -3,16 +3,22 @@ import whisper.utils
 from whisper.utils import get_writer
 
 import os 
+import time
 # from whisper import cli
 
-model = whisper.load_model("base")
-result = model.transcribe("BarbaraWalters.mp3",  fp16=False)
+start_time = time.time()
 
-# model.utils.write_vtt("BarbaraWalters.mp3", "BarbaraWalters.vtt")
-# whisper.utils.write_vtt("BarbaraWalters.mp3", "BarbaraWalters.vtt")
+model = whisper.load_model("base")
+filename = "BarbaraWalters.mp3"
+# filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp4"
+# filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
+result = model.transcribe(filename,  fp16=False)
+
+# model.utils.write_vtt(filename, "BarbaraWalters.vtt")
+# whisper.utils.write_vtt(filename, "BarbaraWalters.vtt")
 
 output_dir = "."
-audio_path="BarbaraWalters.mp3"
+audio_path=filename
 audio_basename = os.path.basename(audio_path)
 
 print ("output_dir: ", output_dir )
@@ -28,7 +34,6 @@ srt_writer(result, audio_basename + ".srt")
 # Save as a VTT file
 vtt_writer = get_writer("vtt", output_dir)
 vtt_writer(result, audio_basename + ".vtt")
-
 
 
 # from whisper.utils import write_srt
@@ -53,6 +58,11 @@ vtt_writer(result, audio_basename + ".vtt")
 #     whisper.utils.WriteJSON(result["segments"], file=json)
 
 # whisper.utils.write_vtt(result["segments"], file="BarbaraWalters.vtt")
+
+end_time = time.time() 
+time_diff = end_time - start_time
+print("Time: "  + str(time_diff))
+
 print(result["text"])
 print("--------------write_vtt--------------")
 # print(result["segments"])

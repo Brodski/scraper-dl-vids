@@ -127,7 +127,7 @@ def scrape4Href(channels):
        
         everyChannel.append({
             'displayname': channel['displayname'],
-            'twitchurl': channel['twitchurl'],
+            'url': channel['url'],
             'links': resultz
         })
         # resultz = jsonify(results=unique_list)

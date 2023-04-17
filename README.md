@@ -13,6 +13,7 @@ $ python .\whisperGogogo.py
 (getting started)
 $ pip install virtualenv
 $ python -m virtualenv venv
+
 $ .\venv\Scripts\activate
 $ python -m pip install webdriver-manager  
 $ python -m pip install beautifulsoup4  

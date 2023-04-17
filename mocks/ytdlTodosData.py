@@ -1,8 +1,7 @@
-hrefData = [
+ytdlTodosData = [
    {
       "displayname":"LoLGeranimo",
-      "url":"lolgeranimo",
-      "links":[
+      "todos":[
          "/videos/1758483887",
          "/videos/1747933567",
          "/videos/1767827635",
@@ -59,8 +58,7 @@ hrefData = [
    },
    {
       "displayname":"xQc",
-      "url":"xqc",
-      "links":[
+      "todos":[
          "/videos/1775892326",
          "/videos/1752690726",
          "/videos/1746842079",
@@ -111,6 +109,5 @@ hrefData = [
       ]
    }
 ]
-
-def getHrefsData():
-    return hrefData
+def getYtdlTodoData():
+    return ytdlTodosData

@@ -3,6 +3,7 @@ import controllers.scrapey as scrapey
 import mocks.initScrapData
 import mocks.initHrefsData
 import controllers.yt_download as yt
+from flask import jsonify, abort
 def getTopChannelsAndSave():
     # Make http request to sullygnome 
     topChannels = downloadController.getTopChannels()
@@ -15,16 +16,38 @@ def initScrape():
     combined_channels_list = downloadController.addWhiteList(combined_channels_list)
     return combined_channels_list
 
-def initScrapeHrefs():
+def initYtdlAudio():
+    # TODO probably need some interface & models for the scrapped-data vs ytdl-data
     # href_channel_list = scrapey.scrape4HrefAux()
-    href_channel_list = mocks.initHrefsData.getHrefsData()
-    print("initScrapeHrefs - href_list:")
-    for channel in href_channel_list:
-        print(channel)
-        # yt.downloadChannelAudio(channel['twitchurl'], channel['links'])
-    msg = yt.downloadChannelAudio(href_channel_list[0]['twitchurl'], href_channel_list[0]['links'])
-    return msg
-        # downloadAudio(h)
-        
-    # yt.getMeta(href_list[0])
+    scrapped_channels = mocks.initHrefsData.getHrefsData()
+    scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)
+    print ("scrapped_channels")
+    print ("scrapped_channels")
+    print ("scrapped_channels")
+    print ("scrapped_channels")
+    print ("scrapped_channels")
+    print (scrapped_channels)
+    print ("todo_downloads_objlist")
+    print ("todo_downloads_objlist")
+    print ("todo_downloads_objlist")
+    print ("todo_downloads_objlist")
+    print ("todo_downloads_objlist")
+    print (scrapped_channels_with_todos)
+    print ()
+    print ()
+    print ()
+    each_channels_and_their_ytdl_vids_metadata = yt.downloadChannelsAudio(scrapped_channels_with_todos)
+    # updateScrapeHistory(metaData_yt)
+    return each_channels_and_their_ytdl_vids_metadata
+            
+    if metaDownloads is None:
+        print("failed to download: " + channel['displayname'])
+            # abort(400, description="Failed to download: href_channel_list[0]['twitchurl']")
+    return metaDownloads
+            # downloadAudio(h)
+    
+    # yt.downloadUrl(href_list[0])
+
+def getAlreadyDownloadedxx():
+    return yt.getAlreadyDownloaded()
     

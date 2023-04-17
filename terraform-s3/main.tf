@@ -1,3 +1,8 @@
+# gpt 4
+# use terraform to build an s3 bucket, this s3 bucket should only be 
+# accessible by me and my apps, and a lambda function that runs once a 
+# week and only me and the lambda function could access the s3 bucket
+
 provider "aws" {
   region = "us-west-2"
 }
@@ -9,6 +14,21 @@ locals {
 resource "aws_s3_bucket" "this" {
   bucket = "my-unique-bucket-name"
   acl    = "private"
+}
+
+# Q: create an s3 bucket with the folders "channels/raw" and "channels/scrapped"
+resource "aws_s3_bucket_object" "channels_raw" {
+  bucket       = aws_s3_bucket.this.id
+  key          = "channels/raw/"
+  content_type = "application/x-directory"
+  source       = "/dev/null" # placeholder b/c required. since not uploading actual content use /dev/null
+}
+
+resource "aws_s3_bucket_object" "channels_scrapped" {
+  bucket       = aws_s3_bucket.this.id
+  key          = "channels/scrapped/"
+  content_type = "application/x-directory"
+  source       = "/dev/null"
 }
 
 resource "aws_iam_role" "lambda_role" {

@@ -39,6 +39,10 @@ def initScrape_Route():
 def scrape4HrefAux_Route():
     return scrape4HrefAux()
 
-@download_bp.route('/initScrapeHrefs')
-def initScrapeHrefs_Route():
-    return dirController.initScrapeHrefs()
+@download_bp.route('/initYtdlAudio')
+def initYtdlAudio_Route():
+    return dirController.initYtdlAudio()
+
+@download_bp.route('/getAlreadyDownloaded')
+def getAlreadyDownloaded_Route():
+    return dirController.getAlreadyDownloadedxx()

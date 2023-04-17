@@ -17,19 +17,26 @@ directory_name_real = "channels/ranking/raw"
 
 test_bp = Blueprint('test', __name__)
 vidUrl = 'https://www.twitch.tv/videos/1783465374' # pro leauge
-# vidUrl = 'https://www.twitch.tv/videos/1791750006' # lolgera
+vidUrl = 'https://www.twitch.tv/videos/1791750006' # lolgera
+vidUrl = 'https://www.twitch.tv/videos/1792628012' # lolgera
 # # vidUrl = 'https://www.twitch.tv/videos/1792255936' # sub only
 # vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
+vidUrl = "https://www.youtube.com/watch?v=rQsAxHHEHaw" # Belmont gains
+vidUrl = 'https://www.twitch.tv/videos/1792628012' # lolgera
+vidUrl = 'https://www.youtube.com/watch?v=qOoe3ZpciI0' # AI scared
+vidUrl = 'https://www.twitch.tv/videos/1767827635' # short gera
 
 # Download
-#  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
+# https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
 @test_bp.route('/yt1')
 def test_editor():
     
     ydl_opts = {
         'format': 'worstvideo/bestaudio',
         'output': '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path),
-        "verbose": True
+        "verbose": True,
+        "concurrent_fragment_downloads": 8
+        # "cookies": "cookieTime.txt"
     }
     # local storage, "mature=true"
     print ("getMeta vidUrl=")
@@ -40,7 +47,7 @@ def test_editor():
         # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
-            meta = ydl.extract_info(vidUrl, download=False) 
+            meta = ydl.extract_info(vidUrl, download=True) 
         except Exception as inst:
             print ("Failed to extract vid info:")
             print (inst)
@@ -80,27 +87,102 @@ def test_editor():
 @test_bp.route('/yt2')
 def test_yt_dlp():
     ydl_opts = {
-        # 'format': 'bestaudio/best',
         # 'format': 'worstvideo+bestaudio',
         # 'format': '(worstvideo+bestaudio)',
-        # 'format': 'worst',
-        'format': 'worstvideo/bestaudio',
         'output': '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path),
         "verbose": True,
         # "listformats": True,
-        # 'postprocessors': [{
-        #     'key': 'FFmpegExtractAudio',
-        #     'preferredcodec': 'mp3',
-        #     'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            # 'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
             # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
-                                        #https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
-        # }],
+                                        # https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
+        }],
         # 'logger': MyLogger(),
         # 'progress_hooks': [my_hook],
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([vidUrl])
     return "done"
+
+
+
+
+
+
+
+
+
+@test_bp.route('/yt3')
+def test_yt_dlp3():
+    ydl_opts = {
+        # 'format': 'worstvideo+bestaudio',
+        # 'format': '(worstvideo+bestaudio)',
+        'format': 'sb0,sb1,sb2,Audio_Only/600/250/worstvideo/bestaudio/160p30',
+        # 'output': '{}/%(title)s-%(id)s.f%(format_id)s.%(ext)s'.format(current_app.root_path),
+        "outtmpl": "%(title)s-%(id)s.f_%(format_id)s.%(ext)s",
+        "verbose": True,
+        # "extractaudio": True,
+        # "audioformat": "mp3",
+        # "listformats": True,
+        # "listsubtitles": True,
+        # "writesubtitles":  "./subtitlez.txt",
+        # "writesubtitles":   '{}/SUBSS+%(title)s-%(id)s.%(ext)s'.format(current_app.root_path),
+        # "writesubtitles":   True,
+        # "allsubtitles": True,
+        # 'postprocessors': [{
+        #     'key': 'FFmpegExtractAudio',
+        #     'preferredcodec': 'mp3',
+        # #     'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        # #     # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        # #                                 #https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
+        # }],
+        # 'logger': MyLogger(),
+        # 'progress_hooks': [my_hook],
+    }
+    # vidUrl = 'https://www.youtube.com/watch?v=qOoe3ZpciI0' # AI scared
+    meta = 123
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        meta = ydl.extract_info(vidUrl, download=True) 
+        # meta = ydl.download([vidUrl])
+    return str(meta)
+
+
+
+
+
+##############################################################
+# This is exactly the same as above but with commented out stuff for reference
+@test_bp.route('/yt4')
+def test_yt_dl_paudio():
+    ydl_opts = {
+        'format': 'sb0,sb1,sb2,Audio_Only/600/250/bestaudio/worstvideo/160p30',
+        "outtmpl": "%(title)s-%(id)s.f_%(format_id)s.%(ext)s",
+        "verbose": True,
+        "writethumbnail": True,
+        "embedthumbnail": True,
+        # "extractaudio": True,
+        # "listformats": True,
+    }
+    # vidUrl = 'https://www.youtube.com/watch?v=qOoe3ZpciI0' # AI scared
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        zz = ydl.download([vidUrl])
+    return str(zz)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @test_bp.route('/date')

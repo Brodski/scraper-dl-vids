@@ -47,6 +47,7 @@ def home():
         <li><a href="/yo">/yo (Hello World)</a></li>
         <li><a href="/test/yt1"> /test/yt1 hard coded (get meta)  </a></li>
         <li><a href="/test/yt2"> /test/yt2 hard coded (dl from arr of vids) </a></li>
+        <li><a href="/test/yt3"> /test/yt3 hard coded (dl from arr of vids) </a></li>
         <li><a href="/channel/lolgeranimo"> /channel/<lolgeranimo>   </a></li>
         <li><a href="/test/doS3Stuff"> /test/doS3Stuff  </a></li>
         <li><a href="/test/uploadJsonToS3Test"> /test/uploadJsonToS3Test (mock json, s3 example) </a></li>
@@ -56,7 +57,8 @@ def home():
         <li><a href="/getTopChannelsAndSave"> /getTopChannelsAndSave </a></li>
         <li><a href="/initScrape"> /initScrape </a></li>
         <li><a href="/scrape4HrefAux"> /scrape4HrefAux </a></li>
-        <li><a href="/initScrapeHrefs"> /initScrapeHrefs </a></li>
+        <li><a href="/initYtdlAudio"> /initYtdlAudio </a></li>
+        <li><a href="/getAlreadyDownloaded"> /getAlreadyDownloaded </a></li>
         <hr/>
         <hr/>
         <li><a href="/gera">/gera gera stuff RIP </a></li>

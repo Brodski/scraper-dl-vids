@@ -231,13 +231,13 @@ def getRanking4Scrape():
 
     s3 = boto3.client('s3')
     objList = []
-    objectz = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")
-    print ("objectz")
-    print ("objectz")
-    print ("objectz")
-    print ("objectz")
-    print ("objectz")
-    print (objectz)
+    # objectz = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")
+    # print ("objectz")
+    # print ("objectz")
+    # print ("objectz")
+    # print ("objectz")
+    # print ("objectz")
+    # print (objectz)
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")['Contents']
     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
     print("sorted_objects = == = = == = = =")

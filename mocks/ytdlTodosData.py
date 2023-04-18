@@ -1,6 +1,7 @@
 ytdlTodosData = [
    {
       "displayname":"LoLGeranimo",
+      "url":"lolgeranimo",
       "todos":[
          "/videos/1758483887",
          "/videos/1747933567",
@@ -58,6 +59,7 @@ ytdlTodosData = [
    },
    {
       "displayname":"xQc",
+      "url":"xqc",
       "todos":[
          "/videos/1775892326",
          "/videos/1752690726",

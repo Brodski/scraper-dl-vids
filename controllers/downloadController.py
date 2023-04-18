@@ -198,7 +198,7 @@ def combineAllContent(sorted_s3_paths):
 
         json_string = binary_data.decode('utf-8')
         json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
-        print (json_object)
+        # print (json_object)
         for channel in json_object['data']:
             # quasi say of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
             if channel.get('displayname') in already_added_list:

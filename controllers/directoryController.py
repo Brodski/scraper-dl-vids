@@ -41,12 +41,12 @@ def initYtdlAudio():
     print ()
     print ()
     print ()
-    # each_channels_and_their_ytdl_vids_metadata = yt.downloadChannelsAudio(scrapped_channels_with_todos)
+    each_channels_and_their_ytdl_vids_metadata = yt.downloadChannelsAudio(scrapped_channels_with_todos)
     # ^
     # [].get('filepath')
     # [].get('__finaldir')
     # [].get('_filename')
-    each_channels_and_their_ytdl_vids_metadata = mocks.ytdlObjMetaDataList.getYytdlObjMetaDataList()
+    # each_channels_and_their_ytdl_vids_metadata = mocks.ytdlObjMetaDataList.getYytdlObjMetadataList()
     # updateScrapeHistory(metaData_yt)
     return each_channels_and_their_ytdl_vids_metadata
             

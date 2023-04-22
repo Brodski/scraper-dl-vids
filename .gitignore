@@ -15,3 +15,5 @@ node_modules/
 **.srt
 **.vtt
 **.mhtml
+
+!BarbaraWalters.mp3

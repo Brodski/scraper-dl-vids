@@ -8,6 +8,7 @@ import datetime
 import controllers.yt_download as yt
 import models.Metadata_Yt as Metadata_Yt
 import models.Metadata_Ytdl as Md_Ytdl
+import controllers.whispererAi as whisperAI
 # from models.Metadata_Ytdl import Metadata_Ytdl
 
 import os
@@ -126,24 +127,16 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
             metadata = downloadTwtvVid(link, True)
             metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], link, metadata)
             scrapped_channels_ytmd_objs.append(metadata_Ytdl)
-            print("metadata_Ytdl")
-            print("metadata_Ytdl")
-            print("metadata_Ytdl")
-            print("metadata_Ytdl")
-            print("metadata_Ytdl")            
-            print(metadata_Ytdl)
-            print(metadata_Ytdl)
             jsonstr1 = json.dumps(metadata_Ytdl.__dict__)
-            print("jsonstr1")
-            print("jsonstr1")
-            print(jsonstr1)
-            # createCaptionsWhisperAi() # (lolgeranimo, 12341234, {...})
+            print("metadata_Ytdl=" + str(metadata_Ytdl))
+            print("jsonstr1="+jsonstr1)
+            createCaptionsWhisperAi(metadata_Ytdl) # (lolgeranimo, 12341234, {...})
 
             keybase = S3_CAPTIONS_KEYBASE + channel['url'] + "/" + CURRENT_DATE_YMD + link.replace("/videos", "") # channels/captions/lolgeranimo/2023-04-18/1747933567
             print ("KEY CAPTIONS=" + keybase)
             print ("KEY CAPTIONS=" + keybase)
             
-            # uploadAudioToS3(metadata, keybase) # key = upload 'location' in the s3 bucket 
+            # isSuccess = uploadAudioToS3(metadata, keybase) # key = upload 'location' in the s3 bucket 
             # getAlreadyDownloaded
         
         print()
@@ -156,9 +149,9 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
         print(scrapped_channels_ytmd_objs)
         print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
         print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
-        for x in scrapped_channels_ytmd_objs:
-            print (x)
-            print (json.dumps(x.__dict__))
+        # for x in scrapped_channels_ytmd_objs:
+            # print (x)
+            # print (json.dumps(x.__dict__))
         print()
         print()
         print()
@@ -169,6 +162,31 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
         print(scrapped_channels_ytmd_objs)
     return scrapped_channels_ytmd_objs
 
+def createCaptionsWhisperAi(metadata_Ytdl):
+    s3 = boto3.client('s3')
+    filesList = []
+    print("#############                         #############")
+    print("############# createCaptionsWhisperAi #############")
+    print("#############                         #############")
+    isPass = False
+
+    for requested in metadata_Ytdl.metadata.get('requested_downloads', []):
+        print(requested.get('format_id', {}))
+        if requested.get('format_id') == "Audio_Only": # TODO othe audio_ids like youtube's, ect
+            __finaldir = requested.get('__finaldir') # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids"
+            filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+            filename = filepath.replace(__finaldir, "")
+            filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+            filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
+            
+            print ("---------------> ADDING " + filename)
+            print(" !  !  !  !  !  !  !  !  !  !  ! ")
+            print(filename)
+            # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
+            isPass = whisperAI.mp3Transcribe(filename)
+            filesList.append(filename)
+        
+    return isPass
 
 
 def uploadAudioToS3(metadata, keybase):
@@ -186,31 +204,44 @@ def uploadAudioToS3(metadata, keybase):
     for requested in metadata.get('requested_downloads', []):
         print(requested.get('format_id', {}))
         if requested.get('format_id') == "Audio_Only":
-            filename = requested.get('_filename')
+            __finaldir = requested.get('__finaldir') # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids"
+            filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+            filename = filepath.replace(__finaldir, "")
+            filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+            print ("filename[-4:]")
+            print ("filename[-4:]")
+            print ("filename[-4:]")
+            print ("filename[-4:]")
+            print ("filename[-4:]")
+            print (filename[-4:])
+            print (len(filename[-4:]))
+            print (filename[-4:] == ".mp4")
+            filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
             if filename:
+                print ("---------------> ADDING " + filename)
                 filesToSave.append(filename)
         
-    # NEED TO UPLOAD FILE FROM DIRECOTYR TO BUCKET
-    for fname in filesToSave:
+    # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
+    for file in filesToSave:
         metaKey = keybase + "/metadta.json"
-        fileKey =  keybase + '/' + fname
+        fileKey =  keybase + '/' + file
         print("")
-        print("fname=" + fname)
+        print("file=" + file)
         print("fileKey=" + fileKey)
         print("metaKey=" + metaKey)
         print("")
         try:
             s3.upload_file(fname, BUCKET_NAME, fileKey)
             print ("UPLOADED !!!!!!!!!!!!!!!!! ")
-            s3.put_object(
-                Body=json.dumps(metadata),
-                Bucket=BUCKET_NAME,
-                Key= metaKey  # channels/test/raw/2023-15/2.json
-                # Key=s3_key
-            )
+            if file == filesToSave[-1]:
+                s3.put_object(
+                    Body=json.dumps(metadata),
+                    Bucket=BUCKET_NAME,
+                    Key= metaKey  # channels/test/raw/2023-15/2.json
+                )
         except Exception as e:
-            print("oops!")
-            continue
+            print("oops! " + str(e))
+            return False
     return True
 
 def updateScrapeHistory(yt_metadata_json):

@@ -23,6 +23,10 @@ $ python -m pip install Flask
 $ python -m pip install -U openai-whisper
 $ python -m pip install flask[async]
 $ python -m pip install boto3
+### At some point (prob ai whisper) we downloaded the CPU only version (__version__ = '2.0.0+cpu') found at "\scraper-dl-vids\venv\Lib\site-packages\torch\version.py"
+$ python -m pip uninstall torch
+$ python -m pip cache purge
+$ python -m pip install torch -f https://download.pytorch.org/whl/torch_stable.html
 $ choco install ffmpeg
 
 (recall)

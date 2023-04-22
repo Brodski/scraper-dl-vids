@@ -30,3 +30,4 @@ def mp3Transcribe(audio_path):
 
     # Save as json
     print(result["text"])
+    return True

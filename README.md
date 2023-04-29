@@ -29,6 +29,7 @@ $ python -m pip install boto3
 $ python -m pip uninstall torch  
 $ python -m pip cache purge  
 $ python -m pip install torch -f https://download.pytorch.org/whl/torch_stable.html  
+$ python -m pip install faster_whisper
 $ choco install ffmpeg  
   
 (recall)  

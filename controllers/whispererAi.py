@@ -1,5 +1,6 @@
 import whisper
 import whisper.utils
+import time
 from whisper.utils import get_writer
 
 import os 
@@ -7,7 +8,13 @@ import os
 
 def mp3Transcribe(audio_path):
     model = whisper.load_model("base")
+    print ("START")
+    print (audio_path)
+    start_time = time.time()
     result = model.transcribe(audio_path,  fp16=False)
+    run_time = time.time() - start_time 
+    print("run_time=")
+    print(run_time)
 
     output_dir = "."
     audio_basename = os.path.basename(audio_path)

@@ -6,10 +6,13 @@ import boto3
 import json
 import datetime
 import controllers.yt_download as yt
-import models.Metadata_Yt as Metadata_Yt
+# import models.Metadata_Yt as Metadata_Yt
 import models.Metadata_Ytdl as Md_Ytdl
 import controllers.whispererAi as whisperAI
+import controllers.whispererAiFAST as whispererAiFAST
 # from models.Metadata_Ytdl import Metadata_Ytdl
+import yt_dlp
+import subprocess
 
 import os
 
@@ -29,8 +32,11 @@ vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
 
 # Download
 #  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
-def downloadTwtvVid(link, isDownload=False): 
+def downloadTwtvVid(link, isDownload=True): 
+    # https://www.twitch.tv/videos/28138895
     vidUrl = "https://www.twitch.tv" + link
+    output_local_dir = "assets/raw"
+    output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
     print ("000000000000                  00000000000000000")
     print ("000000000000 download twtvVid 00000000000000000")
     print ("000000000000                  00000000000000000")
@@ -39,21 +45,38 @@ def downloadTwtvVid(link, isDownload=False):
         # 'format': 'sb0,sb1,sb2,Audio_Only/600/250/worstvideo/bestaudio/160p30',
         'format': 'Audio_Only/600/250/bestaudio/worstvideo/160p30',
         # 'outtmpl': '{}/%(title)s-%(id)s.f%(format_id)s.%(ext)s'.format(current_app.root_path),
-        "outtmpl": "%(title)s-%(id)s.f_%(format_id)s.%(ext)s",
-        # "verbose": True,
+        # "outtmpl": "%(title)s-%(id)s.f_%(format_id)s.%(ext)s",
+        "outtmpl": output_template,
+        "verbose": True,
         # "concurrent_fragment_downloads": 8
         'keepvideo': True,
+        "addmetadata": True,
+        "addchapters": True,
+        # "parse_metadata" "requested_downloads.filepath:%(filepath):" 
         # 'nopostoverwrites': True,
-        # 'postprocessors': [{
-        #     'key': 'FFmpegExtractAudio',
-        #     'preferredcodec': 'mp3',
-        # }]
+        #### !! 
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            # 'options': ['-filter:a', 'atempo=1.5']
+        },
+            # ChatGPT4 hallucinating bullshit postprocessors. FFmpegAudioConvertor does not exist. 
+            # ChatGPT3 made up FFmpegAudioSpeed too -.-
+            # {
+            #     'key': 'FFmpegAudioConvertor',
+            #     'options': '-filter:a "atempo=1.5"',
+            # }
+        ],
+        "overwrites": True,
+        # "nopostoverwrites": False, # hacked yt-dlp.FFmpegExtractAudioPP
+        # 'exec_cmd': 'after_video: --ffmpeg-exec.bat'
+        'exec_cmd': '-filter:a "atempo=1.5"'
     }
     print ("getMeta vidUrl=" + vidUrl)
     print ("getMeta vidUrl=" + vidUrl)
     print ("getMeta vidUrl=" + vidUrl)
     print ("getMeta vidUrl=" + vidUrl)
-    print ("getMeta vid.output=" + '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path))
+    print ("getMeta vid.output= " + output_template)
     # return "gg"
     # YES https://www.twitch.tv/videos/1778309747?filter=archives&sort=time
     # NO  https://www.twitch.tv/lolgeranimo/videos/1778309747
@@ -63,28 +86,74 @@ def downloadTwtvVid(link, isDownload=False):
         try:
             meta = ydl.extract_info(vidUrl, download=isDownload) 
         except Exception as e:
-            print ("Failed to extract vid info:")
-            print (e)
+            print ("Failed to extract vid info:" + str(e))
             return None
+    print('-------------------x')
+    print('Download complete: time=' + str(time.time() - start_time))
+    print()
+    print()
+    print(meta.get('requested_downloads')[0].get('filepath'))
+    inFile = "file:" + meta.get('requested_downloads')[0].get('filepath')
+    extension = inFile.split(".")[-1]
+    outFile =  "".join(inFile.split(".")[:-1]) + "-fast." + extension
+    print("inFile="+inFile)
+    print("outFile="+outFile)
 
+    ffmpeg_command = [
+        'ffmpeg', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
+    ]
+    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp4" -map 0 -dn -ignore_unknown -c copy -f mp4 "-bsf:a" aac_adtstoasc -movflags "+faststart" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.temp.mp4"    
+    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3" -filter:a "atempo=1.5" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3"
+    # ffmpeg -i file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3 -filter:a "atempo=1.5" file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3
+ 
+
+    print("starting subprocess!")
+    try:
+        # stdoutput, stderr, returncode = yt_dlp.utils.Popen.run("where ffmpeg", text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
+        # print("BAM!")
+        # print("BAM!")
+        # print(stdoutput)
+        # print(stderr)
+        # print(returncode)    
+        ffmpeg_command = [
+            # 'ffmpeg', '-version'
+            'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
+        ]
+        print("gogo")
+        print(ffmpeg_command)
+        stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print(stdoutput)
+        print(stderr)
+        print(returncode)    
+        # subprocess.call(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+
+        # subprocess.run(ffmpeg_command, check=True, capture_output=True, text=True)
+        print("Done subprocess!!!!!!!!!!!!!!!!!!!")
+    except subprocess.CalledProcessError as e:
+        print("Failed to run ffmpeg command:")
+        print(e)
     end_time = time.time() 
     time_diff = end_time - start_time
+    
     print('--------------------x')
-    print(meta)
-    print('upload date : %s' %(meta['upload_date']))
-    print( 'uploader    : %s' %(meta['uploader']))
-    print( 'views       : %d' %(meta['view_count']))
-    print( 'likes       : %s' %(meta.get('like_count', 'nope :o')))
-    print( 'dislikes    : %s' %(meta.get('dislike_count', 'no dislikes :)')))
-    print('view_count : %s' %(meta['view_count']))
-    print( 'id          : %s' %(meta['id']))
-    print( 'format      : %s' %(meta['format']))
-    print( 'duration    : %s' %(meta['duration']))
-    print( 'title       : %s' %(meta['title']))
-    print('description : %s' %(meta['description']))
-    print('webpage_url_basename : %s' %(meta['webpage_url_basename']))
-    print("current_app : %s" %(current_app.root_path))
-    print("time-diff ---- ", str(time_diff))
+    # print(meta)
+    # print('upload date : %s' %(meta['upload_date']))
+    # print( 'uploader    : %s' %(meta['uploader']))
+    # print( 'views       : %d' %(meta['view_count']))
+    # print( 'likes       : %s' %(meta.get('like_count', 'nope :o')))
+    # print( 'dislikes    : %s' %(meta.get('dislike_count', 'no dislikes :)')))
+    # print('view_count : %s' %(meta['view_count']))
+    # print( 'id          : %s' %(meta['id']))
+    # print( 'format      : %s' %(meta['format']))
+    # print( 'duration    : %s' %(meta['duration']))
+    # print( 'title       : %s' %(meta['title']))
+    # print('description : %s' %(meta['description']))
+    # print('webpage_url_basename : %s' %(meta['webpage_url_basename']))
+    # print("current_app : %s" %(current_app.root_path))
+    print("Download & FFMpeg-speed= ", str(time_diff))
 
     yt_metadata_json = {
         'upload date' : meta['upload_date'],
@@ -107,11 +176,18 @@ def downloadTwtvVid(link, isDownload=False):
     print ("meta")
     print ("meta")
     # print (meta)
+    # if vidUrl == "https://www.twitch.tv/videos/28138895":
+    if vidUrl == "https://www.twitch.tv/videos/5057810":
+        try:
+            x = json.dumps(meta)
+            return x
+        except:
+            print("except done")
+            return "execpt... done meta"
     return meta
-    # return yt_metadata_json
 
 def downloadChannelsAudio(scrapped_channels_with_todos):
-    scrapped_channels_ytmd_objs = []
+    metadata_Ytdl_list = []
     chnLimit = 0
     for channel in scrapped_channels_with_todos:
         chnLimit = chnLimit + 1
@@ -126,18 +202,14 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
                 break
             metadata = downloadTwtvVid(link, True)
             metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], link, metadata)
-            scrapped_channels_ytmd_objs.append(metadata_Ytdl)
-            jsonstr1 = json.dumps(metadata_Ytdl.__dict__)
+            metadata_Ytdl_list.append(metadata_Ytdl)
             print("metadata_Ytdl=" + str(metadata_Ytdl))
-            print("jsonstr1="+jsonstr1)
-            createCaptionsWhisperAi(metadata_Ytdl) # (lolgeranimo, 12341234, {...})
-
-            keybase = S3_CAPTIONS_KEYBASE + channel['url'] + "/" + CURRENT_DATE_YMD + link.replace("/videos", "") # channels/captions/lolgeranimo/2023-04-18/1747933567
-            print ("KEY CAPTIONS=" + keybase)
-            print ("KEY CAPTIONS=" + keybase)
-            
-            # isSuccess = uploadAudioToS3(metadata, keybase) # key = upload 'location' in the s3 bucket 
-            # getAlreadyDownloaded
+            try:
+                jsonstr1 = json.dumps(metadata_Ytdl.__dict__)
+                # print("jsonstr1="+ str(jsonstr1))
+            except:
+                print("failed to dump: " + metadata_Ytdl.username + " @ " + metadata_Ytdl.link + " - Fail" )
+            print("completed: " + metadata_Ytdl.username + " @ " + metadata_Ytdl.link)
         
         print()
         print()
@@ -145,11 +217,11 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
         print()
         print()
         print()
-        print("scrapped_channels_ytmd_objs")
-        print(scrapped_channels_ytmd_objs)
+        print("metadata_Ytdl_list")
+        print(metadata_Ytdl_list)
         print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
         print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
-        # for x in scrapped_channels_ytmd_objs:
+        # for x in metadata_Ytdl_list:
             # print (x)
             # print (json.dumps(x.__dict__))
         print()
@@ -158,13 +230,13 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
         print()
         print()
         print()
-        print("scrapped_channels_ytmd_objs")
-        print(scrapped_channels_ytmd_objs)
-    return scrapped_channels_ytmd_objs
+        print("metadata_Ytdl_list")
+        print(metadata_Ytdl_list)
+    return metadata_Ytdl_list
 
 def createCaptionsWhisperAi(metadata_Ytdl):
-    s3 = boto3.client('s3')
-    filesList = []
+    output_local_dir = "assets/raw"
+    output_local_dir = "./assets/raw"
     print("#############                         #############")
     print("############# createCaptionsWhisperAi #############")
     print("#############                         #############")
@@ -177,14 +249,16 @@ def createCaptionsWhisperAi(metadata_Ytdl):
             filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
             filename = filepath.replace(__finaldir, "")
             filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+
+            # ffmpeg convertion to audio doesnt change extension -.-
             filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
-            
+
+            output_full_dir = "{}/{}/{}".format(current_app.root_path, output_local_dir, filename)
             print ("---------------> ADDING " + filename)
-            print(" !  !  !  !  !  !  !  !  !  !  ! ")
+            print ("@  " + output_full_dir)
             print(filename)
             # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
-            isPass = whisperAI.mp3Transcribe(filename)
-            filesList.append(filename)
+            isPass = whispererAiFAST.mp3FastTranscribe(filename)
         
     return isPass
 

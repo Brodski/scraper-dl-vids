@@ -58,6 +58,7 @@ def home():
         <li><a href="/initScrape"> /initScrape </a></li>
         <li><a href="/scrape4HrefAux"> /scrape4HrefAux </a></li>
         <li><a href="/initYtdlAudio"> /initYtdlAudio </a></li>
+        <li><a href="/downloadTwtvVid_FIXED"> /downloadTwtvVid_FIXED(/videos/1231231) </a></li>
         <li><a href="/getAlreadyDownloaded"> /getAlreadyDownloaded </a></li>
         <hr/>
         <hr/>

@@ -42,8 +42,21 @@ def mp3FastTranscribe(filename):
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
+    result = { 
+        "segments": []
+    }
+
     for segment in segments:
         print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+        result["segments"].append({
+            "start" : segment.start,
+            "end" :   segment.end,
+            "text" :  segment.text,
+        })
+
+    end_time = time.time() - start_time
+    srt_writer = get_writer("srt", output_dir)
+    srt_writer(result, audio_basename + ".srt")
 
     end_time = time.time() - start_time
 

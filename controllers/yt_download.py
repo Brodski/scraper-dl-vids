@@ -32,11 +32,19 @@ vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
 
 # Download
 #  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
-def downloadTwtvVid(link, isDownload=True): 
+def downloadTwtvVid(link:str, isDownload=True): 
     # https://www.twitch.tv/videos/28138895
-    vidUrl = "https://www.twitch.tv" + link
+    
+    if "youtube.com" in link.lower():
+        vidUrl = link
+    else:
+        vidUrl = "https://www.twitch.tv" + link
+        
     output_local_dir = "assets/raw"
-    output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
+    try:
+        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
+    except:
+        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(os.getcwd()+'/', output_local_dir)
     print ("000000000000                  00000000000000000")
     print ("000000000000 download twtvVid 00000000000000000")
     print ("000000000000                  00000000000000000")

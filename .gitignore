@@ -4,6 +4,7 @@ venv/
 n_env/
 *.mp4
 *.webm
+*.webm.*
 *.mp3
 *.avi
 *mp4.part*

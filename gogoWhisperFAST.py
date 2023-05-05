@@ -10,10 +10,10 @@ import torch
 
 main_dir = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 asset_dir = "assets/raw"
-# model_size = "large-v2"
+model_size = "large-v2"
 # model_size = "medium"
-model_size = "small"
-model_size = "tiny"
+#model_size = "small"
+#model_size = "tiny"
 
 print("torch.cuda.is_available(): " + str(torch.cuda.is_available()))
 
@@ -22,13 +22,15 @@ print("torch.cuda.is_available(): " + str(torch.cuda.is_available()))
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
 # filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
 filename = "BarbaraWalters.mp3"
+filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast.mp3"
 asset_dir = "assets/raw/"
 output_dir = "./assets/output"
-audio_basename = os.path.basename(asset_dir + filename)
-
+audio_basename = os.path.basename(asset_dir + '/' + filename)
+x = "./"+ asset_dir + '/' + filename
+audio_basenameXXX = os.path.abspath(asset_dir + '/' + filename)
 
 # Run on GPU with FP16
-# model = WhisperModel(model_size, device="cuda", compute_type="float16")
+# model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="float16")
 # model = faster_whisper.WhisperModel(model_size, compute_type="int8")
 model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
 audio_path = "{}/{}/{}".format(main_dir, asset_dir, filename)

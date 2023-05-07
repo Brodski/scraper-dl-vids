@@ -1,5 +1,0 @@
-59:51 sec ----> ?
-@ large-v2 - CUDA YES 
-OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast
-39:54 min ---> run time = 464.7338037490845 sec
-

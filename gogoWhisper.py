@@ -55,8 +55,8 @@ srt_writer(result, audio_basename + ".srt")
 
 
 # Save as a VTT file
-vtt_writer = get_writer("vtt", output_dir)
-vtt_writer(result, audio_basename + ".vtt")
+# vtt_writer = get_writer("vtt", output_dir)
+# vtt_writer(result, audio_basename + ".vtt")
 
 
 # from whisper.utils import write_srt

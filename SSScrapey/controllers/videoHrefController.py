@@ -46,7 +46,6 @@ chrome_prefs = {
 options.add_experimental_option("prefs", chrome_prefs)
 
 # Create a new instance of the Chrome WebDriver with the options
-
 #  ignore-gpu-blocklist
 browser = None
 
@@ -54,17 +53,17 @@ SLEEP_SCROLL = 3
 NUM_BOT_SCROLLS = 1
 
 
-def scrape4HrefAux():
+def scrape4VidHrefAux():
     channels = mocks.initScrapData.getScrapeData()
     print ("*********************************************}")
     print ("*********************************************}")
     print ("*********************************************}")
     print ("*********************************************}")
     print (channels)
-    everyChannel = scrape4Href(channels)
+    everyChannel = scrape4VidHref(channels)
     return everyChannel
 
-def scrape4Href(channels):    
+def scrape4VidHref(channels):    
     global browser
     SLEEP_SCROLL = 3
     NUM_BOT_SCROLLS = 1

@@ -68,9 +68,6 @@ def downloadTwtvVid(link:str, isDownload=True):
         'exec_cmd': '-filter:a "atempo=1.5"'
     }
     print ("getMeta vidUrl=" + vidUrl)
-    print ("getMeta vidUrl=" + vidUrl)
-    print ("getMeta vidUrl=" + vidUrl)
-    print ("getMeta vidUrl=" + vidUrl)
     print ("getMeta vid.output= " + output_template)
     start_time = time.time()
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -89,54 +86,51 @@ def downloadTwtvVid(link:str, isDownload=True):
     print("inFile="+inFile)
     print("outFile="+outFile)
 
-    print("starting subprocess!")
-    try:
-        ffmpeg_command = [
-            # 'ffmpeg', '-version'
-            'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
-        ]
-        print("ffmpeg_command=" + "".join(ffmpeg_command))
-        stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        print(stdoutput)
-        print(stderr)
-        print(returncode)    
-        print("Done subprocess!!!!!!!!!!!!!!!!!!!")
-    except subprocess.CalledProcessError as e:
-        print("Failed to run ffmpeg command:")
-        print(e)
+    # try:
+    #     print("starting subprocess!")
+    #     ffmpeg_command = [
+    #         # 'ffmpeg', '-version'
+    #         'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
+    #     ]
+    #     print("ffmpeg_command=" + "".join(ffmpeg_command))
+    #     stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    #     print("FFMPEG PIPE COMPLETE")
+    #     print(stdoutput)
+    #     print(stderr)
+    #     print(returncode)
+    #     print()
+    # except subprocess.CalledProcessError as e:
+    #     print("Failed to run ffmpeg command:")
+    #     print(e)
     end_time = time.time() 
     time_diff = end_time - start_time
     
     print('--------------------x')
     print("Download & FFMpeg-speed= ", str(time_diff))
 
-    # print (meta)
-    if vidUrl == "https://www.twitch.tv/videos/5057810":
-        try:
-            x = json.dumps(meta)
-            return x
-        except:
-            print("except done")
-            return "execpt... done meta"
-    return meta
+    try:
+        x = json.dumps(meta)
+        return x
+    except:
+        print("except done")
+        return "execpt... done meta"
 
-def downloadChannelsAudio(scrapped_channels_with_todos):
+# TODO env debugg variables
+def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10):
     metadata_Ytdl_list = []
-    chnLimit = 0
+    chnCounter = 0
     for channel in scrapped_channels_with_todos:
-        chnLimit = chnLimit + 1
-        if chnLimit == 2:
+        chnCounter = chnCounter + 1
+        if chnCounter == chnLimit:
             break
-        print ("downloading this channel_with_todos...............................................")
+        print ("downloading this channel_with_todos......................")
         print (channel)
-        i = 0
+        vidCount = 0
         for link in channel['todos']:
-            i = i + 1
-            if i == 3:
+            vidCount = vidCount + 1
+            if vidCount == vidDownloadLimit:
                 break
+            # Download the vid
             metadata = downloadTwtvVid(link, True)
             metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], link, metadata)
             metadata_Ytdl_list.append(metadata_Ytdl)
@@ -150,54 +144,41 @@ def downloadChannelsAudio(scrapped_channels_with_todos):
         
         print()
         print()
-        print()
-        print()
-        print()
-        print()
-        print("metadata_Ytdl_list")
+        print("metadata_Ytdl_list:")
         print(metadata_Ytdl_list)
-        print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
-        print(" FINSIHED DOWNLAOINDG (2 vids) from channels[todos]:")
-        # for x in metadata_Ytdl_list:
-            # print (x)
-            # print (json.dumps(x.__dict__))
         print()
         print()
-        print()
-        print()
-        print()
-        print()
-        print("metadata_Ytdl_list")
-        print(metadata_Ytdl_list)
     return metadata_Ytdl_list
 
-def createCaptionsWhisperAi(metadata_Ytdl):
-    output_local_dir = "assets/raw"
-    output_local_dir = "./assets/raw"
-    print("#############                         #############")
-    print("############# createCaptionsWhisperAi #############")
-    print("#############                         #############")
-    isPass = False
+# Nope
+#
+# def transcribefileWhisperAi(metadata_Ytdl):
+#     output_local_dir = "assets/raw"
+#     output_local_dir = "./assets/raw"
+#     print("#############                         #############")
+#     print("############# transcribefileWhisperAi #############")
+#     print("#############                         #############")
+#     isPass = False
 
-    for requested in metadata_Ytdl.metadata.get('requested_downloads', []):
-        print(requested.get('format_id', {}))
-        if requested.get('format_id') == "Audio_Only": # TODO othe audio_ids like youtube's, ect
-            __finaldir = requested.get('__finaldir') # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids"
-            filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
-            filename = filepath.replace(__finaldir, "")
-            filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+#     for requested in metadata_Ytdl.metadata.get('requested_downloads', []):
+#         print(requested.get('format_id', {}))
+#         if requested.get('format_id') == "Audio_Only": # TODO othe audio_ids like youtube's, ect
+#             __finaldir = requested.get('__finaldir') # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids"
+#             filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
+#             filename = filepath.replace(__finaldir, "")
+#             filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
 
-            # ffmpeg convertion to audio doesnt change extension -.-
-            filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
+#             # ffmpeg convertion to audio doesnt change extension -.-
+#             filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
 
-            output_full_dir = "{}/{}/{}".format(current_app.root_path, output_local_dir, filename)
-            print ("---------------> ADDING " + filename)
-            print ("@  " + output_full_dir)
-            print(filename)
-            # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
-            isPass = whispererAiFAST.mp3FastTranscribe(filename)
+#             output_full_dir = "{}/{}/{}".format(current_app.root_path, output_local_dir, filename)
+#             print ("---------------> ADDING " + filename)
+#             print ("@  " + output_full_dir)
+#             print(filename)
+#             # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
+#             isPass = whispererAiFAST.mp3FastTranscribe(filename)
         
-    return isPass
+#     return isPass
 
 
 def uploadAudioToS3(metadata, keybase):
@@ -206,12 +187,9 @@ def uploadAudioToS3(metadata, keybase):
     print("upload audto to s3() ************************************************")
     print("upload audto to s3() ************************************************")
     print("upload audto to s3() ************************************************")
-    print("upload audto to s3() ************************************************")
-    print("upload audto to s3() ************************************************")
-    print("upload audto to s3() ************************************************")
-    print("upload audto to s3() ************************************************")
-    print("upload audto to s3() ************************************************")
     print(metadata.get('requested_downloads', []))
+
+    # Get absolute file path of downloaded audio
     for requested in metadata.get('requested_downloads', []):
         print(requested.get('format_id', {}))
         if requested.get('format_id') == "Audio_Only":
@@ -219,30 +197,23 @@ def uploadAudioToS3(metadata, keybase):
             filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
             filename = filepath.replace(__finaldir, "")
             filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
-            print ("filename[-4:]")
-            print ("filename[-4:]")
-            print ("filename[-4:]")
-            print ("filename[-4:]")
-            print ("filename[-4:]")
-            print (filename[-4:])
-            print (len(filename[-4:]))
-            print (filename[-4:] == ".mp4")
+            print ("filename[-4:]=" + filename[-4:])
             filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
             if filename:
-                print ("---------------> ADDING " + filename)
+                print ("---------------> ADDING to filesToSave " + filename)
                 filesToSave.append(filename)
         
-    # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
+    # Upload audio to S3
     for file in filesToSave:
-        metaKey = keybase + "/metadta.json"
-        fileKey =  keybase + '/' + file
+        metaKey = keybase + "/metadata.json"
+        s3fileKey =  keybase + '/' + file
         print("")
         print("file=" + file)
-        print("fileKey=" + fileKey)
+        print("s3fileKey=" + s3fileKey)
         print("metaKey=" + metaKey)
         print("")
         try:
-            s3.upload_file(fname, BUCKET_NAME, fileKey)
+            s3.upload_file(file, BUCKET_NAME, s3fileKey)
             print ("UPLOADED !!!!!!!!!!!!!!!!! ")
             if file == filesToSave[-1]:
                 s3.put_object(

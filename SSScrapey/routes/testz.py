@@ -44,7 +44,7 @@ def test_editor():
     print (vidUrl)
     start_time = time.time()
     # Inferior alterative to yt_dlp is youtube_dl
-        # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
             meta = ydl.extract_info(vidUrl, download=True) 

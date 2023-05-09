@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
 import time
-import asyncio
-from bs4 import BeautifulSoup
+# import asyncio
+# from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -11,17 +11,17 @@ from webdriver_manager.chrome import ChromeDriverManager
 from flask import jsonify, abort
 import requests
 import datetime
-import controllers.scrapey as scrapey
-import mocks.initScrapData as mockz
+# import controllers.scrapey as scrapey
+# import mocks.initScrapData as mockz
 # use selenium to render the page and then scrape it with beautiful soup. 
 # https://stackoverflow.com/questions/6028000/how-to-read-a-static-web-page-into-python
-import re
+# import re
 import boto3
 import json
 
 # gameplan:
 # Once a day
-# Get top 1500 channels from third party
+# Get top 100 channels from third party website
     # process it slightly
 # Upload to s3
 # Get last ~10 days from s3
@@ -33,9 +33,6 @@ import json
 # upload to s3
 # channels/rankings/2023-4-14/
 
-options = Options()
-# options.add_argument('--headless')
-# key = (filename) under which the JSON object will be stored in the S3 bucket
 # aggregate/2023-04-01.json  --> { date: 2023-04-01, data: [lolgera, xqc, moistcritical] }
 # aggregate/2023-04-02.json
 # aggregate/2023-04-03.json
@@ -52,19 +49,22 @@ options = Options()
 # captions/lolgeranimo/2441993/2441993.txt
 # captions/lolgeranimo/2441993/2441993.csv
 # ...
-CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-s3_key_ranking = "channels/ranking/" + CURRENT_DATE_YMD
-# The key (filename) under which the JSON object will be stored in the S3 bucket
-s3_key = 'example.json'
-
+options = Options()
+# options.add_argument('--headless')
 options.add_argument('--window-size=1550,1250') # width, height
 browser = None
+
+CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+
+# key = (filename) under which the JSON object will be stored in the S3 bucket
+s3_key_ranking = "channels/ranking/" + CURRENT_DATE_YMD
+
 
 BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
 directory_name = 'mydirectory' # this directory legit exists in this bucket ^
 directory_name_real = "channels/ranking/raw" 
 
-WHITE_LIST = [
+VIP_LIST = [
     {
         "displayname": "LoLGeranimo",
         "language": "English",
@@ -92,47 +92,37 @@ WHITE_LIST = [
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/2/3/desc/10/10
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/20/10
 
-def getTopChannels():
+def getTopChannels(*, numChannels=50):
+    if numChannels > 300 or (numChannels % 10) != 0:
+        print("Error, numChannels is too big: " + str(numChannels))
+        return
     # loopMax = 15
-    loopMax = 3
+    loopMax = numChannels / 10
     # pageSize = 100
     pageSize = 10
-    type = 3 # 3 = Most watched = total society time watching .... 
+    type = 3 # 3 = enum = Most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         'Accept': 'application/json',
     }
-    urls = []
     accumilator = []
     complete_json = { "data": accumilator}
     for i in range(loopMax):
-
-        # url = (f"https://jsonplaceholder.typicode.com/posts/{i}")
-        startAt = (i * pageSize)
-        # url = "https://jsonplaceholder.typicode.com/todos"
+        startAt = (i * pageSize) # for their api
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
-        
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
-        print ()
         print ("-------------------------------------------------------------------")
-        print ()
         print (url)
-        print ()
         print ("-------------------------------------------------------------------")
-        print ()
 
         response = requests.get(url, headers=headers)
 
         print ('reponse code = ' + str(response.status_code))
-        print (response)
-        # print ('headers')
         # print (response.headers)
-        print ('reason:')
-        print (response.reason)
-        print ('size:')
-        print (len(response.content))
-        # print (response.text)
-        print (response.text)
+        print ('response.reason: ' + str(response.reason))
+        print ('size: ' + str(len(response.content)))
+        # print ("response.text =" + response.text)
+        print ()
         if response.status_code >= 200 and response.status_code < 300:
             res_json = response.json()
             if 'data' in res_json:
@@ -175,8 +165,8 @@ def saveTopChannels(json_data):
     except:
         abort(400, description="Something went wrong at saveTopChannels()")
 
-def addWhiteList(channels):
-    for channel in WHITE_LIST:
+def addVipList(channels):
+    for channel in VIP_LIST:
         channels.insert(0,channel)
     return channels
 
@@ -192,15 +182,11 @@ def combineAllContent(sorted_s3_paths):
             Key = key # ex) 'channels/ranking/2023-04-14.json'
         )
         binary_data = responseGetObj['Body'].read()
-        # print(binary_data)
-        print("len(dataz)=" + str(len(binary_data)))
-        print("len(dataz)=" + str(len(binary_data)))
-
         json_string = binary_data.decode('utf-8')
         json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
-        # print (json_object)
+
         for channel in json_object['data']:
-            # quasi say of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
+            # quasi way of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
             if channel.get('displayname') in already_added_list:
                 continue
             already_added_list.append(channel.get('displayname'))
@@ -223,44 +209,23 @@ def combineAllContent(sorted_s3_paths):
 # Query the s3 with the formated json of top channels
 def getRanking4Scrape():  
     REACH_BACK_DAYS = 5
-    # - Note boto3 returns late modified as:
+    # - Note boto3 returns last modified as:
     # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
     # - Thus
     # obj['Key']          = channels/ranking/raw/2023-15/100.json
     # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
 
     s3 = boto3.client('s3')
-    objList = []
-    # objectz = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")
-    # print ("objectz")
-    # print ("objectz")
-    # print ("objectz")
-    # print ("objectz")
-    # print ("objectz")
-    # print (objectz)
+    # TODO env var this Prefix
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")['Contents']
     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
-    print("sorted_objects = == = = == = = =")
-    for obj in sorted_objects:
-        print(obj)
-    
-    print("-----SORTED (DEV)----")
-    for obj in sorted_objects:
-        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
-
-    print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " + days ago")
+    print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
     keyPathList = []
     sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
     for obj in sorted_objects:
-        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+        print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
         keyPathList.append(obj['Key'])
-        
-    # x = datetime.datetime(2023, 4, 11, 6, 54, 39, 0, tzinfo=datetime.timezone.utc)
-    # filtered_objects = filter(lambda obj: obj['LastModified'] > x, sorted_objects)
-    # print("-----FILTER ----")
-    # print (x)
-    # for obj in filtered_objects:
-    #     print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+
         
     return keyPathList
 

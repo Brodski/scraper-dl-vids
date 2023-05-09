@@ -1,23 +1,22 @@
-import requests
+# import requests
+import urllib.request
+import os
 import time
 
-start_time = time.time()
 
 
 url = 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/testz/BarbaraWalters.mp3'
-response = requests.get(url)
-print("got response:" )
-print(response)
-print(response.status_code)
-print()
-print("response.content:")
-with open('s3333.mp3', 'wb') as f:
-    f.write(response.content)
+
+filename = os.path.basename(url)
+
+start_time = time.time()
+
+urllib.request.urlretrieve(url, filename)
 
 run_time = time.time() - start_time
+
 print("run_time=" + str(run_time))
-response_size_bytes = len(response.content)
-print("size = " + str(response_size_bytes))
+
 '''
 # Git
 sudo yum update

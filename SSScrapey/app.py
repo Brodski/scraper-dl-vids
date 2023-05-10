@@ -45,27 +45,52 @@ def home():
     return """
     <h1>Links to all other routes in the app.</h1>
     <ul>
-        <li><a href="/yo">/yo (Hello World)</a></li>
-        <li><a href="/test/yt1"> /test/yt1 hard coded (get meta)  </a></li>
-        <li><a href="/test/yt2"> /test/yt2 hard coded (dl from arr of vids) </a></li>
-        <li><a href="/test/yt3"> /test/yt3 hard coded (dl from arr of vids) </a></li>
+        <li> test </li>
+        <ul> 
+            <li><a href="/yo">/yo (Hello World)</a></li>
+            <li><a href="/test/yt1"> /test/yt1 hard coded (get meta)  </a></li>
+            <li><a href="/test/yt2"> /test/yt2 hard coded (dl from arr of vids) </a></li>
+            <li><a href="/test/yt3"> /test/yt3 hard coded (dl from arr of vids) </a></li>
+            
+            <li><a href="/test/doS3Stuff"> /test/doS3Stuff  </a></li>
+            <li><a href="/test/uploadJsonToS3Test"> /test/uploadJsonToS3Test (mock json, s3 example) </a></li>
+            <li><a href="/test/getAllS3Jsons"> /test/getAllS3Jsons (15+ jsons in s3) </a></li>
+            <li><a href="/test/testGetTop500Channels_NameCompleted"> /test/testGetTop500Channels_NameCompleted  </a></li>
+        </ul>
         <hr/>
 
-        <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>
+        <li><a href="/main/ranking/getTopChannelsAndSave"> /main/ranking/getTopChannelsAndSave </a></li>
+        <ul>
+            <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>
+            <li> /ranking/saveTopChannels (dummy) </li>
+        </ul>
+        <hr/>
+        <li> Init Scrape (part 1, find links) </li>
+        <li><a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a></li>
+        <ul>
+            <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
+            <li> addTodoDownloads: /ytdl/addTodoDownloads (dummy) </li>
+            <li> bigBoyChannelDownloader: /ytdl/bigBoyChannelDownloader (dummy) </li>
+            <ul>
+                <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
+                <li> /ytdl/downloadTwtvVid (dummy) </li>
+                
+
+            </ul>
+
+        </ul>
         <hr/>
 
-        <li><a href="/test/doS3Stuff"> /test/doS3Stuff  </a></li>
-        <li><a href="/test/uploadJsonToS3Test"> /test/uploadJsonToS3Test (mock json, s3 example) </a></li>
-        <li><a href="/test/getAllS3Jsons"> /test/getAllS3Jsons (15+ jsons in s3) </a></li>
-        <li><a href="/test/testGetTop500Channels_NameCompleted"> /test/testGetTop500Channels_NameCompleted  </a></li>
 
-        <li><a href="/getTopChannelsAndSave"> /getTopChannelsAndSave </a></li>
+        <li> Init Scrape (part 2, find vids) </li>
+        <ul>
+            <li><a href="/initScrape/getChannelFromS3"> /initScrape/getChannelFromS3 </a></li>
+        </ul>
+        
 
-        <li><a href="/initScrape"> /initScrape </a></li>
-        <li><a href="/scrape4HrefAux"> /scrape4HrefAux </a></li>
-        <li><a href="/initYtdlAudio"> /initYtdlAudio </a></li>
-        <li><a href="/downloadTwtvVid_FIXED"> /downloadTwtvVid_FIXED(/videos/1231231) </a></li>
-        <li><a href="/getAlreadyDownloaded"> /getAlreadyDownloaded </a></li>
+
+        <li><a href="/ytdl/getAlreadyDownloaded"> DEAD LINK /ytdl/getAlreadyDownloaded </a></li>
+
         <hr/>
     </ul>
 

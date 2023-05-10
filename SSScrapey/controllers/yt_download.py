@@ -116,6 +116,7 @@ def downloadTwtvVid(link:str, isDownload=True):
         return "execpt... done meta"
 
 # TODO env debugg variables
+# Download X vids from Y channels
 def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10):
     metadata_Ytdl_list = []
     chnCounter = 0
@@ -226,6 +227,11 @@ def uploadAudioToS3(metadata, keybase):
             return False
     return True
 
+#############################################################
+# NOT USED                                                  #
+# ??????????
+# Adds an json object to S3_ALREADY_DL_KEYBASE 
+# Adds to 'channels/scrapped/lolgeranimo.json'
 def updateScrapeHistory(yt_metadata_json):
     if yt_metadata_json is None:
         return
@@ -237,17 +243,24 @@ def updateScrapeHistory(yt_metadata_json):
         Key=S3_ALREADY_DL_KEYBASE + yt_metadata_json['uploader']
     )
     print( "done: \n")
+#                                                             #
+###############################################################
 
 
-
+#############################################################
+# NOT USED                                                  #
+#
+# TODO
+# Get From s3, eg channels/scrapped/lolgeranimo.json
+# returns some json
 def getAlreadyDownloaded(username):
     s3 = boto3.client('s3')
     
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=S3_ALREADY_DL_KEYBASE)['Contents']
-    print("sorted_objects = == = = == = = =")
+    print("getAlreadyDownloaded() = = = = = = = =")
     for obj in objects:
         print(obj)
-        print ("key split " + str(obj['Key'].split(',')))
+        print("key: " + str(obj['Key'].split(',')))
         print(username)
         if ( not username in obj['Key'].split(',')):
             return None
@@ -258,14 +271,14 @@ def getAlreadyDownloaded(username):
     )
     
     binary_data = responseGetObj['Body'].read()
-    print(":D len(dataz)=" + str(len(binary_data)))
 
     json_string = binary_data.decode('utf-8')
     json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
-    print("GOT THIS------------")
+    print("getAlreadyDownloaded() GOT THIS------------")
     print(json_object)
     return json_object
-
+#                                                           #
+#############################################################
 
 def addTodoDownloads(scrapped_channels):
     print("getTodoDownloads - start")

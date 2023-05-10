@@ -1,4 +1,4 @@
-import controllers.rankingController as rankingController
+import controllers.videoHrefController as videoHrefController
 import controllers.rankingController as rankingController
 import mocks.initScrapData
 import mocks.initHrefsData
@@ -14,17 +14,29 @@ CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-
 
 
 
+####################################################
+# 1
 def getTopChannelsAndSave():
     # Make http request to sullygnome. 3rd party website
     topChannels = rankingController.getTopChannels(numChannels=30) 
-    # Saves those channels to S3 
-    json_data = rankingController.saveTopChannels(topChannels)
-    return json_data
 
-def initScrape():
-    sorted_s3_paths =  rankingController.getRanking4Scrape()
-    combined_channels_list = rankingController.combineAllContent(sorted_s3_paths)
-    combined_channels_list = rankingController.addVipList(combined_channels_list)
+    # Saves those channels to S3 
+    json_data = rankingController.saveTopChannels(topChannels) # json_data = /mocks/getTopChannelsAndSaveResponse.json
+
+    relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
+    relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
+    return relavent_data
+    # return json_data
+####################################################
+
+# IntializeScrape
+# WE CAN PROB IGNORE THIS
+# THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
+def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
+    # We first get the key/paths from the s3
+    sorted_s3_paths =  rankingController.preGetChannelInS3AndTid() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
+    combined_channels_list = rankingController.getChannelInS3AndTidy(sorted_s3_paths) # returns a List[{dict}] of channels and culled date
+    combined_channels_list = rankingController.addVipList(combined_channels_list) # ^ but with gera
     # Returns: 
         #     {
         #     "displayname": "LoLGeranimo",
@@ -35,13 +47,17 @@ def initScrape():
         #   },...,
     return combined_channels_list
 
-def initYtdlAudio():
+# Comes after ?????????
+# TODO
+# calls yt.addTodoDownlaods(channels)
+# calls yt.scrape4VidHref(^)
+# calls yt.addTodoDownloads(^)
+def initYtdlAudio(channels, isDebug = False):
     # TODO probably need some interface & models for the scrapped-data vs ytdl-data
-    # href_channel_list = rankingController.scrape4H30efAux()    
-    scrapped_channels = mocks.initHrefsData.getHrefsData()
-    scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
-    isDebugTime = True
-    if (isDebugTime == True ):
+    chnLimit = 3 if isDebug else 99;
+    vidLimit = 3 if isDebug else 10;
+    if isDebug:
+        scrapped_channels = mocks.initHrefsData.getHrefsData()
         scrapped_channels_with_todos = [{
             "displayname":"LoLGeranimo",
             "url":"lolgeranimo",
@@ -51,15 +67,23 @@ def initYtdlAudio():
             ],
             "links": [ "/videos/1775892326", "/videos/1752690726", "/videos/1746842079", "/videos/1802413591" ]
         }]
-    print ("todo_downloads_objlist")
-    print ("todo_downloads_objlist")
-    print ("todo_downloads_objlist")
+    else:
+        scrapped_channels = videoHrefController.scrape4VidHref(channels, True)
+        scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
+
+    
+
+
+    print ("scrapped_channels_with_todos")
+    print ("scrapped_channels_with_todos")
+    print ("scrapped_channels_with_todos")
     print (scrapped_channels_with_todos)
     print ()
     print ()
     print ()
     # Download X vids from Y channels
-    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=3, vidDownloadLimit=3)
+    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)
+    
     #for yt_meta in metadata_Ytdl_list:
         # Nope. Not here
         # yt.transcribefileWhisperAi(yt_meta) # (lolgeranimo, 12341234, {...})
@@ -69,7 +93,7 @@ def initYtdlAudio():
         # keybase = S3_CAPTIONS_KEYBASE + yt_meta.username + "/" + CURRENT_DATE_YMD + yt_meta.link.replace("/videos", "") # channels/captions/lolgeranimo/2023-04-18/1747933567
         # print ("KEY CAPTIONS=" + keybase)
         # isSuccess = uploadAudioToS3(metadata, keybase) # key = upload 'location' in the s3 bucket 
-        # getAlreadyDownloaded
+
 
     # each_channels_and_their_ytdl_vids_metadata = mocks.ytdlObjMetaDataList.getYytdlObjMetadataList()
     # updateScrapeHistory(metaData_yt)
@@ -81,6 +105,4 @@ def initYtdlAudio():
             # abort(400, description="Failed to download: href_channel_list[0]['twitchurl']")
     return metaDownloads
 
-def getAlreadyDownloadedxx():
-    return yt.getAlreadyDownloaded()
     

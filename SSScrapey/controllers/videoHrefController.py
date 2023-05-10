@@ -44,26 +44,26 @@ chrome_prefs = {
     "profile.default_content_setting_values.autoplay": 2,  # 2 means Block autoplay
 }
 options.add_experimental_option("prefs", chrome_prefs)
-
-# Create a new instance of the Chrome WebDriver with the options
-#  ignore-gpu-blocklist
 browser = None
 
-SLEEP_SCROLL = 3
-NUM_BOT_SCROLLS = 1
 
+scriptPauseVidsJs = """
+    const stopIt = (vid) => {
+        vid.pause()
+    };
+    for ( let vid of document.querySelectorAll('video')) {
+        if (vid) {
+            stopIt(vid);
+            vid.addEventListener("play", (vid) => stopIt(vid))
+        }
+    }
+"""
 
-def scrape4VidHrefAux():
-    channels = mocks.initScrapData.getScrapeData()
-    print ("*********************************************}")
-    print ("*********************************************}")
-    print ("*********************************************}")
-    print ("*********************************************}")
-    print (channels)
-    everyChannel = scrape4VidHref(channels)
-    return everyChannel
-
-def scrape4VidHref(channels):    
+def scrape4VidHref(channels, isDebug=False):
+    channelMax = 99 # TODO 99
+    if isDebug:
+        channels = mocks.initScrapData.getScrapeData()
+        channelMax = 3
     global browser
     SLEEP_SCROLL = 3
     NUM_BOT_SCROLLS = 1
@@ -73,57 +73,44 @@ def scrape4VidHref(channels):
         print(browser)
         browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     everyChannel = []
-    xxx = 0
+    cnt = 0
     for channel in channels:
-        xxx = xxx + 1
-        if xxx == 3:
+        cnt = cnt + 1
+        if cnt > channelMax:
             browser.quit()
             return everyChannel
-        print ("--------------------")
-        print (xxx)
-        print (xxx == 3)
         url = f'https://www.twitch.tv/{channel["url"]}/videos?filter=archives&sort=time'
         browser.get(url)
+        print ("--------------------")
+        print (cnt)
         print (browser.title)
-
-        
-        scriptPauseVidsJs = """
-            const stopIt = (vid) => {
-                vid.pause()
-            };
-            for ( let vid of document.querySelectorAll('video')) {
-                if (vid) {
-                    stopIt(vid);
-                    vid.addEventListener("play", (vid) => stopIt(vid))
-                }
-            }
-        """
         browser.execute_script(scriptPauseVidsJs)
-        # scroll to the bottom, load all the videos.
-        browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") 
         for i in range(NUM_BOT_SCROLLS):
             print ("scroll to bottom " + str(i))
+            # Not 100% sure why I have 2.
+            browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
             browser.execute_script("""document.querySelector("[id='root'] main .simplebar-scroll-content").scroll(0, 10000)""")
             time.sleep(SLEEP_SCROLL)
         
+        # Scrap a[href] via BeautifulSoup
         soup = BeautifulSoup(browser.page_source, 'html.parser')
-
         vids = soup.select("a[href^='/videos/']")
         allHrefs = []
         for tag in vids:
             allHrefs.append(tag['href'])
             # print ("tag['href']=" + tag['href'])
+
+        # Remove duplicates via set
         hrefsSet = set()
         for href in allHrefs:
             match = re.search(r'(/videos/\d+)(\?.*)', href)
             if match:
                 print (match.group(1))
                 hrefsSet.add(match.group(1))
-        
-
         unique_list = list(set(hrefsSet))
         resultz = list(unique_list)
-       
+
+        # Format scrapped data       
         everyChannel.append({
             'displayname': channel['displayname'],
             'url': channel['url'],

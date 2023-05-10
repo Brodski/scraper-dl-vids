@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import time
+from typing import List, Tuple, Dict
 # import asyncio
 # from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -57,7 +58,7 @@ browser = None
 CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
 
 # key = (filename) under which the JSON object will be stored in the S3 bucket
-s3_key_ranking = "channels/ranking/" + CURRENT_DATE_YMD
+S3_KEY_RANKING = "channels/ranking/" + CURRENT_DATE_YMD
 
 
 BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
@@ -92,12 +93,11 @@ VIP_LIST = [
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/2/3/desc/10/10
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/20/10
 
-def getTopChannels(*, numChannels=50):
+def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
     if numChannels > 300 or (numChannels % 10) != 0:
         print("Error, numChannels is too big: " + str(numChannels))
         return
-    # loopMax = 15
-    loopMax = numChannels / 10
+    loopMax = int((numChannels / 10))
     # pageSize = 100
     pageSize = 10
     type = 3 # 3 = enum = Most watched
@@ -118,7 +118,6 @@ def getTopChannels(*, numChannels=50):
         response = requests.get(url, headers=headers)
 
         print ('reponse code = ' + str(response.status_code))
-        # print (response.headers)
         print ('response.reason: ' + str(response.reason))
         print ('size: ' + str(len(response.content)))
         # print ("response.text =" + response.text)
@@ -142,7 +141,7 @@ def getTopChannels(*, numChannels=50):
         else:
             print(f'Error: {response.status_code}')
     print ("DONE!")
-    print (complete_json)
+    # print (complete_json)
     return complete_json
 
 # https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
@@ -151,28 +150,26 @@ def saveTopChannels(json_data):
         abort(400, description="Data is None - Nothing to save. Aborting save")
     try:
         s3 = boto3.client('s3')
-        key = s3_key_ranking + ".json" # channels/rankings/raw/2023-15/2.json
-        print("saving json file to: " + key)
+        key = S3_KEY_RANKING + ".json" # channels/rankings/raw/2023-15/2.json
+        
         s3.put_object(
             Body=json.dumps(json_data),
             Bucket=BUCKET_NAME,
             Key=key
         )
-        print( "done: \n" + str(json_data))
+        # Successfully saved to: channels/ranking/2023-05-10.json
+        print("Successfully saved this as a file: \n" + str(json_data))
         for channel in json_data['data']:
             print (channel['displayname'])
+        print("Successfully saved to: " + key)
+        print('---')
         return json_data
     except:
         abort(400, description="Something went wrong at saveTopChannels()")
 
-def addVipList(channels):
-    for channel in VIP_LIST:
-        channels.insert(0,channel)
-    return channels
-
-def combineAllContent(sorted_s3_paths):
+def getChannelInS3AndTidy(sorted_s3_paths):
     s3 = boto3.client('s3')
-    print("GETTING ALL CONTENTNEN")
+    print("GETTING ALL CONTENT")
     relevant_list = []
     already_added_list = []
     for key in sorted_s3_paths:
@@ -185,19 +182,12 @@ def combineAllContent(sorted_s3_paths):
         json_string = binary_data.decode('utf-8')
         json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
 
-        for channel in json_object['data']:
-            # quasi way of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
+        llist = tidyData(json_object)
+        for channel in llist:
             if channel.get('displayname') in already_added_list:
                 continue
             already_added_list.append(channel.get('displayname'))
-            relevant_entry = {
-                "displayname": channel.get('displayname'),
-                "twitchurl": channel.get('twitchurl'),
-                "language": channel.get('language'),
-                "logo": channel.get('logo'),
-                "url": channel.get('url'),
-            }
-            relevant_list.append(relevant_entry)
+            relevant_list.append(channel)
     print ("WE DONE")
     for r in relevant_list:
         print (r['displayname'])
@@ -206,15 +196,33 @@ def combineAllContent(sorted_s3_paths):
     print (len(relevant_list))
     return relevant_list
 
-# Query the s3 with the formated json of top channels
-def getRanking4Scrape():  
-    REACH_BACK_DAYS = 5
-    # - Note boto3 returns last modified as:
-    # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
-    # - Thus
-    # obj['Key']          = channels/ranking/raw/2023-15/100.json
-    # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+def tidyData(json_object):
+    relevant_list = []
+    for channel in json_object['data']: # json_object =getTopChannelsAndSaveResponse.json
+        # quasi way of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
+        relevant_entry = {
+            "displayname": channel.get('displayname'),
+            "twitchurl": channel.get('twitchurl'),
+            "language": channel.get('language'),
+            "logo": channel.get('logo'),
+            "url": channel.get('url'),
+        }
+        relevant_list.append(relevant_entry)
+    return relevant_list
 
+# Query the s3 with the formated json of top channels
+def preGetChannelInS3AndTid() -> List[str]:  
+    # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+    # Thus
+    #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
+    #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+
+    
+    # REACH_BACK_DAYS = Content / UX thing
+    # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
+    # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
+    #
+    REACH_BACK_DAYS = 5
     s3 = boto3.client('s3')
     # TODO env var this Prefix
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")['Contents']
@@ -229,3 +237,8 @@ def getRanking4Scrape():
         
     return keyPathList
 
+
+def addVipList(channels):
+    for channel in VIP_LIST:
+        channels.insert(0,channel)
+    return channels

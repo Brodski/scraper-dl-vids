@@ -17,6 +17,14 @@ everything_bp = Blueprint('download', __name__)
 ranking_bp = Blueprint('ranking', __name__)
 
 
+####################################################
+# 1
+# Make http request to sullygnome. 3rd party website
+# Decide who we want to look at
+# Saves "who" to S3
+@everything_bp.route('/main/ranking/getTopChannelsAndSave')
+def getTopChannelsAndSave_Route():
+    return mainController.getTopChannelsAndSave()
 
 @ranking_bp.route('/saveTopChannels')
 def saveTopChannels_Route():
@@ -26,34 +34,42 @@ def saveTopChannels_Route():
 def getTopChannels_Route():
     return rankingController.getTopChannels()
 
+####################################################
 
 
 
-@everything_bp.route('/getTopChannelsAndSave')
-def getTopChannelsAndSave_Route():
-    return mainController.getTopChannelsAndSave()
-
-@everything_bp.route('/initScrape')
+####################################################
+# After 1                                          #
+# Retrieves data from our S3 bucket
+# S3 bucket already has channel info. post gnome
+@everything_bp.route('/main/initScrape/getChannelFromS3')
 def initScrape_Route():
-    return mainController.initScrape()
+    return mainController.getChannelFromS3()
 
-@everything_bp.route('/initYtdlAudio')
+####################################################
+
+
+# After 2? def after 1
+# Downloads audio
+@everything_bp.route('/main/ytdl/initYtdlAudio')
 def initYtdlAudio_Route():
-    return mainController.initYtdlAudio()
-
-@everything_bp.route('/getAlreadyDownloaded')
-def getAlreadyDownloaded_Route():
-    return mainController.getAlreadyDownloadedxx()
+    return mainController.initYtdlAudio({}, True) # isDebuging = True
 
 
 
-
-@everything_bp.route('/scrape4VidHrefAux')
-def scrape4VidHrefAux_Route():
-    return videoHrefController.scrape4VidHrefAux()
-
-
-@everything_bp.route('/downloadTwtvVid_FIXED')
+@everything_bp.route('/ytdl/test/downloadTwtvVid_FIXED')
 def downloadTwtvVid_FIXED_Route():
     return ytdl.downloadTwtvVid("/videos/5057810")
     # return ytdl.downloadTwtvVid("/videos/28138895")
+
+@everything_bp.route('/ytdl/getAlreadyDownloaded')
+def getAlreadyDownloaded_Route():
+    return ytdl.getAlreadyDownloaded("lolgeranimo")
+
+
+
+
+@everything_bp.route('/hrefGet/scrape4VidHref/mock')
+def scrape4VidHref_Route():
+    return videoHrefController.scrape4VidHref({}, True)
+

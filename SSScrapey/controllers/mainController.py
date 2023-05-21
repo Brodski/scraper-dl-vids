@@ -1,17 +1,17 @@
-import controllers.videoHrefController as videoHrefController
+from controllers.yt_download import uploadAudioToS3
+import controllers.seleniumController as seleniumController
 import controllers.rankingController as rankingController
 import mocks.initScrapData
 import mocks.initHrefsData
 import mocks.ytdlObjMetaDataList
 import controllers.yt_download as yt
 import datetime
+import json
 # from flask import jsonify, abort
 
 
 
 S3_CAPTIONS_KEYBASE = 'channels/captions/'
-CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-
 
 
 ####################################################
@@ -25,16 +25,19 @@ def getTopChannelsAndSave():
 
     relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
     relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
+    initYtdlAudio(channels, False)
     return relavent_data
     # return json_data
 ####################################################
 
-# IntializeScrape
-# WE CAN PROB IGNORE THIS
+####################################################
+# 2                                                #
+# IntializeScrape                                  #
+# WE CAN PROB IGNORE THIS                          
 # THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
 def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
     # We first get the key/paths from the s3
-    sorted_s3_paths =  rankingController.preGetChannelInS3AndTid() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
+    sorted_s3_paths =  rankingController.preGetChannelInS3AndTidy() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
     combined_channels_list = rankingController.getChannelInS3AndTidy(sorted_s3_paths) # returns a List[{dict}] of channels and culled date
     combined_channels_list = rankingController.addVipList(combined_channels_list) # ^ but with gera
     # Returns: 
@@ -46,9 +49,14 @@ def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
         #     "url": "lolgeranimo"
         #   },...,
     return combined_channels_list
+#                                                   #
+#####################################################
 
-# Comes after ?????????
-# TODO
+
+
+#####################################################
+# Comes after 3                                     #
+# TODO                                              #
 # calls yt.addTodoDownlaods(channels)
 # calls yt.scrape4VidHref(^)
 # calls yt.addTodoDownloads(^)
@@ -58,20 +66,23 @@ def initYtdlAudio(channels, isDebug = False):
     vidLimit = 3 if isDebug else 10;
     if isDebug:
         scrapped_channels = mocks.initHrefsData.getHrefsData()
-        scrapped_channels_with_todos = [{
-            "displayname":"LoLGeranimo",
-            "url":"lolgeranimo",
-            "todos": [
-                "/videos/28138895" # cringe vid
-                # "/videos/1802413591"
-            ],
-            "links": [ "/videos/1775892326", "/videos/1752690726", "/videos/1746842079", "/videos/1802413591" ]
-        }]
     else:
-        scrapped_channels = videoHrefController.scrape4VidHref(channels, True)
+        scrapped_channels = seleniumController.scrape4VidHref(channels, True) # returns /mocks/initHrefsData.py
         scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
 
-    
+    scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
+    # scrapped_channels_with_todos -> returns: [ {
+    #   'displayname': 'LoLGeranimo', 
+    #   'url': 'lolgeranimo', 
+    #   'links': ['/videos/5057810', '/videos/28138895'], 
+    #   'todos': ['/videos/5057810', '/videos/28138895']
+    #  }, {
+    #   'displayname': 'LCK', 
+    #   'url': 'lck', 
+    #   'links': ['/videos/576354726'], 
+    #   'todos': ['/videos/576354726']
+    #  }
+    # ]
 
 
     print ("scrapped_channels_with_todos")
@@ -82,15 +93,36 @@ def initYtdlAudio(channels, isDebug = False):
     print ()
     print ()
     # Download X vids from Y channels
+    # see /mocks/metadata_ytdl_list.txt
     metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)
-    
-    #for yt_meta in metadata_Ytdl_list:
+    print("++++++++++++++++++++++++++++++++++")
+    print("++++++++++++++++++++++++++++++++++")
+    print("++++++++++++++++++++++++++++++++++")
+    try:
+        print(json.dumps(metadata_Ytdl_list.__dict__))
+    except:
+        print('failed dump')
+    for yt_meta in metadata_Ytdl_list:
+
+        print("''''''''''''''''''''''''''")
+        print("username=" + yt_meta.username)
+        print("link=" + yt_meta.link)
+        print("metadata=")
+        # print(yt_meta.metadata)
+        
+        # SEND TO S3
+        uploadAudioToS3(yt_meta) # key = upload 'location' in the s3 bucket 
+        # UPDATE SCRAPE HISTORY
+        # updateScrapeHistory(metadata)
+        # UPDATE COMPLETED DOWNLOADS
+        # updateCompletedDownloads(yt_meta, keybase)
+
         # Nope. Not here
         # yt.transcribefileWhisperAi(yt_meta) # (lolgeranimo, 12341234, {...})
 
         # print ("Creating caption: " + yt_meta.username + " -> " + yt_meta.link)
 
-        # keybase = S3_CAPTIONS_KEYBASE + yt_meta.username + "/" + CURRENT_DATE_YMD + yt_meta.link.replace("/videos", "") # channels/captions/lolgeranimo/2023-04-18/1747933567
+       
         # print ("KEY CAPTIONS=" + keybase)
         # isSuccess = uploadAudioToS3(metadata, keybase) # key = upload 'location' in the s3 bucket 
 

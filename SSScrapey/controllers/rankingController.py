@@ -211,7 +211,7 @@ def tidyData(json_object):
     return relevant_list
 
 # Query the s3 with the formated json of top channels
-def preGetChannelInS3AndTid() -> List[str]:  
+def preGetChannelInS3AndTidy() -> List[str]:  
     # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
     # Thus
     #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata

@@ -37,7 +37,7 @@ sudo make altinstall &&
 sudo ln -s /usr/local/bin/python3.10 /usr/local/bin/python &&
 cd /home/ssm-user &&
 sudo rm Python-3.10.10.tgz
-@
+
 # Pip 
 # ????????????????????????????
 cd /home/ssm-user &&
@@ -54,6 +54,7 @@ sudo python -m virtualenv venv &&
 source venv/bin/activate &&
 sudo python -m pip install requests  &&
 sudo python -m pip install faster-whisper &&
+sudo python -m pip  install torch torchvision torchaudio  &&
 sudo python -m pip install -U openai-whisper
 
 sudo python -m pip install -r requirements.txt
@@ -77,7 +78,9 @@ sudo rm -v -f ffmpeg-release-amd64-static.tar.xz
 
 
 
-# WORKS 
+# WORKS FEDORA
+# https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html ?????
+
 cd /home/ssm-user/ &&
 curl 'https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.0/local_installers/12.x/cudnn-local-repo-rhel7-8.9.0.131-1.0-1.x86_64.rpm/' \
   -H 'cookie: AMCV_F207D74D549850760A4C98C6%40AdobeOrg=1176715910%7CMCMID%7C71794017538113168927256794386408995986%7CMCAID%7CNONE%7CvVersion%7C5.4.0; at_check=true; nvweb_A=3a20aa19-c4d1-4220-aa0c-4e3417062d0d; nv_country_code=US; nvidiaCart={"cart":[],"lastAction":null}; s_fid=3A0A7C8FDD401624-389B99CDF8EF59F0; SESSls=gseo; SESSlsd=https%3A%2F%2Fwww.google.com%2F; SESSloginhint=cbrodski%40gmail.com; SESSauthn=1; nvweb_E=Ng0muRbpGfwOlHdK11fODOxuBWW-xjsvDS9pwvBA6M6BTDMUS2X5Py3WvbzbBWIxaalcbe9oUzfKUzzkHOX7Yg; nvweb_S=77SfVgBdKv2IUdfq0Ta6rsUNgJFeD5eXW26lD3BmW3nRBjQUseguZchvA_2fylO8eCa4bSe4HtAdtU3-vA747Q; remember_user_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3pOak00TlRBd1hTd2laWEJhUlVNMWNHTXRjM2g0TFY5WFdWRm1OM1FpTENJeE5qZ3pNalkyTXpreExqVXlOek01T0NKZCIsImV4cCI6IjIwMjMtMDUtMTlUMDU6NTk6NTEuNTI3WiIsInB1ciI6ImNvb2tpZS5yZW1lbWJlcl91c2VyX3Rva2VuIn19--6e4d0e90a73dae9c6c4de73c96594d3112f0cb5a; _devzone_session=c3f0c67e57d0c1dc8b76c908a47deee2; SSESS2088448faf607a381892ca97487fa4c7=OgiRpvCKlv11kRU4V4mjNQk0e9SGrua9nSbVEEuLpRU; OptanonConsent=isIABGlobal=false&datestamp=Fri+May+05+2023+01%3A08%3A50+GMT-0600+(Mountain+Daylight+Time)&version=6.23.0&hosts=&consentId=2594bb82-8cee-4b85-b314-a83e40044968&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A0%2CC0004%3A0%2CC0003%3A0&AwaitingReconsent=false; mbox=PC#94bacd6001d54eec8f98820bb1a81072.35_0#1746515331|session#05995f980d7c4749a90c107ac01baaba#1683272391' \

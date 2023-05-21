@@ -1,6 +1,8 @@
+from typing import Dict, Any
+
 class Metadata_Ytdl:
 
-    def __init__(self, username, link, metadata):
+    def __init__(self, username: str, link: str, metadata: Dict[Any, Any]):
         self.username = username    # lolgeranmio
         self.link = link # 1718349481
         self.metadata = metadata

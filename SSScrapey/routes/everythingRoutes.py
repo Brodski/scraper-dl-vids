@@ -5,7 +5,7 @@ from flask import jsonify
 # const router = express.Router();
 # from controllers.downloadController import *
 # from controllers.scrapey import *
-import controllers.videoHrefController as videoHrefController
+import controllers.seleniumController as seleniumController
 import controllers.mainController as mainController
 import controllers.rankingController as rankingController
 import controllers.yt_download as ytdl
@@ -62,14 +62,14 @@ def downloadTwtvVid_FIXED_Route():
     return ytdl.downloadTwtvVid("/videos/5057810")
     # return ytdl.downloadTwtvVid("/videos/28138895")
 
-@everything_bp.route('/ytdl/getAlreadyDownloaded')
-def getAlreadyDownloaded_Route():
-    return ytdl.getAlreadyDownloaded("lolgeranimo")
+@everything_bp.route('/ytdl/getAlreadyDownloadedS3_TEST')
+def getAlreadyDownloadedS3_Route():
+    return ytdl.getAlreadyDownloadedS3_TEST("lolgeranimo")
 
 
 
 
 @everything_bp.route('/hrefGet/scrape4VidHref/mock')
 def scrape4VidHref_Route():
-    return videoHrefController.scrape4VidHref({}, True)
+    return seleniumController.scrape4VidHref({}, True)
 

@@ -21,7 +21,10 @@ def yo(text="brother"):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    response = jsonify({"error": "Resource not found"})
+    err = "Resource not found :(" if error is None else error
+    # This works too
+    # response = jsonify({"error": error.description}) 
+    response = jsonify({"error": str(err)})
     response.status_code = 404
     return response
 
@@ -89,7 +92,7 @@ def home():
         
 
 
-        <li><a href="/ytdl/getAlreadyDownloaded"> DEAD LINK /ytdl/getAlreadyDownloaded </a></li>
+        <li><a href="/ytdl/getAlreadyDownloadedS3_TEST"> /ytdl/getAlreadyDownloadedS3_TEST </a></li>
 
         <hr/>
     </ul>

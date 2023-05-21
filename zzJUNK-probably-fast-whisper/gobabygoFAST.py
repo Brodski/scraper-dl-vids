@@ -1,73 +1,70 @@
-# from faster_whisper import WhisperModel
+import faster_whisper
+# import whisper.utils
+from whisper.utils import get_writer
+
 import os
 import time
-import faster_whisper
-import faster_whisper.utils
-# import torch
+import torch
 
-# from faster_whisper.utils import get_writer
 
-# http://muzso.hu/2015/04/25/how-to-speed-up-slow-down-an-audio-stream-with-ffmpeg
-# https://gist.github.com/frankrausch/f871b573060b4d0cf34a7d86077e433f
-# 
-# $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
-# $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
-# $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
-# $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
-# $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3" 
+main_dir = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
+#main_dir = r'/home/ssm-user/scraper-dl-vids'
+asset_dir = "assets/raw"
+# model_size = "large-v2"
+model_size = "medium"
+# model_size = "small"
+# model_size = "tiny"
+
+print("torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+
+
+# filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp4"
+# filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
+# filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
+filename = "BarbaraWalters.mp3"
+filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast.mp3"
+#filename = "Adc+Academy+-+Informative+Adc+Stream+-+GrandMaster+today？+[v1792628012].mp3"
+asset_dir = "assets/raw/"
+output_dir = "./assets/output"
+audio_basename = os.path.basename(asset_dir + filename)
+
 
 # Run on GPU with FP16
 # model = WhisperModel(model_size, device="cuda", compute_type="float16")
-
-main_dir = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
-asset_dir = "assets\\raw"
-# model_size = "large-v2"
-# model_size = "medium"
-model_size = "small"
-# C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\fast-whisper\assets\raw
-
-# C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\fast-whisper
-model = faster_whisper.WhisperModel(model_size, compute_type="int8")
-model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
-# filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only.mp3"
-# filename = "BarbaraWalters.mp3"
-# filename = "BarbaWaltersFASTER.mp3"
-# filename = "bootcampFAST.mp3"
-print('going 1')
-filename = "Adc academy ｜ How to climb on Adc - Grandmaster Climb --v1802413591.mp3"
-output_full_dir = "{}/{}/{}".format(main_dir, asset_dir, filename)
-audio_path = asset_dir + filename
-audio_path = output_full_dir
-print('going 2')
-# bootcampFAST
-# @Small @4  threads ---> 38.72 min
-# @small @16 threads ---> 34.03 min
-
-
-# Bootcamp to Challenger ｜-v1747933567.f_Audio_Only.mp3
-# bootchamp-LONG @small @4 threads--->  38.33 MINUTES
-# bootchamp-LONG @small @4 threads--->  92.82 MINUTES
-
-
-# BarbaraWalters
-# small = 30.654762506484985
-# med = 71.45487022399902
-# v2 = 179.35309767723083
+# model = faster_whisper.WhisperModel(model_size, compute_type="int8")
+#model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
+model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default
+audio_path = "{}/{}/{}".format(main_dir, asset_dir, filename)
 
 start_time = time.time()
-print('going 3')
-segments, info = model.transcribe(audio_path, language="en")
-print('going 4')
+print("start!")
+# segments, info = model.transcribe(audio_path, language="en", condition_on_previous_text=False, beam_size=2, best_of=2)
+# segments, info = model.transcribe(audio_path, language="en", condition_on_previous_text=False, vad_filter=True)
+segments, info = model.transcribe(audio_path, language="en", condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2)
 
 print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
+result = {
+    "segments": []
+}
+
 for segment in segments:
     print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+    result["segments"].append({
+        "start" : segment.start,
+        "end" :   segment.end,
+        "text" :  segment.text,
+    })
 
 end_time = time.time() - start_time
+srt_writer = get_writer("srt", output_dir)
+srt_writer(result, audio_basename + ".srt")
 
+
+print("========================================")
 print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 print()
 print("run time =" + str(end_time))
 print()
+print("Completed srt: " +  audio_basename + ".srt")
 print("Completed: " + audio_path)

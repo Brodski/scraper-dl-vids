@@ -36,3 +36,6 @@ $ choco install ffmpeg
 pip install -r requirements.txt  
 pip freeze > requirements.txt  
 python -m virtualenv venv  
+  
+    
+ssh root@104.156.226.154 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"

@@ -1,0 +1,29 @@
+RTX 3060 Ti
+8.2 GB
+AMD Ryzen 5 3500 6-core
+0.093 / hour
+
+ssh -p 43687 root@194.44.114.10 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+
+@ tiny
+1h audio ---> 44.228                                              chatgpt
+7:53 audio ---> 259.99 = 4.31min --> 1.82 hour / min = 1 hour complete per .57 min     gera
+
+
+@small
+1 h ---> 71.30
+7:53 audio ----> 348.58 = 5.8min
+
+@ medium
+1h ---> 121.58
+7:53 audio ---> 648.33 = 10.81min
+
+@ large2
+7:53 audio ---> 1020.45 = 17.00min
+1h ---> 193.10
+
+@ large1
+7:53 audio ---> 1109.68
+
+
+

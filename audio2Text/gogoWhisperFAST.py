@@ -9,6 +9,7 @@ from whisper.utils import get_writer
 import os 
 import time
 import torch
+import sys
 
 # Should be env vairable for local or micro
 ASSET_DIR_RELATIVE = "./assets/raw/"
@@ -22,15 +23,28 @@ MAIN_DIR = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 model_size = "tiny"
 
 
-
+print ("sys.argv")
+print (sys.argv)
+isSmall = 'small' in sys.argv
+isMed = 'med' in sys.argv
+isLarge = 'large' in sys.argv
+isTiny = 'tiny' in sys.argv
+if isSmall:
+    model_size = "small"
+if isMed:
+    model_size = "medium"
+if isTiny:
+    model_size = "tiny"
+if isLarge:
+    model_size = "large-v2"
+    
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp4"
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
 # filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
 
-filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast.mp3"
+filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ.mp3"
 #filename = "Adc+Academy+-+Informative+Adc+Stream+-+GrandMaster+today？+[v1792628012].mp3"
 filename = "BarbaraWalters.mp3"
-# filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast.mp3"
 audio_basename = os.path.basename(ASSET_DIR_RELATIVE + '/' + filename)
 print(audio_basename)
 print(audio_basename)

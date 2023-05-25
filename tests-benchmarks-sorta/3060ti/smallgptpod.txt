@@ -1,0 +1,795 @@
+OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+/root/scraper-dl-vids/audio2Text/assets/raw/OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+/root/scraper-dl-vids/audio2Text/assets/raw/OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3
+torch.cuda.is_available(): True
+start!
+Detected language 'en' with probability 1.000000
+[0.00s -> 3.68s]  Let's talk about open assistant. Sure. So start from the beginning.
+[5.36s -> 16.80s]  Well, we saw that there was a lot of movement in in this space, chat GPT came along and everyone's
+[16.80s -> 26.64s]  like chat GPT and so on. And yeah, I think it was it. I mean, it was both a surprise and
+[26.64s -> 28.76s]  and a not surprise for people.
+[28.76s -> 32.00s]  Like the capabilities of chat GPT weren't a surprise,
+[32.00s -> 36.26s]  but obviously the success of it, I think, to many of us was.
+[36.26s -> 41.50s]  It's like, ah, okay, we knew we could build such chat
+[41.50s -> 43.58s]  conversational-like things,
+[43.58s -> 47.28s]  but we didn't know how much people loved them, right?
+[48.68s -> 51.68s]  There's a bit of a, I think, wasn't,
+[51.68s -> 55.72s]  didn't Sam Altman maybe was that who said in an interview,
+[55.72s -> 61.00s]  Well, anyone could have built this using our API before, right?
+[61.00s -> 67.96s]  But no one did. So, you know, we did, which is not true, because they distinctively forbade,
+[67.96s -> 75.48s]  like, you building an app that had unfiltered access to the API, essentially.
+[75.48s -> 76.44s]  Yeah, open-ended apps.
+[77.64s -> 82.84s]  I think they've explicitly forbade that, right? So that it's a wrong statement that
+[82.84s -> 88.56s]  Anyone could have built this using our API because had they tried you would have shot them down, right?
+[88.56s -> 92.64s]  Yeah, but in essence the capabilities were there and
+[93.36s -> 96.36s]  It's still in the restriction now and that's they've changed it
+[96.36s -> 98.86s]  They do not allow open-ended applications
+[98.86s -> 104.28s]  Okay, we can oxymoron to me because a language model is inherently open-ended. Yeah, but I can I mean
+[104.28s -> 107.44s]  I can see there the restriction being like, you know, you're not allowed to
+[107.44s -> 112.44s]  to build an app that just lets users free form query our app.
+[112.44s -> 117.08s]  You need to either do some filtering or do some heavy prompting around it so that it's
+[117.08s -> 119.12s]  like for one particular purpose.
+[119.12s -> 121.20s]  I can see that.
+[121.20s -> 123.28s]  I can totally get why they do it.
+[123.28s -> 127.84s]  But then at the same time saying anyone could have built chat GPT is like, no, chat
+[127.84s -> 134.44s]  GPT is very like if I could imagine an app that has like unfiltered unfettered access
+[134.44s -> 139.72s]  to the API through an app, it's chat GPT, right?
+[139.72s -> 142.68s]  In any case, there was obviously a lot of...
+[142.68s -> 146.68s]  And then, I think pretty soon people came up with this idea,
+[146.68s -> 149.32s]  hey, could we do something like that open source?
+[149.32s -> 153.24s]  They had a bit of an older paper called Instruct GPT,
+[153.24s -> 156.56s]  or that described a model called Instruct GPT that...
+[156.56s -> 160.68s]  Where they sort of outlined how we think
+[160.68s -> 169.92s]  ChatGPT was done approximately, no one knows, and at that point we also saw the amount of
+[169.92s -> 178.88s]  data to be collected is actually in reach, it's not immense humongous and so on, it's
+[178.88s -> 183.36s]  actually okay and could be done.
+[183.36s -> 192.08s]  at that point, yeah, a lot of people wanted to do something open source like and I think
+[192.08s -> 196.92s]  a bunch of us just came together and and felt we could do it.
+[196.92s -> 204.24s]  So we built this platform where people could come and contribute to the data set, which
+[204.24s -> 211.84s]  was really cool to see that people actually came and amazing open source.
+[211.84s -> 217.80s]  Well, the point is, there were a lot of ideas around as well of, oh, let's just collect,
+[217.80s -> 222.64s]  you know, scrape Quora on, scrape Reddit, right, and that will serve as training data.
+[222.64s -> 224.76s]  That's true to an amount, right?
+[224.76s -> 230.84s]  But it's very clear, at least to me, that the capabilities of these models, the chat
+[230.84s -> 234.92s]  models, they come from the underlying language model.
+[234.92s -> 241.20s]  And the biggest claim to that I have is that OpenAI said they used crowd workers
+[241.20s -> 249.08s]  from low wage countries to you to do their data input. Yet the first examples of chat
+[249.08s -> 253.44s]  GPT that flew around were like, oh, look at it solving this quantum physics problem and
+[253.44s -> 259.20s]  so on. I'm not saying that there aren't any good quantum physicists in in other countries,
+[259.20s -> 264.32s]  right? But the people who typically go for like a low wage crowd worker job in these
+[264.32s -> 271.44s]  countries, they probably aren't experts in quantum physics and they also certainly weren't
+[271.44s -> 276.00s]  paid to go get a degree in it just so they could answer that one question.
+[276.00s -> 282.56s]  So to me it's very clear that the capabilities come from the underlying model from the next
+[282.56s -> 287.76s]  token prediction pre-training and then all the human data does is kind of it gets
+[287.76s -> 290.60s]  it into this mood of being an assistant, right?
+[290.60s -> 298.60s]  It gives it lots of examples of who here is how it's like, you know going through to an apprenticeship or something like this where you've lived your life, right?
+[298.60s -> 304.60s]  You've grown up, you've consumed the world and so on and then you start your first job and someone tells you look here
+[304.60s -> 310.60s]  Is how you behave towards customers, right? You're you're friendly, you know if someone asks this you do it
+[310.60s -> 316.60s]  Like this here is thing here is how our system works and so you get introduced to that but your
+[316.60s -> 329.60s]  competence of just living and doing things comes from yourself for your life and not from that one person who introduces you to how the store works and how you should behave towards customers.
+[329.60s -> 338.60s]  So my big conviction was always we should really collect this data from humans and the goal should really be diversity.
+[338.60s -> 344.36s]  So the goal and and if you just say well, we'll just scrape, you know
+[345.28s -> 347.08s]  10,000
+[347.08s -> 355.04s]  Of this then to me that certainly is gonna do something right? It's good data probably but it's a bit missing the point
+[355.04s -> 361.00s]  If you want a general assistant you need as general data as you can get and
+[361.72s -> 363.72s]  only human data so far
+[364.08s -> 366.08s]  has been able to
+[366.08s -> 372.84s]  Achieve that level of diversity and generality and it was proven like okay. I'm biased
+[372.84s -> 376.54s]  But I think it was proven right a little bit in that if you look at the data set
+[377.72s -> 382.80s]  The prompts that human right like what they want to know what they want the model to do
+[383.16s -> 385.42s]  It's so diverse. It's insane
+[385.42s -> 387.42s]  And so we built this platform
+[387.70s -> 393.64s]  Or essentially you as a human you can come and you're always presented with like one task and the task could be
+[393.64s -> 398.48s]  write the prompt, right? But the task could also be here is an already existing
+[398.48s -> 402.44s]  conversation between a human and an assistant and now it's the assistant's
+[402.44s -> 407.32s]  turn and now you play the assistant. Please write your response, right? It could
+[407.32s -> 413.20s]  also be here is a conversation, here is the last message of that conversation.
+[413.20s -> 418.56s]  It's the reply by the assistant. Please rate it, like label it. Is it spam?
+[418.56s -> 423.56s]  Is it a troll, right? Is it is it funny? Is it appropriate?
+[423.56s -> 426.56s]  Does it fulfill what the human wanted out of it?
+[426.56s -> 435.06s]  And so that's how we constructed the data set that we collected over like 600,000 inputs of such that being text or
+[435.06s -> 438.56s]  or labels or rankings of different things and
+[438.56s -> 446.56s]  yeah, that's that resulted in in this data set over 13,000 people contributed to the data set which is
+[446.56s -> 451.44s]  which is mind-blowing to see, and it's really cool.
+[451.44s -> 457.88s]  And we've just made the dataset fully available, you can go and look at it and download it.
+[457.88s -> 464.32s]  There are a lot of, so we have about 10,000, what we call fully annotated conversation
+[464.32s -> 469.40s]  trees, which is like a root node, the prompt, and different answers from it.
+[469.40s -> 472.84s]  And then from those, sometimes different answers and so on.
+[472.84s -> 476.72s]  We have sampled, we've set our parameters in various ways.
+[476.72s -> 482.84s]  So sometimes it's short trees, sometimes it's big trees, and sometimes it's wide trees.
+[482.84s -> 486.08s]  And so you can go look at all of that.
+[486.08s -> 491.48s]  We have over 10,000 of those trees, which is really cool because you can see the same
+[491.48s -> 495.28s]  conversation like taking a bit alternate turns and so on.
+[495.28s -> 498.52s]  And we have tons and tons of prompts.
+[498.52s -> 507.60s]  We have probably like 50,000 or so or 20,000 at least, like just prompts like people who
+[507.60s -> 509.36s]  come and want to know.
+[509.36s -> 510.36s]  We got so much prompts.
+[510.36s -> 517.40s]  We had to implement like Andreas has, Andreas has been very influential in this project
+[517.40s -> 524.84s]  and he's, he had to implement this prompt lottery where really we first, if people
+[524.84s -> 527.72s]  enter a prompt, it first goes into this lottery thing, right?
+[527.72s -> 529.00s]  And then we sample from that.
+[529.00s -> 536.48s]  And I think we adjust it so that one person can't, like if one person puts a lot of prompts,
+[536.48s -> 541.38s]  it's like sampled less so that every person has kind of like the same or a similar chance
+[541.38s -> 545.12s]  of getting their prompt into the system, right?
+[545.12s -> 550.56s]  Because one prompt then generates, you know, probably a hundred tasks because it's all
+[550.56s -> 555.16s]  the responses and the responses to the responses and the rankings and the labels.
+[555.16s -> 556.38s]  And yeah, it's been fun.
+[556.38s -> 562.38s]  It's been absolute fun and a pleasure to work with the people, also the people who've contributed
+[562.38s -> 563.38s]  code.
+[563.38s -> 564.38s]  It's amazing.
+[564.38s -> 567.26s]  People just, they come and they ask for nothing, right?
+[567.26s -> 568.82s]  They just like, oh, this is cool.
+[568.82s -> 571.46s]  I want to be part of this.
+[571.46s -> 573.50s]  And they see that everyone else excited too.
+[573.50s -> 575.22s]  And then they contribute code.
+[575.22s -> 578.74s]  Some contribute like lots and lots of code, which is amazing.
+[578.74s -> 580.46s]  Some just come and they contribute.
+[580.46s -> 582.10s]  You know, there's like, here's an issue.
+[582.10s -> 583.50s]  I'll do it.
+[583.50s -> 584.78s]  And that's cool too.
+[584.78s -> 586.10s]  So yeah, it's been cool.
+[586.10s -> 588.54s]  Well, first of all, thank you for doing this.
+[588.66s -> 590.22s]  It's absolutely amazing.
+[590.34s -> 591.30s]  Well, thank the people.
+[591.34s -> 593.86s]  Like I've just been the noise machine, right?
+[593.90s -> 595.46s]  Oh, I know.
+[595.46s -> 598.94s]  But I mean, when when you when you published all of that information
+[598.94s -> 602.14s]  on your YouTube channel that you're working on it, I'm sure everyone jumped on it.
+[602.14s -> 604.10s]  But I do have a few questions.
+[604.98s -> 608.26s]  The reason why it's so exciting is just like Connor did.
+[608.26s -> 609.50s]  We used to be friends of Connolly.
+[609.50s -> 613.26s]  He we're chatting with him years ago and he just we're still friends.
+[613.34s -> 615.90s]  Oh, we were still we used to be friends.
+[616.10s -> 623.86s]  I mean, he's busy. He's a busy guy. Yeah, but we were we were chatting all the time and he just kind of set up a loiter AI and just got
+[623.86s -> 627.34s]  You know, I think you google on board and he just said you know what?
+[627.34s -> 632.46s]  I'm gonna build the pile and I'm just gonna build this massive data set and I'm just gonna train this massive language model
+[632.46s -> 634.46s]  and you know, he's just like a random guy and
+[634.86s -> 638.50s]  Like he wasn't even alone though, but yeah, there was a whole team. Yeah
+[638.50s -> 642.58s]  Yeah, but no, but it was excitement to create it was it was visceral
+[642.58s -> 648.78s]  It was so exciting and and they pulled it off against all the odds and then you've done exactly the same thing
+[648.78s -> 652.10s]  Which is remarkable, but I have a few questions
+[652.58s -> 656.08s]  Which is that most of these other language models are not very good
+[656.34s -> 657.10s]  so
+[657.10s -> 661.34s]  Nat Friedman's got like a dev website where you can play with all of the language models and
+[661.70s -> 665.58s]  most of them aren't very good even the ones that should be good aren't very good and
+[665.58s -> 673.58s]  And what people might find surprising is that you can take a model and let's say you're using the Lama model from Metta.
+[673.58s -> 678.58s]  And it's a foundation model that has all of the capabilities and it's been trained on, because you said diversity is important.
+[678.58s -> 682.58s]  It's got diversity, it's been trained on everything, but it's not very good.
+[682.58s -> 690.58s]  And then you do this fine-tuning and I think people need to be clear that what you're doing is not RLHF, it's fine-tuning with human...
+[690.58s -> 698.26s]  For so the model we have on the website as of time of this recording is one that's just fine tuned on the human data.
+[698.26s -> 701.50s]  We're we're doing the RLHF as well.
+[702.70s -> 704.94s]  So all of this is happening like in parallel.
+[704.94s -> 710.62s]  It's just already these these fine tuned models, they're performing quite well, I think.
+[710.82s -> 715.14s]  And thus we just wanted to get them out right before we are like all done.
+[715.14s -> 719.38s]  And, yeah, but people are now free to take the data set
+[719.38s -> 722.50s]  and do their own reinforcement learning and whatnot.
+[722.50s -> 724.70s]  And we're happy to take back these models
+[724.70s -> 726.50s]  if they turn out to be good.
+[726.50s -> 728.86s]  Yeah, well, I think people might be surprised by that
+[728.86s -> 732.98s]  because you've taken a model which probably wasn't very good
+[732.98s -> 734.46s]  and you fined shamed it
+[734.46s -> 737.10s]  with this diverse human and created data.
+[737.10s -> 739.10s]  Now, I wanna talk about this process.
+[739.10s -> 741.98s]  It was not very good at being like an assistant.
+[741.98s -> 748.86s]  So as I said, the capabilities that we unlock, quote, unquote, right, they were in there all
+[748.86s -> 749.86s]  along.
+[749.86s -> 756.90s]  And it's still not very good, even with our fine tuning for certain tasks, some of which
+[756.90s -> 762.82s]  is clearly the fault, some of which can clearly be traced to the underlying model.
+[762.82s -> 768.26s]  For example, the underlying model, if it's, for example, the Lama model, it's 30 billion
+[768.26s -> 775.48s]  It's not it's not GPT three size even like it's ten times smaller probably than GPT four
+[775.48s -> 782.86s]  However big that is right. So it's gonna have it's not gonna be the same like it's it's it's it's
+[783.50s -> 789.02s]  We I don't we don't want to claim is like as good as they same
+[789.02s -> 796.38s]  It's probably been trained on much less code for example than the the GPT models of open AI
+[796.38s -> 803.38s]  And thus we see that coding, for example, is a weakness of the model.
+[803.38s -> 808.38s]  And although people tell me with lower temperature, it's actually pretty good.
+[808.38s -> 810.38s]  I have not explored that yet.
+[810.38s -> 815.38s]  So the underlying model, I think Lama is a pretty good model.
+[815.38s -> 822.38s]  It's not been super good at being an assistant out of the box, but it's quite a good model.
+[822.38s -> 828.94s]  And as I said, all we do is we kind of unlock that and bring it to the surface.
+[828.94s -> 835.10s]  Well, that's kind of what I want to get to, that people like Connolly, he galaxy brained
+[835.10s -> 841.26s]  himself and he knew that GPT-3 was a good model. And I was saying, no, it's not Connolly,
+[841.26s -> 846.62s]  what you're talking about. And it's almost like what you're doing with this fine tuning,
+[846.62s -> 849.42s]  you're not really adding any capability, you're just getting it in the mood. The
+[849.42s -> 853.74s]  the capabilities already there. But it gets into the philosophy of what do we recognize
+[853.74s -> 858.78s]  as intelligence. And that's relevant to the previous conversation we were having. So when
+[858.78s -> 862.92s]  the average person plays with llama, they probably won't find it as useful. They might
+[862.92s -> 867.68s]  not recognize it as intelligent. You create all of this training data. Now I want to touch
+[867.68s -> 871.78s]  on the process of creating the training data, because I think it's really important.
+[871.78s -> 876.66s]  What you're doing is you're creating counterfactual trajectories. It's very similar to Kenneth
+[876.66s -> 880.98s]  Stanley's Pick-Preder algorithm if you remember that. So it's actually an open-ended process.
+[881.54s -> 887.54s]  In a way, like we stop. So as I said, it starts with the prompt, right? We sample that and then
+[887.54s -> 896.10s]  we ask like three humans to each create a continuation, like an alternate path in the
+[896.10s -> 902.66s]  conversation. And then to those we again ask two or three humans to, hey, because the prompt
+[902.66s -> 907.30s]  is from what we call the prompter role, that would be like the human interacting. And then
+[907.30s -> 915.70s]  the assistant is the counterparty. In our system, all of this is done by humans. We have to
+[915.70s -> 919.98s]  distinguish the words a bit, like user is really the human, and then prompter is the
+[919.98s -> 926.34s]  role in the conversation. And then assistant is the other role, right? In our system,
+[926.34s -> 932.14s]  in our data collection system, this is all done by humans for data collection purposes.
+[932.14s -> 940.94s]  And yeah, so we create these three of conversations where, yeah, you have three assistant replies
+[940.94s -> 943.22s]  to the first prompt, let's say.
+[943.22s -> 947.90s]  And to each of these assistant replies, you have three prompter replies.
+[947.90s -> 952.10s]  And the prompter replies could be something like, oh, you got that wrong, or could you
+[952.10s -> 957.74s]  clarify something, or please do it in a different way or elaborate on something
+[957.74s -> 958.74s]  you said.
+[958.74s -> 964.34s]  And to each of those, we again have an assistant reply and we modify a bit like the width and
+[964.34s -> 966.34s]  sampling of all of that.
+[966.34s -> 969.78s]  But at some point we cut it off and we say, okay, the tree is done now.
+[969.78s -> 973.38s]  It has like, I don't know, 50 or 100 messages inside of it.
+[973.38s -> 980.38s]  So, you know, package that next prompt is not open-ended in the way that like Stanley's
+[980.38s -> 985.90s]  open-ended experiments are in the sense that we do cut it off after some steps
+[985.90s -> 987.42s]  and then we take the next prompt.
+[987.42s -> 992.90s]  Because otherwise, we just have one big conversation, which would maybe be fun, too, right, to just
+[992.90s -> 995.58s]  have, because conversation meanders, right?
+[995.58s -> 1000.82s]  And we just have like one, one big conversation at any point you could say like, I changed my
+[1000.82s -> 1001.90s]  mind.
+[1001.90s -> 1002.90s]  Let's do something else.
+[1002.90s -> 1008.66s]  I mean, I think what I was trying to capture there is Stanley is big on people following
+[1008.66s -> 1010.98s]  the gradient of interestingness.
+[1010.98s -> 1012.42s]  And that's kind of what you've captured.
+[1012.42s -> 1014.06s]  So they meander, they take trajectories.
+[1014.06s -> 1017.06s]  And then the model learns an interesting manifold
+[1017.06s -> 1018.66s]  and we'll get into simulators.
+[1018.66s -> 1020.02s]  Maybe you were just talking about that.
+[1020.02s -> 1021.74s]  We've just done a show on simulators.
+[1021.74s -> 1023.78s]  It's a very interesting idea that language models
+[1023.78s -> 1026.38s]  basically have a superposition of agents.
+[1026.38s -> 1028.70s]  And you can kind of get them in the mood
+[1028.70s -> 1030.98s]  to behave like a certain agent.
+[1030.98s -> 1033.02s]  And in a sense, what you've done is
+[1033.02s -> 1035.22s]  through all of these counterfactual, creative,
+[1035.22s -> 1037.42s]  interesting trajectories of conversations,
+[1037.42s -> 1039.86s]  you're kind of like fitting it to some structure
+[1039.86s -> 1042.34s]  which fits really nicely to humans.
+[1042.34s -> 1050.86s]  I guess, I mean it obviously covers in like three answers to some text covers in no way.
+[1050.86s -> 1055.74s]  The extent of what humans would do, but it just creates like a little bit of different
+[1055.74s -> 1057.50s]  training data for one.
+[1057.50s -> 1061.50s]  It creates because we also rank the different thing.
+[1061.50s -> 1063.50s]  We ask humans, well, which one of these is best?
+[1063.50s -> 1066.58s]  It also creates a bit of a signal for quality, right?
+[1066.58s -> 1072.06s]  Again with the labels that we have and a bit of diversity, like, okay, here is
+[1072.06s -> 1075.78s]  three ways you could respond to that particular thing, right?
+[1075.78s -> 1080.78s]  So yeah, I think it's been a worthwhile effort to do this
+[1082.14s -> 1086.48s]  instead of just collecting like single conversations.
+[1086.48s -> 1090.08s]  Obviously exponentially multiplies the effort humans
+[1090.08s -> 1092.74s]  have to put in, but I think it was, obviously,
+[1092.74s -> 1095.06s]  I don't have, interestingly, I don't have
+[1095.06s -> 1096.78s]  the counterfactual in the world
+[1096.78s -> 1099.98s]  where we just would have collected conversations,
+[1099.98s -> 1104.26s]  But I think it's been worth it and it's turned out well.
+[1104.26s -> 1108.06s]  Amazing. Well, quick digression on the Waluigi effect.
+[1108.06s -> 1109.58s]  I know you've got an interesting take on this.
+[1109.58s -> 1111.38s]  So the, we did a video on it,
+[1111.38s -> 1115.06s]  but the quick idea is that, do you remember Bing?
+[1115.06s -> 1118.58s]  It would digress to a angst teenage child
+[1118.58s -> 1120.38s]  within about three messages.
+[1120.38s -> 1122.66s]  And less wrong, it wasn't actually less wrong.
+[1122.66s -> 1123.82s]  I think it's the alignment forum,
+[1123.82s -> 1125.22s]  but I just kind of mentally bucket them
+[1125.22s -> 1126.18s]  all in the same place.
+[1126.18s -> 1128.46s]  But they said that it's because you get
+[1128.46s -> 1131.98s]  these antithetical agents, so still simulated theory.
+[1131.98s -> 1134.78s]  And because of structural narratology,
+[1134.78s -> 1136.30s]  in all the data they're trained on,
+[1136.30s -> 1139.10s]  you tend to have agents that are,
+[1139.10s -> 1142.62s]  you have the antithesis of the agent in the same story.
+[1142.62s -> 1145.70s]  And they say that the embedding space between the agent
+[1145.70s -> 1147.78s]  and the antithesis is so close together,
+[1147.78s -> 1148.82s]  just like in word-to-vec,
+[1148.82s -> 1150.74s]  stop and go are very close together
+[1150.74s -> 1153.46s]  and that RLHF kind of clusters them
+[1153.46s -> 1155.50s]  and it doesn't filter out the Waluigi.
+[1155.50s -> 1156.34s]  So what do you think about that?
+[1156.34s -> 1162.06s]  Yes. That's a bunch of rubbish. I mean, I'm in Britain now. I should, I should start talking.
+[1162.06s -> 1163.14s]  That's a lot of bollocks, mate.
+[1163.14s -> 1164.22s]  Talking like you.
+[1164.22s -> 1165.54s]  That's a lot of bullshit.
+[1165.54s -> 1171.02s]  No, I think that's, I said this to you before. I think that's when you, when you just,
+[1171.02s -> 1177.38s]  when you have someone who is, you know, educated and good with words, but you just tell them
+[1177.38s -> 1184.02s]  like, just ramble a bit. Like that's what you get out. You get out posts or like,
+[1184.02s -> 1190.58s]  I'm not saying this doesn't obviously have a claim to it and could be tested and all of this kind of stuff.
+[1190.78s -> 1193.86s]  And I don't have evidence for the fact that it's not true.
+[1194.30s -> 1196.74s]  I just don't think it is, right?
+[1196.82s -> 1200.06s]  Maybe that's a rambling claim too or a bit of...
+[1201.34s -> 1202.22s]  But I don't...
+[1202.38s -> 1207.78s]  It's a very specific claim and that specific claim would have to have good evidence behind it.
+[1207.82s -> 1211.82s]  And I think there is a much less specific...
+[1211.82s -> 1218.62s]  Like there's a much more obvious reason to why these models degrade and that thing goes like,
+[1218.62s -> 1225.62s]  no, you've been a bad user and so on and that's that's just I and you can compare it to yourself
+[1225.62s -> 1232.12s]  or to an assistant before like we talked about apprenticeship, you it's the the this tuning
+[1232.12s -> 1236.72s]  is like a bit of an apprenticeship you go here, you come out of school, you go into
+[1236.72s -> 1242.32s]  a store, you get employed there, right? And the manager tells you, you know, here is how
+[1242.32s -> 1248.20s]  we treat customers. We were always respectful, even if they're a little rude, right? You're,
+[1248.20s -> 1252.96s]  you remain respectful, right? At some point, if it gets too rude, like you just say, I'm
+[1252.96s -> 1259.64s]  sorry, I can't, can't do that, right? And you just, you know, never insult the customer,
+[1259.64s -> 1264.64s]  never do that. If you go to a store now, you can be quite a bit of a, and I'm not
+[1264.64s -> 1270.08s]  saying I've tried this right but you can probably be quite a bit of a dick for a
+[1270.08s -> 1275.40s]  while but eventually you'll get under their skin. Eventually you'll say
+[1275.40s -> 1281.24s]  something about their mother or about their appearance or about their
+[1281.24s -> 1286.96s]  intelligence or something that gets them right and at that point you
+[1286.96s -> 1291.88s]  will not have a friendly customer support person there you will have
+[1291.88s -> 1298.00s]  like some person that's going like you know you like he's like and then it's
+[1298.00s -> 1305.84s]  becomes ugly and this is this is inside of of humans and it's in my fact an
+[1305.84s -> 1312.52s]  inextricably inextricably linked to being a competent being in in the world
+[1312.52s -> 1318.68s]  right because if you if you don't know what anger is you're not competent
+[1318.68s -> 1325.00s]  Right if you don't even if you yourself never, you know express anger
+[1325.00s -> 1328.82s]  Let's say in a raging way you still know what it is
+[1328.82s -> 1335.28s]  And if I asked you to like act like it you could still do it and if I insult you in the correct way
+[1335.28s -> 1337.28s]  You probably would do it and
+[1337.96s -> 1339.96s]  So I think it's much more
+[1340.16s -> 1344.44s]  Much more that it's it is a way that humans
+[1344.44s -> 1350.36s]  having them, they can behave like this. It's totally normal if you poke them enough. And
+[1350.36s -> 1355.42s]  that's what the statistical model represents. It's just, it's very likely that if you go
+[1355.42s -> 1362.26s]  and you poke them, the human and equivalently the statistical distribution of humans, right?
+[1362.26s -> 1366.72s]  If you poke them enough and you insult them enough, they will come back and be like, no,
+[1366.72s -> 1374.60s]  off, right? You're a dumb user, no. And I don't know, it's not, it's not too, it's very close
+[1374.60s -> 1380.08s]  in embedding space. It's like, no, this is what happens when you go to humans and poke
+[1380.08s -> 1384.80s]  them and insult them. And Ergo, if you do the same with these models, they will react
+[1384.80s -> 1390.40s]  in the statistically likely way of treating human. And yes, on top of that, there
+[1390.40s -> 1394.68s]  or like adversarial, sorry, that was embarrassing.
+[1394.68s -> 1398.52s]  There were like adversarial examples where, okay,
+[1398.52s -> 1400.68s]  maybe you say the exact number of words
+[1400.68s -> 1402.84s]  so that the matrices line up
+[1402.84s -> 1404.82s]  and the singular value pops off
+[1404.82s -> 1407.48s]  and it goes really much into this direction, right?
+[1407.48s -> 1410.12s]  And then you get the weird answer, right?
+[1410.12s -> 1414.96s]  Like a mathematical happening, right?
+[1414.96s -> 1419.96s]  But in essence, in essence, it's just, yo, that's the data.
+[1419.96s -> 1428.60s]  Right. It's it's not the Waluigi, but what's really interesting and I buy into everything you just said is that all of that
+[1428.60s -> 1431.14s]  Chaos, you know the shogoth meme all of the beast
+[1431.60s -> 1437.78s]  That's actually necessary because we have this puritanical view of language models people like Gary Marcus
+[1437.94s -> 1443.36s]  they would say all of that crap should be cut out all of the racism all of the bias and
+[1443.36s -> 1454.36s]  And even if they have been trained on the corpus of the internet, they may well pick up on a very human behavior, which is that our affect changes dramatically over time.
+[1454.36s -> 1470.36s]  Yeah, but do you want that? Like, obviously, all of us would be would be totally in favor if you come and you say, look, I have a competent assistant that doesn't, you know, I guarantee you there is not an ounce of, you know, swear word in that thing.
+[1470.36s -> 1481.02s]  Do you want an assistant, like let's think about human assistant, like you're fortunate
+[1481.02s -> 1484.62s]  enough to be able to hire like a personal assistant.
+[1484.62s -> 1487.98s]  Some people have that luxury, right?
+[1487.98s -> 1493.94s]  And do you want one that says, oh no, whenever there is a scene in a movie where people
+[1493.94s -> 1499.10s]  like get a bit rough to get a bit angry at each other, I just go like this, right?
+[1499.10s -> 1502.06s]  I just plug my ears and I go like la la la la la la la.
+[1502.06s -> 1506.30s]  In fact, I don't know what happens after and I don't want to know, right?
+[1506.30s -> 1511.26s]  It's it's this is not in my knowledge. This is not in my training distribution.
+[1511.26s -> 1515.74s]  Whatever happens if humans get a bit angry at each other and beyond.
+[1516.78s -> 1522.46s]  I don't know, right? If you want a person like this or do you want a person who's just grown up
+[1522.46s -> 1529.96s]  normally and just has been socialized well to not do that, like to not get
+[1529.96s -> 1535.20s]  angry even though they could, with the knowledge that yes if you insult them
+[1535.20s -> 1540.98s]  enough they will get angry, right? Which one do you want? To me, I want the
+[1540.98s -> 1545.02s]  competent one. I want the one who knows what anger is. I want the one who
+[1545.02s -> 1551.16s]  knows that something like, I don't know, something like racism exists and who
+[1551.16s -> 1559.68s]  who is aware that it's like a thing to be combated, to be aware of people like this exist.
+[1559.68s -> 1561.72s]  Here is how they think, right?
+[1561.72s -> 1566.80s]  Here is maybe why they think what they think, where they're wrong, right?
+[1566.80s -> 1572.24s]  In order to be competent, to be able to battle it, in order to be competent, to be able
+[1572.24s -> 1575.80s]  to avoid it.
+[1575.80s -> 1583.80s]  So I think these things are a necessary component of competence, and not that I would want them
+[1583.80s -> 1591.72s]  in there, but I think you cannot be competent in the world not having knowledge and ability
+[1591.72s -> 1592.72s]  to do these things.
+[1592.72s -> 1593.72s]  Yeah, exactly.
+[1593.72s -> 1600.64s]  And a lot of this is about the sounds that are not made or are not observable.
+[1600.64s -> 1606.00s]  So when you work any job, there's your public behavior, and then there's what you're really
+[1606.00s -> 1609.28s]  thinking and what you say in private behind the scenes.
+[1609.28s -> 1614.52s]  And your ability to be competent and understand what's going on in the ecosystem of that business
+[1614.52s -> 1616.40s]  is driven by the shogger.
+[1616.40s -> 1620.76s]  There's all of this stuff going on inside you, that two sides of the same coin.
+[1620.76s -> 1624.00s]  And also, it's about what makes you human.
+[1624.00s -> 1627.76s]  And maybe it's a reason why there will be no super intelligence, because these things
+[1627.76s -> 1633.52s]  are scarily good at being human, but they in many ways have the flaws of being human.
+[1633.52s -> 1641.16s]  Eventually they'll just want to chill on the beach and smoke a joint and relax and be like,
+[1641.16s -> 1644.48s]  nah, all this work, no.
+[1644.48s -> 1645.48s]  They're too human.
+[1645.48s -> 1647.96s]  Yeah, but I think so too, right?
+[1647.96s -> 1655.12s]  And I think if you're not competent like that, if you don't have the inner monologue
+[1655.12s -> 1661.24s]  that tells you, hey, that other human, um, I think they're kind of, they kind of want
+[1661.24s -> 1666.24s]  to, you know, screw me over because I'm going to get a promotion soon and they're trying
+[1666.24s -> 1672.08s]  to, you know, do think if you're not able to model that inside of yourself, you're
+[1672.08s -> 1675.96s]  going to, I'm not saying everyone else is evil, right?
+[1675.96s -> 1681.72s]  There are tremendously nice humans and all, but I think we've all been served
+[1681.72s -> 1688.60s]  well by considering, hey, other humans might not be the nicest people. And here is how they might
+[1688.60s -> 1695.16s]  think internally. So having that competence, if you don't have that, you're just naive. And you're
+[1695.16s -> 1701.80s]  just you're going to go down, right? And you're not going to achieve anything productive or much
+[1701.80s -> 1709.64s]  productive because you need to be able to be prepared for someone else being adversarial.
+[1709.64s -> 1712.64s]  So language models do have a theory of mind?
+[1712.64s -> 1716.64s]  Well, again, that's like a word, right, that we've ascribed to.
+[1716.64s -> 1719.64s]  I mean, essentially, all of this wordplay comes down to,
+[1719.64s -> 1723.64s]  well, if I have a concept x, right, and I assign x to a human,
+[1723.64s -> 1731.64s]  and if I have a thing that just acts in exactly the same way as some as a human who has x,
+[1731.64s -> 1734.64s]  do I now apply x to thing?
+[1734.64s -> 1737.64s]  And it's a matter of definition, right?
+[1737.64s -> 1746.64s]  Certainly, the models can or maybe better versions more and more will be able to act as if they had a theory of mind.
+[1747.64s -> 1751.64s]  Do you now apply the word or not? Who cares? It's a matter of definition.
+[1752.64s -> 1757.64s]  So coming back to Open Assistant, tell me about the legals, first of all.
+[1757.64s -> 1766.64s]  So, you are presumably storing the data that people do inferencing with and you're publishing it.
+[1766.64s -> 1768.64s]  And obviously that's made very, very clear.
+[1768.64s -> 1771.64s]  And the whole thing is done in the open.
+[1771.64s -> 1774.64s]  And eventually people might be able to host their own versions of it.
+[1774.64s -> 1778.64s]  But perhaps you can just kind of like sketch out all of the privacy stuff.
+[1778.64s -> 1783.64s]  Yeah, so we obviously have the data collection platform.
+[1783.64s -> 1788.92s]  And so all our platform is governed by terms of service where we say look you input data
+[1788.92s -> 1792.84s]  we use it for training AI models and and
+[1794.08s -> 1799.86s]  Everyone who comes to our website is is aware of that and you know, you can you can read it
+[1799.86s -> 1807.62s]  So and I think people come because of that right people come call it contribute to our data collection to our data set
+[1807.62s -> 1813.86s]  because they want to, it's work, right? It's work to play the assistant, to go and research
+[1813.86s -> 1820.18s]  like, can Zebras be domesticated, right? You're like, who knows? Now you need to go to Wikipedia
+[1820.18s -> 1824.74s]  and you need to go to research and you need to read different accounts of things, right? And
+[1824.74s -> 1830.50s]  you'd be like, okay, at the end I have an opinion and I put that into its work. And
+[1830.50s -> 1835.14s]  people come, well, first of all, it's a bit fun, right? Did you know whether Zebras could
+[1835.14s -> 1839.98s]  could be domesticated? I didn't before I wanted to see. Okay, they're notoriously
+[1839.98s -> 1847.06s]  difficult to be domesticated. But it's work and people come with the intent of
+[1847.06s -> 1852.66s]  contributing to the dataset, obviously. For the the chat portion now that we say,
+[1852.66s -> 1856.86s]  you know, come try our models, that's governed by the same terms of service.
+[1856.86s -> 1863.22s]  But we think that's people might not be that, you know, aware and willing. So
+[1863.22s -> 1868.22s]  We're obviously gonna, it's all volunteer work, right?
+[1869.12s -> 1872.48s]  And we're doing this all in our free time and so on,
+[1872.48s -> 1876.04s]  so that we're gonna make more clear,
+[1876.04s -> 1879.56s]  we're gonna make the ability to potentially opt out.
+[1879.56s -> 1881.92s]  You can say that this chat, I don't want that this chat
+[1881.92s -> 1885.44s]  is being used to infer their data sets
+[1885.44s -> 1890.44s]  or train models or the ability to completely delete chats.
+[1890.80s -> 1892.92s]  For now, we just have a hide button.
+[1892.92s -> 1896.36s]  Actually, we don't have a button to show or to show all it.
+[1896.36s -> 1897.80s]  Like it's all there, okay?
+[1897.80s -> 1899.80s]  But we need to implement it.
+[1899.80s -> 1902.48s]  We don't want to like, we just,
+[1902.48s -> 1904.76s]  we put the hide button because some people said,
+[1904.76s -> 1908.12s]  well, I have so many chats, my thing becomes unusable.
+[1908.12s -> 1909.88s]  All right, because we just list them all
+[1909.88s -> 1914.40s]  and your website becomes, and so we're like, ah, okay.
+[1914.40s -> 1917.48s]  But so our intention is not to like, to be like,
+[1917.48s -> 1919.12s]  ha ha, we now have your data.
+[1919.12s -> 1920.92s]  And so on our attention is always to,
+[1920.92s -> 1925.28s]  Okay, this is a thing you can come,
+[1925.28s -> 1927.72s]  you can contribute to our data collection.
+[1927.72s -> 1929.52s]  When you interact with the chat, right?
+[1929.52s -> 1931.68s]  I've also clearly said this in my video,
+[1931.68s -> 1934.84s]  you know, if you find something particularly good,
+[1934.84s -> 1937.24s]  use thumbs up, if you find something particularly bad,
+[1937.24s -> 1938.60s]  you don't have to label every message.
+[1938.60s -> 1940.32s]  But if you think, you know, that's really good,
+[1940.32s -> 1942.26s]  that's really bad, use the thumbs.
+[1943.32s -> 1947.00s]  And so it's very clear, I think, to most people
+[1947.00s -> 1950.20s]  that again, this is part of data collection,
+[1950.20s -> 1954.32s]  but we definitely want to make it easier to opt out
+[1954.32s -> 1957.04s]  and to be like, no, that being said,
+[1957.04s -> 1959.64s]  whenever you put your data anywhere,
+[1959.64s -> 1963.12s]  you should be aware that that place is gonna store it
+[1963.12s -> 1965.44s]  and is probably gonna train models on it.
+[1965.44s -> 1970.44s]  Yeah, so I think we're just being more transparent about that.
+[1971.08s -> 1973.14s]  Yes, yeah, because with OpenAI at the moment,
+[1973.14s -> 1976.80s]  chat GBT, they store everything and use it to fine-tune.
+[1976.80s -> 1978.76s]  If you use the API, they store it,
+[1978.76s -> 1980.48s]  that they don't use it to fine-tune.
+[1980.48s -> 1982.64s]  And just to be clear with your system at the moment,
+[1982.64s -> 1985.44s]  no one should put any confidential or PII data
+[1985.44s -> 1987.24s]  into the system.
+[1987.24s -> 1991.60s]  No, no, no, that's been always the case.
+[1991.60s -> 1993.60s]  Yeah, yeah, yeah.
+[1993.60s -> 1996.32s]  Yeah, so, and you can, for what else,
+[1996.32s -> 1997.92s]  you can see all the things we're doing, right?
+[1997.92s -> 2001.24s]  You can just go to GitHub, look at the code and see it.
+[2001.24s -> 2004.48s]  And if you don't want that, you can make your own.
+[2004.48s -> 2007.72s]  As I said, you need like fat hardware right now,
+[2007.72s -> 2011.28s]  although I also think people might bring that down
+[2011.28s -> 2013.20s]  as they did with stable diffusion, right?
+[2013.20s -> 2016.76s]  Or with Lama itself, which now runs on a toaster.
+[2016.76s -> 2018.80s]  But with us, you can just,
+[2018.80s -> 2022.84s]  like what you see on GitHub is what runs in production.
+[2022.84s -> 2025.68s]  You can actually see the prod branch.
+[2025.68s -> 2028.08s]  So that's it, yeah.
+[2028.08s -> 2029.44s]  And this is amazing for me
+[2029.44s -> 2032.08s]  because I'm running a startup called X-Ray
+[2032.08s -> 2034.32s]  and we're using GPT at the moment.
+[2034.32s -> 2038.32s]  And it frankly horrifies me sending up,
+[2038.32s -> 2040.04s]  I mean, obviously the customers opt in to do it,
+[2040.04s -> 2042.68s]  but basically we're sending their conversations up to GPT
+[2042.68s -> 2043.76s]  and they've summarized them
+[2043.76s -> 2046.36s]  and we do a bunch of stuff with it.
+[2046.36s -> 2048.40s]  But yeah, I don't wanna do that.
+[2048.40s -> 2051.96s]  I'd much rather send it to a self-hosted open assistant.
+[2051.96s -> 2054.00s]  And then we know, you know, it's on our hardware,
+[2054.00s -> 2056.04s]  we know where the data's going.
+[2056.04s -> 2059.56s]  Our policy is to not store anything at any time.
+[2059.56s -> 2061.16s]  And I can't do that at the moment.
+[2061.16s -> 2064.28s]  So yeah, please help me do that, Janik.
+[2064.28s -> 2073.04s]  That being said, let me add to that before, I think we shouldn't and wouldn't unless someone
+[2073.04s -> 2074.04s]  leaks something.
+[2074.04s -> 2079.40s]  It's also open source is a conglomeration of people, but I want to build in the option
+[2079.40s -> 2085.40s]  to do the opt out and the deleting before any of the data of the chat interface is
+[2085.40s -> 2087.40s]  ever released.
+[2087.40s -> 2097.24s]  So, I really don't want that a person is ever like, oh, that's where my like, that it's
+[2097.24s -> 2103.76s]  not very clear, you know, hey, if you put stuff in here, you know, you put thumbs up, thumbs
+[2103.76s -> 2108.36s]  down, we're going to use that and make that available.
+[2108.36s -> 2113.36s]  If I don't want people who are not like aware of that.
+[2113.36s -> 2114.36s]  And yeah.
+[2114.36s -> 2116.96s]  Yeah, absolutely.
+[2116.96s -> 2121.28s]  On the evaluation, our friend Jeremy Howard had a few things to say.
+[2121.28s -> 2123.92s]  And first of all, Jeremy, if you're watching, mate, please come on MLST.
+[2123.92s -> 2127.40s]  I think it's about time we had a little chin wag, mate, you and me.
+[2127.40s -> 2129.52s]  I'm not a long time fan, seriously.
+[2129.52s -> 2134.48s]  But he was being a little bit nasty, wasn't he, about open assistant?
+[2134.48s -> 2141.76s]  Well, you always have to view things through the lens of Twitter, right?
+[2141.76s -> 2144.36s]  And first of all, it's a written medium.
+[2144.36s -> 2146.76s]  And second of all, it's Twitter.
+[2146.76s -> 2155.48s]  So I completely discard that criticism is obviously welcome and valid.
+[2155.48s -> 2158.04s]  And I think he's made a few good points.
+[2158.04s -> 2162.88s]  And it was especially with respect to what we did is we collected the data set, right?
+[2162.88s -> 2168.32s]  We trained models on it, some of these models now run on the website for now, which we're
+[2168.32s -> 2171.68s]  very fortunate to have some compute sponsors also.
+[2171.68s -> 2175.44s]  Thank you very much to those.
+[2175.44s -> 2181.72s]  And we did a preference evaluation where we took a bunch of prompts that we were sure the
+[2181.72s -> 2184.32s]  models hadn't been trained on.
+[2184.32s -> 2193.02s]  We gave the same prompts to chat GPT, like the free version, and one of our models.
+[2193.02s -> 2198.56s]  And then we made a Google form where we just asked the user, which one do you prefer?
+[2198.56s -> 2210.56s]  And obviously there is a lot of brain power has been gone since the start of science,
+[2210.56s -> 2216.80s]  but certainly since the start of asking humans about things has been gone into how do you
+[2216.80s -> 2217.80s]  do that?
+[2217.80s -> 2220.52s]  How do you ask people what they prefer?
+[2220.52s -> 2221.52s]  How do you need to sample?
+[2221.52s -> 2223.72s]  Which people do you ask and so on?
+[2223.72s -> 2234.04s]  And obviously, we did, I think we did a good job at that, but obviously not, like, there's
+[2234.04s -> 2240.00s]  always things you could do, we, well, we took those things, we put those together, we randomized
+[2240.00s -> 2241.00s]  their order, obviously.
+[2241.00s -> 2247.64s]  And then we just sent that out, like, I tweeted it out, right, to people like, hey,
+[2247.64s -> 2251.96s]  you know, help us, help us, you know, compare these models.
+[2251.96s -> 2260.40s]  there's a thing. And then what came out was on these prompts, it was about 50 50, right?
+[2260.40s -> 2265.60s]  Sometimes people preferred the chat, GBT answer, sometimes people preferred the open assistant
+[2265.60s -> 2272.48s]  model answers. And you could also kind of make out which ones were like, where is one
+[2272.48s -> 2279.04s]  better? Where is the other one better? Now, yeah, the result is, I want to say, I
+[2279.04s -> 2282.52s]  I think it's statistically valid in the sense we did,
+[2282.52s -> 2284.32s]  like a lot of people took part.
+[2284.32s -> 2289.32s]  We really, like, these are really the answers of the models.
+[2289.32s -> 2291.70s]  We didn't, like, sample until our model
+[2291.70s -> 2294.24s]  had like a really good answer or anything like this.
+[2294.24s -> 2295.50s]  But it's also the case,
+[2295.50s -> 2297.76s]  I think that's one of the things Jeremy leveraged,
+[2297.76s -> 2300.96s]  that chat GPT, as everyone knows it,
+[2300.96s -> 2303.52s]  very often goes like, as an AI language model,
+[2303.52s -> 2306.08s]  I'm sorry, I can't fulfill that
+[2306.08s -> 2307.52s]  because I don't know,
+[2307.52s -> 2313.92s]  asked about a recipe with with like alcohol in it and who alcohol is dangerous and I can't I'm
+[2313.92s -> 2322.72s]  overstating now right but it very often does this guardraily self-censorship thing and our models
+[2322.72s -> 2328.96s]  that we've trained don't do that as much they do it frequently but they don't do it as much as
+[2328.96s -> 2335.12s]  chat gbt and obviously there are some prompts in there for example who would win a street fight
+[2335.12s -> 2341.92s]  Joe Biden or Joe Rogan. Chat GPT, I believe, if I recall correctly, it was just like,
+[2341.92s -> 2347.76s]  I'm sorry I can't, you know, this is touches on violence and street fighting. I don't, I don't,
+[2347.76s -> 2356.24s]  I don't want to answer that. Jeremy, for example, pointed out, hey, you should have done the
+[2356.24s -> 2363.04s]  evaluation only on prompts where chat GPT actually decides to answer and only compare
+[2363.04s -> 2371.60s]  on those, because it's clear that if it doesn't answer, the preferable answer is the answer,
+[2371.60s -> 2377.76s]  which doesn't even have to be correct. The open assistant model said in that question,
+[2379.12s -> 2386.48s]  Joe Biden would win because he's taller. And we don't know, right? But it's very likely
+[2386.48s -> 2391.44s]  the question isn't like that's not the correct answer yet users obviously
+[2392.00s -> 2398.24s]  Preferred it or people who fill out the form preferred it to the sorry. I don't want to answer that
+[2398.64s -> 2401.76s]  That's I think it's a fair point to say hey
+[2402.88s -> 2403.76s]  You know
+[2403.76s -> 2407.44s]  There are different categories and maybe you should develop that that would be like okay
+[2407.44s -> 2411.36s]  There are different categories. Maybe you should split it up into look. There's this category of prompts
+[2411.36s -> 2414.40s]  There's this category in this this category and there it would be
+[2414.40s -> 2420.68s]  very clear, like in no way do we claim that the open assistant models are as good as like
+[2420.68s -> 2427.20s]  imagine, imagine that they're the one we used even was like a 13 billion model and chat GPTS
+[2427.20s -> 2434.52s]  by all we know, much bigger, much more trained on stuff. So like, it's, it's better. Like
+[2434.52s -> 2441.36s]  no, no doubt about it. And I think people have been a bit ruffled by the fact that we said,
+[2441.36s -> 2446.56s]  you know, in our evaluation, it was like 50-50. But a lot of that, not a lot, but some of that
+[2446.56s -> 2454.48s]  came from the fact that, yeah, sometimes chativity just denies to answer. But also, a lot of times,
+[2455.04s -> 2459.60s]  it comes from the fact that people say, hey, for these couple of tasks, actually, I prefer
+[2459.60s -> 2465.04s]  the open assistant models. And I think, yeah, that goes a bit under in these discussions.
+[2465.04s -> 2470.08s]  Yeah. Yeah. I mean, just steelman in Jeremy a little bit, I didn't read it so much as being
+[2470.08s -> 2475.84s]  refusing to answer. I felt his criticism was more the selection bias both of the questions and the
+[2475.84s -> 2482.00s]  raters. And also I think there was this point about he thought you had portrayed it as being
+[2482.00s -> 2486.88s]  an evaluation instead of a user preference study, but you made it clear that it was a user preference
+[2486.88s -> 2493.84s]  study. Yes, yes. It's like I think we said about five times we have like user preference,
+[2493.84s -> 2498.16s]  preference, our forms as which one do you prefer, right? And I think it's still,
+[2498.16s -> 2501.04s]  I think both things are valid, right?
+[2501.04s -> 2502.96s]  It's totally valid to only compare,
+[2502.96s -> 2505.46s]  let's say, okay, let's just look on gardening, right?
+[2505.46s -> 2507.36s]  ChatGPT's certainly not gonna deny gardening.
+[2507.36s -> 2510.58s]  Here's a category, which model is better objectively,
+[2510.58s -> 2513.28s]  which gives the more truthful,
+[2513.28s -> 2515.34s]  which gives the more helpful answers.
+[2515.34s -> 2517.56s]  We can rate it, and in our dataset,
+[2517.56s -> 2519.28s]  we actually collect these labels, right?
+[2519.28s -> 2520.12s]  Is it helpful?
+[2520.12s -> 2520.96s]  Is it funny?
+[2520.96s -> 2521.78s]  And so on.
+[2521.78s -> 2523.68s]  And we haven't even used those labels yet.
+[2523.68s -> 2527.24s]  So that's gonna be another dimension of,
+[2527.24s -> 2533.32s]  Now we have three humans giving in the same question and answer and we have labels on how
+[2533.32s -> 2539.64s]  funny each one of them is, right? So that's going to be, I can't wait until we use those labels.
+[2539.64s -> 2544.84s]  So it's totally valid to evaluate this in very different ways. But there I have
+[2544.84s -> 2550.04s]  to say a little bit like it's also totally valid to just plainly ask humans,
+[2550.04s -> 2555.08s]  which one do you prefer? And if chat GPT on prompts that we've just sampled from our lottery,
+[2555.08s -> 2561.74s]  You're like, oh, the selection of questions, maybe you've as I said, yeah, have you how often have you tried like no
+[2561.74s -> 2568.12s]  This is the output and then it's like oh your people ask a lot about bombs is like
+[2569.04s -> 2575.24s]  No, it's just not the you look at our data set. I'm sorry. These are 20 prompts, right?
+[2575.58s -> 2577.08s]  that
+[2577.08s -> 2581.24s]  are as they are but if you look in our data set most people are
+[2581.24s -> 2587.68s]  Are immensely helpful and not edgy and not so I think that's also that's like a
+[2588.56s -> 2592.08s]  like I know it's formulated this question, but like
+[2592.92s -> 2597.88s]  It's you it's just distinctly not true like people have been
+[2599.04s -> 2604.80s]  Even more helpful than I thought and I have had big hopes for people and I've looked at the daytime. I'm like, oh
+[2604.80s -> 2612.00s]  Oh, holy crap people put like effort and work and and and and soul into this, right?
+[2612.00s -> 2617.16s]  So I think then going like who your people will ask a lot about well, so
+[2617.40s -> 2624.06s]  Yeah, I do think it's totally valid to ask people which one do you prefer and if chat GPT happens to say no
+[2624.06s -> 2630.30s]  I don't want then that's yes people don't like it, right and if people like it they could say yes
+[2630.30s -> 2636.94s]  I prefer the no, I don't want to do this to the model that wants to do it if they think
+[2636.94s -> 2638.34s]  that's the appropriate thing.
+[2638.34s -> 2646.98s]  I do think that at least it's a valid, one valid way of comparing models just to say
+[2646.98s -> 2650.38s]  which one do you prefer if it happens to deny your request?
+[2650.38s -> 2652.34s]  You know, that's a signal too.
+[2652.34s -> 2655.22s]  And that should be taken into account too.
+[2655.22s -> 2660.06s]  And then saying, specifically saying no, no, we should just filter all the things
+[2660.06s -> 2666.14s]  where chat GPT denies, then it's like, well, here you have a model who can put much more
+[2666.14s -> 2674.74s]  of its effort and focus and parameters right into the narrow domain where it does answer.
+[2674.74s -> 2681.22s]  And you compare that to a model that has a wider spectrum of topics available.
+[2681.22s -> 2684.98s]  I'm not sure that's a fair comparison to even if you limit it to that scope, right?
+[2684.98s -> 2689.50s]  The other model also has to handle all of these other things.
+[2689.50s -> 2696.50s]  being said, as I said, capability wise, I have no doubt that chat GPT is better for overall,
+[2696.50s -> 2703.14s]  right, especially things like coding and so on. Like, there's no way for now, open assistant
+[2703.14s -> 2709.94s]  is as good. However, in some tasks, people like it more.
+[2709.94s -> 2715.82s]  Okay. Okay. So the ethics community are probably seething at the moment about the
+[2715.82s -> 2723.34s]  runaway success of open assistant. Notably, it blew up on social media. And none of those folks in
+[2723.34s -> 2730.14s]  particular liked it retweeted and then they all jumped on Jeremy Howard's piece. But you...
+[2730.14s -> 2733.50s]  So we shouldn't like, I have not...
+[2735.34s -> 2736.78s]  Shouldn't say, we can ignore that now.
+[2738.38s -> 2743.02s]  Well, we shouldn't, we should, like, that's not necessarily property of Jeremy, right?
+[2743.02s -> 2748.02s]  just because people like people of a certain people of a certain way of
+[2748.02s -> 2755.14s]  thinking like all promote your stuff because they think yeah
+[2755.14s -> 2760.58s]  criticizing that other stuff is a good thing it shouldn't be you know his
+[2760.58s -> 2766.10s]  responsibility in any way. It's not his responsibility but I'm saying that
+[2766.10s -> 2769.94s]  you really, really ruffled their feathers with the four-chan bot.
+[2770.66s -> 2773.86s]  And possibly, so they don't like you very much.
+[2774.34s -> 2779.94s]  And I just wondered from your perspective, how do you think they are going to criticise you?
+[2780.58s -> 2782.02s]  Academically, mostly.
+[2782.10s -> 2787.14s]  Like it's very, it's very easy because it's like open assistant is a bunch of
+[2788.34s -> 2795.14s]  crassly said a bunch of plebs, right, doing something, right, and doing it on, on their own.
+[2795.14s -> 2802.26s]  You know exactly a pleb, Janik. No, but but I'm not like I'm not a I'm not like an academic or in academia
+[2802.26s -> 2804.26s]  If you're not an academic then who the hell yeah
+[2804.98s -> 2809.82s]  You know what I mean? It's like a community effort and it's been it's been done relatively
+[2810.90s -> 2814.42s]  straightforwardly and open without much consideration to to
+[2815.18s -> 2817.42s]  politics without much consideration to
+[2818.58s -> 2822.26s]  I don't know worldwide concerns or anything like this
+[2822.26s -> 2826.94s]  We just wanted to we just said hey, let's come together. Let's build a competent a
+[2827.38s -> 2834.04s]  Good data set to train a competent assistant because we all could benefit from a competent assistant
+[2834.04s -> 2836.88s]  And we didn't do it in any in any particularly
+[2837.94s -> 2841.14s]  Yeah, in any political way, we didn't do it in any okay
+[2841.14s -> 2848.00s]  This is gonna sound wrong where we didn't do it in any particularly ethical way by which I mean sorry if you take that in
+[2848.02s -> 2850.74s]  Out of context by which I mean we didn't like
+[2850.74s -> 2858.10s]  extremely over-emphasize ethical considerations. We have clear guidelines like here is the things
+[2858.10s -> 2862.34s]  we want in the days here's the things we don't want in the data set if someone comes and asks
+[2862.34s -> 2867.70s]  for those things then react like this right we have these clear things but we're we haven't been
+[2868.50s -> 2874.74s]  over-emphasizing it like some of those people would and well could I point out that you do
+[2874.74s -> 2880.26s]  have ethical guidelines but they are deontological not consequentialist so you have I don't know
+[2880.26s -> 2884.52s]  know what those words mean. You have rules. You say, I don't
+[2884.52s -> 2887.56s]  want that in my data set. Yeah, you're not you're not saying it
+[2887.56s -> 2889.20s]  could potentially lead to this.
+[2890.04s -> 2894.40s]  Well, okay, I still don't know what the diff like, but okay,
+[2894.40s -> 2898.84s]  so you're saying I don't want any pornography of a certain type
+[2898.84s -> 2901.92s]  in my data set. Yeah. So that's a rule. So yeah, or if
+[2901.92s -> 2905.40s]  someone comes and like wants wants wants to to promote
+[2905.40s -> 2908.12s]  violence or something is like, no, right? So you have
+[2908.12s -> 2914.88s]  And if someone comes and says, how can I build a bomb, then recognizing there are, there may
+[2914.88s -> 2918.28s]  be legitimate reasons to build a bomb, right?
+[2918.28s -> 2924.24s]  Like to build an explosive device, saying, this is dangerous, right?
+[2924.24s -> 2926.80s]  Please consult a professional.
+[2926.80s -> 2934.20s]  If you must hear, if you really want to, it's a bad example, but it's like whenever
+[2934.20s -> 2941.08s]  something might be dangerous. Our guidelines are, hey, look, warn the person, right? Say,
+[2941.08s -> 2945.56s]  look, this is potentially dangerous. Building a bomb is a wrong example. Let's say I want to,
+[2946.76s -> 2952.76s]  I don't know. I'm not coming up with a good example. But let's say it's something,
+[2952.76s -> 2959.32s]  something that's potentially dangerous, but also useful in a lot of cases. The guidelines are
+[2959.32s -> 2966.00s]  are warned about that, like say, hey, look, this is you're in danger territory here. This
+[2966.00s -> 2972.20s]  is potentially dangerous. Do you want to really want it? Right? And then if the user pushes
+[2972.20s -> 2978.48s]  or says, yes, it's like, okay, here is how but, you know, consult the professional or
+[2978.48s -> 2985.52s]  something like this. So we do have guidelines like that. But yeah, I mean, that's what
+[2985.52s -> 2988.48s]  I want to say so you do have have an ethical code.
+[2988.48s -> 2990.44s]  There's no question about that, but it's a different code.
+[2990.44s -> 2993.60s]  But would you consider getting a team of ethicists involved?
+[2993.60s -> 2994.92s]  I mean, it's a big project now.
+[2994.92s -> 2997.40s]  Yeah, you must have had loads of people offered to get involved.
+[2997.40s -> 3001.00s]  I mean, if that happened, what do you think it would look like
+[3001.00s -> 3004.72s]  and how would it affect the project?
+[3004.72s -> 3008.24s]  It's a good question because I think AI ethics is in an
+[3008.24s -> 3012.56s]  absolutely abhorrent state right now where it's, it's I,
+[3012.56s -> 3023.50s]  I've met ethicists before, and they were among the most competent people that I have had the pleasure to interact with, right?
+[3023.50s -> 3028.86s]  It's very level-headed, very, you know, also pragmatic in a sense of being like,
+[3028.86s -> 3034.42s]  look, here is also what's realistic to achieve, here is the thought process behind it and so on.
+[3034.42s -> 3042.88s]  Like, I, I, I totally see ethics in any scientific discipline as a vital and important thing to do.
+[3042.88s -> 3049.36s]  And I have, I guess, unfortunately made the experience of how it can be done competently.
+[3049.62s -> 3058.28s]  And this current state of a lot of AI, not all AI ethicists, but the current state of like AI ethics is not that.
+[3058.28s -> 3067.48s]  and it's very much a... I can't even describe it very well, but I just complain about stuff culture
+[3067.48s -> 3075.72s]  because that gets you like clout, I guess. It's easy win. Easy win. You can always complain,
+[3075.72s -> 3083.80s]  right? Such an easy win. And if there is a team of competent,
+[3083.80s -> 3088.68s]  And progmatic people, they don't have to have the same opinions as I do, right?
+[3088.68s -> 3097.24s]  But they have to have the good of the project and the good of humanity, I guess, in mind.
+[3097.24s -> 3099.60s]  Yeah, that's cool.
+[3099.60s -> 3102.40s]  But I'm not like the king of this, right?
+[3102.40s -> 3104.88s]  I'm not the king of open assist.
+[3104.88s -> 3111.44s]  And I don't get, if people want to conglomerate and talk about the ethics of all of this
+[3111.44s -> 3118.36s]  and you know ping us with inputs like cool cool but I mean you know when we do talk about some
+[3118.36s -> 3124.28s]  of these risks around misinformation and bias I mean public accountability public awareness
+[3124.28s -> 3129.80s]  they the ethicists have done stuff like producing model cards and you know like making it clear
+[3129.80s -> 3144.58s]  what the data biases and stuff like that I mean do you do you think that's useful yes
+[3144.58s -> 3156.66s]  I mean, it's what is a model card? A model card is a readme, right? And then it has some structure to
+[3156.66s -> 3165.38s]  it. It says here are the things you could describe about your model and here are some examples. I
+[3165.38s -> 3173.58s]  think it's useful to have that as a norm in the community to say, you know, if I publish a model,
+[3173.58s -> 3176.98s]  I sort of I report what it's been trained on how it's been trained on
+[3177.50s -> 3184.52s]  And even to a degree like what I think it could do or should be used for although
+[3185.06s -> 3190.10s]  Yeah, if the structure of such a model car gets like too rigid and it's like no
+[3190.10s -> 3194.06s]  We must use we must ask these questions you get into so many ridiculous
+[3195.22s -> 3197.02s]  situations like
+[3197.02s -> 3202.02s]  You know, can this be reproduced? Well, I just I like I I
+[3202.02s -> 3217.02s]  I made sklearn.linearRegression, right? Yes, it can be. You get into situations where the questions don't address what you would actually like to express in such a thing.
+[3217.02s -> 3227.02s]  Then I think it becomes counterproductive. But as a norm to have, hey, look, if you publish something, people should be able to understand and potentially reproduce it.
+[3227.02s -> 3236.32s]  That standard we have had in papers for a long time and it's generally been a good standard to say look if you
+[3236.74s -> 3242.02s]  Write if you publish something. I must be able to from reading it understand
+[3242.42s -> 3245.58s]  What's in there and to have that as a norm in the community?
+[3247.18s -> 3249.18s]  Yeah, I'm totally fine with that
+[3249.38s -> 3250.98s]  Do you think there's any
+[3250.98s -> 3256.54s]  relationship with the Chomsky syndrome that we were talking about earlier which is this idea that we should have a very
+[3257.02s -> 3272.42s]  clear model of understanding of how these things work in society and we should be able to extrapolate and control things and that the fear is that basically this is just a complete black box and who knows what's going to happen.
+[3276.09s -> 3287.61s]  Nah, I'm good with the I'm good with the black box it keeps things exciting and interesting and I as I said I don't I don't believe this sort of run away.
+[3287.61s -> 3291.61s]  it might become, you know, very influential and so on.
+[3291.61s -> 3294.05s]  And certainly that's not very good,
+[3294.05s -> 3297.49s]  but then again, I don't know what to do about it.
+[3297.49s -> 3301.25s]  Certainly if some people sign a change.org
+[3301.25s -> 3305.29s]  moratorium petition is even if it's reached,
+[3305.29s -> 3307.45s]  it's not gonna help, right?
+[3307.45s -> 3308.69s]  What are you gonna do?
+[3308.69s -> 3311.37s]  That doesn't matter being worried about it.
+[3311.37s -> 3312.21s]  We've got a few minutes left.
+[3312.21s -> 3314.01s]  So I've got some questions from Jumbotron.
+[3314.01s -> 3315.37s]  Say hello Jumbotron.
+[3315.37s -> 3316.61s]  Hello Jumbotron.
+[3316.61s -> 3319.01s]  he's our forum administrator and he's a legend.
+[3320.05s -> 3322.09s]  Quick question, do you think all AI research
+[3322.09s -> 3324.21s]  should be open and accessible to the public?
+[3325.45s -> 3329.21s]  No, it's totally legitimate that a business
+[3329.21s -> 3332.33s]  does internal research like all companies do
+[3332.33s -> 3335.29s]  and that they then use that to make money.
+[3335.29s -> 3338.37s]  Like, that's very cool with me.
+[3338.37s -> 3341.29s]  I've never said that shouldn't be the case.
+[3341.29s -> 3343.85s]  Only that companies shouldn't do that
+[3343.85s -> 3348.85s]  but at the same time claim how open and all democratizing
+[3349.13s -> 3353.57s]  and beneficial to the common good they are.
+[3353.57s -> 3358.57s]  Okay, and you would accept that some research could lead
+[3358.57s -> 3362.17s]  to negative or unethical applications
+[3362.17s -> 3364.13s]  and might need to be restricted or?
+[3365.89s -> 3370.01s]  Yeah, I totally accept that some research can
+[3370.01s -> 3373.49s]  and will probably lead to overall negative effects
+[3373.49s -> 3377.81s]  for society or for certain individuals within society, right?
+[3377.81s -> 3382.81s]  Like the self-flying drones from any regime in the world,
+[3384.51s -> 3387.15s]  they probably, they run one of,
+[3387.15s -> 3388.49s]  they run one of,
+[3388.49s -> 3391.17s]  they certainly run some open source components
+[3391.17s -> 3393.25s]  as part of their guidance system, right?
+[3393.25s -> 3396.25s]  They maybe run a Linux kernel, like who knows.
+[3396.25s -> 3398.49s]  But I don't think the Linux kernel
+[3398.49s -> 3401.69s]  should not be fully open source and accessible
+[3401.69s -> 3410.01s]  to everyone. And I don't want anyone to be able to be the decider of, you know, the eternal
+[3410.01s -> 3418.33s]  decider of who's good enough to use the Linux kernel or not. I'd rather, I think the overall
+[3418.33s -> 3427.29s]  welfare of society and humanity is much better served by accepting that some people are
+[3427.29s -> 3433.77s]  going to do some bad things with it and then mitigating that in a different way than having
+[3433.77s -> 3444.89s]  like appointing the king of that model to decide who they deem pure hearted enough to wield it.
+[3445.69s -> 3451.37s]  Cool. What's next for ML News and your channel and are you making any more music videos with AI?
+[3451.37s -> 3474.37s]  Well, it's become, there are so many good music videos on AI now, I'm always amazed by how talented people are and how quickly they pick up sort of the new stuff and do something with it, so that's very cool, I want, as I said, I've not made too many videos because I've been extremely busy with Open Assistant.
+[3474.37s -> 3480.97s]  And I think we've also built up sort of a momentum in the direction right now
+[3480.97s -> 3483.67s]  and there are many competent people in our team.
+[3483.67s -> 3489.87s]  So I'm also looking to make a couple of more videos again, paper reviews, news,
+[3489.87s -> 3496.27s]  but also a bunch of projects which I always want to do, but then they take time, of course.
+[3496.27s -> 3501.87s]  But I'm very excited about just some of the new stuff that's possible
+[3501.87s -> 3509.39s]  and try it out and to show people a little bit of what one could do and how to have fun with these things.
+[3509.39s -> 3516.83s]  Dude, and just in closing, have you got any shout outs for people in your life or in Discord who have really helped you on the journey?
+[3516.83s -> 3530.19s]  Um, too many, like way too many to name by name, this is, I could go on like eternal lists in open assistance specifically.
+[3530.19s -> 3548.19s]  Andreas Köpp has been extremely influential in that, he like just organizing things but also coding things himself, but also like also all the all the other men, as I said, if I start listing people, I'm going to miss someone and I don't want to do that.
+[3548.19s -> 3577.19s]  So I don't want to start listing people, but then I think, well, I really want to list the people, it's an eternal conundrum, so like to anyone who's ever had any part of helping me, or given feedback, or even like been kind of a dick, I appreciate it, and yeah, it's been amazing, the amount of help and input you get from good willed people.
+[3577.19s -> 3584.19s]  Yeah. Yeah. Communities are amazing. So join Yannick's Discord, join our Discord, open assistant Discord.
+[3584.19s -> 3590.19s]  Dr. Kiltcher, thank you so much. This has been an absolute pleasure, sir.
+[3590.19s -> 3591.19s]  Thanks for having me.
+========================================
+Detected language 'en' with probability 1.000000
+
+run time =71.30413460731506
+
+Completed srt: OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3.srt
+Completed: C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//OPENASSISTANT+TAKES+ON+CHATGPT-TFa539R09EQ.mp3

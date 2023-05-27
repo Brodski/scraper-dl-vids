@@ -2,10 +2,26 @@
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 
+##############################################
+# - Build
+# docker build -t coolimage:3.5 .
+# - WINDOWS
+# docker run -v /host/path:/container/path -it coolimage:latest  /bin/bash
+# docker run -v C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\outputz-temp:/app/scraper-dl-vids/docker-benchmarks -it coolimage:3.5  /bin/bash
+# - LINUX
+# mkdir -p /var/log/benchy
+# docker run -v /var/log/benchy:/app/scraper-dl-vids/docker-benchmarks <image_name>
+###############################################
 
-# COPY . .
+ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
+ENV BARBARA="BarbaraWalters.mp3"
+ENV GPT_PODCAST="OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
 
-# # EXPOSE 4004
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
 
 # ##########
 # # Python #
@@ -37,6 +53,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 # # Project #
 # ###########
 # 1st RUN to fix a goofy error -> https://github.com/docker/docs/issues/13980
+# https://wiki.debian.org/SourcesList
 WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata  \
     && echo "deb http://deb.debian.org/debian bullseye main" >> /etc/apt/sources.list \
@@ -45,9 +62,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata  \
     && echo "deb-src http://deb.debian.org/debian-security/ bullseye-security main" >> /etc/apt/sources.list \
     && echo "deb http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list \
     && echo "deb-src http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list
-
 RUN apt install git-all -y \
-      && git clone https://github.com/Brodski/scraper-dl-vids.git \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git \
     #   && cd scraper-dl-vids/ \
     #   && python -m pip install virtualenv \
     #   && python -m virtualenv venv \
@@ -56,8 +72,39 @@ RUN apt install git-all -y \
       && pip install -U openai-whisper 
     #   && deactivate
 
-# https://wiki.debian.org/SourcesList
-# dpkg --configure -a
+
+# For testing
+WORKDIR /app/scraper-dl-vids/audio2Text/assets/raw
+RUN  wget https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/testz/OPENASSISTANT+TAKES+ON+CHATGPT.mp3
+
+
+
+
+WORKDIR /app/scraper-dl-vids/audio2Text
+RUN mkdir -p $BENCH_OUTPUT
+# CMD echo "My BENCH_OUTPUTZ: $BENCH_OUTPUT"
+RUN echo "gpt $GPT_PODCAST"
+RUN echo "gpt $GPT_PODCAST"
+CMD python ./gogoWhisperFAST.py -f    "$BARBARA" -m "tiny"      > $BENCH_OUTPUT/tiny-barbara.txt  2>&1 \
+    && python ./gogoWhisperFAST.py -f "$BARBARA" -m "small"     > $BENCH_OUTPUT/small-barbara.txt 2>&1 \
+    && python ./gogoWhisperFAST.py -f "$GPT_PODCAST" -m "tiny"  > $BENCH_OUTPUT/tiny-chatgpt.txt  2>&1 \
+    && python ./gogoWhisperFAST.py -f "$GPT_PODCAST" -m "small" > $BENCH_OUTPUT/small-chatgpt.txt 2>&1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #########
 # cuDNN #
@@ -76,5 +123,3 @@ RUN apt install git-all -y \
 #     && apt-get install libcudnn8=8.9.1.23-1+cuda12.1 \
 #     && apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 \
 #     && rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
-
-CMD ['echo' 'yeah']

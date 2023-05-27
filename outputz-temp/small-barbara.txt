@@ -1,0 +1,66 @@
+/usr/local/lib/python3.10/site-packages/whisper/timing.py:58: NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.
+  def backtrace(trace: np.ndarray):
+sys.argv
+['./gogoWhisperFAST.py', '-f', 'BarbaraWalters.mp3', '-m', 'small']
+BarbaraWalters.mp3
+BarbaraWalters.mp3
+BarbaraWalters.mp3
+Downloading (…)972fe5dc/config.json:   0%|          | 0.00/2.37k [00:00<?, ?B/s]Downloading (…)972fe5dc/config.json: 100%|██████████| 2.37k/2.37k [00:00<00:00, 16.9MB/s]
+Downloading model.bin:   0%|          | 0.00/484M [00:00<?, ?B/s]Downloading model.bin:   2%|▏         | 10.5M/484M [00:00<00:07, 62.6MB/s]Downloading model.bin:   7%|▋         | 31.5M/484M [00:00<00:04, 97.1MB/s]
+Downloading (…)fe5dc/vocabulary.txt:   0%|          | 0.00/460k [00:00<?, ?B/s][A
+
+Downloading (…)fe5dc/tokenizer.json:   0%|          | 0.00/2.20M [00:00<?, ?B/s][A[A
+Downloading (…)fe5dc/vocabulary.txt: 100%|██████████| 460k/460k [00:00<00:00, 3.11MB/s][ADownloading (…)fe5dc/vocabulary.txt: 100%|██████████| 460k/460k [00:00<00:00, 3.06MB/s]
+Downloading model.bin:  11%|█         | 52.4M/484M [00:00<00:04, 106MB/s] 
+
+Downloading (…)fe5dc/tokenizer.json: 100%|██████████| 2.20M/2.20M [00:00<00:00, 7.95MB/s][A[ADownloading (…)fe5dc/tokenizer.json: 100%|██████████| 2.20M/2.20M [00:00<00:00, 7.85MB/s]
+Downloading model.bin:  15%|█▌        | 73.4M/484M [00:00<00:03, 106MB/s]Downloading model.bin:  20%|█▉        | 94.4M/484M [00:00<00:03, 106MB/s]Downloading model.bin:  24%|██▍       | 115M/484M [00:01<00:03, 110MB/s] Downloading model.bin:  28%|██▊       | 136M/484M [00:01<00:03, 113MB/s]Downloading model.bin:  33%|███▎      | 157M/484M [00:01<00:02, 115MB/s]Downloading model.bin:  37%|███▋      | 178M/484M [00:01<00:02, 117MB/s]Downloading model.bin:  41%|████      | 199M/484M [00:01<00:02, 117MB/s]Downloading model.bin:  46%|████▌     | 220M/484M [00:01<00:02, 118MB/s]Downloading model.bin:  50%|████▉     | 241M/484M [00:02<00:02, 119MB/s]Downloading model.bin:  54%|█████▍    | 262M/484M [00:02<00:01, 119MB/s]Downloading model.bin:  59%|█████▊    | 283M/484M [00:02<00:01, 119MB/s]Downloading model.bin:  63%|██████▎   | 304M/484M [00:02<00:01, 119MB/s]Downloading model.bin:  67%|██████▋   | 325M/484M [00:02<00:01, 113MB/s]Downloading model.bin:  72%|███████▏  | 346M/484M [00:03<00:01, 115MB/s]Downloading model.bin:  76%|███████▌  | 367M/484M [00:03<00:01, 116MB/s]Downloading model.bin:  80%|████████  | 388M/484M [00:03<00:00, 117MB/s]Downloading model.bin:  85%|████████▍ | 409M/484M [00:03<00:00, 118MB/s]Downloading model.bin:  89%|████████▉ | 430M/484M [00:03<00:00, 119MB/s]Downloading model.bin:  93%|█████████▎| 451M/484M [00:03<00:00, 119MB/s]Downloading model.bin:  98%|█████████▊| 472M/484M [00:04<00:00, 119MB/s]Downloading model.bin: 100%|██████████| 484M/484M [00:04<00:00, 115MB/s]
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3
+C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3
+/app/scraper-dl-vids/audio2Text/assets/raw/BarbaraWalters.mp3
+/app/scraper-dl-vids/audio2Text/assets/raw/BarbaraWalters.mp3
+torch.cuda.is_available(): False
+start!
+Detected language 'en' with probability 1.000000
+[0.00s -> 5.36s]  We want to take a moment to pay tribute to Barbara Walter. She was a trail-blazing journalist
+[5.36s -> 10.16s]  who spent more than half a century in broadcast news. Throughout her iconic career, Barbara
+[10.16s -> 15.20s]  Walter shattered glass ceiling after glass ceiling, breaking barriers in an industry once dominated
+[15.20s -> 20.08s]  by men, and paving the way for today's female journalist. She was the first-ever woman
+[20.08s -> 25.92s]  to co-host NBC's Today Show, and later the first woman to anchor a network evening news
+[25.92s -> 29.60s]  broadcast. In a tweet on Saturday, President Biden said quote,
+[29.60s -> 33.36s]  Barbara Walters has always been an example of bravery and truth
+[33.36s -> 38.24s]  breaking barriers while driving our nation forward. Her legacy will continue
+[38.24s -> 42.88s]  as an inspiration for all journalists. Barbara Walters conducted hundreds of
+[42.88s -> 46.40s]  interviews with newsmakers from the world of politics, sports and
+[46.40s -> 50.32s]  entertainment. She was famous for asking tough questions and sometimes
+[50.32s -> 53.60s]  uncomfortable questions and forgetting some of the world's most famous
+[53.60s -> 58.24s]  people to reveal parts of themselves the public had not seen before. Here she was
+[58.24s -> 64.96s]  on Meet the Press back in February 1976, pressing then the Prime Minister of Israel.
+[64.96s -> 69.04s]  We'll have the first questions now from Barbara Walters of NBC News.
+[69.04s -> 73.84s]  Mr. Prime Minister, you have repeatedly said in your speeches that a militarily strong
+[73.84s -> 78.48s]  Israel is necessary to maintain the peace. Now the Pentagon and the CIA have reported
+[78.48s -> 82.80s]  after their military analysis that Israel is more than strong enough to deter any
+[82.80s -> 87.62s]  our progression. Were you able to convince Congress and President Ford, those who are
+[87.62s -> 92.78s]  responsible for deciding military aid to Israel, that you are right and that the CIA and the
+[92.78s -> 94.18s]  Pentagon are wrong?
+[94.18s -> 100.62s]  Well, first I would like to thank the CIA and the Pentagon for complimenting Israel for
+[100.62s -> 108.54s]  its military strengths. But I believe that we need more than compliments. We need hardware.
+[108.54s -> 112.42s]  Mr. Prime Minister, we've heard these arguments now back and forth for a year. And I'd
+[112.42s -> 116.92s]  I'd like to get back to my very first question, which was how do you expect to have a Geneva
+[116.92s -> 119.10s]  conference reconvened without the PLO?
+[119.10s -> 122.90s]  Can you give us any sign, any hope, any direction?
+[122.90s -> 128.74s]  Can you realistically be specific about one new action that's going to break the stalemate,
+[128.74s -> 132.18s]  the same conversation back and forth that we have heard from the year?
+[132.18s -> 135.42s]  Has anything happened in this week or are things basically the way they were before you
+[135.42s -> 136.42s]  came to this country?
+[136.42s -> 141.58s]  I believe that there are basically two options how to move towards peace
+[144.52s -> 150.74s]  Incredible to watch her do her work Barbara Walters died on Friday in New York City. She was 93 years old
+[154.55s -> 161.39s]  Thanks for watching our YouTube channel follow today's top stories and breaking news by downloading the NBC News app
+========================================
+Detected language 'en' with probability 1.000000
+
+run time =9.546882152557373
+
+Completed srt: BarbaraWalters.mp3.srt
+Completed: C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3

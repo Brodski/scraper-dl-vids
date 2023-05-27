@@ -2,6 +2,11 @@
 # python -m pip install faster-whisper
 # python -m pip install openai-whisper
 
+# $ python ./gogoWhisperFAST.py -f "BarbaraWalters.mp3" -m "tiny" > tiny-barbara.txt 2>&1   &&
+# $ python ./gogoWhisperFAST.py -f "BarbaraWalters.mp3" -m "small" > small-barbara.txt 2>&1    &&
+# $ python ./gogoWhisperFAST.py -f "OPENASSISTANT+TAKES+ON+CHATGPT.mp3" -m "tiny" > tiny-chatgpt.txt 2>&1    &&
+# $ python ./gogoWhisperFAST.py -f "OPENASSISTANT+TAKES+ON+CHATGPT.mp3" -m "small" > small-chatgpt.txt 2>&1   
+
 import faster_whisper
 # import whisper.utils
 from whisper.utils import get_writer
@@ -10,6 +15,8 @@ import os
 import time
 import torch
 import sys
+import argparse
+from pathlib import Path
 
 # Should be env vairable for local or micro
 ASSET_DIR_RELATIVE = "./assets/raw/"
@@ -23,26 +30,14 @@ MAIN_DIR = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 model_size = "tiny"
 
 
-print ("sys.argv")
-print (sys.argv)
-isSmall = 'small' in sys.argv
-isMed = 'med' in sys.argv
-isLarge = 'large' in sys.argv
-isTiny = 'tiny' in sys.argv
-if isSmall:
-    model_size = "small"
-if isMed:
-    model_size = "medium"
-if isTiny:
-    model_size = "tiny"
-if isLarge:
-    model_size = "large-v2"
-    
+######
+# DEFAULT
+######
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp4"
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
 # filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
 
-filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ.mp3"
+filename = "OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
 #filename = "Adc+Academy+-+Informative+Adc+Stream+-+GrandMaster+today？+[v1792628012].mp3"
 filename = "BarbaraWalters.mp3"
 audio_basename = os.path.basename(ASSET_DIR_RELATIVE + '/' + filename)
@@ -50,10 +45,36 @@ print(audio_basename)
 print(audio_basename)
 print(audio_basename)
 
+########
+parser = argparse.ArgumentParser()
+parser.add_argument('-f', "--file", help="file to use")
+parser.add_argument('-m', "--model", help="model: tiny, base, small, med, large-v2, tiny.en, base.en, ... https://github.com/openai/whisper#available-models-and-languages  ||  https://huggingface.co/openai/whisper-large")
+args = parser.parse_args()
+
+if args.model:
+    model_size = args.model
+if args.file:
+    filename = args.file
+    # filename = Path(args.file)
+    
+print ("sys.argv")
+print (sys.argv)
+print ("args")
+print ("args")
+print ("args")
+print (args)
+print ("args.file")
+print (args.file)
+print (args.file)
+
+
+########
+## MODELS
+########
 # Run on GPU with FP16
 # model = WhisperModel(model_size, device="cuda", compute_type="float16")
 # model = faster_whisper.WhisperModel(model_size, compute_type="int8")
-#model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
+# model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
 # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default
 model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
 audio_path = "{}/{}/{}".format(MAIN_DIR, ASSET_DIR_RELATIVE, filename)

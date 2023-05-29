@@ -25,7 +25,7 @@ def getTopChannelsAndSave():
 
     relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
     relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
-    initYtdlAudio(channels, False)
+    initYtdlAudio(relavent_data, initYtdlAudio=False)
     return relavent_data
     # return json_data
 ####################################################
@@ -60,7 +60,7 @@ def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
 # calls yt.addTodoDownlaods(channels)
 # calls yt.scrape4VidHref(^)
 # calls yt.addTodoDownloads(^)
-def initYtdlAudio(channels, isDebug = False):
+def initYtdlAudio(channels, *, isDebug=False):
     # TODO probably need some interface & models for the scrapped-data vs ytdl-data
     chnLimit = 3 if isDebug else 99;
     vidLimit = 3 if isDebug else 10;

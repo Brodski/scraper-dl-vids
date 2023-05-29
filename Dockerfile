@@ -1,6 +1,6 @@
-# FROM python:3.10.11-bullseye
-FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:12.0.0-devel-ubuntu20.04 
 
+# Need devel for cudnn https://github.com/NVIDIA/nvidia-docker/issues/1160#issuecomment-568814500
 
 ##############################################
 # - Build
@@ -12,7 +12,38 @@ FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 # mkdir -p /var/log/benchy
 # docker run -v /var/log/benchy:/app/scraper-dl-vids/docker-benchmarks <image_name>
 ###############################################
+# https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide
+# https://docs.docker.com/engine/install/
+#############################################
+# RUN THIS ON HOST !!!
+#############################################
+# install docker
+# for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do apt-get remove $pkg; done &&
+# apt-get update &&
+# apt-get install ca-certificates curl gnupg -y &&
+# install -m 0755 -d /etc/apt/keyrings &&
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg |  gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
+# chmod a+r /etc/apt/keyrings/docker.gpg &&
+# echo \
+#   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+#   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && 
+# apt-get update &&
+# apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+# # install nvidia container toolkit
+# systemctl --now enable docker 
+# distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+#       && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+#       && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+#             sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+#             tee /etc/apt/sources.list.d/nvidia-container-toolkit.list &&
+# apt-get update &&
+# apt-get install -y nvidia-container-toolkit &&
+# nvidia-ctk runtime configure --runtime=docker &&
+# systemctl restart docker 
+
+##############################################
 ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
 ENV BARBARA="BarbaraWalters.mp3"
 ENV GPT_PODCAST="OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
@@ -83,8 +114,19 @@ RUN  wget https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s
 WORKDIR /app/scraper-dl-vids/audio2Text
 RUN mkdir -p $BENCH_OUTPUT
 # CMD echo "My BENCH_OUTPUTZ: $BENCH_OUTPUT"
-RUN echo "gpt $GPT_PODCAST"
-RUN echo "gpt $GPT_PODCAST"
+RUN echo "OUTPUT TO $BENCH_OUTPUT"
+RUN echo "OUTPUT TO $BENCH_OUTPUT"
+RUN echo "OUTPUT TO $BENCH_OUTPUT"
+RUN echo "OUTPUT TO $BENCH_OUTPUT"
+
+# https://github.com/NVIDIA/nvidia-docker/issues/1644
+RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+# RUN export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+# RUN export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+
 CMD python ./gogoWhisperFAST.py -f    "$BARBARA" -m "tiny"      > $BENCH_OUTPUT/tiny-barbara.txt  2>&1 \
     && python ./gogoWhisperFAST.py -f "$BARBARA" -m "small"     > $BENCH_OUTPUT/small-barbara.txt 2>&1 \
     && python ./gogoWhisperFAST.py -f "$GPT_PODCAST" -m "tiny"  > $BENCH_OUTPUT/tiny-chatgpt.txt  2>&1 \

@@ -37,7 +37,6 @@ source venv/bin/activate &&
 sudo python -m pip install faster-whisper &&
 sudo python -m pip install -U openai-whisper &&
 
-#  DEBIAN
 # CUDNN
 cd /root/ &&
 curl 'https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.1/local_installers/12.x/cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb/' \
@@ -57,13 +56,6 @@ rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb &&
 #OPTIONAL 
 sudo apt-get install libcudnn8-samples=8.x.x.x-1+cudaX.Y
 
-# CUDA
-wget https://developer.download.nvidia.com/compute/cuda/12.1.1/local_installers/cuda-repo-debian11-12-1-local_12.1.1-530.30.02-1_amd64.deb &&
-sudo dpkg -i cuda-repo-debian11-12-1-local_12.1.1-530.30.02-1_amd64.deb &&
-sudo cp /var/cuda-repo-debian11-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/ &&
-sudo add-apt-repository contrib &&
-sudo apt-get update &&
-sudo apt-get -y install cuda &&
 
 ##############################################################################
 ##############################################################################
@@ -72,20 +64,6 @@ sudo apt-get -y install cuda &&
 ##############################################################################
 ##############################################################################
 ##############################################################################
-# Vultr
-  # Dvd
-  ssh titus@66.135.28.25 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-dvd"
-  # classic deb
-  ssh root@207.148.28.23 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-  # Ubuntu
-  # a16
-  ssh root@149.28.50.173 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-  # a40
-  ssh root@66.135.29.165 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-  ssh root@207.246.124.161 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-
-
-
 # vast.ai
 
 ssh -p 40002 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
@@ -93,16 +71,3 @@ ssh -p 40002 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGre
 scp -P 40002 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh" root@75.191.38.75:/root/scraper-dl-vids/audio2Text/tinygptpod.txt .
 
 ssh -p 43868 root@194.44.114.10 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-
-#
- debian-classic
- ssh root@207.246.124.161 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
- no dock
- ssh root@45.77.102.127 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
- ssh titus@66.135.28.25 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-dvd"
-
- Get-PSReadLineKeyHandler
- Set-PSReadLineKeyHandler -Chord F4 -ScriptBlock { [Microsoft.PowerShell.PSConsoleReadLine]::ScrollDisplayUp() }
-
- Debian mirros : https://www.itzgeek.com/how-tos/linux/debian/setup-debian-11-official-repository-in-sources-list-etc-apt-sources-list.html
- set ssh keys in ~/.ssh/authorized_keys

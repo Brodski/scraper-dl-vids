@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint
 from flask import jsonify
 # import asyncio
@@ -59,7 +60,9 @@ def initYtdlAudio_Route():
 
 @everything_bp.route('/ytdl/test/downloadTwtvVid_FIXED')
 def downloadTwtvVid_FIXED_Route():
-    return ytdl.downloadTwtvVid("/videos/5057810")
+    x = ytdl.downloadTwtvVid("/videos/5057810")
+    return str(x)
+    # return str(x)
     # return ytdl.downloadTwtvVid("/videos/28138895")
 
 @everything_bp.route('/ytdl/getAlreadyDownloadedS3_TEST')

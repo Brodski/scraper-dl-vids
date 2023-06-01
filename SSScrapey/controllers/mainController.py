@@ -59,7 +59,7 @@ def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
 # TODO                                              #
 # calls yt.addTodoDownlaods(channels)
 # calls yt.scrape4VidHref(^)
-# calls yt.addTodoDownloads(^)
+# calls yt.addTodoDownloadsS3(^)
 def initYtdlAudio(channels, *, isDebug=False):
     # TODO probably need some interface & models for the scrapped-data vs ytdl-data
     chnLimit = 3 if isDebug else 99;
@@ -68,20 +68,17 @@ def initYtdlAudio(channels, *, isDebug=False):
         scrapped_channels = mocks.initHrefsData.getHrefsData()
     else:
         scrapped_channels = seleniumController.scrape4VidHref(channels, True) # returns /mocks/initHrefsData.py
-        scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
+        # scrapped_channels_with_todos = yt.addTodoDownloadsS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
 
-    scrapped_channels_with_todos = yt.addTodoDownloads(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
+    scrapped_channels_with_todos = yt.addTodoDownloadsS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
     # scrapped_channels_with_todos -> returns: [ {
     #   'displayname': 'LoLGeranimo', 
     #   'url': 'lolgeranimo', 
     #   'links': ['/videos/5057810', '/videos/28138895'], 
     #   'todos': ['/videos/5057810', '/videos/28138895']
     #  }, {
-    #   'displayname': 'LCK', 
-    #   'url': 'lck', 
-    #   'links': ['/videos/576354726'], 
-    #   'todos': ['/videos/576354726']
-    #  }
+    #     ...
+    #   }
     # ]
 
 

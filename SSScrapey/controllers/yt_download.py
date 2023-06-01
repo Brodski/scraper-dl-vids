@@ -51,21 +51,25 @@ def downloadTwtvVid(link:str, isDownload=True):
     print ("000000000000                  00000000000000000")
     ydl_opts = {
         # format --> https://github.com/yt-dlp/yt-dlp#sorting-formats
-        'format': 'Audio_Only/600/250/bestaudio/worstvideo/160p30',
+        # 'format': 'worstaudio/Audio_Only/600/250/bestaudio/worstvideo/160p30',
         "outtmpl": output_template,
-        "quiet": True,
-        # "verbose": True,
-        # "concurrent_fragment_downloads": 8
-        'keepvideo': True,
-        "addmetadata": True,
-        "addchapters": True,
+        "extractaudio": True,
+        "format": "worst",
+        "audioformat": "mp3",
+        # "audioformat": "worst",
+        # "listformats": True,
+        # "audioformat": "mp3",
+        # "quiet": True,
+        "verbose": True,
         "parse_metadata" "requested_downloads.filepath:%(filepath):" 
+        "overwrites": True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
-        },],
-        "overwrites": True,
-        # 'exec_cmd': '-filter:a "atempo=1.5"' #doesnt mfo work
+        #     'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #     # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #                                 #https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
+        }],
     }
 
     start_time = time.time()
@@ -81,24 +85,40 @@ def downloadTwtvVid(link:str, isDownload=True):
     inFile = "file:" + filepath
     extension = inFile.split(".")[-1]
     outFileFAST =  "".join(inFile.split(".")[:-1]) + "-fast." + extension
+    outFile =  "".join(inFile.split(".")[:-1]) + "-out."+ extension
+    print("")
+    print("")
+    print("")
     print("getMeta vidUrl=" + vidUrl)
     print("getMeta vid.output= " + output_template)
     print("filepath="+filepath)
     print("inFile="+inFile)
-    print("outFileFAST="+outFileFAST)
+    print("outFile="+outFile)
+    print("")
+    print("")
+    print("")
 
+    ffmpeg_command = [ 'ffmpeg', '-i', inFile, '-q:a', '0', '-map', 'a', inFile+'.mp3' ]
+    # _execFFmpegCmd(ffmpeg_command)
+    ffmpeg_command = [
+        # 'ffmpeg', '-version'
+        # 'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
+        'ffmpeg', '-y', '-i',  inFile+'.mp3', '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '33K', '-vbr', 'constrained', outFile
+    ]
+    # _execFFmpegCmd(ffmpeg_command)
+    
 
     # try:
     #     print("starting subprocess!")
-    #     ffmpeg_command = [
-    #         # 'ffmpeg', '-version'
-    #         'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
-    #     ]
-    #     print("ffmpeg_command=" + "".join(ffmpeg_command))
+    #     print("ffmpeg_command=" + " ".join(ffmpeg_command))
+    #     print("ffmpeg_command=" + str(ffmpeg_command))
     #     stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     #     print("FFMPEG PIPE COMPLETE")
+    #     print()
     #     print(stdoutput)
+    #     print()
     #     print(stderr)
+    #     print()
     #     print(returncode)
     #     print()
     # except subprocess.CalledProcessError as e:
@@ -108,7 +128,7 @@ def downloadTwtvVid(link:str, isDownload=True):
     time_diff = end_time - start_time
     
     print('--------------------x')
-    print("Download + FFMpeg speedup = ", str(time_diff))
+    print("Download + FFMpeg cmd = ", str(time_diff))
     print("***********************************")
     # print(meta)
     return meta
@@ -137,8 +157,25 @@ def downloadTwtvVid(link:str, isDownload=True):
 #             queueOfLinks.append(link)
     
     
-# def bigBoyChannelDownloader2(queueOfLinks):
-#     for link in queueOfLinks:
+def _execFFmpegCmd(ffmpeg_command):
+    try:
+        print("starting subprocess!")
+        print("ffmpeg_command=" + " ".join(ffmpeg_command))
+        print("ffmpeg_command=" + str(ffmpeg_command))
+        stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        print("FFMPEG PIPE COMPLETE")
+        print()
+        print(stdoutput)
+        print()
+        print(stderr)
+        print()
+        print(returncode)
+        print()
+        return True
+    except subprocess.CalledProcessError as e:
+        print("Failed to run ffmpeg command:")
+        print(e)
+        return False
 
 # TODO env debugg variables
 # Download X vids from Y channels
@@ -336,8 +373,8 @@ def getAlreadyDownloadedS3_TEST(username):
         abort(404, description="Username not found")
 
 # Make sure we havent already DL the vid
-def addTodoDownloads(scrapped_channels):
-    print("addTodoDownloads - start")
+def addTodoDownloadsS3(scrapped_channels):
+    print("addTodoDownloadsS3 - start")
     print("Making sure we havent already DL the vid")
     # todo_downloads_objlist = []
     for todo in scrapped_channels:

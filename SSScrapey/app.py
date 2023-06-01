@@ -53,6 +53,7 @@ def home():
             <li><a href="/yo">/yo (Hello World)</a></li>
             <li><a href="/test/yt1"> /test/yt1 hard coded (get meta)  </a></li>
             <li><a href="/test/yt2"> /test/yt2 hard coded (dl from arr of vids) </a></li>
+            <li><a href="/test/yt21"> /test/yt2 twitch audio dl low quality </a></li>
             <li><a href="/test/yt3"> /test/yt3 hard coded (dl from arr of vids) </a></li>
             
             <li><a href="/test/doS3Stuff"> /test/doS3Stuff  </a></li>
@@ -72,7 +73,7 @@ def home():
         <li><a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a></li>
         <ul>
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
-            <li> addTodoDownloads: /ytdl/addTodoDownloads (dummy) </li>
+            <li> addTodoDownloadsS3: /ytdl/addTodoDownloadsS3 (dummy) </li>
             <li> bigBoyChannelDownloader: /ytdl/bigBoyChannelDownloader (dummy) </li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>

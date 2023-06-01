@@ -19,3 +19,12 @@ node_modules/
 
 !BarbaraWalters.mp3
 !OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ.mp3
+
+
+*.m4a
+*.ogg
+*.ini
+*.opus
+*.m4a
+*.rar
+*.zip

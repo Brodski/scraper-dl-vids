@@ -59,6 +59,24 @@ scriptPauseVidsJs = """
         }
     }
 """
+# When multi-day marathon
+def _isVidFinished(inner_text):
+    # inner_text = tag.get_text(separator="|")
+    print("SOUP - get_text() =" + inner_text )
+    dayz = None
+    broadcast_time = None
+    for i, item in enumerate(inner_text.split("|")):
+        print(item)
+        print(len(item))
+        if "days" in item:
+            dayz = item
+        if len(item) >=8 and item.count(":") == 2:
+            broadcast_time = item.split(":")[0]
+    if broadcast_time and dayz:
+            days_num = int( dayz.split("days")[0].strip() )
+            broadcast_hours = broadcast_time.split(":")[0]
+            if (days_num*24) < broadcast_hours:
+                print("NOT KOSHER!!!!!!" )
 
 def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
     channelMax = 99 # TODO 99
@@ -98,10 +116,11 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
         vids = soup.select("a[href^='/videos/']:has(img)")
         allHrefs = []
         for tag in vids:
-            print("SOUP - get_text() =" + tag.get_text())
-            txt = tag.get_text().lower()
+            inner_text = tag.get_text(separator="|").lower()
+            print("SOUP - get_text() =" + inner_text )
             # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
-            if ( not (("hours" in txt) or ("minutes" in txt))):
+            # TODO bugs may occure for marathon vids (_isVidFinished)
+            if ( not (("hours" in inner_text) or ("minutes" in inner_text))):
                 allHrefs.append(tag['href'])
             else:
                 print ("skipping a['href'] @ text=" + tag['href'])

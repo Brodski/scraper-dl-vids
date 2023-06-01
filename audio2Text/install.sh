@@ -93,7 +93,7 @@ ssh -p 40002 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGre
 scp -P 40002 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh" root@75.191.38.75:/root/scraper-dl-vids/audio2Text/tinygptpod.txt .
 
 ssh -p 43868 root@194.44.114.10 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-
+ssh -p 50660 root@142.112.39.215 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #
  debian-classic
  ssh root@207.246.124.161 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"

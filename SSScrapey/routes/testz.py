@@ -86,19 +86,23 @@ def test_editor():
 # This is exactly the same as above but with commented out stuff for reference
 @test_bp.route('/yt2')
 def test_yt_dlp():
+    vidUrl = 'https://www.twitch.tv/videos/1792628012' # lolgera
+    vidUrl = 'https://www.youtube.com/watch?v=qOoe3ZpciI0' # AI scared
+    # vidUrl = 'https://www.twitch.tv/videos/1767827635' # short gera
     ydl_opts = {
         # 'format': 'worstvideo+bestaudio',
         # 'format': '(worstvideo+bestaudio)',
+        'format': '599',
         'output': '{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path),
         "verbose": True,
         # "listformats": True,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            # 'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
-            # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
-                                        # https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
-        }],
+        # 'postprocessors': [{
+        #     'key': 'FFmpegExtractAudio',
+        #     'preferredcodec': 'mp3',
+        #     # 'preferredquality': '0', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #     # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #                                 # https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
+        # }],
         # 'logger': MyLogger(),
         # 'progress_hooks': [my_hook],
     }
@@ -106,7 +110,35 @@ def test_yt_dlp():
         ydl.download([vidUrl])
     return "done"
 
-
+#######################
+# https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
+#  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
+#  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
+#  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
+# This is exactly the same as above but with commented out stuff for reference
+@test_bp.route('/yt21')
+def test_yt_dlp2():
+    vidUrl = 'https://www.twitch.tv/videos/1792628012' # lolgera
+    # vidUrl = 'https://www.youtube.com/watch?v=qOoe3ZpciI0' # AI scared
+    # vidUrl = 'https://www.youtube.com/watch?v=iTQOIMSwuOc' # music
+    # vidUrl = 'https://www.twitch.tv/videos/1767827635' # short gera
+    ydl_opts = {
+        'format': 'worstaudio/Audio_Only/600/250',
+        # 'output': '{}/%(title)s-%(format_id)s-%(format)s-%(id)s.%(ext)s'.format(current_app.root_path),
+        'output': '%(title)s-%(format_id)s-%(format)s-%(id)s.%(ext)s',
+        "verbose": True,
+        # "listformats": True,
+        # 'postprocessors': [{
+        #     'key': 'FFmpegExtractAudio',
+        #     'preferredcodec': 'vorbis',
+        #     'preferredquality': '10', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #     # 'preferredquality': '192', #https://trac.ffmpeg.org/wiki/Encode/MP3
+        #                                 # https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
+        # }]
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([vidUrl])
+    return "done"
 
 
 

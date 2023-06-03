@@ -115,6 +115,9 @@ def test_yt_dlp():
 #  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
 #  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
 #  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
+#
+#  yt-dlp https://www.twitch.tv/videos/5057810 -x --audio-format mp3 --format "worstaudio/Audio_only"
+#
 # This is exactly the same as above but with commented out stuff for reference
 @test_bp.route('/yt21')
 def test_yt_dlp2():

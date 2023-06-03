@@ -73,17 +73,20 @@ def home():
         <li><a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a></li>
         <ul>
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
-            <li> addTodoDownloadsS3: /ytdl/addTodoDownloadsS3 (dummy) </li>
+            <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>
             <li> bigBoyChannelDownloader: /ytdl/bigBoyChannelDownloader (dummy) </li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
                 <li> /ytdl/downloadTwtvVid (dummy) </li>
-                
-
             </ul>
-
         </ul>
+        <li><a href="/s3/updateSpider"> /s3/updateSpider </a></li>
+        <ul>
+            <li> </li>
+        </ul>
+
         <hr/>
+
 
 
         <li> Init Scrape (part 2, find vids) </li>

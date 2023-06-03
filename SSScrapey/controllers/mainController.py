@@ -1,4 +1,4 @@
-from controllers.yt_download import uploadAudioToS3
+from controllers.yt_download import uploadAudioToS3, updateScrapeHistory
 import controllers.seleniumController as seleniumController
 import controllers.rankingController as rankingController
 import mocks.initScrapData
@@ -7,11 +7,18 @@ import mocks.ytdlObjMetaDataList
 import controllers.yt_download as yt
 import datetime
 import json
+import boto3
 # from flask import jsonify, abort
 
 
 
+CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
+directory_name = 'mydirectory' # this directory legit exists in this bucket ^
+directory_name_real = "channels/ranking/raw"
+S3_ALREADY_DL_KEYBASE = 'channels/scrapped/'
 S3_CAPTIONS_KEYBASE = 'channels/captions/'
+# S3_ALREADY_DL_KEY = 'channels/scrapped/lolgeranimo/2023-04-01.json'
 
 
 ####################################################
@@ -59,18 +66,22 @@ def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
 # TODO                                              #
 # calls yt.addTodoDownlaods(channels)
 # calls yt.scrape4VidHref(^)
-# calls yt.addTodoDownloadsS3(^)
+# calls yt.addTodoListS3(^)
 def initYtdlAudio(channels, *, isDebug=False):
+    print ("00000000000000                 00000000000000000")
+    print ("00000000000000  initYtdlAudio  00000000000000000")
+    print ("00000000000000                 00000000000000000")
     # TODO probably need some interface & models for the scrapped-data vs ytdl-data
     chnLimit = 3 if isDebug else 99;
     vidLimit = 3 if isDebug else 10;
     if isDebug:
+        print("    (initYtdlAudio) Getting mock channels")
         scrapped_channels = mocks.initHrefsData.getHrefsData()
     else:
+        print("    (initYtdlAudio) Getting IRL channels ")
         scrapped_channels = seleniumController.scrape4VidHref(channels, True) # returns /mocks/initHrefsData.py
-        # scrapped_channels_with_todos = yt.addTodoDownloadsS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
 
-    scrapped_channels_with_todos = yt.addTodoDownloadsS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
+    scrapped_channels_with_todos = yt.addTodoListS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
     # scrapped_channels_with_todos -> returns: [ {
     #   'displayname': 'LoLGeranimo', 
     #   'url': 'lolgeranimo', 
@@ -80,12 +91,8 @@ def initYtdlAudio(channels, *, isDebug=False):
     #     ...
     #   }
     # ]
-
-
-    print ("scrapped_channels_with_todos")
-    print ("scrapped_channels_with_todos")
-    print ("scrapped_channels_with_todos")
-    print (scrapped_channels_with_todos)
+    print ("     (initYtdlAudio) scrapped_channels_with_todos=")
+    print (str(scrapped_channels_with_todos))
     print ()
     print ()
     print ()
@@ -96,19 +103,19 @@ def initYtdlAudio(channels, *, isDebug=False):
     print("++++++++++++++++++++++++++++++++++")
     print("++++++++++++++++++++++++++++++++++")
     try:
-        print(json.dumps(metadata_Ytdl_list.__dict__))
+        # print(json.dumps(metadata_Ytdl_list.__dict__))
+        print(str(metadata_Ytdl_list.__dict__))
     except:
-        print('failed dump')
-    for yt_meta in metadata_Ytdl_list:
+        print('    (initYtdlAudio) failed dump')
 
-        print("''''''''''''''''''''''''''")
-        print("username=" + yt_meta.username)
-        print("link=" + yt_meta.link)
-        print("metadata=")
-        # print(yt_meta.metadata)
-        
-        # SEND TO S3
-        uploadAudioToS3(yt_meta) # key = upload 'location' in the s3 bucket 
+    print ("(initYtdlAudio) DOWNLOADED THESE:")
+    for yt_meta in metadata_Ytdl_list:       
+        print (   "(initYtdlAudio) - " + yt_meta.username + " @ " + yt_meta.metadata.get("title"))
+    for yt_meta in metadata_Ytdl_list:        
+        # SEND mp3 & metadata TO S3 --> channels/captions/<CHN>/<DATE>/<ID>.mp3
+        isSuccess = uploadAudioToS3(yt_meta, isDebug) # key = upload 'location' in the s3 bucket 
+        if isSuccess:
+          updateScrapeHistory(yt_meta)  
         # UPDATE SCRAPE HISTORY
         # updateScrapeHistory(metadata)
         # UPDATE COMPLETED DOWNLOADS
@@ -134,4 +141,35 @@ def initYtdlAudio(channels, *, isDebug=False):
             # abort(400, description="Failed to download: href_channel_list[0]['twitchurl']")
     return metaDownloads
 
-    
+def updateSpider():
+    s3 = boto3.client('s3')
+    # TODO env var this Prefix
+    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=S3_CAPTIONS_KEYBASE)['Contents']
+    # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+    sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
+    print("-----SORTED (OFFICIAL)---- ")
+    keyPathList = []
+    # channel = Array<vods> vods
+    # poopy = channels: [
+    #                     {   
+    #                         channel_name: "name",
+    #                         vods_uploaded: [123, 111,222,...]
+    #                     }
+    #                 ],
+    allOfit = {}
+    for obj in sorted_objects:
+        print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+        # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
+        # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
+        keyPathList.append(obj['Key'])
+        temp = str(obj['Key']).split(S3_CAPTIONS_KEYBASE, 1)[1]  #obj[key] = channels/captions/lolgeranimo/5057810/Calculated-v5057810.mp3
+        channel, vod_id = temp.split("/", 2)[:2]
+        print(channel + " --- " + vod_id)
+        if allOfit.get(channel):
+            allOfit[channel].append(vod_id)
+        else:
+            allOfit[channel] = [vod_id]
+    print ("allOfit")
+    print (allOfit)
+
+    return 'gg'

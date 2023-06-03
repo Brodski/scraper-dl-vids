@@ -54,13 +54,14 @@ def initScrape_Route():
 # Downloads audio
 @everything_bp.route('/main/ytdl/initYtdlAudio')
 def initYtdlAudio_Route():
-    return mainController.initYtdlAudio({}, True) # isDebuging = True
+    return mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
 
 
 
 @everything_bp.route('/ytdl/test/downloadTwtvVid_FIXED')
 def downloadTwtvVid_FIXED_Route():
-    x = ytdl.downloadTwtvVid("/videos/5057810")
+    # x = ytdl.downloadTwtvVid("/videos/5057810")
+    x = ytdl.downloadTwtvVid("https://www.youtube.com/watch?v=R4g5jUqatFk")
     return str(x)
     # return str(x)
     # return ytdl.downloadTwtvVid("/videos/28138895")
@@ -75,4 +76,11 @@ def getAlreadyDownloadedS3_Route():
 @everything_bp.route('/hrefGet/scrape4VidHref/mock')
 def scrape4VidHref_Route():
     return seleniumController.scrape4VidHref({}, True)
+
+
+
+
+@everything_bp.route('/s3/updateSpider')
+def updateSpider_Route():
+    return mainController.updateSpider()
 

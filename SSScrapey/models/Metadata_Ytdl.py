@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Any
 
 class Metadata_Ytdl:
@@ -7,6 +8,15 @@ class Metadata_Ytdl:
         self.link = link # 1718349481
         self.metadata = metadata
 
+
+    def toJSON(self):
+        return {
+                "username": self.username,
+                "link": self.link,
+                "metadata":str(self.metadata)
+                }
+        # return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)
+    
     def getFilePathFromMetaD(self):
         for requested in self.metadata.get('requested_downloads', []):
             print(requested.get('format_id', {}))

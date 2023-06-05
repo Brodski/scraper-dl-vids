@@ -30,9 +30,9 @@ MAIN_DIR = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 model_size = "tiny"
 
 
-######
-# DEFAULT
-######
+######################################################
+# DEFAULTS
+######################################################
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp4"
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
 # filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
@@ -41,11 +41,10 @@ filename = "OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
 #filename = "Adc+Academy+-+Informative+Adc+Stream+-+GrandMaster+today？+[v1792628012].mp3"
 filename = "BarbaraWalters.mp3"
 audio_basename = os.path.basename(ASSET_DIR_RELATIVE + '/' + filename)
-print(audio_basename)
-print(audio_basename)
-print(audio_basename)
 
-########
+######################################################
+#  COMMAND LINE ARGS
+######################################################
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', "--file", help="file to use")
 parser.add_argument('-m', "--model", help="model: tiny, base, small, med, large-v2, tiny.en, base.en, ... https://github.com/openai/whisper#available-models-and-languages  ||  https://huggingface.co/openai/whisper-large")
@@ -68,9 +67,9 @@ print (args.file)
 print (args.file)
 
 
-########
-## MODELS
-########
+######################################################
+# APP
+######################################################
 # Run on GPU with FP16
 # model = WhisperModel(model_size, device="cuda", compute_type="float16")
 # model = faster_whisper.WhisperModel(model_size, compute_type="int8")

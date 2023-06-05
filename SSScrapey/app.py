@@ -80,7 +80,7 @@ def home():
                 <li> /ytdl/downloadTwtvVid (dummy) </li>
             </ul>
         </ul>
-        <li><a href="/s3/updateSpider"> /s3/updateSpider </a></li>
+        <li><a href="/s3/syncAudioFilesUploadedS3"> /s3/syncAudioFilesUploadedS3 </a></li>
         <ul>
             <li> </li>
         </ul>

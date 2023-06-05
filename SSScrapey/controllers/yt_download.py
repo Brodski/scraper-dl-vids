@@ -282,17 +282,17 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
 # ??????????
 # Adds an json object to S3_ALREADY_DL_KEYBASE 
 # Adds to 'channels/scrapped/lolgeranimo.json'
-def updateScrapeHistory(metadata_json):
-    if metadata_json is None:
-        return
-    already_downloaded_json = getAlreadyDownloadedS3(metadata_json['uploader'])
-    s3 = boto3.client('s3')
-    s3.put_object(
-        Body=json.dumps(metadata_json),
-        Bucket=BUCKET_NAME,
-        Key=S3_ALREADY_DL_KEYBASE + metadata_json['uploader']
-    )
-    print( "done: \n")
+# def updateScrapeHistory(metadata_json):
+#     if metadata_json is None:
+#         return
+#     already_downloaded_json = getAlreadyDownloadedS3(metadata_json['uploader'])
+#     s3 = boto3.client('s3')
+#     s3.put_object(
+#         Body=json.dumps(metadata_json),
+#         Bucket=BUCKET_NAME,
+#         Key=S3_ALREADY_DL_KEYBASE + metadata_json['uploader']
+#     )
+#     print( "done: \n")
 #                                                             #
 ###############################################################
 

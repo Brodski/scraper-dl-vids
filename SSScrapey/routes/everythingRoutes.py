@@ -80,7 +80,7 @@ def scrape4VidHref_Route():
 
 
 
-@everything_bp.route('/s3/updateSpider')
-def updateSpider_Route():
-    return mainController.updateSpider()
+@everything_bp.route('/s3/syncAudioFilesUploadedS3')
+def syncAudioFilesUploadedS3_Route():
+    return mainController.syncAudioFilesUploadedS3()
 

@@ -105,7 +105,7 @@ RUN apt install git-all -y \
 
 
 # For testing
-WORKDIR /app/scraper-dl-vids/audio2Text/assets/raw
+WORKDIR /app/scraper-dl-vids/audio2Text/assets/audio
 RUN  wget https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/testz/OPENASSISTANT+TAKES+ON+CHATGPT.mp3
 
 

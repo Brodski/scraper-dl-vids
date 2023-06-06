@@ -22,7 +22,7 @@ import os
 def downloadTwtvVid(link, isDownload=True): 
     # https://www.twitch.tv/videos/28138895
     vidUrl = "https://www.twitch.tv" + link
-    output_local_dir = "assets/raw"
+    output_local_dir = "assets/audio"
     output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
     print ("000000000000                  00000000000000000")
     print ("000000000000 download twtvVid 00000000000000000")
@@ -88,9 +88,9 @@ def downloadTwtvVid(link, isDownload=True):
     ffmpeg_command = [
         'ffmpeg', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
     ]
-    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp4" -map 0 -dn -ignore_unknown -c copy -f mp4 "-bsf:a" aac_adtstoasc -movflags "+faststart" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.temp.mp4"    
-    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3" -filter:a "atempo=1.5" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3"
-    # ffmpeg -i file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3 -filter:a "atempo=1.5" file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3
+    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.mp4" -map 0 -dn -ignore_unknown -c copy -f mp4 "-bsf:a" aac_adtstoasc -movflags "+faststart" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.temp.mp4"    
+    # ffmpeg -y -loglevel "repeat+info" -i "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3" -filter:a "atempo=1.5" "file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3"
+    # ffmpeg -i file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3 -filter:a "atempo=1.5" file:C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
  
 
     print("starting subprocess!")

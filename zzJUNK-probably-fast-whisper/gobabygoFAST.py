@@ -9,7 +9,7 @@ import torch
 
 main_dir = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 #main_dir = r'/home/ssm-user/scraper-dl-vids'
-asset_dir = "assets/raw"
+asset_dir = "assets/audio"
 # model_size = "large-v2"
 model_size = "medium"
 # model_size = "small"
@@ -24,7 +24,7 @@ print("torch.cuda.is_available(): " + str(torch.cuda.is_available()))
 filename = "BarbaraWalters.mp3"
 filename = "OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ-fast.mp3"
 #filename = "Adc+Academy+-+Informative+Adc+Stream+-+GrandMaster+today？+[v1792628012].mp3"
-asset_dir = "assets/raw/"
+asset_dir = "assets/audio/"
 output_dir = "./assets/output"
 audio_basename = os.path.basename(asset_dir + filename)
 

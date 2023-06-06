@@ -17,7 +17,7 @@ print("torch.cuda.is_available(): " + str(torch.cuda.is_available()))
 # filename = "Bootcamp to Challenger - Gaming-v1767827635.f_Audio_Only.mp3"
 # filename = "Bootcamp to Challenger ｜-v1747933567.f_Audio_Only-wtf.mp3"
 filename = "BarbaraWalters.mp3"
-asset_dir = "assets/raw/"
+asset_dir = "assets/audio/"
 
 # model = whisper.load_model("base")
 # model = whisper.load_model("small.en")

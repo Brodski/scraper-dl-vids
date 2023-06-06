@@ -4,7 +4,7 @@ import jax.numpy as jnp
 # instantiate pipeline with bfloat16 and enable batching
 pipeline = FlaxWhisperPipline("openai/whisper-large-v2", dtype=jnp.bfloat16, batch_size=16)
 
-filepath = "./assets/raw/BarbaraWalters.mp3"
+filepath = "./assets/audio/BarbaraWalters.mp3"
 # transcribe and return timestamps
 outputs = pipeline(filepath,  task="transcribe", return_timestamps=True)
 

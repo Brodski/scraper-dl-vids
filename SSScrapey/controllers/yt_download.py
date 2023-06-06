@@ -40,7 +40,7 @@ vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
 # Turn this into (HTTP POST ---> Lambda)
 def downloadTwtvVid(link:str, isDownload=True): 
     # https://www.twitch.tv/videos/28138895
-    output_local_dir = "assets/raw"
+    output_local_dir = "assets/audio"
     
     vidUrl = link if "youtube.com" in link.lower() else "https://www.twitch.tv" + link
         
@@ -83,7 +83,7 @@ def downloadTwtvVid(link:str, isDownload=True):
             return None
     print('--------TOP-----------x')
     print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
-    filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\raw\Calculated-v5057810.mp3
+    filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
     inFile = "file:" + filepath
     extension = inFile.split(".")[-1]
     # outFileFAST =  "".join(inFile.split(".")[:-1]) + "-fast." + extension
@@ -198,8 +198,8 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDown
 # Nope
 #
 # def transcribefileWhisperAi(metadata_Ytdl):
-#     output_local_dir = "assets/raw"
-#     output_local_dir = "./assets/raw"
+#     output_local_dir = "assets/audio"
+#     output_local_dir = "./assets/audio"
 #     print("#############                         #############")
 #     print("############# transcribefileWhisperAi #############")
 #     print("#############                         #############")

@@ -26,7 +26,7 @@ filename = "Adc academy ｜ How to climb on Adc - Grandmaster Climb --v180241359
 
 def mp3FastTranscribe(filename):
     main_dir = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
-    asset_dir = "assets/raw"
+    asset_dir = "assets/audio"
     # model_size = "large-v2"
     # model_size = "medium"
     model_size = "small"

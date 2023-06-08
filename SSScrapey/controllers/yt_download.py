@@ -195,36 +195,6 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDown
         print()
     return metadata_Ytdl_list
 
-# Nope
-#
-# def transcribefileWhisperAi(metadata_Ytdl):
-#     output_local_dir = "assets/audio"
-#     output_local_dir = "./assets/audio"
-#     print("#############                         #############")
-#     print("############# transcribefileWhisperAi #############")
-#     print("#############                         #############")
-#     isPass = False
-
-#     for requested in metadata_Ytdl.metadata.get('requested_downloads', []):
-#         print(requested.get('format_id', {}))
-#         if requested.get('format_id') == "Audio_Only": # TODO othe audio_ids like youtube's, ect
-#             __finaldir = requested.get('__finaldir') # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids"
-#             filepath = requested.get("filepath")     # "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
-#             filename = filepath.replace(__finaldir, "")
-#             filename = filename[1:] if (filename[0] == "/" or filename[0] == "\\") else filename # filename = "Bootcamp to Challenger \uff5c-v1747933567.f_Audio_Only.mp3"
-
-#             # ffmpeg convertion to audio doesnt change extension -.-
-#             filename = (filename[:-4] + ".mp3") if filename[-4:] == ".mp4" else filename # NOTE position of ":" is diff
-
-#             output_full_dir = "{}/{}/{}".format(current_app.root_path, output_local_dir, filename)
-#             print ("---------------> ADDING " + filename)
-#             print ("@  " + output_full_dir)
-#             print(filename)
-#             # NEED TO UPLOAD FILE FROM DIRECTORY TO BUCKET
-#             isPass = whispererAiFAST.mp3FastTranscribe(filename)
-        
-#     return isPass
-
 def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print ("000000000000                 00000000000000000")
     print ("000000000000 uploadAudioToS3 00000000000000000")
@@ -264,11 +234,10 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     try:
         # upload: channels/captions/lck/2023-04-18/576354726/metadta.json
         # upload: channels/captions/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
+        print ("    UPLOADING MP3 !!!!!!!!!!!!!!!!! ")
         s3.upload_file(filepath, BUCKET_NAME, s3fileKey)
-        print ("    UPLOADED file !!!!!!!!!!!!!!!!! ")
-        # s3.upload_file(str(yt_meta), BUCKET_NAME, s3metaKey)
+        print ("    UPLOADING META !!!!!!!!!!!!!!!!! ")
         s3.put_object(Body=str(yt_meta.toJSON()), Bucket=BUCKET_NAME, Key=s3metaKey)
-        print ("    UPLOADED meta !!!!!!!!!!!!!!!!! ")
         return True
     except Exception as e:
         print("oops! " + str(e))

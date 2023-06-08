@@ -7,9 +7,11 @@
 # $ python ./gogoWhisperFAST.py -f "OPENASSISTANT+TAKES+ON+CHATGPT.mp3" -m "tiny" > tiny-chatgpt.txt 2>&1    &&
 # $ python ./gogoWhisperFAST.py -f "OPENASSISTANT+TAKES+ON+CHATGPT.mp3" -m "small" > small-chatgpt.txt 2>&1   
 
+
 import faster_whisper
 # import whisper.utils
 from whisper.utils import get_writer
+import boto3
 
 import os 
 import time
@@ -18,11 +20,16 @@ import sys
 import argparse
 from pathlib import Path
 
+# import requests
+
 # Should be env vairable for local or micro
 ASSET_DIR_RELATIVE = "./assets/audio/"
 OUTPUT_DIR_RELATIVE = "./assets/output"
 MAIN_DIR = r'/home/ssm-user/scraper-dl-vids'
 MAIN_DIR = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
+FILE_EXTENSIONS_TO_SAVE = ["json", "vtt"]
+S3_COMPLETED_CAPTIONS = "channels/completed/captions/"
+BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
 
 def main():
     ######################################################
@@ -76,13 +83,13 @@ def run(*, model_size, filename):
     # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
     # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default
     model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
-    audio_path = "{}/{}/{}".format(MAIN_DIR, ASSET_DIR_RELATIVE, filename)
+    # audio_path = "{}/{}/{}".format(MAIN_DIR, ASSET_DIR_RELATIVE, filename)
     audio_abs_path = os.path.abspath(ASSET_DIR_RELATIVE + '/' + filename)
     audio_basename = os.path.basename(ASSET_DIR_RELATIVE + '/' + filename)
 
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print(audio_path)
-    print(audio_path)
+    # print(audio_path)
+    # print(audio_path)
     print(audio_abs_path)
     print(audio_abs_path)
     # exit()
@@ -109,19 +116,53 @@ def run(*, model_size, filename):
             "text" :  segment.text,
         })
 
-    end_time = time.time() - start_time
-    file_extension = "json"
-    srt_writer = get_writer(file_extension, OUTPUT_DIR_RELATIVE)
-    srt_writer(result, audio_basename + file_extension)
 
+    # file_extension = "json"
+    # srt_writer = get_writer(file_extension, OUTPUT_DIR_RELATIVE)
+    # srt_writer(result, audio_basename + file_extension)
+    saved_files = writeFileLocally(result, audio_basename)
+    for file in saved_files:
+        uploadToS3(file)
+    end_time = time.time() - start_time
 
     print("========================================")
+    print("Complete!")
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
     print()
     print("run time =" + str(end_time))
     print()
-    print("Completed srt: " +  audio_basename + ".srt")
-    print("Completed: " + audio_path)
+    # print("Completed srt: " +  audio_basename + ".srt")
+    # print("Completed: " + audio_path)
+
+def writeFileLocally(result, audio_basename):
+    print("------   WRITE FILE   ------")
+    file_extensions = FILE_EXTENSIONS_TO_SAVE
+    saved_files = []
+    for ext in file_extensions:
+        srt_writer = get_writer(ext, OUTPUT_DIR_RELATIVE)
+        srt_writer(result, audio_basename + ext)
+
+        pathy = os.path.join(OUTPUT_DIR_RELATIVE, audio_basename)
+        absolute_path = os.path.abspath(pathy)
+        saved_files.append(absolute_path)
+        print("Wrote - " + ext + " - " + absolute_path)
+    return saved_files
+
+def uploadToS3(file_path):    
+    s3 = boto3.client('s3')
+    filen = os.path.basename(file_path)
+    print("filen: " + filen)
+    # s3fileKey = S3_COMPLETED_CAPTIONS + 
+    # s3.upload_file(file_path, BUCKET_NAME, s3fileKey)
+
+# def uploadToS3(file_path):
+#     endpoint_url = 'https://example.com/upload'
+#     with open(file_path, 'rb') as file:
+#         response = requests.post(endpoint_url, files={'file': file})
+#     if response.status_code == 200:
+#         print("File uploaded successfully.")
+#     else:
+#         print("Error uploading file:", response.text)
 
 if __name__ == '__main__':
     main()

@@ -54,6 +54,7 @@ def _getUploadedFilesS3():
     print(dataCaps)
 
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=S3_CAPTIONS_KEYBASE, EncodingType="url")['Contents']
+    # good use of cont token https://www.tabnine.com/code/javascript/functions/aws-sdk/ListObjectsV2Output/NextContinuationToken
     # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
     # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
     sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
@@ -76,7 +77,13 @@ def _getUploadedFilesS3():
 
 
 if __name__ == '__main__':
-  todo_list = _getUploadedFilesS3()
+  # todo_list = _getUploadedFilesS3()
+  todo_list =  ['channels/captions/lck/576354726/Clip%3A+AF+vs.+KT+-+SB+vs.+DWG+%5B2020+LCK+Spring+Split%5D-v576354726.mp3', 'channels/captions/lolgeranimo/28138895/The+Geraniproject%21+I+Love+You+Guys%21%21%21-v28138895.mp3', 'channels/captions/lolgeranimo/5057810/Calculated-v5057810.mp3']
+  print()
+  print()
+  print(todo_list)
+  print()
+  print()
   print("######################################")
   print("             GET FROM S3              ")
   print("######################################")
@@ -88,8 +95,17 @@ if __name__ == '__main__':
     filename = os.path.basename(link_url) # A trick to get the file name. eg) filename = "Calculated-v5057810.mp3"
     relative_filename = A2T_ASSETS_AUDIO +  filename
     ass = urllib.request.urlretrieve(link_url, relative_filename)
+     
+    # current_dir = os.getcwd()
+    absolute_path = os.path.abspath(relative_filename)
+
+
+    print ("+++++++++++++++++++++++++++++++++++")
     print ("link_path: " + link_path)
     print ("os-base: " + filename)
-    # print (ass)
+    print ("os-relative_filename: " + relative_filename)
+    print("Absolute path:", absolute_path)
+    print ("ass" )
+    print (ass)
 
-    gogoWhisperFAST.run(model_size="tiny", filename=relative_filename)
+    gogoWhisperFAST.run(model_size="base", filename=filename)

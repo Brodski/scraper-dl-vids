@@ -20,16 +20,15 @@ import sys
 import argparse
 from pathlib import Path
 
+import env_app as env_varz
 # import requests
 
 # Should be env vairable for local or micro
-ASSET_DIR_RELATIVE = "./assets/audio/"
-OUTPUT_DIR_RELATIVE = "./assets/output"
+# env_varz.A2T_ASSETS_AUDIO = "./assets/audio/"
+# env_varz.A2T_ASSETS_CAPTIONS = "./assets/output/"
 MAIN_DIR = r'/home/ssm-user/scraper-dl-vids'
 MAIN_DIR = r'C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids'
 FILE_EXTENSIONS_TO_SAVE = ["json", "vtt"]
-S3_COMPLETED_CAPTIONS = "channels/completed/captions/"
-BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
 
 def main():
     ######################################################
@@ -83,9 +82,9 @@ def run(*, model_size, filename):
     # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
     # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default
     model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
-    # audio_path = "{}/{}/{}".format(MAIN_DIR, ASSET_DIR_RELATIVE, filename)
-    audio_abs_path = os.path.abspath(ASSET_DIR_RELATIVE + '/' + filename)
-    audio_basename = os.path.basename(ASSET_DIR_RELATIVE + '/' + filename)
+    # audio_path = "{}/{}/{}".format(MAIN_DIR, env_varz.A2T_ASSETS_AUDIO, filename)
+    audio_abs_path = os.path.abspath(env_varz.A2T_ASSETS_AUDIO + '/' + filename)
+    audio_basename = os.path.basename(env_varz.A2T_ASSETS_AUDIO + '/' + filename)
 
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     # print(audio_path)
@@ -118,11 +117,9 @@ def run(*, model_size, filename):
 
 
     # file_extension = "json"
-    # srt_writer = get_writer(file_extension, OUTPUT_DIR_RELATIVE)
+    # srt_writer = get_writer(file_extension, env_varz.A2T_ASSETS_CAPTIONS)
     # srt_writer(result, audio_basename + file_extension)
-    saved_files = writeFileLocally(result, audio_basename)
-    for file in saved_files:
-        uploadToS3(file)
+    saved_caption_files = writeCaptionsLocally(result, audio_basename)
     end_time = time.time() - start_time
 
     print("========================================")
@@ -131,38 +128,31 @@ def run(*, model_size, filename):
     print()
     print("run time =" + str(end_time))
     print()
+    print("Saved files: " + str(saved_caption_files))
+    print()
     # print("Completed srt: " +  audio_basename + ".srt")
     # print("Completed: " + audio_path)
+    return saved_caption_files
 
-def writeFileLocally(result, audio_basename):
+def writeCaptionsLocally(result, audio_basename):
     print("------   WRITE FILE   ------")
     file_extensions = FILE_EXTENSIONS_TO_SAVE
-    saved_files = []
+    saved_caption_files = []
     for ext in file_extensions:
-        srt_writer = get_writer(ext, OUTPUT_DIR_RELATIVE)
+        srt_writer = get_writer(ext, env_varz.A2T_ASSETS_CAPTIONS)
         srt_writer(result, audio_basename + ext)
+        print("audio_basename")
+        print("audio_basename")
+        print(audio_basename)
 
-        pathy = os.path.join(OUTPUT_DIR_RELATIVE, audio_basename)
-        absolute_path = os.path.abspath(pathy)
-        saved_files.append(absolute_path)
-        print("Wrote - " + ext + " - " + absolute_path)
-    return saved_files
+        filename, file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
+        caption_file = filename + '.' + ext
+        # pathy = os.path.join(env_varz.A2T_ASSETS_CAPTIONS, caption_base)
+        # caption_file = os.path.basename(pathy)
+        saved_caption_files.append(caption_file)
+        print("Wrote - " + ext + " - " + caption_file)
+    return saved_caption_files
 
-def uploadToS3(file_path):    
-    s3 = boto3.client('s3')
-    filen = os.path.basename(file_path)
-    print("filen: " + filen)
-    # s3fileKey = S3_COMPLETED_CAPTIONS + 
-    # s3.upload_file(file_path, BUCKET_NAME, s3fileKey)
-
-# def uploadToS3(file_path):
-#     endpoint_url = 'https://example.com/upload'
-#     with open(file_path, 'rb') as file:
-#         response = requests.post(endpoint_url, files={'file': file})
-#     if response.status_code == 200:
-#         print("File uploaded successfully.")
-#     else:
-#         print("Error uploading file:", response.text)
 
 if __name__ == '__main__':
     main()

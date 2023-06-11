@@ -1,6 +1,10 @@
 ytdlObjMetaDataList = [
    {
-      "username":"lolgeranimo",
+      "channel":"lolgeranimo",
+      "displayname": "LoLGeranimo",
+      "language": "English",
+      "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl": "https://www.twitch.tv/lolgeranimo",
       "link":"/videos/1758483887",
       "metadata":{
          "id":"v1758483887",
@@ -378,8 +382,12 @@ ytdlObjMetaDataList = [
       }
    },
    {
-      "username":"lolgeranimo",
-      "link":"/videos/1747933567",
+      "channel":"lolgeranimo",
+      "displayname": "LoLGeranimo",
+      "language": "English",
+      "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl": "https://www.twitch.tv/lolgeranimo",
+      "link":"/videos/1758483887",
       "metadata":{
          "id":"v1747933567",
          "title":"Bootcamp to Challenger |",

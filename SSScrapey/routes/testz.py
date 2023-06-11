@@ -8,12 +8,11 @@ import datetime
 
 import os
 
+import env_app as env_varz
+
 current_week = str(datetime.date.today().isocalendar()[1])
 current_year = str(datetime.date.today().isocalendar()[0])
 s3_key_test = "channels/test/raw/" + current_year + "-" + current_week + "/"
-BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
-directory_name = 'mydirectory' # this directory legit exists in this bucket ^
-directory_name_real = "channels/ranking/raw" 
 
 test_bp = Blueprint('test', __name__)
 vidUrl = 'https://www.twitch.tv/videos/1783465374' # pro leauge
@@ -130,7 +129,7 @@ def test_yt_dlp2():
         # 'output': '{}/%(title)s-%(format_id)s-%(format)s-%(id)s.%(ext)s'.format(current_app.root_path),
         'output': '%(title)s-%(format_id)s-%(format)s-%(id)s.%(ext)s',
         "verbose": True,
-        # "listformats": True,
+        "listformats": True,
         # 'postprocessors': [{
         #     'key': 'FFmpegExtractAudio',
         #     'preferredcodec': 'vorbis',
@@ -231,7 +230,7 @@ def getAllS3Jsons():
     # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
     s3 = boto3.client('s3')
     objList = []
-    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name_real)
+    objects = s3.list_objects_v2(Bucket=env_varz.env_varz.BUCKET_NAME, Prefix=env_varz.S3_RANKING_RAW)
     print ("objects")
     print (objects)
     print (objects.get('Contents'))
@@ -282,7 +281,7 @@ def uploadJsonToS3Test():
     json_object = myJsonStff
     s3.put_object(
         Body=json.dumps(json_object),
-        Bucket=BUCKET_NAME,
+        Bucket=env_varz.env_varz.BUCKET_NAME,
         Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json
         # Key=s3_key
     )
@@ -292,17 +291,15 @@ def uploadJsonToS3Test():
 
 @test_bp.route('/doS3Stuff')
 def doS3Stuff():
-    s3Aws = os.environ.get('BUCKET_NAME')
-    s3local = os.environ.get('BUCKET_NAME_LOCAL')
+    s3Aws = os.environ.get('env_varz.env_varz.BUCKET_NAME')
     print(f'AWS_BUCKET Key: {s3Aws}')
-    print(f'BUCKET_NAME_LOCAL Key: {s3local}')
 
     s3 = boto3.client('s3')
-    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name)['Contents']
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_TEST_DIR)['Contents']
 
     for obj in objects:
         print(obj['Key'])
-    response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=directory_name) 
+    response = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_TEST_DIR) 
     print (response)
     print('================')
     print('================')
@@ -312,7 +309,7 @@ def doS3Stuff():
         object_key = content.get('Key')
         print (object_key)
         # local_file_path = 'local/path/to/save/' + object_key.split('/')[-1]
-        # s3.download_file(BUCKET_NAME, object_key, local_file_path)
+        # s3.download_file(env_varz.BUCKET_NAME, object_key, local_file_path)
     print('================')
     responseGetObj = s3.get_object(
             Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',

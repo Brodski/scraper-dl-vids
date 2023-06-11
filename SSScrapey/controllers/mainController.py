@@ -10,17 +10,7 @@ import json
 import boto3
 from flask import abort
 
-
-
-CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
-directory_name = 'mydirectory' # this directory legit exists in this bucket ^
-directory_name_real = "channels/ranking/raw"
-S3_COMPLETED_AUDIO_UPLOADED = 'channels/completed/audio/completed.json'
-S3_COMPLETED_CAPTIONS_UPLOADED = 'channels/completed/captions/completed.json'
-S3_ALREADY_DL_KEYBASE = 'channels/scrapped/'
-S3_CAPTIONS_KEYBASE = 'channels/captions/'
-# S3_ALREADY_DL_KEY = 'channels/scrapped/lolgeranimo/2023-04-01.json'
+import env_app as env_varz
 
 
 ####################################################
@@ -30,11 +20,12 @@ def getTopChannelsAndSave():
     topChannels = rankingController.getTopChannels(numChannels=30) 
 
     # Saves those channels to S3 
-    json_data = rankingController.saveTopChannels(topChannels) # json_data = /mocks/getTopChannelsAndSaveResponse.json
+    # json_data = rankingController.saveTopChannels(topChannels) # json_data = /mocks/getTopChannelsAndSaveResponse.json
 
-    relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
+    # relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
+    relavent_data = rankingController.tidyData(topChannels) # relavent_data = /mocks/initScrapData.py
     relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
-    initYtdlAudio(relavent_data, initYtdlAudio=False)
+    initYtdlAudio(relavent_data, isDebug=True)
     return relavent_data
     # return json_data
 ####################################################
@@ -75,7 +66,7 @@ def initYtdlAudio(channels, *, isDebug=False):
     print ("00000000000000                 00000000000000000")
     # TODO probably need some interface & models for the scrapped-data vs ytdl-data
     chnLimit = 3 if isDebug else 99;
-    vidLimit = 3 if isDebug else 10;
+    vidLimit = 3 if isDebug else 5;
     if isDebug:
         print("    (initYtdlAudio) Getting mock channels")
         scrapped_channels = mocks.initHrefsData.getHrefsData()
@@ -95,80 +86,78 @@ def initYtdlAudio(channels, *, isDebug=False):
     # ]
     print ("     (initYtdlAudio) scrapped_channels_with_todos=")
     print (str(scrapped_channels_with_todos))
-    print ()
-    print ()
-    print ()
     # Download X vids from Y channels
     # see /mocks/metadata_ytdl_list.txt
     metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)
-    print("++++++++++++++++++++++++++++++++++")
-    print("++++++++++++++++++++++++++++++++++")
-    print("++++++++++++++++++++++++++++++++++")
+    print("     (initYtdlAudio) ++++++++++++++++++++++++++")
+    print("     (initYtdlAudio) ++++++++++++++++++++++++++")
+    print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     try:
         # print(json.dumps(metadata_Ytdl_list.__dict__))
         print(str(metadata_Ytdl_list.__dict__))
     except:
         print('    (initYtdlAudio) failed dump')
-
+    return
     print ("(initYtdlAudio) DOWNLOADED THESE:")
     for yt_meta in metadata_Ytdl_list:       
-        print (   "(initYtdlAudio) - " + yt_meta.username + " @ " + yt_meta.metadata.get("title"))
+        print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
     for yt_meta in metadata_Ytdl_list:        
-        # SEND mp3 & metadata TO S3 --> channels/captions/<CHN>/<DATE>/<ID>.mp3
+        # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3
         isSuccess = uploadAudioToS3(yt_meta, isDebug) # key = upload 'location' in the s3 bucket 
 
     # UPDATE SCRAPE HISTORY
     # updateScrapeHistory(metadata)
 
     # UPDATE COMPLETED DOWNLODS
-    syncAudioFilesUploadedS3()
+    syncAudioFilesUploadJsonS3()
     return "done initYtdlAudio"
     return metadata_Ytdl_list
 
 
-def syncAudioFilesUploadedS3():
-    allOfit = _getUploadedFilesS3()
+def syncAudioFilesUploadJsonS3():
+    allOfIt = _getUploadedAudioS3()
     s3 = boto3.client('s3')
-    if allOfit is None or len(allOfit)==0:
+    if allOfIt is None or len(allOfIt)==0:
         abort(400, description="Something is wrong with 'uploaded' json file")
     try:
-        s3.put_object(Body=str(allOfit), Bucket=BUCKET_NAME, Key=S3_COMPLETED_AUDIO_UPLOADED)
+        s3.put_object(Body=str(allOfIt), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_AUDIO_UPLOADED)
         return "Sync completed"
     except:
         abort(400, description="Failed to do sync")
         
 
-def _getUploadedFilesS3():
+def _getUploadedAudioS3():
     s3 = boto3.client('s3')
     # TODO env var this Prefix
-    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=S3_CAPTIONS_KEYBASE)['Contents']
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
     # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
     sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
     print("-----SORTED (OFFICIAL)---- ")
     keyPathList = []
     
-    allOfit = {}
+    allOfIt = {}
+    # allOfIt = { lck: {'576354726'}, lolgeranimo: {'5057810', '28138895'} }
     for obj in sorted_objects:
         # print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
 
         # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
         # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
 
-        # 1. obj[key] = channels/captions/lolgeranimo/5057810/Calculated-v5057810.mp``3``
+        # 1. obj[key] = channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3
         # 2. temp = lolgeranimo/5057810/Calculated-v5057810.mp3
         # 3. channel, vod_i = [ lolgeranimo, 5057810 ] 
         print("Key= " + f"{obj['Key']}")
         keyPathList.append(obj['Key'])
-        temp = str(obj['Key']).split(S3_CAPTIONS_KEYBASE, 1)[1]  
+        temp = str(obj['Key']).split(env_varz.S3_CAPTIONS_KEYBASE, 1)[1]  
         channel, vod_id = temp.split("/", 2)[:2]
-        if allOfit.get(channel):
-            allOfit[channel].add(vod_id)
+        if allOfIt.get(channel):
+            allOfIt[channel].add(vod_id)
         else:
-            allOfit[channel] = {vod_id}
+            allOfIt[channel] = {vod_id}
     print ()
-    print ("allOfit:")
+    print ("allOfIt:")
     print ()
-    for key, value in allOfit.items():
+    for key, value in allOfIt.items():
         print(key + ": " + str(value))
     
-    return allOfit
+    return allOfIt

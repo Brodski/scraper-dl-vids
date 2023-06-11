@@ -20,6 +20,8 @@ import datetime
 import boto3
 import json
 
+import env_app as env_varz
+
 # gameplan:
 # Once a day
 # Get top 100 channels from third party website
@@ -41,14 +43,14 @@ import json
 # scraped/lolgeranimo/2023-04-01.json ---> { date: 2023-04-01, data: [1771303, 186211, 2441993] }
 # scraped/lolgeranimo/2023-04-02.json ---> { date: 2023-04-02, data: [1989833, 1771303, 186211, 2441993] }
 # ...
-# captions/lolgeranimo/1771303/metadata.json
-# captions/lolgeranimo/1771303/1771303.svt
-# captions/lolgeranimo/1771303/1771303.txt
-# captions/lolgeranimo/1771303/1771303.csv
-# captions/lolgeranimo/2441993/metadata.json
-# captions/lolgeranimo/2441993/2441993.svt
-# captions/lolgeranimo/2441993/2441993.txt
-# captions/lolgeranimo/2441993/2441993.csv
+# vod-audio/lolgeranimo/1771303/metadata.json
+# vod-audio/lolgeranimo/1771303/1771303.svt
+# vod-audio/lolgeranimo/1771303/1771303.txt
+# vod-audio/lolgeranimo/1771303/1771303.csv
+# vod-audio/lolgeranimo/2441993/metadata.json
+# vod-audio/lolgeranimo/2441993/2441993.svt
+# vod-audio/lolgeranimo/2441993/2441993.txt
+# vod-audio/lolgeranimo/2441993/2441993.csv
 # ...
 options = Options()
 # options.add_argument('--headless')
@@ -58,12 +60,11 @@ browser = None
 CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
 
 # key = (filename) under which the JSON object will be stored in the S3 bucket
-S3_KEY_RANKING = "channels/ranking/" + CURRENT_DATE_YMD
+# env_varz.S3_KEY_RANKING = "channels/ranking/" + CURRENT_DATE_YMD
 
 
-BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
-directory_name = 'mydirectory' # this directory legit exists in this bucket ^
-directory_name_real = "channels/ranking/raw" 
+# env_varz.BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
+
 
 VIP_LIST = [
     {
@@ -94,6 +95,9 @@ VIP_LIST = [
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/20/10
 
 def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
+    print ("000000000000                         00000000000000000")
+    print ("000000000000 getTopChannels - sully  00000000000000000")
+    print ("000000000000                         00000000000000000")
     if numChannels > 300 or (numChannels % 10) != 0:
         print("Error, numChannels is too big: " + str(numChannels))
         return
@@ -111,15 +115,15 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
         startAt = (i * pageSize) # for their api
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
-        print ("-------------------------------------------------------------------")
-        print (url)
-        print ("-------------------------------------------------------------------")
+        print ("    (getTopChannels) ----------------------")
+        print ("    " + url)
+        print ("    (getTopChannels) ----------------------")
 
         response = requests.get(url, headers=headers)
 
-        print ('reponse code = ' + str(response.status_code))
-        print ('response.reason: ' + str(response.reason))
-        print ('size: ' + str(len(response.content)))
+        print ('    (getTopChannels) reponse code = ' + str(response.status_code))
+        print ('    (getTopChannels) response.reason: ' + str(response.reason))
+        print ('    (getTopChannels) size: ' + str(len(response.content)))
         # print ("response.text =" + response.text)
         print ()
         if response.status_code >= 200 and response.status_code < 300:
@@ -129,32 +133,33 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
                 cnt = 0
                 accumilator.extend(data)
                 for obj in data:
-                    print(str(i) + " @ "+ str(cnt) + ": =========================")
-                    print(obj)
-                    print('userId=' + str(obj.get('userId')))
-                    print('language=' + str(obj.get('language')))
-                    print('viewminutes=' + str(obj.get('viewminutes')))
-                    print('displayname=' + str(obj.get('displayname')))
-                    print('url=' + str(obj.get('url')))
-                    print('logo=' + str(obj.get('logo')))
+                    print("    (getTopChannels) " + str(i) + " @ "+ str(cnt) + ": ===========")
+                    print('    ' + srt(obj))
+                    print('    (getTopChannels) userId=' + str(obj.get('userId')))
+                    print('    (getTopChannels) language=' + str(obj.get('language')))
+                    print('    (getTopChannels) viewminutes=' + str(obj.get('viewminutes')))
+                    print('    (getTopChannels) displayname=' + str(obj.get('displayname')))
+                    print('    (getTopChannels) url=' + str(obj.get('url')))
+                    print('    (getTopChannels) logo=' + str(obj.get('logo')))
                     cnt= cnt + 1
         else:
             print(f'Error: {response.status_code}')
-    print ("DONE!")
+    print ("    (getTopChannels) DONE!")
     # print (complete_json)
     return complete_json
 
 # https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
+# WE DONT NEED THIS
 def saveTopChannels(json_data):
     if json_data is None:
         abort(400, description="Data is None - Nothing to save. Aborting save")
     try:
         s3 = boto3.client('s3')
-        key = S3_KEY_RANKING + ".json" # channels/rankings/raw/2023-15/2.json
+        key = env_varz.S3_KEY_RANKING + CURRENT_DATE_YMD + ".json" # channels/rankings/raw/2023-15/2.json
         
         s3.put_object(
             Body=json.dumps(json_data),
-            Bucket=BUCKET_NAME,
+            Bucket=env_varz.BUCKET_NAME,
             Key=key
         )
         # Successfully saved to: channels/ranking/2023-05-10.json
@@ -225,7 +230,7 @@ def preGetChannelInS3AndTidy() -> List[str]:
     REACH_BACK_DAYS = 5
     s3 = boto3.client('s3')
     # TODO env var this Prefix
-    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
     print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
     keyPathList = []

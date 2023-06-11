@@ -1,6 +1,9 @@
 ytdlTodosData = [
    {
       "displayname":"LoLGeranimo",
+      "language":"English",
+      "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl":"https://www.twitch.tv/lolgeranimo",
       "url":"lolgeranimo",
       "todos":[
          "/videos/1758483887",
@@ -59,6 +62,9 @@ ytdlTodosData = [
    },
    {
       "displayname":"xQc",
+      "language":"English",
+      "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/xqc-profile_image-9298dca608632101-150x150.jpeg?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl":"https://www.twitch.tv/xqc",
       "url":"xqc",
       "todos":[
          "/videos/1775892326",

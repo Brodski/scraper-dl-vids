@@ -20,19 +20,38 @@ import inspect
 
 import os
 
+import env_app as env_varz
+
 CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
-directory_name = 'mydirectory' # this directory legit exists in this bucket ^
-directory_name_real = "channels/ranking/raw" 
-S3_ALREADY_DL_KEYBASE = 'channels/scrapped/'
-S3_CAPTIONS_KEYBASE = 'channels/captions/'
-# S3_ALREADY_DL_KEY = 'channels/scrapped/lolgeranimo/2023-04-01.json'
+
 
 test_bp = Blueprint('test', __name__)
 vidUrl = 'https://www.twitch.tv/videos/1783465374' # pro leauge
 vidUrl = 'https://www.twitch.tv/videos/1791750006' # lolgera
 # vidUrl = 'https://www.twitch.tv/videos/1792255936' # sub only
 vidUrl = 'https://www.twitch.tv/videos/1792342007' # live
+
+def is_json_serializable(obj):
+    try:
+        json.dumps(obj)
+        return True
+    except (TypeError, OverflowError):
+        return False
+
+def removeNonSerializable(meta):
+    to_delete = []
+    for key, val in meta.items():
+        if key == "requested_downloads":
+            whitlist_properties = ["format_id","url","manifest_url","tbr","ext","fps","protocol","width","height","vcodec","acodec","dynamic_range","resolution","aspect_ratio","filesize_approx","video_ext","audio_ext","vbr","abr","format","epoch","_filename","__finaldir","filepath" ]            
+            for item in meta['requested_downloads']:
+                removeNonSerializable(item)
+        if not is_json_serializable(val):
+            print("Something wrong with :" + str(key))
+            to_delete.append(key)
+    for d in to_delete: # FFmpegFixupM3u8PP is not serializable, adding this semi annoying logic so i never need to look at this agian
+        del meta[d]
+    return meta
+
 
 # Download
 #  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
@@ -83,12 +102,10 @@ def downloadTwtvVid(link:str, isDownload=True):
             return None
     print('--------TOP-----------x')
     print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
+    meta = removeNonSerializable(meta)
     filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
     inFile = "file:" + filepath
-    extension = inFile.split(".")[-1]
-    # outFileFAST =  "".join(inFile.split(".")[:-1]) + "-fast." + extension
     outFile =  "".join(inFile.split(".")[:-1]) + "-out.opus" 
-    # print("")
     print("  (dlTwtvVid) getMeta vidUrl= " + vidUrl)
     print("  (dlTwtvVid) getMeta vid.output= " + output_template)
     print("  (dlTwtvVid) filepath= "+filepath)
@@ -96,14 +113,16 @@ def downloadTwtvVid(link:str, isDownload=True):
     print("  (dlTwtvVid) outFile= "+outFile)
     print("")
 
+    # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
+    #  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
     # ffmpeg_command = [ 'ffmpeg', '-i', inFile, '-q:a', '0', '-map', 'a', inFile+'.mp3' ]
     # _execFFmpegCmd(ffmpeg_command)
     ffmpeg_command = [
         # 'ffmpeg', '-version'
         # 'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
-        'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '33K', '-vbr', 'constrained', outFile
+        'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', outFile
     ]
-    _execFFmpegCmd(ffmpeg_command)
+    # _execFFmpegCmd(ffmpeg_command)
     
     end_time = time.time() 
     time_diff = end_time - start_time
@@ -112,14 +131,6 @@ def downloadTwtvVid(link:str, isDownload=True):
     print('---------BOT----------x')
     # print(meta)
     return meta
-    try:
-        x = json.dumps(meta)
-        return x
-    except:
-        print("except done :(")
-        print("except done :(")
-        print("except done :(")
-        return meta
 
 # Queue up X vids from Y channels
 # def createDownloadQueue(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10) -> List[str]:
@@ -157,7 +168,6 @@ def _execFFmpegCmd(ffmpeg_command):
         print(e)
         return False
 
-# TODO env debugg variables
 # Download X vids from Y channels. 
 def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10):
     print ("000000000000                         00000000000000000")
@@ -182,10 +192,11 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDown
             print ("    (bigboy) ----> chn #" + str(chnCounter) + " vid #" + str(vidCount))
             print ("    (bigboy) ----> " + channel.get("url") + " @ " + link)
             metadata = downloadTwtvVid(link, True)
-            metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], link, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
+
+            metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
             metadata_Ytdl_list.append(metadata_Ytdl)
             print("    (bigboy) metadata_Ytdl=" + str(metadata_Ytdl))
-            print("    (bigboy) completed: " + metadata_Ytdl.username + " @ " + metadata_Ytdl.link)
+            print("    (bigboy) completed: " + metadata_Ytdl.channel + " @ " + metadata_Ytdl.link)
         
         print()
         print()
@@ -199,13 +210,9 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print ("000000000000                 00000000000000000")
     print ("000000000000 uploadAudioToS3 00000000000000000")
     print ("000000000000                 00000000000000000")
-    # caption_keybase = channels/captions/lolgeranimo/2023-04-18/1747933567 
-    # channels/captions/<CHANNEL>/<TODAY-DATE>/<VID-ID/URL>.MP3 
-    
-        
-    # print("yyyyyyy")
-    # print(str(yt_meta.toJSON()))
-    # return
+    # caption_keybase = channels/vod-audio/lolgeranimo/2023-04-18/1747933567 
+    # channels/vod-audio/<CHANNEL>/<TODAY-DATE>/<VID-ID/URL>.MP3 
+
     meta = yt_meta.metadata
     filepath = meta.get('requested_downloads')[0].get('filepath')
     vodTitle = meta.get('fulltitle')
@@ -213,14 +220,14 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     ext = meta.get("requested_downloads")[0].get('ext')
     vod_filename = vodTitle + "-" + display_id + "." + ext
 
-    # caption_keybase = channels/captions/lolgeranimo/2023-04-18/1747933567 
-    # caption_keybase = S3_CAPTIONS_KEYBASE + yt_meta.username + "/" + CURRENT_DATE_YMD + yt_meta.link.replace("/videos", "") 
-    caption_keybase = S3_CAPTIONS_KEYBASE + yt_meta.username + "/" + yt_meta.link.replace("/videos/", "") 
+    # caption_keybase = channels/vod-audio/lolgeranimo/2023-04-18/1747933567 
+    # caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + yt_meta.channel + "/" + CURRENT_DATE_YMD + yt_meta.link.replace("/videos", "") 
+    caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + yt_meta.channel + "/" + yt_meta.link.replace("/videos/", "") 
     s3fileKey = caption_keybase + '/' + vod_filename
     s3metaKey = caption_keybase + "/metadata.json"
     print("")
     print("    " + str(yt_meta.metadata)[:100])
-    print("    uploading: " +yt_meta.username)
+    print("    uploading: " +yt_meta.channel)
     print("    link: " + yt_meta.link)
     # print("    filepath:" + meta.get('requested_downloads')[0].get('filepath'))
     print("    file= " + filepath)
@@ -232,12 +239,19 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     #     return
     s3 = boto3.client('s3')
     try:
-        # upload: channels/captions/lck/2023-04-18/576354726/metadta.json
-        # upload: channels/captions/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
+        # upload: channels/vod-audio/lck/2023-04-18/576354726/metadta.json
+        # upload: channels/vod-audio/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
         print ("    UPLOADING MP3 !!!!!!!!!!!!!!!!! ")
-        s3.upload_file(filepath, BUCKET_NAME, s3fileKey)
+        s3.upload_file(filepath, env_varz.BUCKET_NAME, s3fileKey)
         print ("    UPLOADING META !!!!!!!!!!!!!!!!! ")
-        s3.put_object(Body=str(yt_meta.toJSON()), Bucket=BUCKET_NAME, Key=s3metaKey)
+        # print(json.dumps(yt_meta.__dict__))
+        print ()
+        print ()
+        print ()
+        print ()
+        # print (json.dumps(yt_meta))
+        # s3.put_object(Body=str(yt_meta.toJSON()), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
+        s3.put_object(Body=json.dumps(yt_meta.__dict__), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return True
     except Exception as e:
         print("oops! " + str(e))
@@ -249,7 +263,7 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
 #############################################################
 # NOT USED                                                  #
 # ??????????
-# Adds an json object to S3_ALREADY_DL_KEYBASE 
+# Adds an json object to env_varz.S3_ALREADY_DL_KEYBASE 
 # Adds to 'channels/scrapped/lolgeranimo.json'
 # def updateScrapeHistory(metadata_json):
 #     if metadata_json is None:
@@ -258,8 +272,8 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
 #     s3 = boto3.client('s3')
 #     s3.put_object(
 #         Body=json.dumps(metadata_json),
-#         Bucket=BUCKET_NAME,
-#         Key=S3_ALREADY_DL_KEYBASE + metadata_json['uploader']
+#         Bucket=env_varz.BUCKET_NAME,
+#         Key=env_varz.S3_ALREADY_DL_KEYBASE + metadata_json['uploader']
 #     )
 #     print( "done: \n")
 #                                                             #
@@ -272,27 +286,27 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
 # TODO
 # Get From s3, eg channels/scrapped/lolgeranimo.json
 # returns some json
-def getAlreadyDownloadedS3(username):
+def getAlreadyDownloadedS3(channel):
     print ("xxxxxxxxxxxx                        xxxxxxxxxxxx")
     print ("xxxxxxxxxxxx getAlreadyDownloadedS3 xxxxxxxxxxxx")
     print ("xxxxxxxxxxxx                        xxxxxxxxxxxx")
   
     s3 = boto3.client('s3')
     
-    objects = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=S3_ALREADY_DL_KEYBASE)['Contents']
-    print("     (getAlreadyDownloadedS3) looking for username: "+ username)
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_ALREADY_DL_KEYBASE)['Contents']
+    print("     (getAlreadyDownloadedS3) looking for channel: "+ channel)
     # isFound = False
     # for obj in objects:
     #     print("---------------------")
     #     print(obj)
     #     print("key: " + str(obj['Key'].split(',')))
-    #     if ( username in obj['Key'].split(',')):
+    #     if ( channel in obj['Key'].split(',')):
     #         return "True"
     
     try:
         responseGetObj = s3.get_object(
-            Bucket = BUCKET_NAME,
-            Key = S3_ALREADY_DL_KEYBASE + username # ex) 'channels/scrapped/lolgeranimo.json'
+            Bucket = env_varz.BUCKET_NAME,
+            Key = env_varz.S3_ALREADY_DL_KEYBASE + channel # ex) 'channels/scrapped/lolgeranimo.json'
         )
     except:
         print("    (getAlreadyDownloadedS3) found nothing!")
@@ -310,8 +324,8 @@ def getAlreadyDownloadedS3(username):
 #############################################################
 
 
-def getAlreadyDownloadedS3_TEST(username):
-    x = getAlreadyDownloadedS3(username)
+def getAlreadyDownloadedS3_TEST(channel):
+    x = getAlreadyDownloadedS3(channel)
     if x:
         return x
     else: 
@@ -356,7 +370,7 @@ def addTodoListS3(scrapped_channels):
     # print("saving json file to: " + key)
     # s3.put_object(
     #     Body=json.dumps(json_data),
-    #     Bucket=BUCKET_NAME,
-    #     Key= S3_ALREADY_DL_KEYBASE + "lolgeranimo/" + date
+    #     Bucket=env_varz.BUCKET_NAME,
+    #     Key= env_varz.S3_ALREADY_DL_KEYBASE + "lolgeranimo/" + date
     # )
 

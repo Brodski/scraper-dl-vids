@@ -7,6 +7,7 @@ import json
 import datetime
 from models.Metadata_Ytdl import Metadata_Ytdl
 import controllers.yt_download as yt
+import urllib.parse
 # import models.Metadata_Yt as Metadata_Yt
 import models.Metadata_Ytdl as Md_Ytdl
 import controllers.whispererAi as whisperAI
@@ -219,20 +220,78 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     display_id = meta.get('display_id')
     ext = meta.get("requested_downloads")[0].get('ext')
     vod_filename = vodTitle + "-" + display_id + "." + ext
+    vod_encode = urllib.parse.quote(vod_filename)
 
-    # caption_keybase = channels/vod-audio/lolgeranimo/2023-04-18/1747933567 
-    # caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + yt_meta.channel + "/" + CURRENT_DATE_YMD + yt_meta.link.replace("/videos", "") 
+    # caption_keybase = channels/vod-audio/lolgeranimo/1747933567 
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + yt_meta.channel + "/" + yt_meta.link.replace("/videos/", "") 
+    # s3fileKey = caption_keybase + '/' + vod_encode
     s3fileKey = caption_keybase + '/' + vod_filename
     s3metaKey = caption_keybase + "/metadata.json"
+    vod_decode = urllib.parse.unquote(vod_encode)
     print("")
-    print("    " + str(yt_meta.metadata)[:100])
-    print("    uploading: " +yt_meta.channel)
-    print("    link: " + yt_meta.link)
-    # print("    filepath:" + meta.get('requested_downloads')[0].get('filepath'))
-    print("    file= " + filepath)
-    print("    s3fileKey= " + s3fileKey)
-    print("    metaKey= " + s3metaKey)
+    print("    (uploadAudioToS3) " + str(yt_meta.metadata)[:100])
+    print("    (uploadAudioToS3) uploading: " +yt_meta.channel)
+    print("    (uploadAudioToS3) link: " + yt_meta.link)
+    # print("  (uploadAudioToS3)   filepath:" + meta.get('requested_downloads')[0].get('filepath'))
+    print("    (uploadAudioToS3) file= " + filepath)
+    print("    (uploadAudioToS3) vod_filename encode= " + vod_encode)
+    print("    (uploadAudioToS3) vod_filename de encode= " + vod_decode )
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    print("    (uploadAudioToS3) metaKey= " + s3metaKey)
     print("")
     # if isDebug:
     #     print("IS DEBUG - DIDNT ACTUALLY UPDLOAD")
@@ -364,13 +423,3 @@ def addTodoListS3(scrapped_channels):
         # })
         print(str(cnt) + " (addTodoS3) BOT ---------")
     return scrapped_channels
-    # return todo_downloads_objlist
-    
-    # key = s3_key_ranking + ".json" # channels/rankings/raw/2023-15/2.json
-    # print("saving json file to: " + key)
-    # s3.put_object(
-    #     Body=json.dumps(json_data),
-    #     Bucket=env_varz.BUCKET_NAME,
-    #     Key= env_varz.S3_ALREADY_DL_KEYBASE + "lolgeranimo/" + date
-    # )
-

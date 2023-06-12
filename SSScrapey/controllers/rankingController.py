@@ -216,31 +216,31 @@ def tidyData(json_object):
     return relevant_list
 
 # Query the s3 with the formated json of top channels
-def preGetChannelInS3AndTidy() -> List[str]:  
-    # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
-    # Thus
-    #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
-    #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+# def preGetChannelInS3AndTidy() -> List[str]:  
+#     # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+#     # Thus
+#     #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
+#     #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
 
     
-    # REACH_BACK_DAYS = Content / UX thing
-    # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
-    # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
-    #
-    REACH_BACK_DAYS = 5
-    s3 = boto3.client('s3')
-    # TODO env var this Prefix
-    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
-    sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
-    print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
-    keyPathList = []
-    sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
-    for obj in sorted_objects:
-        print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
-        keyPathList.append(obj['Key'])
+#     # REACH_BACK_DAYS = Content / UX thing
+#     # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
+#     # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
+#     #
+#     REACH_BACK_DAYS = 5
+#     s3 = boto3.client('s3')
+#     # TODO env var this Prefix
+#     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+#     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+#     print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
+#     keyPathList = []
+#     sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
+#     for obj in sorted_objects:
+#         print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+#         keyPathList.append(obj['Key'])
 
         
-    return keyPathList
+#     return keyPathList
 
 
 def addVipList(channels):

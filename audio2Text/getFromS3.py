@@ -36,33 +36,32 @@ def _getCompletedJsonS3():
     print (env_varz.S3_COMPLETED_AUDIO_UPLOADED)
     print (env_varz.S3_COMPLETED_AUDIO_UPLOADED)
     print (env_varz.S3_COMPLETED_AUDIO_UPLOADED)
-    try:
-      resAudio = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_AUDIO_UPLOADED)
-    except:
-      resAudio = None
-      print("error: completed-audio json file does not exist. There is no audio to download?")
-      return
-      
-    try:
-      resCaps = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_UPLOADED)
-    except:
-      resCaps = None
-      print("Completed captions not found.")
+    # try:
+    #   resAudio = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_AUDIO_UPLOADED)
+    # except:
+    #   resAudio = None
+    #   print("error: completed-audio json file does not exist. There is no audio to download?")
+    #   return
+    # try:
+    #   resCaps = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_UPLOADED)
+    # except:
+    #   resCaps = None
+    #   print("Completed captions not found.")
 
-    dataAudio = resAudio['Body'].read().decode('utf-8') if resAudio != None else {}
-    dataCaps = resCaps['Body'].read().decode('utf-8') if resCaps != None else {}
-    print("dataAudio")
-    print(dataAudio)
-    print()
-    print("dataCaps")
-    print(dataCaps)
+    # dataAudio = resAudio['Body'].read().decode('utf-8') if resAudio != None else {}
+    # dataCaps = resCaps['Body'].read().decode('utf-8') if resCaps != None else {}
+    # print("dataAudio")
+    # print(dataAudio)
+    # print()
+    # print("dataCaps")
+    # print(dataCaps)
 
-    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE, EncodingType="url")['Contents']
+    # objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE, EncodingType="url")['Contents']
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
     # good use of cont token https://www.tabnine.com/code/javascript/functions/aws-sdk/ListObjectsV2Output/NextContinuationToken
     # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
     # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
     sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
-    print("-----SORTED (OFFICIAL)---- ")
     todo_list = []
     for obj in sorted_objects:
         print("===============================")
@@ -79,12 +78,10 @@ def _getCompletedJsonS3():
     
     return todo_list
 
-def uploadToS3(filename, channel, vod_id):
-
-
-    print ("XXXXXXXXXXXXXX              XXXXXXXXXXXXXX")
-    print ("XXXXXXXXXXXXXX  uploadToS3  XXXXXXXXXXXXXX")
-    print ("XXXXXXXXXXXXXX              XXXXXXXXXXXXXX")
+def uploadCaptionsToS3(filename, channel, vod_id):
+    print ("XXXXXXXXXXXXXX                      XXXXXXXXXXXXXX")
+    print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
+    print ("XXXXXXXXXXXXXX                      XXXXXXXXXXXXXX")
     print()
 
     s3 = boto3.client('s3')
@@ -108,16 +105,6 @@ def uploadToS3(filename, channel, vod_id):
       print("oops! failed to upload: " + filename)
       return False
 
-# def uploadToS3(file_path):
-#     endpoint_url = 'https://example.com/upload'
-#     with open(file_path, 'rb') as file:
-#         response = requests.post(endpoint_url, files={'file': file})
-#     if response.status_code == 200:
-#         print("File uploaded successfully.")
-#     else:
-#         print("Error uploading file:", response.text)
-
-
 def get_language_code(full_language_name):
     try:
         language_code = langcodes.find(full_language_name).language
@@ -126,8 +113,8 @@ def get_language_code(full_language_name):
         return None
     
 if __name__ == '__main__':
-  # todo_list = _getCompletedJsonS3()
-  todo_list =  ['channels/vod-audio/lck/576354726/Clip%3A+AF+vs.+KT+-+SB+vs.+DWG+%5B2020+LCK+Spring+Split%5D-v576354726.mp3', 'channels/vod-audio/lolgeranimo/28138895/The+Geraniproject%21+I+Love+You+Guys%21%21%21-v28138895.mp3', 'channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3']
+  todo_list = _getCompletedJsonS3()
+  # todo_list =  ['channels/vod-audio/lck/576354726/Clip%3A+AF+vs.+KT+-+SB+vs.+DWG+%5B2020+LCK+Spring+Split%5D-v576354726.mp3', 'channels/vod-audio/lolgeranimo/28138895/The+Geraniproject%21+I+Love+You+Guys%21%21%21-v28138895.mp3', 'channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3']
   print()
   print()
   print(todo_list)
@@ -136,19 +123,27 @@ if __name__ == '__main__':
   print("######################################")
   print("             GET FROM S3              ")
   print("######################################")
+  # exit()
   for i, link_path_todo in enumerate(todo_list):
     print(i)
-    print("file: " + link_path_todo)
+    print("link_path_todo: " + link_path_todo)
 
     audio_url = env_varz.S3_DOMAIN_WGET + link_path_todo
     audio_name = os.path.basename(audio_url) # A trick to get the file name. eg) filename = "Calculated-v5057810.mp3"
+    audio_name_decode = urllib.parse.quote(audio_name)
+    # print("audio_url BEFORE=" +audio_url)
     meta_url = audio_url.replace(audio_name, "metadata.json")
-    relative_filename = env_varz.A2T_ASSETS_AUDIO +  audio_name
-
+    audio_url = audio_url.replace(audio_name, audio_name_decode)    
+    # meta_url = audio_url.replace(audio_name, "metadata.json")
+    relative_filename = env_varz.A2T_ASSETS_AUDIO +  audio_name_decode
+    print("audio_name_decode=" +audio_name_decode)
     print("audio_name=" +audio_name)
+    print()
     print("audio_url=" +audio_url)
     print("meta_url=" +meta_url)
-
+    print()
+    print("relative_filename=" + relative_filename)
+    # exit()
     # Audio file download locally
     local_filename  = urllib.request.urlretrieve(audio_url, relative_filename)
 
@@ -173,7 +168,7 @@ if __name__ == '__main__':
 
     print ("+++++++++++++++++++++++++++++++++++")
     print ("link_path_todo: " + link_path_todo)
-    print ("os-base: " + audio_name)
+    print ("os-base: " + audio_name_decode)
     print ("os-relative_filename: " + relative_filename)
     print("Absolute path:", absolute_path)
     # print ("headers" )
@@ -184,9 +179,9 @@ if __name__ == '__main__':
     # print (ass )
 
     language_code = get_language_code(json_data["language"])
-    saved_caption_files = gogoWhisperFAST.run(model_size="base", filename=audio_name)
+    saved_caption_files = gogoWhisperFAST.run(model_size="base", filename=audio_name_decode)
 
     for filename in saved_caption_files: # [vodx.json, vodx.vtt]
-        uploadToS3(filename, json_data["channel"], json_data["link"].split("/")[-1])
+        uploadCaptionsToS3(filename, json_data["channel"], json_data["link"].split("/")[-1])
     
 

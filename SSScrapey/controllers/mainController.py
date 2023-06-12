@@ -93,25 +93,27 @@ def initYtdlAudio(channels, *, isDebug=False):
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     try:
-        # print(json.dumps(metadata_Ytdl_list.__dict__))
-        print(str(metadata_Ytdl_list.__dict__))
+        print(str(metadata_Ytdl_list[0]))
+        # print(str( json.dumps(metadata_Ytdl_list, default= lambda m: m.__dict__)))
     except:
         print('    (initYtdlAudio) failed dump')
-    return
+        print('    (initYtdlAudio) failed dump')
+        print('    (initYtdlAudio) failed dump')
     print ("(initYtdlAudio) DOWNLOADED THESE:")
+    print (metadata_Ytdl_list)
     for yt_meta in metadata_Ytdl_list:       
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
     for yt_meta in metadata_Ytdl_list:        
         # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3
         isSuccess = uploadAudioToS3(yt_meta, isDebug) # key = upload 'location' in the s3 bucket 
-
+    # return ":)"
     # UPDATE SCRAPE HISTORY
     # updateScrapeHistory(metadata)
 
     # UPDATE COMPLETED DOWNLODS
     syncAudioFilesUploadJsonS3()
-    return "done initYtdlAudio"
-    return metadata_Ytdl_list
+    print("COMPLEEEEEEEEEEEEEEEEEETE")
+    return "Compelte init"
 
 
 def syncAudioFilesUploadJsonS3():

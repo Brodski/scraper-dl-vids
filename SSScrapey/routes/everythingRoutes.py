@@ -84,3 +84,13 @@ def scrape4VidHref_Route():
 def syncAudioFilesUploadJsonS3_Route():
     return mainController.syncAudioFilesUploadJsonS3()
 
+
+
+@everything_bp.route('/s3/syncCaptionsUploadJsonS3')
+def syncCaptionsUploadJsonS3_Route():
+    return mainController.syncCaptionsUploadJsonS3()
+
+@everything_bp.route('/s3/_getCompletedJsonSuperS3')
+def _getCompletedJsonSuperS3_Route():
+    return mainController._getCompletedJsonSuperS3()
+

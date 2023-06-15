@@ -116,31 +116,148 @@ def initYtdlAudio(channels, *, isDebug=False):
     return "Compelte init"
 
 
+
+
+
+# could polish these 2 (4) methods
+# this method is kinda shit and hacky
+def _appendCaptionJson(channel, vod):
+    print("_appendCaptionJson: " + channel + " - " + vod)
+
+def syncCaptionsUploadJsonS3():
+    allOfIt = _getCompletedJsonSuperS3() # allOfIt = /mocks/completedCaptionsJson.py
+    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+    print(allOfIt)
+    print(type(allOfIt))
+    print('===')
+    completed = {}
+    captions_expected = [".vtt", ".json"]
+    for chn_key, vod_dicts_value in allOfIt.items():
+        print(chn_key + ": " + str(vod_dicts_value))
+        print(chn_key + ": " + str(type(vod_dicts_value)))
+        for vod_id, vods_data in vod_dicts_value.items():
+            print('8888888888888')
+            print(vod_id + ": " + str(vods_data))
+            found = any('.vtt' in element[-4:] for element in vods_data)
+            if (found):
+                _appendCaptionJson(chn_key, vod_id)
+                if completed.get(chn_key):
+                    completed[chn_key].add(vod_id)
+                else:
+                    completed[chn_key] = { vod_id }
+            # for file_type in captions_expected:
+                # found = any((file_type in element[-5:] and element != "metadata.json" ) for element in vods_data)
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print("i want it all")
+    print(completed)
+    # return str(completed)
+    s3 = boto3.client('s3')
+    if completed is None or len(completed)==0:
+        abort(400, description="Something is wrong with 'uploaded' caption json file")
+    try:
+        s3.put_object(Body=str(completed), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_UPLOADED)
+        return str(completed)
+    except:
+        abort(400, description="Failed to do caption sync")
+
 def syncAudioFilesUploadJsonS3():
-    allOfIt = _getUploadedAudioS3()
+    allOfIt = _getUploadedAudioS3() # allOfIt = /mocks/completedAudioJson.py
     s3 = boto3.client('s3')
     if allOfIt is None or len(allOfIt)==0:
-        abort(400, description="Something is wrong with 'uploaded' json file")
+        abort(400, description="Something is wrong with 'uploaded' audio json file")
     try:
+        print()
+        print()
+        print()
+        print()
+        print(" :) ")
+        # print(allOfIt)
+        # print(type(allOfIt))
+        # print(str(json.dumps(allOfIt)))
         s3.put_object(Body=str(allOfIt), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_AUDIO_UPLOADED)
-        return "Sync completed"
+        return str(allOfIt)
     except:
-        abort(400, description="Failed to do sync")
+        abort(400, description="Failed to do audio sync")
         
+
+# Expected S3 query:
+# Key= channels/vod-audio/lck/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.json
+# Key= channels/vod-audio/lck/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
+# Key= channels/vod-audio/lck/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.vtt
+# Key= channels/vod-audio/lck/576354726/metadata.json
+# Key= channels/vod-audio/lolgeranimo/28138895/The Geraniproject! I Love You Guys!!!-v28138895.json
+# Key= channels/vod-audio/lolgeranimo/28138895/The Geraniproject! I Love You Guys!!!-v28138895.mp3
+# Key= channels/vod-audio/lolgeranimo/28138895/The Geraniproject! I Love You Guys!!!-v28138895.vtt
+# Key= channels/vod-audio/lolgeranimo/28138895/metadata.json
+# Key= channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.json
+# Key= channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3
+# Key= channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.vtt
+# Key= channels/vod-audio/lolgeranimo/5057810/metadata.json
+# return = 
+# {
+#   "lck": {
+#              "28138895": ["Geraniproject.json", "Geraniproject.mp3", "Geraniproject.vtt"],
+#              "5057810": ["Calculated.json", "Calculated.mp3", "Calculated.vtt"],
+#          }
+#   "lolgeranimo" ... 
+# }
+def _getCompletedJsonSuperS3():
+    s3 = boto3.client('s3')
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
+    sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
+    print("----- _getCompletedJsonSuperS3 ---- ")
+    
+    allOfIt = {}
+    for obj in sorted_objects:
+        filename = obj['Key'].split("/")[4:][0]
+        vod_id = obj['Key'].split("/")[3:4][0]
+        channel = obj['Key'].split("/")[2:3][0]
+        print("@@@@@@@@@@@@@@@@@@@@@")
+        print("Key= " + f"{obj['Key']}")
+        print("channel: " +  (channel))     
+        print("vod_id: " +  (vod_id))
+        print("filename: " + (filename))
+        if allOfIt.get(channel):
+            print('        ass=' + str(allOfIt.get(channel).get(vod_id)))
+            if allOfIt.get(channel).get(vod_id): # if vod_id for channel exists
+                print("      ??? " + str(type(allOfIt.get(channel))))
+                allOfIt.get(channel).get(vod_id).append(filename)
+            else: # else create a list that has all filenames
+                allOfIt.get(channel)[vod_id] = [filename]
+                print ('                pooooooooooooooooooooooooooooop')
+                print ('                pooooooooooooooooooooooooooooop')
+                print (type(allOfIt.get(channel)[vod_id] ))
+        else:
+            print ('---bang')
+            vod_dict = { vod_id: [filename] }
+            allOfIt[channel] = vod_dict
+    print ()
+    print (allOfIt)
+    print ()
+    print ("420")
+    for key, value in allOfIt.items():
+        print(key + ": " + str(value))
+    
+    return allOfIt
 
 def _getUploadedAudioS3():
     s3 = boto3.client('s3')
-    # TODO env var this Prefix
     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
-    # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
     sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
-    print("-----SORTED (OFFICIAL)---- ")
-    keyPathList = []
+    print("----- _getUploadedAudioS3 ---- ")
     
     allOfIt = {}
-    # allOfIt = { lck: {'576354726'}, lolgeranimo: {'5057810', '28138895'} }
     for obj in sorted_objects:
-        # print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+        print("Key= " + f"{obj['Key']}")
 
         # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
         # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
@@ -148,10 +265,8 @@ def _getUploadedAudioS3():
         # 1. obj[key] = channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3
         # 2. temp = lolgeranimo/5057810/Calculated-v5057810.mp3
         # 3. channel, vod_i = [ lolgeranimo, 5057810 ] 
-        print("Key= " + f"{obj['Key']}")
-        keyPathList.append(obj['Key'])
-        temp = str(obj['Key']).split(env_varz.S3_CAPTIONS_KEYBASE, 1)[1]  
-        channel, vod_id = temp.split("/", 2)[:2]
+        temp = str(obj['Key']).split(env_varz.S3_CAPTIONS_KEYBASE, 1)[1]   # 2
+        channel, vod_id = temp.split("/", 2)[:2] # 3 
         if allOfIt.get(channel):
             allOfIt[channel].add(vod_id)
         else:
@@ -159,7 +274,10 @@ def _getUploadedAudioS3():
     print ()
     print ("allOfIt:")
     print ()
+    print (allOfIt)
+    print ()
     for key, value in allOfIt.items():
         print(key + ": " + str(value))
     
+    # allOfIt = { lck: {'576354726'}, lolgeranimo: {'5057810', '28138895'} }
     return allOfIt

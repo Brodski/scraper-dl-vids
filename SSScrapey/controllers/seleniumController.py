@@ -18,7 +18,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
-from models.Todo_download import Todo_download
 import mocks.initScrapData
 # use selenium to render the page and then scrape it with beautiful soup. 
 # https://stackoverflow.com/questions/6028000/how-to-read-a-static-web-page-into-python
@@ -60,23 +59,23 @@ scriptPauseVidsJs = """
     }
 """
 # When multi-day marathon
-def _isVidFinished(inner_text):
-    # inner_text = tag.get_text(separator="|")
-    print("SOUP - get_text() =" + inner_text )
-    dayz = None
-    broadcast_time = None
-    for i, item in enumerate(inner_text.split("|")):
-        print(item)
-        print(len(item))
-        if "days" in item:
-            dayz = item
-        if len(item) >=8 and item.count(":") == 2:
-            broadcast_time = item.split(":")[0]
-    if broadcast_time and dayz:
-            days_num = int( dayz.split("days")[0].strip() )
-            broadcast_hours = broadcast_time.split(":")[0]
-            if (days_num*24) < broadcast_hours:
-                print("NOT KOSHER!!!!!!" )
+# def _isVidFinished(inner_text):
+#     # inner_text = tag.get_text(separator="|")
+#     print("SOUP - get_text() =" + inner_text )
+#     dayz = None
+#     broadcast_time = None
+#     for i, item in enumerate(inner_text.split("|")):
+#         print(item)
+#         print(len(item))
+#         if "days" in item:
+#             dayz = item
+#         if len(item) >=8 and item.count(":") == 2:
+#             broadcast_time = item.split(":")[0]
+#     if broadcast_time and dayz:
+#             days_num = int( dayz.split("days")[0].strip() )
+#             broadcast_hours = broadcast_time.split(":")[0]
+#             if (days_num*24) < broadcast_hours:
+#                 print("NOT KOSHER!!!!!!" )
 
 def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
     channelMax = 99 # TODO 99
@@ -136,12 +135,6 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
         unique_list = list(set(hrefsSet))
         resultz = list(unique_list)
 
-        # Format scrapped data       
-        # todo = Todo_download()
-        # todo.displayname =  channel['displayname']
-        # todo.url =  channel['url']
-        # todo.links =  resultz
-        # everyChannel.append(todo)
         everyChannel.append({
             'displayname': channel["displayname"],
             'language': channel["language"],

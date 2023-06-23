@@ -8,11 +8,9 @@ import datetime
 from models.Metadata_Ytdl import Metadata_Ytdl
 import controllers.yt_download as yt
 import urllib.parse
-# import models.Metadata_Yt as Metadata_Yt
-import models.Metadata_Ytdl as Md_Ytdl
-import controllers.whispererAi as whisperAI
-import controllers.whispererAiFAST as whispererAiFAST
-# from models.Metadata_Ytdl import Metadata_Ytdl
+# import models.Metadata_Ytdl as Md_Ytdl
+
+
 import yt_dlp
 import subprocess
 # from botocore.exceptions import NoCredentialsError, ClientError
@@ -105,11 +103,13 @@ def downloadTwtvVid(link:str, isDownload=True):
     print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
     meta = removeNonSerializable(meta)
     filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
+    title = meta.get('requested_downloads')[0].get('title')  
     inFile = "file:" + filepath
     outFile =  "".join(inFile.split(".")[:-1]) + "-out.opus" 
     print("  (dlTwtvVid) getMeta vidUrl= " + vidUrl)
     print("  (dlTwtvVid) getMeta vid.output= " + output_template)
     print("  (dlTwtvVid) filepath= "+filepath)
+    print("  (dlTwtvVid) title= "+title)
     print("  (dlTwtvVid) inFile= "+inFile)
     print("  (dlTwtvVid) outFile= "+outFile)
     print("")
@@ -132,21 +132,6 @@ def downloadTwtvVid(link:str, isDownload=True):
     print('---------BOT----------x')
     # print(meta)
     return meta
-
-# Queue up X vids from Y channels
-# def createDownloadQueue(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10) -> List[str]:
-#     queueOfLinks = []
-#     chnCounter = 0
-#     for channel in scrapped_channels_with_todos:
-#         if chnCounter == chnLimit:
-#             break
-#         chnCounter = chnCounter + 1
-#         vidCount = 0
-#         for link in channel['todos']:
-#             if vidCount == vidDownloadLimit:
-#                 break
-#             vidCount = vidCount + 1
-#             queueOfLinks.append(link)
     
     
 def _execFFmpegCmd(ffmpeg_command):
@@ -170,7 +155,7 @@ def _execFFmpegCmd(ffmpeg_command):
         return False
 
 # Download X vids from Y channels. 
-def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDownloadLimit=10):
+def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit, vidDownloadLimit):
     print ("000000000000                         00000000000000000")
     print ("000000000000 bigBoyChannelDownloader 00000000000000000")
     print ("000000000000                         00000000000000000")
@@ -194,7 +179,7 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit=10, vidDown
             print ("    (bigboy) ----> " + channel.get("url") + " @ " + link)
             metadata = downloadTwtvVid(link, True)
 
-            metadata_Ytdl = Md_Ytdl.Metadata_Ytdl(channel['url'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
+            metadata_Ytdl = Metadata_Ytdl.Metadata_Ytdl(channel['url'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
             metadata_Ytdl_list.append(metadata_Ytdl)
             print("    (bigboy) metadata_Ytdl=" + str(metadata_Ytdl))
             print("    (bigboy) completed: " + metadata_Ytdl.channel + " @ " + metadata_Ytdl.link)
@@ -211,8 +196,8 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print ("000000000000                 00000000000000000")
     print ("000000000000 uploadAudioToS3 00000000000000000")
     print ("000000000000                 00000000000000000")
-    # caption_keybase = channels/vod-audio/lolgeranimo/2023-04-18/1747933567 
-    # channels/vod-audio/<CHANNEL>/<TODAY-DATE>/<VID-ID/URL>.MP3 
+    # caption_keybase = channels/vod-audio/lolgeranimo/1747933567 
+    # channels/vod-audio/<CHANNEL>/<VID-ID>.MP3 
 
     meta = yt_meta.metadata
     filepath = meta.get('requested_downloads')[0].get('filepath')
@@ -243,54 +228,6 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
     print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
     print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
     print("    (uploadAudioToS3) metaKey= " + s3metaKey)
     print("")
     # if isDebug:
@@ -304,10 +241,6 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
         s3.upload_file(filepath, env_varz.BUCKET_NAME, s3fileKey)
         print ("    UPLOADING META !!!!!!!!!!!!!!!!! ")
         # print(json.dumps(yt_meta.__dict__))
-        print ()
-        print ()
-        print ()
-        print ()
         # print (json.dumps(yt_meta))
         # s3.put_object(Body=str(yt_meta.toJSON()), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         s3.put_object(Body=json.dumps(yt_meta.__dict__), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
@@ -393,9 +326,9 @@ def getAlreadyDownloadedS3_TEST(channel):
 # Prob coulda make this method part of the "scrapped_channel" object
 # Make sure we havent already DL the vid
 def addTodoListS3(scrapped_channels):
-    print ("000000000000                    00000000000000000")
-    print ("000000000000 addTodoListS3 00000000000000000")
-    print ("000000000000                    00000000000000000")
+    print ("000000000000                      000000000000")
+    print ("000000000000     addTodoListS3    000000000000")
+    print ("000000000000                      000000000000")
     print("    (addTodoS3) Making sure we havent already DL'd the vid")
     # todo_downloads_objlist = []
     cnt = 0
@@ -403,7 +336,14 @@ def addTodoListS3(scrapped_channels):
         print(str(cnt) + " (addTodoS3) TOP ---------")
         print(scrap_channel)
         cnt = cnt + 1
-        already_downloaded = yt.getAlreadyDownloadedS3(scrap_channel['url'])
+        already_downloaded = yt.getAlreadyDownloadedS3(scrap_channel['url']) #HERE
+        #HERE
+        #HERE
+        #HERE
+        #HERE
+        #HERE
+        #HERE
+
         print("     (addTodoS3) already_downloaded")
         print(already_downloaded)
         print() 

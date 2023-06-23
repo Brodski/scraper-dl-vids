@@ -22,19 +22,31 @@ import json
 
 import env_app as env_varz
 
-# gameplan:
-# Once a day
-# Get top 100 channels from third party website
-    # process it slightly
-# Upload to s3
-# Get last ~10 days from s3
-# Create a set combining all 10 days
-    # Must be channels
-# Get everyone of their new vids
-# speach -> text
-# 
-# upload to s3
-# channels/rankings/2023-4-14/
+# # # # # # # # # # # GAMEPLAN  # # # # # # # # # # # # # # # # # # # # # #
+#                                                                         # 
+# Lambda function (likely ... TBD):                                       # 
+#                                                                         # 
+# Once a day                                                              # 
+# Http request top 100 channels from third party website                  # 
+    # process it slightly                                                 # 
+# Selenium scrape urls from twitch                                        # 
+# Ytdl download vods from channels                                        # 
+    # Convert to audio and reduce bitrate/file-size                       # 
+# Upload audio to s3                                                      # 
+# Update a json of all the completed mp3 downloads                        # 
+# Update a joson of all the completed captions                            # 
+# todo = audio_downloads - completed_captions                             # 
+#                                                                         # 
+# VAST.AI / GPU                                                           # 
+# (spin a docker container that does this):                               # 
+# Get Json file of the to-do audio files                                  # 
+# Download the audio from my s3                                           # 
+# WhisperFast.py on audio                                                 # 
+# Upload transcripions                                                    # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+
 
 # aggregate/2023-04-01.json  --> { date: 2023-04-01, data: [lolgera, xqc, moistcritical] }
 # aggregate/2023-04-02.json
@@ -52,19 +64,9 @@ import env_app as env_varz
 # vod-audio/lolgeranimo/2441993/2441993.txt
 # vod-audio/lolgeranimo/2441993/2441993.csv
 # ...
-options = Options()
-# options.add_argument('--headless')
-options.add_argument('--window-size=1550,1250') # width, height
-browser = None
-
-CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-
-# key = (filename) under which the JSON object will be stored in the S3 bucket
-# env_varz.S3_KEY_RANKING = "channels/ranking/" + CURRENT_DATE_YMD
 
 
-# env_varz.BUCKET_NAME = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket'
-
+# CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
 
 VIP_LIST = [
     {
@@ -85,11 +87,8 @@ VIP_LIST = [
     #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/200/100
     #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/4/3/desc/300/100
     #  https://sullygnome.com/api/tables/channeltables/getchannels/30/0/1/5/desc/0/100
-
                                                 # type6=avg-viewers
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/11/6/desc/0/100
-
-    
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/1/3/desc/0/10
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/2/3/desc/10/10
     # https://sullygnome.com/api/tables/channeltables/getchannels/30/0/3/3/desc/20/10
@@ -99,12 +98,12 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
     print ("000000000000 getTopChannels - sully  00000000000000000")
     print ("000000000000                         00000000000000000")
     if numChannels > 300 or (numChannels % 10) != 0:
-        print("Error, numChannels is too big: " + str(numChannels))
+        print("Error, numChannels is too big or not in 10s: " + str(numChannels))
         return
     loopMax = int((numChannels / 10))
     # pageSize = 100
     pageSize = 10
-    type = 3 # 3 = enum = Most watched
+    type = 3 # note '3' = enum = Most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         'Accept': 'application/json',
@@ -134,7 +133,7 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
                 accumilator.extend(data)
                 for obj in data:
                     print("    (getTopChannels) " + str(i) + " @ "+ str(cnt) + ": ===========")
-                    print('    ' + srt(obj))
+                    print('    ' + str(obj))
                     print('    (getTopChannels) userId=' + str(obj.get('userId')))
                     print('    (getTopChannels) language=' + str(obj.get('language')))
                     print('    (getTopChannels) viewminutes=' + str(obj.get('viewminutes')))
@@ -148,32 +147,16 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
     # print (complete_json)
     return complete_json
 
-# https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
-# WE DONT NEED THIS
-def saveTopChannels(json_data):
-    if json_data is None:
-        abort(400, description="Data is None - Nothing to save. Aborting save")
-    try:
-        s3 = boto3.client('s3')
-        key = env_varz.S3_KEY_RANKING + CURRENT_DATE_YMD + ".json" # channels/rankings/raw/2023-15/2.json
-        
-        s3.put_object(
-            Body=json.dumps(json_data),
-            Bucket=env_varz.BUCKET_NAME,
-            Key=key
-        )
-        # Successfully saved to: channels/ranking/2023-05-10.json
-        print("Successfully saved this as a file: \n" + str(json_data))
-        for channel in json_data['data']:
-            print (channel['displayname'])
-        print("Successfully saved to: " + key)
-        print('---')
-        return json_data
-    except:
-        abort(400, description="Something went wrong at saveTopChannels()")
-
 def getChannelInS3AndTidy(sorted_s3_paths):
     s3 = boto3.client('s3')
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+    sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+    keyPathList = []
+    for obj in sorted_objects:
+        print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+        keyPathList.append(obj['Key'])
+    # return keyPathList
+
     print("GETTING ALL CONTENT")
     relevant_list = []
     already_added_list = []
@@ -196,9 +179,6 @@ def getChannelInS3AndTidy(sorted_s3_paths):
     print ("WE DONE")
     for r in relevant_list:
         print (r['displayname'])
-    print (len(relevant_list))
-    print (len(relevant_list))
-    print (len(relevant_list))
     return relevant_list
 
 def tidyData(json_object):
@@ -215,35 +195,35 @@ def tidyData(json_object):
         relevant_list.append(relevant_entry)
     return relevant_list
 
-# Query the s3 with the formated json of top channels
-# def preGetChannelInS3AndTidy() -> List[str]:  
-#     # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
-#     # Thus
-#     #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
-#     #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
-
-    
-#     # REACH_BACK_DAYS = Content / UX thing
-#     # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
-#     # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
-#     #
-#     REACH_BACK_DAYS = 5
-#     s3 = boto3.client('s3')
-#     # TODO env var this Prefix
-#     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
-#     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
-#     print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
-#     keyPathList = []
-#     sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
-#     for obj in sorted_objects:
-#         print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
-#         keyPathList.append(obj['Key'])
-
-        
-#     return keyPathList
-
-
 def addVipList(channels):
     for channel in VIP_LIST:
         channels.insert(0,channel)
     return channels
+
+
+
+# Query the s3 with the formated json of top channels
+def preGetChannelInS3AndTidy() -> List[str]:  
+    return "commented out code"
+    # # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+    # # Thus
+    # #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
+    # #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+
+    
+    # # REACH_BACK_DAYS = Content / UX thing
+    # # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
+    # # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
+    # #
+    # REACH_BACK_DAYS = 5
+    # s3 = boto3.client('s3')
+    # # TODO env var this Prefix
+    # objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+    # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+    # print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
+    # keyPathList = []
+    # sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
+    # for obj in sorted_objects:
+    #     print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+    #     keyPathList.append(obj['Key'])
+    # return keyPathList

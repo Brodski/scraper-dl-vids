@@ -4,6 +4,7 @@ env_vars = dotenv_values('.env_public')
 
 # this directory legit exists in this bucket ^
 BUCKET_NAME = env_vars['BUCKET_NAME']
+BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
 S3_TEST_DIR = env_vars['S3_TEST_DIR'] 
 S3_RANKING_RAW = env_vars["S3_RANKING_RAW"]
 S3_COMPLETED_AUDIO_UPLOADED = env_vars['S3_COMPLETED_AUDIO_UPLOADED']

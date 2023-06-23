@@ -283,7 +283,6 @@ def uploadJsonToS3Test():
         Body=json.dumps(json_object),
         Bucket=env_varz.env_varz.BUCKET_NAME,
         Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json
-        # Key=s3_key
     )
     return "done: \n" + str(myJsonStff)
 
@@ -318,7 +317,7 @@ def doS3Stuff():
         )
     dataz = responseGetObj['Body'].read()
     print("len(dataz)=" + str(len(dataz)))
-    return s3local
+    return dataz
 
 
 @test_bp.route('/testGetTop500Channels_NameCompleted')

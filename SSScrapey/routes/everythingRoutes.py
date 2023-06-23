@@ -90,7 +90,24 @@ def syncAudioFilesUploadJsonS3_Route():
 def syncCaptionsUploadJsonS3_Route():
     return mainController.syncCaptionsUploadJsonS3()
 
-@everything_bp.route('/s3/_getCompletedJsonSuperS3')
-def _getCompletedJsonSuperS3_Route():
-    return mainController._getCompletedJsonSuperS3()
+@everything_bp.route('/s3/_getCompletedAudioJsonSuperS3')
+def _getCompletedAudioJsonSuperS3_Route():
+    return mainController._getCompletedAudioJsonSuperS3(True)
+
+
+@everything_bp.route('/s3/_getAllCompletedJsonSuperS3__BETTER')
+def _getAllCompletedJsonSuperS3__BETTER_Route():
+    return mainController._getAllCompletedJsonSuperS3__BETTER()
+
+@everything_bp.route('/s3/getAllFilesS3')
+def getAllFilesS3_Route():
+    return mainController.getAllFilesS3(True)
+
+@everything_bp.route('/s3/getUploadedAudioS3')
+def getUploadedAudioS3_Route():
+    return mainController.getUploadedAudioS3()
+
+@everything_bp.route('/s3/createCaptionTodoList4Whispher')
+def createCaptionTodoList4Whispher_Route():
+    return mainController.createCaptionTodoList4Whispher(True)
 

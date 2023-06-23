@@ -82,7 +82,12 @@ def home():
         </ul>
         <li><a href="/s3/syncAudioFilesUploadJsonS3"> audio /s3/syncAudioFilesUploadJsonS3 </a></li>
         <li><a href="/s3/syncCaptionsUploadJsonS3"> captions /s3/syncCaptionsUploadJsonS3 </a></li>
-        <li><a href="/s3/_getCompletedJsonSuperS3"> CompS3 /s3/_getCompletedJsonSuperS3 </a></li>
+        <li><a href="/s3/_getCompletedAudioJsonSuperS3"> CompS3 /s3/_getCompletedAudioJsonSuperS3 </a></li>
+        <li><a href="/s3/_getAllCompletedJsonSuperS3__BETTER"> CompS3 /s3/_getAllCompletedJsonSuperS3__BETTER </a></li>
+        <li><a href="/s3/getAllFilesS3"> CompS3 /s3/getAllFilesS3 </a></li>
+        <li><a href="/s3/getUploadedAudioS3"> CompS3 /s3/getUploadedAudioS3 </a></li>
+        <li><a href="/s3/createCaptionTodoList4Whispher"> TODO audio /s3/createCaptionTodoList4Whispher </a></li>
+
         <ul>
             <li> </li>
         </ul>
@@ -93,7 +98,7 @@ def home():
 
         <li> Init Scrape (part 2, find vids) </li>
         <ul>
-            <li><a href="/initScrape/getChannelFromS3"> /initScrape/getChannelFromS3 </a></li>
+            <li><a href="/main/initScrape/getChannelFromS3"> /main/initScrape/getChannelFromS3 </a></li>
         </ul>
         
 

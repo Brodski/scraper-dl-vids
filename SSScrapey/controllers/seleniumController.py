@@ -137,11 +137,11 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
 
         everyChannel.append({
             'displayname': channel["displayname"],
-            'language': channel["language"],
-            'logo': channel["logo"],
-            'twitchurl': channel["twitchurl"],
-            'url': channel["url"],
-            'links': resultz
+            'language': channel["language"], # English
+            'logo': channel["logo"], 
+            'twitchurl': channel["twitchurl"], # https://www.twitch.tv/lolgeranimo
+            'channel': channel["url"], # url = lolgeranimo
+            'links': resultz # '/videos/5057810
         })
         # resultz = jsonify(results=unique_list)
         print ("resultzzzzz")

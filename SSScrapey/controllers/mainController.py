@@ -78,6 +78,9 @@ def initYtdlAudio(channels, *, isDebug=False):
         scrapped_channels = mocks.initHrefsData.getHrefsData()
     else:
         scrapped_channels = seleniumController.scrape4VidHref(channels, isDebug) # returns /mocks/initHrefsData.py
+        
+    print("     (initYtdlAudio) scrapped_channels")
+    print("     (initYtdlAudio) " + str(scrapped_channels))
     scrapped_channels_with_todos = yt.addTodoListS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
     # scrapped_channels_with_todos -> returns: [ {
     #   'displayname': 'LoLGeranimo', 
@@ -91,7 +94,7 @@ def initYtdlAudio(channels, *, isDebug=False):
     print ("     (initYtdlAudio) scrapped_channels_with_todos=")
     print (str(scrapped_channels_with_todos))
     # Download X vids from Y channels
-    # see /mocks/metadata_ytdl_list.txt
+    # -> /mocks/metadata_ytdl_list.txt
     chnLimit = 3 if isDebug else 99;
     vidLimit = 1 if isDebug else 2;
     metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)

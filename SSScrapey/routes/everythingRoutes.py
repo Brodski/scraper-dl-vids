@@ -56,6 +56,34 @@ def initScrape_Route():
 def initYtdlAudio_Route():
     return mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
 
+@everything_bp.route('/main/ytdl/bigBoyChannelDownloader')
+def bigBoyChannelDownloader_Route():
+    metadata_Ytdl_list = ytdl.bigBoyChannelDownloader(
+        [
+            {
+            "displayname":"LoLGeranimo",
+            "language":"English",
+            "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+            "twitchurl":"https://www.twitch.tv/lolgeranimo",
+            "url":"lolgeranimo",
+            "links":["/videos/5057810","/videos/28138895"],
+            "todos":["/5057810/","//"]
+            # "todos":["/5057810/","/28138895/"]
+            },
+            {
+            "displayname":"LCK",
+            "language":"English",
+            "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/04b097ac-9a71-409e-b30e-570175b39caf-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+            "twitchurl":"https://www.twitch.tv/lck",
+            "url":"lck",
+            "links":["/videos/576354726","/videos/1108764940"],
+            "todos":[]
+            }
+        ],
+    chnLimit=3, vidDownloadLimit=2
+    )
+    return json.loads(json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__))
+
 
 
 @everything_bp.route('/ytdl/test/downloadTwtvVid_FIXED')
@@ -68,7 +96,7 @@ def downloadTwtvVid_FIXED_Route():
 
 @everything_bp.route('/ytdl/getAlreadyDownloadedS3_TEST')
 def getAlreadyDownloadedS3_Route():
-    return ytdl.getAlreadyDownloadedS3_TEST("lolgeranimo")
+    return ytdl.getAlreadyDownloadedS3_TEST("lolgeranimo", ['/videos/5057810', '/videos/28138895', '/videos/6666666'])
 
 
 

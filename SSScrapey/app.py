@@ -74,7 +74,7 @@ def home():
         <ul>
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
             <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>
-            <li> bigBoyChannelDownloader: /ytdl/bigBoyChannelDownloader (dummy) </li>
+            <li> <a href="/main/ytdl/bigBoyChannelDownloader "> /main/ytdl/bigBoyChannelDownloader  </a></li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
                 <li> /ytdl/downloadTwtvVid (dummy) </li>

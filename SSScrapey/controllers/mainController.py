@@ -37,30 +37,6 @@ def getTopChannelsAndSave(isDebug=False):
     return "!!!"
 ####################################################
 
-####################################################
-# 2                                                #
-# IntializeScrape                                  #
-# WE CAN PROB IGNORE THIS                          
-# THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
-def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
-    return "COMMENTED OUT CODE!!! junk"
-    # # We first get the key/paths from the s3
-    # # sorted_s3_paths = rankingController.preGetChannelInS3AndTidy() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
-    # # combined_channels_list = rankingController.getChannelInS3AndTidy(sorted_s3_paths) # returns a List[{dict}] of channels and culled date
-    # combined_channels_list = rankingController.getChannelInS3AndTidy() # returns a List[{dict}] of channels and culled date
-    # combined_channels_list = rankingController.addVipList(combined_channels_list) # ^ but with gera
-    # # Returns: 
-    #     #     {
-    #     #     "displayname": "LoLGeranimo",
-    #     #     "language": "English",
-    #     #     "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-    #     #     "twitchurl": "https://www.twitch.tv/lolgeranimo",
-    #     #     "url": "lolgeranimo"
-    #     #   },...,
-    # return combined_channels_list
-#                                                   #
-#####################################################
-
 
 
 #####################################################
@@ -77,59 +53,37 @@ def initYtdlAudio(channels, *, isDebug=False):
     if isDebug:
         scrapped_channels = mocks.initHrefsData.getHrefsData()
     else:
-        scrapped_channels = seleniumController.scrape4VidHref(channels, isDebug) # returns /mocks/initHrefsData.py
+        scrapped_channels = seleniumController.scrape4VidHref(channels, isDebug) # returns -> /mocks/initHrefsData.py
         
     print("     (initYtdlAudio) scrapped_channels")
     print("     (initYtdlAudio) " + str(scrapped_channels))
-    scrapped_channels_with_todos = yt.addTodoListS3(scrapped_channels)  # scrapped_channels == scrapped_channels_with_todos b/c pass by ref
-    # scrapped_channels_with_todos -> returns: [ {
-    #   'displayname': 'LoLGeranimo', 
-    #   'url': 'lolgeranimo', 
-    #   'links': ['/videos/5057810', '/videos/28138895'], 
-    #   'todos': ['/videos/5057810', '/videos/28138895']
-    #  }, {
-    #     ...
-    #   }
-    # ]
+    scrapped_channels_with_todos = yt.addTodoListS3(scrapped_channels)  # returns -> /mocks/scrapped_channels_with_todos.py
     print ("     (initYtdlAudio) scrapped_channels_with_todos=")
     print (str(scrapped_channels_with_todos))
     # Download X vids from Y channels
-    # -> /mocks/metadata_ytdl_list.txt
     chnLimit = 3 if isDebug else 99;
     vidLimit = 1 if isDebug else 2;
     metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
-    try:
-        print(str(metadata_Ytdl_list[0]))
-        # print(str( json.dumps(metadata_Ytdl_list, default= lambda m: m.__dict__)))
-    except:
-        print('    (initYtdlAudio) failed dump')
-        print('    (initYtdlAudio) failed dump')
-        print('    (initYtdlAudio) failed dump')
-    print ("(initYtdlAudio) DOWNLOADED THESE:")
+    print("     (initYtdlAudio) DOWNLOADED THESE:")
     print (metadata_Ytdl_list)
     for yt_meta in metadata_Ytdl_list:       
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
     for yt_meta in metadata_Ytdl_list:        
-        # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3
-        isSuccess = uploadAudioToS3(yt_meta, isDebug) # key = upload 'location' in the s3 bucket 
-    # return ":)"
-    # UPDATE SCRAPE HISTORY
-    # updateScrapeHistory(metadata)
+        # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3 .. yt_meta has mp3 file location
+        uploadAudioToS3(yt_meta, isDebug) 
 
-    # UPDATE COMPLETED DOWNLODS
-    # syncAudioFilesUploadJsonS3()
-    createCaptionTodoList4Whispher()
+    createTodoList4Whispher()
     print("COMPLEEEEEEEEEEEEEEEEEETE")
     return "Compelte init"
 
 
 
-def createCaptionTodoList4Whispher(isDebug=False):
+def createTodoList4Whispher(isDebug=False):
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    print('zzzzzz           createCaptionTodoList4Whispher         zzzzzzz')
+    print('zzzzzz           createTodoList4Whispher            zzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     # allOfIt_ids, allOfIt_titles = _getCompletedAudioJsonSuperS3() # lotsOfData = mocks/completedJsonSuperS3.py
     allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/completedJsonSuperS3.py
@@ -162,9 +116,9 @@ def createCaptionTodoList4Whispher(isDebug=False):
                 if file[-5:] in captions_ext or file[-4:] in captions_ext:
                     hasCaptions = True
             if hasAudio and not hasCaptions:
-                print("MISSING CAPTIONS")
-                print(k_chn + " " + id)
-                vod = Vod(channel=k_chn, id=id, title=vod_title)
+                print("MISSING CAPTIONS for: " + k_chn + " " + id)
+                print()
+                vod = Vod(channel=k_chn, id=id, title=urllib.parse.unquote(vod_title))
                 vod_encode = urllib.parse.quote(vod.title)
                 vod_path = env_varz.S3_CAPTIONS_KEYBASE + vod.channel + "/" + vod.id + "/" + vod_encode
                 vod.link_s3 =  env_varz.BUCKET_DOMAIN + "/" + vod_path
@@ -245,254 +199,103 @@ def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/completedJsonSuperS3.py
 
 
 
-# could polish these 2 (4) methods
-# this method is kinda shit and hacky
-def syncCaptionsUploadJsonS3():
-    return "COMMENTED OUT CODE, NOT NEEDED!!"
-    # lotsOfAudio = _getCompletedAudioJsonSuperS3() # allOfIt = /mocks/completedJsonSuperS3.py
-    # print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
-    # print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
-    # print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
-    # print(lotsOfAudio)
-    # print (json.dumps(lotsOfAudio, default=lambda o: o.__dict__))
-    # print('===')
-    # completed = {}
-    # captions_expected = [".vtt", ".json"]
-    # for audio in lotsOfAudio:
-    #     print('9090909090909')
-    #     print (json.dumps(audio, default=lambda o: o.__dict__))
-    # for chn_key, vod_dicts_value in lotsOfAudio.items():
-    #     print(chn_key + ": " + str(vod_dicts_value))
-    #     for vod_id, vods_data in vod_dicts_value.items():
-    #         vod_id = int(vod_id)
-    #         print('8888888888888')
-    #         print(str(vod_id) + ": " + str(vods_data))
-    #         found = any('.vtt' in element[-4:] for element in vods_data)
-    #         if (found):
-    #             if completed.get(chn_key) and vod_id not in completed.get(chn_key):
-    #                 completed[chn_key].append(vod_id)
-    #             elif not completed.get(chn_key):
-    #                 completed[chn_key] = [ vod_id ]
-    #         # for file_type in captions_expected:
-    #             # found = any((file_type in element[-5:] and element != "metadata.json" ) for element in vods_data)
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print("i want it all")
-    # print(completed)
-    # print("json.dumps(completed)")
-    # print(json.dumps(completed))
-    # # return str(completed)
-    # return "lol"
-    # s3 = boto3.client('s3')
-    # if completed is None or len(completed)==0:
-    #     abort(400, description="Something is wrong with 'uploaded' caption json file")
-    # try:
-    #     s3.put_object(Body=json.dumps(completed), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_UPLOADED)
-    #     return str(completed)
-    # except:
-    #     abort(400, description="Failed to do caption sync")
-
-def syncAudioFilesUploadJsonS3():
-    return "COMMENTED OUT CODE RIP!"
-    # print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    # print('zzzzzz           syncAudioFilesUploadJsonS3         zzzzzzz')
-    # print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    # # allOfIt_ids, allOfIt_titles = _getCompletedAudioJsonSuperS3() # lotsOfData = mocks/completedJsonSuperS3.py
-    # allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/completedJsonSuperS3.py
-    # print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    # print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-
-    # if allOfIt is None or len(allOfIt)==0:
-    #     abort(400, description="Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
-    # print ("lotsOfAudio")
-    # print (lotsOfAudio)
-    # print (json.dumps(lotsOfAudio, default=lambda o: o.__dict__,))
-    # print()
-    # print()
-    # print()
-    # print()
-    # print(" :) ")
-    # print(allOfIt)
-    # print(type(allOfIt))
-    # print(json.dumps(allOfIt))
-    # print()
-    # print()
-    # print()
-    # print(json.dumps(allOfIt_titles))
-    # lotsOfAudio = []
-    # for k_chn, v_idz in allOfIt_ids.items():
-    #     print(k_chn)
-    #     print(v_idz)
-    #     audio = AudioResponse()
-    #     audio.channel = k_chn
-    #     audio.vod_ids = v_idz
-    #     # audio.vod_titles = allOfIt_titles.get(k_chn)
-    #     lotsOfAudio.append(audio)
-    # s3 = boto3.client('s3')
-    # s3.put_object(Body=json.dumps(allOfIt_ids), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_AUDIO_UPLOADED)
-    # return str(allOfIt_ids)
-        
-
-def getAllFilesS3(isDebug=False): # -> mocks/allFilesS33333.py
-    return "COMMENTED OUT METHOD"
-#     allOfIt = _getAllCompletedJsonSuperS3__BETTER()
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#     print(allOfIt)
-#     vodS3_set = []
-#     print("looping")
-#     for k_channel, vod_dict in allOfIt.items():
-#         vodS3_res = VodS3Response()
-#         vodS3_res.channel = k_channel
-
-#         vodS3_set[k_channel] = vodS3_res
-#         for k_vodId, v_files in vod_dict.items():
-#             print ('-')
-#             print(k_vodId)
-#             print(v_files)
-#             vodS3_res.vod_files[k_vodId] = v_files
-            
-#     print("vvvvvvvvvvvvvvvvvvvvvv")
-#     print(vodS3_set)
-#     print()
-#     print(json.dumps(vodS3_set, default=lambda o: o.__dict__, indent=4))
-#     if isDebug:
-#         return json.loads(json.dumps(vodS3_set, default=lambda o: o.__dict__))
-#     return vodS3_set
-
-def getUploadedAudioS3():
-    return "COMMENTED OUT COOOOODE!"
-    # vodS3_set = getAllFilesS3() # -> mocks/allFilesS33333.py
-    # print("22222222222222222222222222222222")
-    # captions_ext = ['.json', '.vtt']
-    # # audio_without_caps = List[VodS3Response]
-    # audio_without_caps = VodS3Response
-    # for k_channel, vod_s3_res in vodS3_set.items():
-    #     print()
-    #     print(k_channel)
-    #     print("vod_s3_res.vod_files")
-    #     # print(vod_s3_res.vod_files)
-    #     print(json.dumps( vod_s3_res.vod_files,  indent=4))
-    #     print(type(vod_s3_res.vod_files))
-    #     for id, vod_files in vod_s3_res.vod_files.items():
-    #         print("id: " + str(id))
-    #         print("vod_file: " + str(vod_files))
-    #         for file in vod_files:
-    #             print("    " + str(file))
-    #             if file[-5:] not in captions_ext and file[-4:] not in captions_ext and file != "metadata.json":
-    #                 # audio_without_caps.append({"id": k_vodId, "title": file})
-    #                 print("---- " + k_channel)
-    #                 print("---- " + (file))
-    #                 audio_without_caps.append(VodS3Response(channel=k_channel, vod_files={id: [file] }))
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    #                 #HERE
-    # print("audio_without_caps")
-    # print("audio_without_caps")
-    # print("audio_without_caps")
-    # print(audio_without_caps)
-    # print(json.dumps( audio_without_caps,  indent=4, default=lambda o: o.__dict__))
-    # return "yes!"
 
 
-def _getCompletedAudioJsonSuperS3(isDebug=False): # -> lotsOfData = mocks/completedJsonSuperS3.py
-    return "MORE COMMENTED OUT CODE!!!"
-    # s3 = boto3.client('s3')
-    # objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
-    # sorted_objects = sorted(objects, key=lambda obj: obj['Key'])
-    # print("----- _getCompletedAudioJsonSuperS3 ---- ")
+
+
+
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+###########################################################################################################################################################
+
+####################################################
+# 2                                                #
+# IntializeScrape                                  #
+# WE CAN PROB IGNORE THIS                          
+# THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
+# def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
+#     return "COMMENTED OUT CODE!!! junk"
+    # # We first get the key/paths from the s3
+    # # sorted_s3_paths = rankingController.preGetChannelInS3AndTidy() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
+    # # combined_channels_list = rankingController.getChannelInS3AndTidy(sorted_s3_paths) # returns a List[{dict}] of channels and culled date
+    # combined_channels_list = rankingController.getChannelInS3AndTidy() # returns a List[{dict}] of channels and culled date
+    # combined_channels_list = rankingController.addVipList(combined_channels_list) # ^ but with gera
+    # # Returns: 
+    #     #     {
+    #     #     "displayname": "LoLGeranimo",
+    #     #     "language": "English",
+    #     #     "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+    #     #     "twitchurl": "https://www.twitch.tv/lolgeranimo",
+    #     #     "url": "lolgeranimo"
+    #     #   },...,
+    # return combined_channels_list
+#                                                   #
+#####################################################
+
+# Query the s3 with the formated json of top channels
+# def preGetChannelInS3AndTidy() -> List[str]:  
+#     return "commented out code"
+    # # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+    # # Thus
+    # #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
+    # #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+
     
-    # allOfIt_ids = {}
-    # allOfIt_titles = {}
+    # # REACH_BACK_DAYS = Content / UX thing
+    # # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
+    # # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
+    # #
+    # REACH_BACK_DAYS = 5
+    # s3 = boto3.client('s3')
+    # # TODO env var this Prefix
+    # objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+    # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+    # print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
+    # keyPathList = []
+    # sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
     # for obj in sorted_objects:
-    #     print("===================================")
-    #     print("Key= " + f"{obj['Key']}")
+    #     print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+    #     keyPathList.append(obj['Key'])
+    # return keyPathList
 
-    #     # print("ContinuationToken: " +     str(obj.get('ContinuationToken')))
-    #     # print("NextContinuationToken: " + str(obj.get('NextContinuationToken')))
+# def getChannelInS3AndTidy(sorted_s3_paths):
+#     s3 = boto3.client('s3')
+#     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
+#     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
+#     keyPathList = []
+#     for obj in sorted_objects:
+#         print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
+#         keyPathList.append(obj['Key'])
+#     # return keyPathList
 
-    #     # 1. obj[key] = channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3
-    #     # 2. temp = lolgeranimo/5057810/Calculated-v5057810.mp3
-    #     # 3. channel, vod_i = [ lolgeranimo, 5057810 ] 
-    #     temp = str(obj['Key']).split(env_varz.S3_CAPTIONS_KEYBASE, 1)[1]   # 2
-    #     channel, vod_id, vod_title = temp.split("/", 2)[:3] # 3 
-    #     vod_id = int(vod_id)
-    #     if vod_title[-5:] == ".json" or vod_title[-4:] == ".vtt":
-    #         continue
-    #     print ("vod_id=" + str(vod_id) + " --- allOfIt.get(channel)=" + str(allOfIt_ids.get(channel)))
-    #     if allOfIt_ids.get(channel) and vod_id not in allOfIt_ids.get(channel):
-    #         print(vod_id)
-    #         allOfIt_ids[channel].append({vod_id: vod_title})
-    #         allOfIt_titles[channel].append(vod_title)
-    #     elif not allOfIt_ids.get(channel):
-    #         allOfIt_ids[channel] = [{vod_id: vod_title}]
-    #         allOfIt_titles[channel] = [vod_title]
-    # print ()
-    # print ("allOfIt:")
-    # print ()
-    # print (allOfIt_ids)
-    # print ()
-    # print ()
-    # print ()
-    # print ('ids')
-    # for key, value in allOfIt_ids.items():
-    #     print(key + ": " + str(value))
-    # print ()
-    # print ()
-    # print ()
-    # print ('titles')
-    # for key, value in allOfIt_titles.items():
-    #     print(key + ": " + str(value))
-    
-    # print ()
-    # print ()
-    # print ()
-    # print ()
-    # print ()
-    # # allOfIt = { lck: {'576354726'}, lolgeranimo: {'5057810', '28138895'} }
+#     print("GETTING ALL CONTENT")
+#     relevant_list = []
+#     already_added_list = []
+#     for key in sorted_s3_paths:
+#         print(key)
+#         responseGetObj = s3.get_object(
+#             Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',
+#             Key = key # ex) 'channels/ranking/2023-04-14.json'
+#         )
+#         binary_data = responseGetObj['Body'].read()
+#         json_string = binary_data.decode('utf-8')
+#         json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
 
-    # if allOfIt_ids is None or len(allOfIt_ids)==0:
-    #     abort(400, description="Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
-    # print()
-    # print()
-    # print()
-    # print()
-    # print(" :) ")
-    # print(allOfIt_ids)
-    # print(type(allOfIt_ids))
-    # print(json.dumps(allOfIt_ids, indent=4))
-    # print()
-    # print()
-    # print()
-    # print(json.dumps(allOfIt_titles,indent=4))
-    # lotsOfAudio = []
-    # for k_chn, v_idz in allOfIt_ids.items():
-    #     print(k_chn)
-    #     print(v_idz)
-    #     audio = AudioResponse()
-    #     audio.channel = k_chn
-    #     audio.vod_ids = v_idz
-    #     # audio.vod_titles = allOfIt_titles.get(k_chn)
-    #     lotsOfAudio.append(audio)
-    # if isDebug:
-    #     print( json.dumps(lotsOfAudio, default=lambda o: o.__dict__, indent=4) )
-    #     return json.dumps(lotsOfAudio, default=lambda o: o.__dict__)
-    # return lotsOfAudio # lotsOfData = mocks/completedJsonSuperS3.py
+#         llist = tidyData(json_object)
+#         for channel in llist:
+#             if channel.get('displayname') in already_added_list:
+#                 continue
+#             already_added_list.append(channel.get('displayname'))
+#             relevant_list.append(channel)
+#     print ("WE DONE")
+#     for r in relevant_list:
+#         print (r['displayname'])
+#     return relevant_list

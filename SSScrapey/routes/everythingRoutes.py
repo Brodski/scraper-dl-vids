@@ -40,12 +40,6 @@ def getTopChannels_Route():
 
 
 ####################################################
-# After 1                                          #
-# Retrieves data from our S3 bucket
-# S3 bucket already has channel info. post gnome
-@everything_bp.route('/main/initScrape/getChannelFromS3')
-def initScrape_Route():
-    return mainController.getChannelFromS3()
 
 ####################################################
 
@@ -56,8 +50,8 @@ def initScrape_Route():
 def initYtdlAudio_Route():
     return mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
 
-@everything_bp.route('/main/ytdl/bigBoyChannelDownloader')
-def bigBoyChannelDownloader_Route():
+@everything_bp.route('/main/ytdl/bigBoyChannelDownloader_TEST')
+def bigBoyChannelDownloader_TEST_Route():
     metadata_Ytdl_list = ytdl.bigBoyChannelDownloader(
         [
             {
@@ -77,7 +71,7 @@ def bigBoyChannelDownloader_Route():
             "twitchurl":"https://www.twitch.tv/lck",
             "url":"lck",
             "links":["/videos/576354726","/videos/1108764940"],
-            "todos":[]
+            "todos":["/576354726/", "/1108764940/"]
             }
         ],
     chnLimit=3, vidDownloadLimit=2
@@ -106,36 +100,12 @@ def scrape4VidHref_Route():
     return seleniumController.scrape4VidHref({}, True)
 
 
-
-
-@everything_bp.route('/s3/syncAudioFilesUploadJsonS3')
-def syncAudioFilesUploadJsonS3_Route():
-    return mainController.syncAudioFilesUploadJsonS3()
-
-
-
-@everything_bp.route('/s3/syncCaptionsUploadJsonS3')
-def syncCaptionsUploadJsonS3_Route():
-    return mainController.syncCaptionsUploadJsonS3()
-
-@everything_bp.route('/s3/_getCompletedAudioJsonSuperS3')
-def _getCompletedAudioJsonSuperS3_Route():
-    return mainController._getCompletedAudioJsonSuperS3(True)
-
-
 @everything_bp.route('/s3/_getAllCompletedJsonSuperS3__BETTER')
 def _getAllCompletedJsonSuperS3__BETTER_Route():
     return mainController._getAllCompletedJsonSuperS3__BETTER()
 
-@everything_bp.route('/s3/getAllFilesS3')
-def getAllFilesS3_Route():
-    return mainController.getAllFilesS3(True)
 
-@everything_bp.route('/s3/getUploadedAudioS3')
-def getUploadedAudioS3_Route():
-    return mainController.getUploadedAudioS3()
-
-@everything_bp.route('/s3/createCaptionTodoList4Whispher')
-def createCaptionTodoList4Whispher_Route():
-    return mainController.createCaptionTodoList4Whispher(True)
+@everything_bp.route('/s3/createTodoList4Whispher')
+def createTodoList4Whispher_Route():
+    return mainController.createTodoList4Whispher(True)
 

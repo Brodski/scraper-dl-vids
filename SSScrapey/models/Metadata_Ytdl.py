@@ -3,12 +3,13 @@ from typing import Dict, Any
 
 class Metadata_Ytdl:
 
-    def __init__(self, channel: str, displayname: str, language: str, logo: str, twitchurl: str, link: str, metadata: Dict[Any, Any]):
+    def __init__(self, channel: str, displayname: str, language: str, logo: str, twitchurl: str, link: str, outFile: str, metadata: Dict[Any, Any]):
         self.channel = channel    # lolgeranmio
         self.displayname = displayname
         self.language = language
         self.logo = logo
         self.twitchurl = twitchurl
+        self.outFile = outFile
 
         self.link = link # 1718349481
         self.metadata = metadata

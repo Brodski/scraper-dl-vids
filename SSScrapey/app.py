@@ -74,19 +74,19 @@ def home():
         <ul>
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
             <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>
-            <li> <a href="/main/ytdl/bigBoyChannelDownloader "> /main/ytdl/bigBoyChannelDownloader  </a></li>
+            <li> <a href="/main/ytdl/bigBoyChannelDownloader_TEST "> /main/ytdl/bigBoyChannelDownloader_TEST  </a></li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
                 <li> /ytdl/downloadTwtvVid (dummy) </li>
             </ul>
         </ul>
-        <li><a href="/s3/syncAudioFilesUploadJsonS3"> audio /s3/syncAudioFilesUploadJsonS3 </a></li>
-        <li><a href="/s3/syncCaptionsUploadJsonS3"> captions /s3/syncCaptionsUploadJsonS3 </a></li>
-        <li><a href="/s3/_getCompletedAudioJsonSuperS3"> CompS3 /s3/_getCompletedAudioJsonSuperS3 </a></li>
+        
+        
+        
         <li><a href="/s3/_getAllCompletedJsonSuperS3__BETTER"> CompS3 /s3/_getAllCompletedJsonSuperS3__BETTER </a></li>
-        <li><a href="/s3/getAllFilesS3"> CompS3 /s3/getAllFilesS3 </a></li>
-        <li><a href="/s3/getUploadedAudioS3"> CompS3 /s3/getUploadedAudioS3 </a></li>
-        <li><a href="/s3/createCaptionTodoList4Whispher"> TODO audio /s3/createCaptionTodoList4Whispher </a></li>
+        
+        
+        <li><a href="/s3/createTodoList4Whispher"> TODO audio /s3/createTodoList4Whispher </a></li>
 
         <ul>
             <li> </li>
@@ -97,9 +97,6 @@ def home():
 
 
         <li> Init Scrape (part 2, find vids) </li>
-        <ul>
-            <li><a href="/main/initScrape/getChannelFromS3"> /main/initScrape/getChannelFromS3 </a></li>
-        </ul>
         
 
 

@@ -33,7 +33,7 @@ def getTopChannelsAndSave(isDebug=False):
     if isDebug:
         print ("ENDING PREMPTIVELY B/C is DEBUG")
         return relavent_data
-    initYtdlAudio(relavent_data, isDebug=True)
+    initYtdlAudio(relavent_data, isDebug=isDebug)
     return "!!!"
 ####################################################
 

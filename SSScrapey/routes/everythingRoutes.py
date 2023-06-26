@@ -23,17 +23,13 @@ ranking_bp = Blueprint('ranking', __name__)
 # Make http request to sullygnome. 3rd party website
 # Decide who we want to look at
 # Saves "who" to S3
-@everything_bp.route('/main/ranking/getTopChannelsAndSave')
-def getTopChannelsAndSave_Route():
-    return mainController.getTopChannelsAndSave()
-
-@ranking_bp.route('/saveTopChannels')
-def saveTopChannels_Route():
-    return rankingController.saveTopChannels(None)
+@everything_bp.route('/main/ranking/kickit')
+def kickit_Route():
+    return mainController.kickit()
 
 @ranking_bp.route('/getTopChannels')
 def getTopChannels_Route():
-    return rankingController.getTopChannels()
+    return rankingController.getTopChannels(isDebug=True)
 
 ####################################################
 
@@ -41,11 +37,6 @@ def getTopChannels_Route():
 
 ####################################################
 
-####################################################
-
-
-# After 2? def after 1
-# Downloads audio
 @everything_bp.route('/main/ytdl/initYtdlAudio')
 def initYtdlAudio_Route():
     return mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
@@ -74,7 +65,7 @@ def bigBoyChannelDownloader_TEST_Route():
             "todos":["/576354726/", "/1108764940/"]
             }
         ],
-    chnLimit=3, vidDownloadLimit=2
+    isDebug=True
     )
     return json.loads(json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__))
 
@@ -83,10 +74,9 @@ def bigBoyChannelDownloader_TEST_Route():
 @everything_bp.route('/ytdl/test/downloadTwtvVid_FIXED')
 def downloadTwtvVid_FIXED_Route():
     # x = ytdl.downloadTwtvVid("/videos/5057810")
+    # x = ytdl.downloadTwtvVid("/videos/28138895")
     x = ytdl.downloadTwtvVid("https://www.youtube.com/watch?v=R4g5jUqatFk")
     return str(x)
-    # return str(x)
-    # return ytdl.downloadTwtvVid("/videos/28138895")
 
 @everything_bp.route('/ytdl/getAlreadyDownloadedS3_TEST')
 def getAlreadyDownloadedS3_Route():

@@ -20,21 +20,27 @@ import env_app as env_varz
 import ast
 
 ####################################################
-# 1
-def getTopChannelsAndSave(isDebug=False):
+# Kickit()
+#
+# Does everything.
+# API sully gnome - Gets top channels 
+# Selenium  - gets vods
+# ytdl      - downloads new vods
+# ffmpeg    - compresses audio
+# S3        - uploads audio
+# S3        - updates completed json
+#####################################################
+def kickit(isDebug=False):
     # Make http request to sullygnome. 3rd party website
-    topChannels = rankingController.getTopChannels(numChannels=30) 
-
-    # Saves those channels to S3 
-    # json_data = rankingController.saveTopChannels(topChannels) # json_data = /mocks/getTopChannelsAndSaveResponse.json
-    # relavent_data = rankingController.tidyData(json_data) # relavent_data = /mocks/initScrapData.py
+    topChannels = rankingController.getTopChannels() 
     relavent_data = rankingController.tidyData(topChannels) # relavent_data = /mocks/initScrapData.py
     relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
+
     if isDebug:
         print ("ENDING PREMPTIVELY B/C is DEBUG")
         return relavent_data
     initYtdlAudio(relavent_data, isDebug=isDebug)
-    return "!!!"
+    return "Finished kickit()"
 ####################################################
 
 
@@ -60,10 +66,9 @@ def initYtdlAudio(channels, *, isDebug=False):
     scrapped_channels_with_todos = yt.addTodoListS3(scrapped_channels)  # returns -> /mocks/scrapped_channels_with_todos.py
     print ("     (initYtdlAudio) scrapped_channels_with_todos=")
     print (str(scrapped_channels_with_todos))
+
     # Download X vids from Y channels
-    chnLimit = 3 if isDebug else 99;
-    vidLimit = 1 if isDebug else 2;
-    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, chnLimit=chnLimit, vidDownloadLimit=vidLimit)
+    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, isDebug=True)
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
@@ -221,7 +226,7 @@ def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/completedJsonSuperS3.py
 # IntializeScrape                                  #
 # WE CAN PROB IGNORE THIS                          
 # THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
-# def getChannelFromS3(): # -> return data = getTopChannelsAndSave() = json_data
+# def getChannelFromS3(): # -> return data = kickit() = json_data
 #     return "COMMENTED OUT CODE!!! junk"
     # # We first get the key/paths from the s3
     # # sorted_s3_paths = rankingController.preGetChannelInS3AndTidy() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:

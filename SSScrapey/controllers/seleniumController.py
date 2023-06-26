@@ -1,30 +1,14 @@
 from __future__ import unicode_literals
-# from flask import Flask
-# from aioflask import Flask
-
-import requests 
 from bs4 import BeautifulSoup
-# from requests_html import HTMLSession
-# from requests_html import AsyncHTMLSession
-
-# import youtube_dl
-# import yt_dlp
-
-import time
-import asyncio
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+import env_app as env_varz
 import mocks.initScrapData
-# use selenium to render the page and then scrape it with beautiful soup. 
-# https://stackoverflow.com/questions/6028000/how-to-read-a-static-web-page-into-python
-
-# https://stackoverflow.com/questions/6028000/how-to-read-a-static-web-page-into-python
-import sys
 import re
+import time
 
 
 ###
@@ -42,7 +26,9 @@ import re
 ######################################################################################### 
 ######################################################################################### 
 options = Options()
-# options.add_argument('--headless')
+if env_varz.SELENIUM_IS_HEADLESS:
+    options.add_argument('--headless')
+    
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
 options.add_argument('–-autoplay-policy=user-required') 
 options.add_argument('--window-size=1550,1250') # width, height
@@ -85,10 +71,10 @@ scriptPauseVidsJs = """
 #                 print("NOT KOSHER!!!!!!" )
 
 def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    channelMax = 99 # TODO 99
+    channelMax = env_varz.SELENIUM_NUM_CHANNELS
     if isDebug:
         channels = mocks.initScrapData.getScrapeData()
-        channelMax = 3
+        channelMax = env_varz.SELENIUM_NUM_CHANNELS_DEBUG
     global browser
     SLEEP_SCROLL = 3
     NUM_BOT_SCROLLS = 1

@@ -77,17 +77,20 @@ VIP_LIST = [
         "url": "lolgeranimo"
     }
   ]
-def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
+def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
     print ("000000000000                         00000000000000000")
     print ("000000000000 getTopChannels - sully  00000000000000000")
     print ("000000000000                         00000000000000000")
-    if numChannels > 300 or (numChannels % 10) != 0:
-        print("Error, numChannels is too big or not in 10s: " + str(numChannels))
-        return
-    loopMax = int((numChannels / 10))
+
+    num_channels = env_varz.SULLY_NUM_CHANNELS_DEBUG if isDebug else env_varz.SULLY_NUM_CHANNELS
+
+    if num_channels > 300 or (num_channels % 10) != 0:
+        raise Exception("Error, num_channels is too big or not in 10s: " + str(num_channels))
+
+    loopMax = int((num_channels / 10))
     # pageSize = 100
     pageSize = 10
-    type = 3 # note '3' => enum = Most watched
+    type = 3 # note '3' = most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         'Accept': 'application/json',
@@ -134,7 +137,7 @@ def getTopChannels(*, numChannels=50): # Returns big json: { "data": [ { "avgvie
 
 def tidyData(json_object):
     relevant_list = []
-    for channel in json_object['data']: # json_object =getTopChannelsAndSaveResponse.json
+    for channel in json_object['data']: # json_object =kickitResponse.json
         # quasi way of making a set, but afraid one of those other properties might change. ALso, trying to avoid forloop
         relevant_entry = {
             "displayname": channel.get('displayname'),

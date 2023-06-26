@@ -15,7 +15,6 @@ app.register_blueprint(everything_bp)
 @app.route('/yo/<text>')
 @app.route('/yo/')
 def yo(text="brother"):
-
     return "Yo {} @ {}".format(text, app.root_path)
 
 
@@ -34,12 +33,6 @@ def conflict_error(error):
     response = jsonify({"error":  error.description})
     response.status_code = 400
     return response
-
-# @app.errorhandler(Exception)
-# def server_error(error):
-#     app.logger.exception(error)
-#     print ("OOPS! I fucked up!")
-#     return "OOPS! I fucked up", 500
 
 
 @app.route('/')
@@ -63,10 +56,9 @@ def home():
         </ul>
         <hr/>
 
-        <li><a href="/main/ranking/getTopChannelsAndSave"> /main/ranking/getTopChannelsAndSave </a></li>
+        <li><a href="/main/ranking/kickit"> /main/ranking/kickit </a></li>
         <ul>
             <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>
-            <li> /ranking/saveTopChannels (dummy) </li>
         </ul>
         <hr/>
         <li> Init Scrape (part 1, find links) </li>

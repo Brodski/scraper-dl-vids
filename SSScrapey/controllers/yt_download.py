@@ -1,26 +1,15 @@
 from flask import Blueprint, current_app
-import yt_dlp
-import time
-
-import boto3
-import json
-import datetime
-from models.Metadata_Ytdl import Metadata_Ytdl
-import controllers.yt_download as yt
-import urllib.parse
-
-import yt_dlp
-import subprocess
 from flask import jsonify, abort
-
-import os
-
+from models.Metadata_Ytdl import Metadata_Ytdl
+import boto3
+import controllers.yt_download as yt
 import env_app as env_varz
-
-CURRENT_DATE_YMD = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-
-
-test_bp = Blueprint('test', __name__)
+import json
+import os
+import subprocess
+import time
+import urllib.parse
+import yt_dlp
 
 def is_json_serializable(obj):
     try:
@@ -55,7 +44,7 @@ def getTitle(meta):
 # Download
 #  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
 # TODO???
-# Turn this into (HTTP POST ---> Lambda)
+# Turn this into (HTTP REQUEST ---> Lambda)
 def downloadTwtvVid(link:str, isDownload=True): 
     print ("000000000000                  00000000000000000")
     print ("000000000000 download twtvVid 00000000000000000")
@@ -80,11 +69,11 @@ def downloadTwtvVid(link:str, isDownload=True):
         "format": "worst",
         "audioformat": "mp3",
         # "audioformat": "worst",
-        # "listformats": True,
+        # "listformats": True,      # FOR DEBUGGING
         # "audioformat": "mp3",
         "quiet": True,
         # "verbose": True,
-        "parse_metadata" "requested_downloads.filepath:%(filepath):"  # my custom  metadata
+        "parse_metadata" "requested_downloads.filepath:%(filepath):"  # my custom  metadata field
         "overwrites": True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -94,16 +83,7 @@ def downloadTwtvVid(link:str, isDownload=True):
         #                                 #https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
         }],
     }
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
-    print(vidUrl)
+    print("vidUrl")
     print(vidUrl)
     print(vidUrl)
     start_time = time.time()
@@ -131,13 +111,15 @@ def downloadTwtvVid(link:str, isDownload=True):
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     #  ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
     # ffmpeg_command = [ 'ffmpeg', '-i', inFile, '-q:a', '0', '-map', 'a', inFile+'.mp3' ]
-    # _execFFmpegCmd(ffmpeg_command)
+    # if env_varz.WHSP_EXEC_FFMPEG:
+    #     _execFFmpegCmd(ffmpeg_command)
     ffmpeg_command = [
         # 'ffmpeg', '-version'
         # 'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
         'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', outFile
     ]
-    _execFFmpegCmd(ffmpeg_command)
+    if env_varz.WHSP_EXEC_FFMPEG:
+        _execFFmpegCmd(ffmpeg_command)
     
     end_time = time.time() 
     time_diff = end_time - start_time
@@ -168,30 +150,35 @@ def _execFFmpegCmd(ffmpeg_command):
         return False
 
 # Download X vids from Y channels. 
-# Recieves the sullygnome digested data
-def bigBoyChannelDownloader(scrapped_channels_with_todos,*, chnLimit, vidDownloadLimit):
+# Recieves the sullygnome processed data
+def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
     print ("000000000000                         00000000000000000")
     print ("000000000000 bigBoyChannelDownloader 00000000000000000")
     print ("000000000000                         00000000000000000")
+
+    chn_limit =          env_varz.YTDL_NUM_CHANNELS_DEBUG     if isDebug else env_varz.YTDL_NUM_CHANNELS
+    vid_download_limit = env_varz.YTDL_VIDS_PER_CHANNEL_DEBUG if isDebug else env_varz.YTDL_VIDS_PER_CHANNEL
+
     for chn in scrapped_channels_with_todos:
         print("    (bigboy) Will do these channels: " + chn.get('url'))
+
     metadata_Ytdl_list = []
-    chnCounter = 0
+    chn_counter = 0
     for channel in scrapped_channels_with_todos:
-        if chnCounter == chnLimit:
+        if chn_counter == chn_limit:
             break
-        chnCounter = chnCounter + 1
+        chn_counter = chn_counter + 1
         
-        print ("    (bigboy) ----> TOP -" + str(chnCounter))
+        print ("    (bigboy) ----> TOP -" + str(chn_counter))
         print ("    (bigboy) ----> Channel: " + channel.get("url") + " ---> number todos = " + str(len(channel.get("todos"))))
         print ("    (bigboy) ----> " + str(channel))
         print ("    (bigboy) downloading channel_with_todos (via yt_dl) ................")
-        todoCount = 0
+        todo_count = 0
         for link in channel['todos']:
-            if todoCount == vidDownloadLimit:
+            if todo_count == vid_download_limit:
                 break
-            todoCount = todoCount + 1
-            print ("    (bigboy) ----> chn #" + str(chnCounter) + " todoCount: " + str(todoCount))
+            todo_count = todo_count + 1
+            print ("    (bigboy) ----> chn #" + str(chn_counter) + " todo_count: " + str(todo_count))
             print ("    (bigboy) ----> " + channel.get("url") + " @ " + link)
             metadata, outFile = downloadTwtvVid(link, True)
             if metadata == None:

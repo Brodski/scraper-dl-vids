@@ -1,5 +1,5 @@
 import urllib
-from controllers.yt_download import uploadAudioToS3
+# from controllers.yt_download import uploadAudioToS3
 import controllers.seleniumController as seleniumController
 import controllers.rankingController as rankingController
 import mocks.initScrapData
@@ -13,7 +13,6 @@ from models.AudioResponse import AudioResponse
 from models.VodS3Response import VodS3Response
 from models.Vod import Vod
 from typing import List
-from flask import abort, jsonify
 
 import env_app as env_varz
 
@@ -31,6 +30,7 @@ import ast
 # S3        - updates completed json
 #####################################################
 def kickit(isDebug=False):
+    
     # Make http request to sullygnome. 3rd party website
     topChannels = rankingController.getTopChannels() 
     relavent_data = rankingController.tidyData(topChannels) # relavent_data = /mocks/initScrapData.py
@@ -42,6 +42,11 @@ def kickit(isDebug=False):
     initYtdlAudio(relavent_data, isDebug=isDebug)
     return "Finished kickit()"
 ####################################################
+
+def kickit_just_gera(isDebug=False):
+    relavent_data = rankingController.addVipList([]) # same ^ but with gera
+    initYtdlAudio(relavent_data, isDebug=isDebug)
+    return "JUST GERA DONE!"
 
 
 
@@ -68,7 +73,7 @@ def initYtdlAudio(channels, *, isDebug=False):
     print (str(scrapped_channels_with_todos))
 
     # Download X vids from Y channels
-    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, isDebug=True)
+    metadata_Ytdl_list = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, isDebug=isDebug)
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
@@ -78,7 +83,7 @@ def initYtdlAudio(channels, *, isDebug=False):
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
     for yt_meta in metadata_Ytdl_list:        
         # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3 .. yt_meta has mp3 file location
-        uploadAudioToS3(yt_meta, isDebug) 
+        yt.uploadAudioToS3(yt_meta, isDebug) 
 
     createTodoList4Whispher()
     print("COMPLEEEEEEEEEEEEEEEEEETE")
@@ -90,13 +95,12 @@ def createTodoList4Whispher(isDebug=False):
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     print('zzzzzz           createTodoList4Whispher            zzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    # allOfIt_ids, allOfIt_titles = _getCompletedAudioJsonSuperS3() # lotsOfData = mocks/completedJsonSuperS3.py
     allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/completedJsonSuperS3.py
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
 
     if allOfIt is None or len(allOfIt)==0:
-        abort(400, description="Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
+        raise Exception("Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
     # print ("allOfIt")
     # print (allOfIt)
     # print (json.dumps(allOfIt, default=lambda o: o.__dict__, indent=4))

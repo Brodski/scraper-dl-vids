@@ -82,7 +82,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     print ("000000000000 getTopChannels - sully  00000000000000000")
     print ("000000000000                         00000000000000000")
 
-    num_channels = env_varz.SULLY_NUM_CHANNELS_DEBUG if isDebug else env_varz.SULLY_NUM_CHANNELS
+    num_channels = int(env_varz.SULLY_NUM_CHANNELS_DEBUG) if isDebug or env_varz.IS_DEBUG == "True" else int(env_varz.SULLY_NUM_CHANNELS)
 
     if num_channels > 300 or (num_channels % 10) != 0:
         raise Exception("Error, num_channels is too big or not in 10s: " + str(num_channels))

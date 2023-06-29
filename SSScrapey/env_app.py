@@ -1,6 +1,8 @@
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
+import os
 
 env_vars = dotenv_values('.env_public')
+load_dotenv()
 
 BUCKET_NAME = env_vars['BUCKET_NAME']
 BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
@@ -26,4 +28,9 @@ YTDL_VIDS_PER_CHANNEL = env_vars['YTDL_VIDS_PER_CHANNEL']
 YTDL_VIDS_PER_CHANNEL_DEBUG = env_vars['YTDL_VIDS_PER_CHANNEL_DEBUG']
 
 WHSP_EXEC_FFMPEG = env_vars['WHSP_EXEC_FFMPEG']
+
+IS_DEBUG = env_vars['IS_DEBUG']
+JUST_GERA = env_vars['JUST_GERA']
+
+JUST_GERA_ENV = os.getenv('JUST_GERA_ENV')
 

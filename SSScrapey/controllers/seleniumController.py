@@ -26,9 +26,9 @@ import time
 ######################################################################################### 
 ######################################################################################### 
 options = Options()
-if env_varz.SELENIUM_IS_HEADLESS:
+if env_varz.SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
-    
+
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
 options.add_argument('–-autoplay-policy=user-required') 
 options.add_argument('--window-size=1550,1250') # width, height
@@ -71,10 +71,9 @@ scriptPauseVidsJs = """
 #                 print("NOT KOSHER!!!!!!" )
 
 def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    channelMax = env_varz.SELENIUM_NUM_CHANNELS
+    channelMax = int(env_varz.SELENIUM_NUM_CHANNELS_DEBUG) if env_varz.IS_DEBUG == "True" else int(env_varz.SELENIUM_NUM_CHANNELS)
     if isDebug:
         channels = mocks.initScrapData.getScrapeData()
-        channelMax = env_varz.SELENIUM_NUM_CHANNELS_DEBUG
     global browser
     SLEEP_SCROLL = 3
     NUM_BOT_SCROLLS = 1
@@ -113,27 +112,31 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
             # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
             # TODO bugs may occure for marathon vids (_isVidFinished)
             if ( not (("hours" in inner_text) or ("minutes" in inner_text))):
-                allHrefs.append(tag['href'])
+                match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
+                if match and tag['href'] not in allHrefs:
+                    print (match.group(1))
+                    allHrefs.append(match.group(1))
             else:
                 print ("skipping a['href'] @ text=" + tag['href'])
                 
 
         # Remove duplicates via set
-        hrefsSet = set()
-        for href in allHrefs:
-            match = re.search(r'(/videos/\d+)(\?.*)', href)
-            if match:
-                print (match.group(1))
-                hrefsSet.add(match.group(1))
-        unique_list = list(set(hrefsSet))
-        resultz = list(unique_list)
+        # hrefsSet = set()
+        # for href in allHrefs:
+        #     match = re.search(r'(/videos/\d+)(\?.*)', href)
+        #     if match:
+        #         print (match.group(1))
+        #         hrefsSet.add(match.group(1))
+        # unique_list = list(set(hrefsSet))
+        # resultz = list(unique_list)
+        resultz = allHrefs
 
         everyChannel.append({
             'displayname': channel["displayname"],
             'language': channel["language"], # English
             'logo': channel["logo"], 
             'twitchurl': channel["twitchurl"], # https://www.twitch.tv/lolgeranimo
-            'channel': channel["url"], # url = lolgeranimo
+            'url': channel["url"], # url = lolgeranimo
             'links': resultz # '/videos/5057810
         })
         # resultz = jsonify(results=unique_list)

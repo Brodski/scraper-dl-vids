@@ -281,7 +281,7 @@ def uploadJsonToS3Test():
     json_object = myJsonStff
     s3.put_object(
         Body=json.dumps(json_object),
-        Bucket=env_varz.env_varz.BUCKET_NAME,
+        Bucket=env_varz.BUCKET_NAME,
         Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json
     )
     return "done: \n" + str(myJsonStff)
@@ -290,7 +290,7 @@ def uploadJsonToS3Test():
 
 @test_bp.route('/doS3Stuff')
 def doS3Stuff():
-    s3Aws = os.environ.get('env_varz.env_varz.BUCKET_NAME')
+    s3Aws = os.environ.get('env_varz.BUCKET_NAME')
     print(f'AWS_BUCKET Key: {s3Aws}')
 
     s3 = boto3.client('s3')

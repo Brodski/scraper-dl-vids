@@ -68,6 +68,7 @@ def downloadTwtvVid(link:str, isDownload=True):
         "extractaudio": True,
         "format": "worst",
         "audioformat": "mp3",
+        "restrictfilenames": True,
         # "audioformat": "worst",
         # "listformats": True,      # FOR DEBUGGING
         # "audioformat": "mp3",
@@ -87,6 +88,7 @@ def downloadTwtvVid(link:str, isDownload=True):
     print(vidUrl)
     print(vidUrl)
     start_time = time.time()
+    print("doing ytdl extract/download stuff")
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
             meta = ydl.extract_info(vidUrl, download=isDownload) 
@@ -99,7 +101,11 @@ def downloadTwtvVid(link:str, isDownload=True):
     filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
     title = getTitle(meta)
     inFile = "file:" + filepath
-    outFile =  "".join(inFile.split(".")[:-1]) + ".opus" 
+    if env_varz.WHSP_EXEC_FFMPEG == "True":
+        outFile =  "".join(inFile.split(".")[:-1]) + ".opus" #opus b/c of the ffmpeg cmd below
+    else:
+        outFile = inFile
+    
     print("  (dlTwtvVid) getMeta vidUrl= " + vidUrl)
     print("  (dlTwtvVid) getMeta vid.output= " + output_template)
     print("  (dlTwtvVid) filepath= "+filepath)
@@ -118,7 +124,7 @@ def downloadTwtvVid(link:str, isDownload=True):
         # 'ffmpeg', '-y', '-i', inFile, '-filter:a', 'atempo=1.5', outFile
         'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', outFile
     ]
-    if env_varz.WHSP_EXEC_FFMPEG:
+    if env_varz.WHSP_EXEC_FFMPEG == "True":
         _execFFmpegCmd(ffmpeg_command)
     
     end_time = time.time() 
@@ -156,8 +162,8 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
     print ("000000000000 bigBoyChannelDownloader 00000000000000000")
     print ("000000000000                         00000000000000000")
 
-    chn_limit =          env_varz.YTDL_NUM_CHANNELS_DEBUG     if isDebug else env_varz.YTDL_NUM_CHANNELS
-    vid_download_limit = env_varz.YTDL_VIDS_PER_CHANNEL_DEBUG if isDebug else env_varz.YTDL_VIDS_PER_CHANNEL
+    chn_limit =          int(env_varz.YTDL_NUM_CHANNELS_DEBUG)     if isDebug or env_varz.IS_DEBUG else int(env_varz.YTDL_NUM_CHANNELS)
+    vid_download_limit = int(env_varz.YTDL_VIDS_PER_CHANNEL_DEBUG) if isDebug or env_varz.IS_DEBUG else int(env_varz.YTDL_VIDS_PER_CHANNEL)
 
     for chn in scrapped_channels_with_todos:
         print("    (bigboy) Will do these channels: " + chn.get('url'))
@@ -172,7 +178,6 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
         print ("    (bigboy) ----> TOP -" + str(chn_counter))
         print ("    (bigboy) ----> Channel: " + channel.get("url") + " ---> number todos = " + str(len(channel.get("todos"))))
         print ("    (bigboy) ----> " + str(channel))
-        print ("    (bigboy) downloading channel_with_todos (via yt_dl) ................")
         todo_count = 0
         for link in channel['todos']:
             if todo_count == vid_download_limit:
@@ -198,23 +203,17 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print ("000000000000 uploadAudioToS3 00000000000000000")
     print ("000000000000                 00000000000000000")
     # caption_keybase = channels/vod-audio/lolgeranimo/1747933567 
-    # channels/vod-audio/<CHANNEL>/<VID-ID>.MP3 
 
     meta = yt_meta.metadata
-    # filepath = meta.get('requested_downloads')[0].get('filepath')
-    # filepath = yt_meta.outFile
     vod_title = os.path.basename(yt_meta.outFile)
-    
-    # vod_title = meta.get('fulltitle')
+
     display_id = meta.get('display_id')
     ext = meta.get("requested_downloads")[0].get('ext')
 
-    # caption_keybase = channels/vod-audio/lolgeranimo/1747933567 
     vod_id = yt_meta.link.replace("/videos/", "").replace("/", "")
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + yt_meta.channel + "/" + vod_id
     vod_filename = vod_title #+ "-" + display_id + "." + ext
     vod_encode = urllib.parse.quote(vod_filename)
-    # s3fileKey = caption_keybase + '/' + vod_filename
     s3fileKey = caption_keybase + "/" + vod_encode
     s3metaKey = caption_keybase + "/metadata.json"
     vod_decode = urllib.parse.unquote(vod_encode)
@@ -235,8 +234,8 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
     print("")
     s3 = boto3.client('s3')
     try:
-        # upload: channels/vod-audio/lck/2023-04-18/576354726/metadta.json
-        # upload: channels/vod-audio/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
+        # uploads: channels/vod-audio/lck/2023-04-18/576354726/metadta.json
+        # uploads: channels/vod-audio/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
         print ("    UPLOADING MP3 !!!!!!!!!!!!!!!!! ")
         print ("    " + yt_meta.outFile[5:])
         s3.upload_file(os.path.abspath(yt_meta.outFile[5:]), env_varz.BUCKET_NAME, s3fileKey)
@@ -318,15 +317,26 @@ def getAlreadyDownloadedS3(channel, links):
         responseGetObj = sorted(responseGetObj, key=lambda obj: obj['LastModified'])
         print(links_ids)
         print(links_ids)
-        for obj in responseGetObj:
-            print("     (getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
-            for id in links_ids:
+
+        for id in links_ids:
+            for obj in responseGetObj:
+                print("     (getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
                 if id in obj['Key']:
                     print("YES!")
                     print(id)
                     print(obj['Key'])
                     links_ids.remove(id)
                     print(links_ids)
+
+        # for obj in responseGetObj:
+        #     print("     (getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
+        #     for id in links_ids:
+        #         if id in obj['Key']:
+        #             print("YES!")
+        #             print(id)
+        #             print(obj['Key'])
+        #             links_ids.remove(id)
+        #             print(links_ids)
         print(links_ids)
         print(links_ids)
         print(links_ids)

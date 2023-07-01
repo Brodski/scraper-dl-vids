@@ -76,15 +76,21 @@ def main():
 ######################################################
 # APP
 ######################################################
-def run(*, model_size, filename):
-    # model = WhisperModel(model_size, device="cuda", compute_type="float16")
-    # model = faster_whisper.WhisperModel(model_size, compute_type="int8")
-    # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8",  cpu_threads=8) # 4 default
-    # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default
-    model = faster_whisper.WhisperModel(model_size, compute_type="int8",  cpu_threads=16) # 4 default
+def run(*, model_size, lang_code, filename):
+    model_size = env_varz.WHSP_MODEL_SIZE
+    compute_type = env_varz.WHSP_COMPUTE_TYPE
+    cpu_threads = int(env_varz.WHSP_CPU_THREADS)
+
+    # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8) # 4 default 
+    model = faster_whisper.WhisperModel(model_size, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
     # audio_path = "{}/{}/{}".format(MAIN_DIR, env_varz.A2T_ASSETS_AUDIO, filename)
     audio_abs_path = os.path.abspath(env_varz.A2T_ASSETS_AUDIO + '/' + filename)
     audio_basename = os.path.basename(env_varz.A2T_ASSETS_AUDIO + '/' + filename)
+    
+    model_size = env_varz.WHSP_MODEL_SIZE
+    compute_type = env_varz.WHSP_COMPUTE_TYPE
+    cpu_threads = int(env_varz.WHSP_CPU_THREADS)
+
 
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     # print(audio_path)
@@ -99,7 +105,7 @@ def run(*, model_size, filename):
     # segments, info = model.transcribe(audio_abs_path, language="en", condition_on_previous_text=False, beam_size=2, best_of=2)
     # segments, info = model.transcribe(audio_abs_path, language="en", condition_on_previous_text=False, vad_filter=True)
     # segments, info = model.transcribe(audio_abs_path, language="en")
-    segments, info = model.transcribe(audio_abs_path, language="en", condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2)
+    segments, info = model.transcribe(audio_abs_path, language=lang_code, condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2)
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
@@ -107,7 +113,7 @@ def run(*, model_size, filename):
         "segments": []
     }
 
-    for segment in segments:
+    for segment in segments: # generator()
         print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
         result["segments"].append({
             "start" : segment.start,

@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 import env_app as env_varz
 import mocks.initScrapData
 import re
@@ -33,10 +36,19 @@ if env_varz.SELENIUM_IS_HEADLESS == "True":
 options.add_argument('–-autoplay-policy=user-required') 
 options.add_argument('--window-size=1550,1250') # width, height
 options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
-chrome_prefs = {
-    "profile.default_content_setting_values.autoplay": 2,  # 2 means Block autoplay
+# chrome_prefs = {
+#     "profile.default_content_setting_values.autoplay": 2,  # 2 means Block autoplay
+# }
+firefox_pref = {
+    "media.block-play-until-visible": "false",
+    "media.autoplay.blocking_policy": 2,
+    "media.autoplay.default": 1,
+    "media.autoplay.enabled.user-gestures-needed": "false",
+    "media.autoplay.block-event.enabled": "true"
+
 }
-options.add_experimental_option("prefs", chrome_prefs)
+# options.add_experimental_option("prefs", chrome_prefs)
+options.add_experimental_option("prefs", firefox_pref)
 browser = None
 
 
@@ -44,10 +56,14 @@ scriptPauseVidsJs = """
     const stopIt = (vid) => {
         vid.pause()
     };
+    console.log("document.querySelectorAll('video')")
     for ( let vid of document.querySelectorAll('video')) {
+        console.log(vid)
         if (vid) {
             stopIt(vid);
-            vid.addEventListener("play", (vid) => stopIt(vid))
+            vid.addEventListener("play", (e) => {
+                stopIt(vid)
+            })
         }
     }
 """
@@ -81,7 +97,8 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
     print(browser)
     if browser is None:
         print(browser)
-        browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options))
     everyChannel = []
     cnt = 0
     for channel in channels:
@@ -96,6 +113,7 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
         print (browser.title)
         browser.execute_script(scriptPauseVidsJs)
         for i in range(NUM_BOT_SCROLLS):
+            time.sleep(28)
             print ("scroll to bottom " + str(i))
             # Not 100% sure why I have 2.
             browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.

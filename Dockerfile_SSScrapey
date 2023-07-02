@@ -1,0 +1,95 @@
+FROM ubuntu:focal-20230605
+
+
+#############################################
+#
+# 
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# docker run --env-file .env ssscrapey:v2.0
+#
+# GO INTO CONTAIENR
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+#
+# Go into docker
+# $ docker run -it ssscrapey:v2.0 /bin/bash
+#
+#
+##############################################
+ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
+# ENV BARBARA="BarbaraWalters.mp3"
+# ENV GPT_PODCAST="OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
+
+
+# Required to make firefox headless
+ENV MOZ_HEADLESS=1 
+
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+RUN echo "My variable: $BENCH_OUTPUT"
+
+#  ~/.aws/credentials
+# ARG AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+# ARG AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
+# WORKDIR /root/.aws
+# RUN echo "[default] \
+#         aws_access_key_id=$AWS_ACCESS_KEY_ID \
+#         aws_secret_access_key=$AWS_SECRET_ACCESS_KEY \
+#         " > credentials
+
+
+# ##########
+# # Python #
+# ##########
+WORKDIR /app
+RUN apt update \
+    && apt-get update \
+    && apt install curl  -y \
+    && apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev -y \
+    && curl https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz -o Python-3.10.10.tgz \
+    && tar -xzf Python-3.10.10.tgz \
+    && cd Python-3.10.10/ \
+    && ./configure --enable-optimizations --with-ensurepip=install \
+    && make -j $(nproc) \
+    && make altinstall \
+    && ln -s /usr/local/bin/python3.10 /usr/local/bin/python \
+    && cd .. \
+    && rm Python-3.10.10.tgz 
+
+
+#######
+# Pip #
+#######    
+WORKDIR /app
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py pip==23.0.1 \
+    && pip --version \
+    && rm get-pip.py 
+
+
+###########
+# Project #
+###########
+WORKDIR /app
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata  
+RUN apt install git-all -y \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git \
+    && pip install faster-whisper \
+    && pip install -U openai-whisper 
+
+############################
+# Dependencies - SSScrapey #
+############################
+WORKDIR /app
+RUN apt-get install ffmpeg -y \
+    && apt install firefox -y \
+    && pip install flask \
+    && pip install yt-dlp \
+    && pip install boto3 \
+    && pip install beautifulsoup4 \
+    && pip install selenium \
+    && pip install webdriver-manager
+
+# && pip install selenium==4.8.3
+# && pip install webdriver-manager==3.8.5

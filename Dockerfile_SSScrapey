@@ -1,14 +1,26 @@
 FROM ubuntu:focal-20230605
 
+# RUN
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
+
+# BUILD
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+
+# GO INTO CONTAIENR
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
 
 #############################################
 #
 # 
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
-# docker run --env-file .env ssscrapey:v2.0
 #
-# GO INTO CONTAIENR
-# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
 #
 # Go into docker
 # $ docker run -it ssscrapey:v2.0 /bin/bash
@@ -93,3 +105,8 @@ RUN apt-get install ffmpeg -y \
 
 # && pip install selenium==4.8.3
 # && pip install webdriver-manager==3.8.5
+WORKDIR /app/scraper-dl-vids/SSScrapey
+CMD python main-no-server-gogo.py
+
+
+# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash

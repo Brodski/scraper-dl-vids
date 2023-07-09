@@ -7,6 +7,7 @@ import mocks.initHrefsData
 import mocks.ytdlObjMetaDataList
 import controllers.yt_download as yt
 import datetime
+import os
 import json
 import boto3
 from models.AudioResponse import AudioResponse
@@ -36,7 +37,7 @@ def kickit(isDebug=False):
     relavent_data = rankingController.tidyData(topChannels) # relavent_data = /mocks/initScrapData.py
     relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
 
-    if isDebug:
+    if isDebug and os.getenv("ENV") == "local":
         print ("ENDING PREMPTIVELY B/C is DEBUG")
         return relavent_data
     initYtdlAudio(relavent_data, isDebug=isDebug)
@@ -60,7 +61,7 @@ def initYtdlAudio(channels, *, isDebug=False):
     print ("00000000000000                 00000000000000000")
     print ("00000000000000  initYtdlAudio  00000000000000000")
     print ("00000000000000                 00000000000000000")
-    # TODO probably need some interface & models for the scrapped-data vs ytdl-data
+
     if isDebug:
         scrapped_channels = mocks.initHrefsData.getHrefsData()
     else:
@@ -131,7 +132,6 @@ def createTodoList4Whispher(isDebug=False):
                 vod_encode = urllib.parse.quote(vod.title)
                 vod_path = env_varz.S3_CAPTIONS_KEYBASE + vod.channel + "/" + vod.id + "/" + vod_encode
                 vod.link_s3 =  env_varz.BUCKET_DOMAIN + "/" + vod_path
-
                 missing_captions_list.append(vod)
     s3 = boto3.client('s3')
     s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
@@ -141,7 +141,7 @@ def createTodoList4Whispher(isDebug=False):
     print ("MISSSING!")
     print (missing_captions_list)
     print (json.dumps(missing_captions_list, default=lambda o: o.__dict__, indent=4))
-    if isDebug:
+    if isDebug and os.getenv("ENV") == "local":
         return json.loads(json.dumps(missing_captions_list, default=lambda o: o.__dict__)) 
     return missing_captions_list
 

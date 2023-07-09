@@ -12,6 +12,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 import env_app as env_varz
 import mocks.initScrapData
 import re
+import os
 import time
 
 
@@ -64,7 +65,7 @@ scriptPauseVidsJs = """
 
 def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
     channelMax = int(env_varz.SELENIUM_NUM_CHANNELS_DEBUG) if env_varz.IS_DEBUG == "True" else int(env_varz.SELENIUM_NUM_CHANNELS)
-    if isDebug:
+    if isDebug and os.getenv("ENV") == "local":
         channels = mocks.initScrapData.getScrapeData()
     global browser
     SLEEP_SCROLL = 3

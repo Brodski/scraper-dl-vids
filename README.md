@@ -41,3 +41,48 @@ python -m virtualenv venv
   
     
 ssh root@104.156.226.154 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+
+
+
+==========================================
+#  AWS
+
+TODO - https://registry.terraform.io/modules/cn-terraform/ecs-fargate-scheduled-task/aws/latest 
+
+
+Create an AWS Fargate Cluster
+Create an AWS Fargate Cluster
+Create an AWS Fargate Cluster
+Create an AWS Fargate Cluster
+https://www.youtube.com/watch?v=WsvuIxaCQGg
+https://www.youtube.com/watch?v=WsvuIxaCQGg
+https://www.youtube.com/watch?v=WsvuIxaCQGg
+https://www.youtube.com/watch?v=WsvuIxaCQGg
+https://www.youtube.com/watch?v=WsvuIxaCQGg
+
+LOGS
+LOGS
+LOGS
+LOGS
+https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups
+
+
+
+=====================
+ssscrapey
+pip install boto3
+pip install python-dotenv
+pip install boto3
+pip install beautifulsoup4
+pip install selenium
+pip install webdriver-manager==3.8.5
+
+// apt-get install chromium-driver -y
+// pip install ffmpeg
+// pip install ffprobe
+apt-get install ffmpeg
+apt install firefox
+
+
+???
+pip isntall flask

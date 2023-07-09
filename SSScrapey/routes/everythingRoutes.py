@@ -99,3 +99,7 @@ def _getAllCompletedJsonSuperS3__BETTER_Route():
 def createTodoList4Whispher_Route():
     return mainController.createTodoList4Whispher(True)
 
+@everything_bp.route('/main/kickit_just_gera')
+def kickit_just_gera_Route():
+    return mainController.kickit_just_gera(True)
+

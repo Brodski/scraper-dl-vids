@@ -56,6 +56,7 @@ def home():
         </ul>
         <hr/>
 
+        <li><a href="/main/kickit_just_gera"> /main/kickit_just_gera </a></li>
         <li><a href="/main/ranking/kickit"> /main/ranking/kickit </a></li>
         <ul>
             <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>

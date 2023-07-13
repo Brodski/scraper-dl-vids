@@ -9,11 +9,12 @@ FROM ubuntu:focal-20230605
 # docker run --env-file .env ssscrapey:v2.0
 
 # BUILD
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
-# $ docker build -t ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t cbrodski/ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t cbrodski/ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t cbrodski/ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t cbrodski/ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+# $ docker build -t cbrodski/ssscrapey:v01.1 -f Dockerfile_SSScrapey  .
+
 
 # GO INTO CONTAIENR
 # docker run --env-file .env -it ssscrapey:v2.0 /bin/bash
@@ -92,6 +93,3 @@ RUN apt-get install ffmpeg -y \
 WORKDIR /app/scraper-dl-vids/SSScrapey
 CMD git pull origin master \
     && python main-no-server-gogo.py
-
-
-# docker run --env-file .env -it ssscrapey:v2.0 /bin/bash

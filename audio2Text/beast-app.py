@@ -120,8 +120,7 @@ def cleanUpFiles(filename):
   if os.getenv("ENV") != "local":
      print("DELETING IT!!!!!!!")
      os.remove(file_abs)
-  print()
-  # os.remove(file_abs)
+  return 
 
 def doWhisperStuff(audio_name_encode, metadata_file_s3):
     lang_code = get_language_code(metadata_file_s3["language"])
@@ -137,10 +136,7 @@ def doWhisperStuff(audio_name_encode, metadata_file_s3):
 
     for filename in saved_caption_files: # [vodx.json, vodx.vtt]
       s3_file_location = uploadCaptionsToS3(filename, todo)
-    cleanUpFiles(audio_name_encode)
     return True
-    # if s3_file_location:
-    #    updateCompletedCaptionsS3(s3_file_location, todo)
 
 # todo_list
 # {
@@ -160,20 +156,21 @@ if __name__ == '__main__':
     super_start = time.time()
     print('Start')
     print(os.getenv("ENV"))
-    print(os.getenv("ENV"))
     todo_list = _getCompletedJsonS3() 
-    print("##########")
-    print()
     if isDebug and os.getenv("ENV") == "local":
       todo = Todo(channel="lolgeranimo", id="28138895", title="The Geraniproject! I Love You Guys!!!-v28138895", link_s3="https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.mp3" )
       todo_list = [todo]
 
+    print("###############")
     for todo in todo_list:
       print("---")
       print(json.dumps(todo, default=lambda o:o.__dict__, indent=4))
-      # local_filename, metadata_file_s3 = downloadAudio(todo_list)
       audio_name_encode, metadata_file_s3 = downloadAudio(todo)
       doWhisperStuff(audio_name_encode, metadata_file_s3)
+      try:
+        cleanUpFiles(audio_name_encode)
+      except:
+         print('failed to run cleanUpFiles() on: ' + audio_name_encode)
     print("done!!")
     
     # end = time.time() - super_start

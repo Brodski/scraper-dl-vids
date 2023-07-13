@@ -1,4 +1,11 @@
-# python -m venv venvA2T
+###########################################################################
+#
+# Faster Whisper transcription with CTranslate2
+#
+# https://github.com/guillaumekln/faster-whisper
+# https://github.com/guillaumekln/faster-whisper
+# https://github.com/guillaumekln/faster-whisper
+##########################################################################
 # python -m pip install faster-whisper
 # python -m pip install openai-whisper
 

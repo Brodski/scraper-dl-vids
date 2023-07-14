@@ -34,6 +34,8 @@ def _getCompletedJsonS3():
        print(todo)
        todo = Todo(channel=todo.get("channel"), id=todo.get("id"), title=todo.get("title"), link_s3=todo.get("link_s3") )
        todo_list.append(todo)
+    for todo in todo_list_pre:
+       print(todo['channel'] + " : " + todo['title'])
     return todo_list
 
 

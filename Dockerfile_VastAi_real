@@ -81,7 +81,8 @@ RUN apt install git-all -y \
     && pip install -U openai-whisper \
     && pip install boto3 \
     && pip install python-dotenv \
-    && pip install langcodes
+    && pip install langcodes \
+    && pip install language_data
 
 
 #########

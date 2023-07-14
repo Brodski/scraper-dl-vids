@@ -69,7 +69,7 @@ def get_language_code(full_language_name):
     try:
         language_code = langcodes.find(full_language_name).language
         return language_code
-    except langcodes.LanguageNotFoundError:
+    except:
         return None
 
 

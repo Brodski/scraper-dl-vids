@@ -89,6 +89,7 @@ def run(*, model_size, lang_code=None, filename):
     
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+    print("model_size: " + model_size)
 
     result = { 
         "segments": []
@@ -132,6 +133,8 @@ def run(*, model_size, lang_code=None, filename):
     print("run time =" + str(end_time))
     print()
     print("Saved files: " + str(saved_caption_files))
+    print()
+    print("model_size: " + model_size)
     print()
 
     return saved_caption_files

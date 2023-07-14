@@ -15,23 +15,30 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 #
 #
 #
-#   vastai create instance 6479528 --image cbrodski/audio2text:latest --disk 23
-#   vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
-#   vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
-#   vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
-# ssh -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh.pub" -p 40299 root@75.191.38.75 -L 8080:localhost:8080 
+# vastai create instance 6479528 --image cbrodski/audio2text:latest --disk 23
+# vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
+# vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
+# vastai create instance 36842 --image cbrodski/audio2text:latest --disk 23
 # ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 # ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-
+#
+#
+# docker run --env-file .env -it cbrodski/audio2text:latest /bin/bash
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run --env-file .env cbrodski/audio2text:latest
+# docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
+# 
+# docker build -t cbrodski/audio2text:v2023.7.13 -f Dockerfile_VastAi_real  .
 ##############################################
 # ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
 # ENV BARBARA="BarbaraWalters.mp3"
 # ENV GPT_PODCAST="OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
 
-# RUN echo "My variable: $BENCH_OUTPUT"
-# RUN echo "My variable: $BENCH_OUTPUT"
-# RUN echo "My variable: $BENCH_OUTPUT"
-# RUN echo "My variable: $BENCH_OUTPUT"
 # RUN echo "My variable: $BENCH_OUTPUT"
 
 ##########
@@ -71,7 +78,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt install git-all -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git \
     && pip install faster-whisper \
-    && pip install -U openai-whisper 
+    && pip install -U openai-whisper \
+    && pip install boto3 \
+    && pip install python-dotenv \
+    && pip install langcodes
 
 
 #########
@@ -124,4 +134,4 @@ WORKDIR /app/scraper-dl-vids/audio2Text
 CMD ls && \
     git pull origin master && \ 
     ls && \
-    python beast-app.py
+    python audio2text-app.py

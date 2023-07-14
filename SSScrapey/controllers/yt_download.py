@@ -162,6 +162,7 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
     print ("000000000000 bigBoyChannelDownloader 00000000000000000")
     print ("000000000000                         00000000000000000")
 
+    # CONFIG VARS
     chn_limit =          int(env_varz.YTDL_NUM_CHANNELS_DEBUG)     if isDebug or (env_varz.IS_DEBUG and os.getenv("ENV") == "local") else int(env_varz.YTDL_NUM_CHANNELS)
     vid_download_limit = int(env_varz.YTDL_VIDS_PER_CHANNEL_DEBUG) if isDebug or (env_varz.IS_DEBUG and os.getenv("ENV") == "local") else int(env_varz.YTDL_VIDS_PER_CHANNEL)
 

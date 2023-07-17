@@ -70,7 +70,11 @@ def home():
             <li> <a href="/main/ytdl/bigBoyChannelDownloader_TEST "> /main/ytdl/bigBoyChannelDownloader_TEST  </a></li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
-                <li> /ytdl/downloadTwtvVid (dummy) </li>
+                <ul> (uploads)
+                    <li><a href="/s3/uploadOverviewStateS3"> /s3/uploadOverviewStateS3 </a></li>
+                    <li><a href="/s3/uploadEachChannelsCompletedJson"> /s3/uploadEachChannelsCompletedJson </a></li>
+                    <li><a href="/s3/uploadLightOverviewS3"> /s3/uploadLightOverviewS3 </a></li>
+                </ul>
             </ul>
         </ul>
         
@@ -79,7 +83,7 @@ def home():
         <li><a href="/s3/_getAllCompletedJsonSuperS3__BETTER"> CompS3 /s3/_getAllCompletedJsonSuperS3__BETTER </a></li>
         
         
-        <li><a href="/s3/createTodoList4Whispher"> TODO audio /s3/createTodoList4Whispher </a></li>
+        <li><a href="/s3/uploadTodoAndCompletedJsons"> TODO audio /s3/uploadTodoAndCompletedJsons </a></li>
 
         <ul>
             <li> </li>

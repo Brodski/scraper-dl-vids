@@ -41,15 +41,26 @@ def kickit(isDebug=False):
         print ("ENDING PREMPTIVELY B/C is DEBUG")
         return relavent_data
     initYtdlAudio(relavent_data, isDebug=isDebug)
+    
+    doUploadStuff()
+
     return "Finished kickit()"
 ####################################################
 
 def kickit_just_gera(isDebug=False):
     relavent_data = rankingController.addVipList([]) # same ^ but with gera
     initYtdlAudio(relavent_data, isDebug=isDebug)
+
+    if not isDebug:
+        doUploadStuff(relavent_data)
+
     return "JUST GERA DONE!"
 
-
+def doUploadStuff(relavent_data):
+    [missing_captions_list, completed_captions_list] = uploadTodoAndCompletedJsons()
+    uploadOverviewStateS3()
+    big_key_val_list = uploadEachChannelsCompletedJson(completed_captions_list)
+    uploadLightOverviewS3(big_key_val_list, relavent_data)
 
 #####################################################
 # Comes after 3                                     #
@@ -86,35 +97,31 @@ def initYtdlAudio(channels, *, isDebug=False):
         # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3 .. yt_meta has mp3 file location
         yt.uploadAudioToS3(yt_meta, isDebug) 
 
-    createTodoList4Whispher()
     print("COMPLEEEEEEEEEEEEEEEEEETE")
     return "Compelte init"
 
 
-
-def createTodoList4Whispher(isDebug=False):
+# could be better
+def uploadTodoAndCompletedJsons(isDebug=False):
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    print('zzzzzz           createTodoList4Whispher            zzzzzzz')
+    print('zzzzzz           uploadTodoAndCompletedJsons            zzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/completedJsonSuperS3.py
+    allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/get_all_superS3__BETTER.py.py
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
 
     if allOfIt is None or len(allOfIt)==0:
         raise Exception("Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
-    # print ("allOfIt")
-    # print (allOfIt)
-    # print (json.dumps(allOfIt, default=lambda o: o.__dict__, indent=4))
+
     captions_ext = ['.json', '.vtt']
     missing_captions_list = []
+    completed_captions_list = []
 
     for k_chn, v_id_files in allOfIt.items():
+        print()
         print(k_chn)
         for id, files in v_id_files.items():
-            # print ()
-            # print ("    " + str(id))
-            # print ("    " + str(files))
-            # hasAudio = False
+            print()
             hasCaptions = False
             for file in files:
                 if file == "metadata.json":
@@ -127,26 +134,99 @@ def createTodoList4Whispher(isDebug=False):
                     hasCaptions = True
             if hasAudio and not hasCaptions:
                 print("MISSING CAPTIONS for: " + k_chn + " " + id)
-                print()
                 vod = Vod(channel=k_chn, id=id, title=urllib.parse.unquote(vod_title))
-                vod_encode = urllib.parse.quote(vod.title)
-                vod_path = env_varz.S3_CAPTIONS_KEYBASE + vod.channel + "/" + vod.id + "/" + vod_encode
-                vod.link_s3 =  env_varz.BUCKET_DOMAIN + "/" + vod_path
                 missing_captions_list.append(vod)
+            if hasAudio and hasCaptions:
+                print("COMPLETED AUDIO and CAPTIONS for: " + k_chn + " " + id)
+                vod = Vod(channel=k_chn, id=id, title=urllib.parse.unquote(vod_title))
+                completed_captions_list.append(vod)
+
     s3 = boto3.client('s3')
-    s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
-    print ("MISSSING!")
-    print ("MISSSING!")
-    print ("MISSSING!")
-    print ("MISSSING!")
+    # s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
+    s3.put_object(Body=json.dumps(completed_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_JSON)
+    print ("MISSSING below!")
+    print ("MISSSING below!")
+    print ("MISSSING below!")
+    print ("MISSSING below!")
     print (missing_captions_list)
-    print (json.dumps(missing_captions_list, default=lambda o: o.__dict__, indent=4))
+    print ("COMPLETED below!")
+    print ("COMPLETED below!")
+    print ("COMPLETED below!")
+    print ("COMPLETED below!")
+    print (completed_captions_list)
     if isDebug and os.getenv("ENV") == "local":
-        return json.loads(json.dumps(missing_captions_list, default=lambda o: o.__dict__)) 
-    return missing_captions_list
+        return json.loads(json.dumps({"completed_captions_list": completed_captions_list, "missing_captions_list": missing_captions_list}, default=lambda o: o.__dict__))
+    return [missing_captions_list, completed_captions_list]
+
+def getIndivChannelKey(chan):
+    return env_varz.S3_COMPLETED_INDIV_CHAN_ROOT + chan + ".json"
+
+# returns -> /mocks/light_overview_s3.py
+def uploadLightOverviewS3(big_key_val_list, relevant_data): # /mocks/big_key_val_list.py
+    # print(str(s3_state_json))
+    # print(json.dumps(big_key_val_list, default=lambda o: o.__dict__, indent=4))
+    
+    # prepped_rel_data = {'lolgeranimo': '-1', 'ibai': 1, 'kaicenat': 2, 'fextralife': 3, 'kingsleague': 4, 'loud_coringa': 5, 'cellbit': 6, 'k3soju': 7, 'handongsuk': 8, 'eliasn97': 9, 'tarik': 10, 'xqc': 11, 'gaules': 12, 'hasanabi': 13, 'paulinholokobr': 14, 'ironmouse': 15, 'nix': 16, 'otplol_': 17, 'esl_dota2': 18, 'fps_shaka': 19, 'paragon_dota': 20}
+    prepped_rel_data = {} 
+    for chan in relevant_data:
+        prepped_rel_data[chan.get("url")] = chan.get("rownum")
+
+    light_overview_list = []
+    for chan in big_key_val_list:
+        x = prepped_rel_data.get(chan)
+        print(x if x else "9999")
+        light_overview_list.append({
+            "channel": chan,
+            "size": len(big_key_val_list[chan]),
+            "path": getIndivChannelKey(chan),
+            "rownum": x if x else "9999"
+        })
+    s3 = boto3.client('s3')
+    key = env_varz.S3_OVERVIEW_STATE_LIGHT_JSON
+    print("UPLOADING LIGHTWEIGHT S3 OVERVIEW:")
+    print("upload to: " + key)
+    print(json.dumps(light_overview_list, default=lambda o: o.__dict__, indent=4))
+    s3.put_object(Body=json.dumps(light_overview_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    return json.loads(json.dumps(light_overview_list, default=lambda o: o.__dict__))
 
 
 
+def uploadOverviewStateS3():
+    s3_state_json = _getAllCompletedJsonSuperS3__BETTER() # mocks/get_all_superS3__BETTER.py
+    s3 = boto3.client('s3')
+    key = env_varz.S3_OVERVIEW_STATE_JSON
+    print("UPLOADING S3 OVERVIEW:")
+    print("upload to: " + key)
+    print(json.dumps(s3_state_json, default=lambda o: o.__dict__, indent=4))
+    s3.put_object(Body=json.dumps(s3_state_json, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    return json.loads(json.dumps(s3_state_json, default=lambda o: o.__dict__))
+
+
+def uploadEachChannelsCompletedJson(completed_captions_list: list[Vod]): # /mocks/completed_captions_list.py
+    s3 = boto3.client('s3')
+    big_key_val_list = {}
+    prepped_rel_data = {}
+
+    for vod in completed_captions_list:
+        if big_key_val_list.get(vod['channel']):
+            big_key_val_list[vod['channel']].append(vod)
+        else:
+            big_key_val_list[vod['channel']] = []
+            big_key_val_list[vod['channel']].append(vod)
+    for chan in big_key_val_list:
+        key = getIndivChannelKey(chan)
+        print("UPLOADING COMPLETED LIST (caps + audio) for: " + chan)
+        print("upload to: " + key)
+        print(json.dumps(big_key_val_list[chan], indent=4))
+        s3.put_object(Body=json.dumps(big_key_val_list[chan], default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    print("prepped_rel_data")
+    print("prepped_rel_data")
+    print("prepped_rel_data")
+    print("prepped_rel_data")
+    print("prepped_rel_data")
+    print("prepped_rel_data")
+    print(json.dumps(prepped_rel_data, indent=4))
+    return big_key_val_list # /mocks/big_key_val_list.py
 
 # Expected S3 query:
 # Key= channels/vod-audio/lck/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.json

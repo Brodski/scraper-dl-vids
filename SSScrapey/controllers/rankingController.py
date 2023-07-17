@@ -14,6 +14,7 @@ import requests
 
 import boto3
 import json
+import os
 
 import env_app as env_varz
 
@@ -74,7 +75,8 @@ VIP_LIST = [
         "language": "English",
         "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
         "twitchurl": "https://www.twitch.tv/lolgeranimo",
-        "url": "lolgeranimo"
+        "url": "lolgeranimo",
+        "rownum": "-1"
     }
   ]
 def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
@@ -87,9 +89,9 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     if num_channels > 300 or (num_channels % 10) != 0:
         raise Exception("Error, num_channels is too big or not in 10s: " + str(num_channels))
 
-    loopMax = int((num_channels / 10))
-    # pageSize = 100
-    pageSize = 10
+    pageSize = 100
+    loopMax = max(1, int((num_channels / pageSize)))
+    # pageSize = 10
     type = 3 # note '3' = most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
@@ -127,6 +129,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
                     print('    (getTopChannels) displayname=' + str(obj.get('displayname')))
                     print('    (getTopChannels) url=' + str(obj.get('url')))
                     print('    (getTopChannels) logo=' + str(obj.get('logo')))
+                    print('    (getTopChannels) rownum=' + str(obj.get('rownum')))
                     cnt= cnt + 1
         else:
             print(f'Error: {response.status_code}')
@@ -145,6 +148,7 @@ def tidyData(json_object):
             "language": channel.get('language'),
             "logo": channel.get('logo'),
             "url": channel.get('url'),
+            "rownum": channel.get('rownum')
         }
         relevant_list.append(relevant_entry)
     return relevant_list

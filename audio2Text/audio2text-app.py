@@ -174,6 +174,10 @@ if __name__ == '__main__':
       except:
          print('failed to run cleanUpFiles() on: ' + audio_name_encode)
     print("done!!")
+    print("done!!")
+    print("done!!")
+    print("done!!")
+    print("done!!")
     
     # end = time.time() - super_start
     # some_obj = {

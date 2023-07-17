@@ -12,6 +12,9 @@ import controllers.rankingController as rankingController
 import controllers.yt_download as ytdl
 # or "import controllers.downloadController"
 # --> controllers.downloadController.uploadJsonToS3
+import mocks.completed_captions_list
+import mocks.big_key_val_list
+import mocks.relevant_data
 
 #variable is used in app.py
 everything_bp = Blueprint('download', __name__)
@@ -25,7 +28,7 @@ ranking_bp = Blueprint('ranking', __name__)
 # Saves "who" to S3
 @everything_bp.route('/main/ranking/kickit')
 def kickit_Route():
-    return mainController.kickit()
+    return mainController.kickit(True)
 
 @ranking_bp.route('/getTopChannels')
 def getTopChannels_Route():
@@ -95,9 +98,21 @@ def _getAllCompletedJsonSuperS3__BETTER_Route():
     return mainController._getAllCompletedJsonSuperS3__BETTER()
 
 
-@everything_bp.route('/s3/createTodoList4Whispher')
-def createTodoList4Whispher_Route():
-    return mainController.createTodoList4Whispher(True)
+@everything_bp.route('/s3/uploadTodoAndCompletedJsons')
+def uploadTodoAndCompletedJsons_Route():
+    return mainController.uploadTodoAndCompletedJsons(True)
+
+@everything_bp.route('/s3/uploadLightOverviewS3')
+def uploadLightOverviewS3_Route():
+    return mainController.uploadLightOverviewS3(mocks.big_key_val_list.get_big_key_val_list(), mocks.relevant_data.get_relevant_data())
+
+@everything_bp.route('/s3/uploadEachChannelsCompletedJson')
+def uploadEachChannelsCompletedJson_Route():
+    return mainController.uploadEachChannelsCompletedJson(mocks.completed_captions_list.get_completed_captions_list())
+
+@everything_bp.route('/s3/uploadOverviewStateS3')
+def uploadOverviewStateS3_Route():
+    return mainController.uploadOverviewStateS3()
 
 @everything_bp.route('/main/kickit_just_gera')
 def kickit_just_gera_Route():

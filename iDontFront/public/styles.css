@@ -1,3 +1,44 @@
 body {
     background-color: grey;
 }
+
+.row {
+    
+}
+
+.col-1 {
+    width: 0.083%
+}
+.col-2 {
+    width: 0.166%
+}
+.col-3 {
+    width: 0.25%
+}
+.col-4 {
+    width: 0.333%
+}
+.col-5 {
+    width: 0.417%
+}
+.col-6 {
+    width: 0.5%
+}
+.col-7 {
+    width: 0.583%
+}
+.col-8 {
+    width: 0.667%
+}
+.col-9 {
+    width: 0.750%
+}
+.col-10 {
+    width: 0.833%
+}
+.col-11 {
+    width: 0.917%
+}
+.col-12 {
+    width: 100%
+}

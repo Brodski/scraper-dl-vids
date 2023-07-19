@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<% let title = "Big Dick Captions 😏" %>
+<html>
+    <head>
+        <title> <%= title %> </title>
+        <link rel="stylesheet" type="text/css" href="/styles.css">
+        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
+        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <script defer src="/scripts.js"></script>
+    </head>
+    <body>
+        <h1> <%= title %> </h1>
+        <p>Welcome to  <%= title %>™</p>
+        <h2> Captions available for these channels 🍆💦 : </h2>
+        <div> <%= JSON.stringify(overviewLight) %></div>
+        <div>
+            <% 
+            let name;
+            let logo;
+            let path;
+            let twitchurl;
+            let rownum;
+            let displayname;
+            overviewLight.sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
+            for (let chann of overviewLight) {
+                name = chann.channel;
+                logo = chann.logo
+                path = chann.path
+                twitchurl = chann.twitchurl
+                rownum = chann.rownum
+                displayname = chann.displayname
+            %>
+                
+                <h2> <%= name %></h2>
+                <div> <b>logo: </b> <%= logo %></div>
+                <div> <b>path: </b> <%= path %></div>
+                <div> <b>twitchurl: </b> <%= twitchurl %></div>
+                <div> <b>rownum: </b> <%= rownum %></div>
+                <div> <b>displayname: </b> <%= displayname %></div>
+                <div> Link= <a href= <%= "channel/"+ name %> > <%= "channel/"+ name %></a> </div>
+                <div> <%= configs.S3_EACH_CHANNEL_JSON + name %>  </div>
+                
+            <% } %> 
+        </div>
+    </body>
+</html>

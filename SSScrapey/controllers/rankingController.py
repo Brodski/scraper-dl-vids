@@ -148,7 +148,9 @@ def tidyData(json_object):
             "language": channel.get('language'),
             "logo": channel.get('logo'),
             "url": channel.get('url'),
-            "rownum": channel.get('rownum')
+            "rownum": channel.get('rownum'),
+            "logo": channel.get("logo"),
+            "twitchurl": channel.get("twitchurl")
         }
         relevant_list.append(relevant_entry)
     return relevant_list

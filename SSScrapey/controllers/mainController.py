@@ -169,17 +169,46 @@ def uploadLightOverviewS3(big_key_val_list, relevant_data): # /mocks/big_key_val
     # prepped_rel_data = {'lolgeranimo': '-1', 'ibai': 1, 'kaicenat': 2, 'fextralife': 3, 'kingsleague': 4, 'loud_coringa': 5, 'cellbit': 6, 'k3soju': 7, 'handongsuk': 8, 'eliasn97': 9, 'tarik': 10, 'xqc': 11, 'gaules': 12, 'hasanabi': 13, 'paulinholokobr': 14, 'ironmouse': 15, 'nix': 16, 'otplol_': 17, 'esl_dota2': 18, 'fps_shaka': 19, 'paragon_dota': 20}
     prepped_rel_data = {} 
     for chan in relevant_data:
-        prepped_rel_data[chan.get("url")] = chan.get("rownum")
+        print("chan")
+        print(chan.get("url"))
+        # print(chan)
+        # print("relevant_data")
+        # print(relevant_data)
+        prepped_rel_data[chan.get("url")] = {}
+        prepped_rel_data[chan.get("url")] = {
+            "rownum": chan.get("rownum"),
+            "logo": chan.get("logo"),
+            "twitchurl": chan.get("twitchurl"),
+            "displayname": chan.get("displayname")
+        }
 
     light_overview_list = []
     for chan in big_key_val_list:
-        x = prepped_rel_data.get(chan)
-        print(x if x else "9999")
+        print()
+        print()
+        print()
+        print(chan)        
+        rnum = None
+        twitchurl = None
+        displayname = None
+        logo = None
+        chanx = prepped_rel_data.get(chan)
+        
+        print(chanx)
+        print(chanx)
+        if chanx:
+            rnum = chanx.get("rownum")
+            twitchurl = chanx.get("twitchurl")
+            displayname = chanx.get("displayname")
+            logo = chanx.get("logo")
         light_overview_list.append({
             "channel": chan,
             "size": len(big_key_val_list[chan]),
             "path": getIndivChannelKey(chan),
-            "rownum": x if x else "9999"
+            "rownum": rnum if rnum else "9999",
+            "twitchurl": twitchurl,
+            "displayname": displayname,
+            "logo": logo
         })
     s3 = boto3.client('s3')
     key = env_varz.S3_OVERVIEW_STATE_LIGHT_JSON

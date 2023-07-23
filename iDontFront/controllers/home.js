@@ -12,7 +12,7 @@ exports.homepage = async (req, res) => {
         console.log("channXz")
         console.log(chann)
     }
-
+    
     res.render("../views/homepage", {
         "overviewLight": overviewLight
     })

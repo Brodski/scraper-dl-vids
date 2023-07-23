@@ -1,39 +1,43 @@
 
 
+<% let twitchUrl = "https://twitch.tv/videos/" + vod.id %>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <title> <%= title %> </title>
+        <title> <%= vod.title %> </title>
         <link rel="stylesheet" type="text/css" href="/styles.css">
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
         <script defer src="/scripts.js"></script>
     </head>    
     <body>
-        <h1> <%= title %> </h1>
-        <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div>
+        <h1> <%= vod.title %> </h1>
+        <h2> <%= subtitle %> </h2>
+        <div> twitch vod <a href="<%= twitchUrl %>"> <%= twitchUrl %> </a> </div>
         <% 
-            let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json;
+            // console.log(transcript_json)
+            console.log(vod)
+        %>
                 
-                // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
-                for (let vod of scrapped_data_s3) {
-                    channel = vod.channel;
-                    id = vod.id;
-                    vod_title = vod.title;
-                    link_s3 = vod.link_s3; //mp3
-                    console.log(path)
-                    href = path + "/" +  id 
-                    let lastPeriodIdx = link_s3.lastIndexOf('.');
-                    if (lastPeriodIdx !== -1) {
-                        const tempName = link_s3.substring(0, lastPeriodIdx);
-                        link_s3_vtt = tempName + ".vtt"                
-                        link_s3_json = tempName + ".json"
-                    } 
-                    %>
-                    <div> 
-                        <a href="<%= href %>"> <%= vod_title %> </a>
-                    </div>
-             <% } %>
+        <!-- <% // for (let i=0; i < transcript_json.length; i++) { %> -->
+        <% for (let segment of transcript_json) { 
+            let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
+            let min = Math.floor(parseInt(segment.start) / 60)
+            let timestamp = min + "m" + sec + "s";
+        %>
+
+            <div> 
+                <span>
+                        <% let start = Number(segment.start).toFixed(2) %>
+                        <% let end = Number(segment.start).toFixed(2) %>
+                    <a href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">[<%= start %> →  <%= end %>]</a>
+                </span>
+                <span>
+                    <%= segment.text %>
+                </span>
+            </div>
+        <% } %>
 
     </body>
 </html>

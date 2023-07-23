@@ -25,7 +25,7 @@ ranking_bp = Blueprint('ranking', __name__)
 # 1
 # Make http request to sullygnome. 3rd party website
 # Decide who we want to look at
-# Saves "who" to S3
+# Saves to S3
 @everything_bp.route('/main/ranking/kickit')
 def kickit_Route():
     return mainController.kickit(True)

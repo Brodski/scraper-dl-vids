@@ -2,6 +2,10 @@ body {
     background-color: grey;
 }
 
+.d-flex {
+    display: flex;
+}
+
 .row {
     
 }

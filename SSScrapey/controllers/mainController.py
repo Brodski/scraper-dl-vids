@@ -34,13 +34,13 @@ def kickit(isDebug=False):
     
     # Make http request to sullygnome. 3rd party website
     topChannels = rankingController.getTopChannels() 
-    relavent_data = rankingController.tidyData(topChannels) # relavent_data = /mocks/initScrapData.py
-    relavent_data = rankingController.addVipList(relavent_data) # same ^ but with gera
+    relevant_data = rankingController.tidyData(topChannels) # relevant_data = /mocks/initScrapData.py
+    relevant_data = rankingController.addVipList(relevant_data) # same ^ but with gera
 
     if isDebug and os.getenv("ENV") == "local":
         print ("ENDING PREMPTIVELY B/C is DEBUG")
-        return relavent_data
-    initYtdlAudio(relavent_data, isDebug=isDebug)
+        return relevant_data
+    initYtdlAudio(relevant_data, isDebug=isDebug)
     
     doUploadStuff()
 
@@ -48,19 +48,19 @@ def kickit(isDebug=False):
 ####################################################
 
 def kickit_just_gera(isDebug=False):
-    relavent_data = rankingController.addVipList([]) # same ^ but with gera
-    initYtdlAudio(relavent_data, isDebug=isDebug)
+    relevant_data = rankingController.addVipList([]) # same ^ but with gera
+    initYtdlAudio(relevant_data, isDebug=isDebug) # relevant_data = data from gnome api
 
     if not isDebug:
-        doUploadStuff(relavent_data)
+        doUploadStuff(relevant_data)
 
     return "JUST GERA DONE!"
 
-def doUploadStuff(relavent_data):
+def doUploadStuff(relevant_data):
     [missing_captions_list, completed_captions_list] = uploadTodoAndCompletedJsons()
     uploadOverviewStateS3()
     big_key_val_list = uploadEachChannelsCompletedJson(completed_captions_list)
-    uploadLightOverviewS3(big_key_val_list, relavent_data)
+    uploadLightOverviewS3(big_key_val_list, relevant_data)
 
 #####################################################
 # Comes after 3                                     #
@@ -96,6 +96,11 @@ def initYtdlAudio(channels, *, isDebug=False):
     for yt_meta in metadata_Ytdl_list:        
         # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3 .. yt_meta has mp3 file location
         yt.uploadAudioToS3(yt_meta, isDebug) 
+        # HERE
+        # HERE
+        # HERE
+        # HERE
+        # createCustomMetadata(yt_meta)
 
     print("COMPLEEEEEEEEEEEEEEEEEETE")
     return "Compelte init"
@@ -278,7 +283,7 @@ def uploadEachChannelsCompletedJson(completed_captions_list: list[Vod]): # /mock
 #          }
 #   "lolgeranimo" ... 
 # }
-def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/completedJsonSuperS3.py
+def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/getAllCompletedJsonSuperS3__BETTER.py
     s3 = boto3.client('s3')
     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_CAPTIONS_KEYBASE)['Contents']
     sorted_objects = sorted(objects, key=lambda obj: obj['Key'])

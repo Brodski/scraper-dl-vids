@@ -2,7 +2,7 @@ body {
     background-color: grey;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 200px) {
     body {
         max-width: 1250px;
         margin-left: auto;
@@ -10,5 +10,17 @@ body {
         /* display: flex;
         justify-content: center;
         flex-flow: column; */
+    }
+    .channel_row img {
+        height: 48px;
+        width: 48px;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    .channel_row {
+        display: flex;
+    }
+    .channel_row h2 {
+        padding-left: 12px;
     }
 }

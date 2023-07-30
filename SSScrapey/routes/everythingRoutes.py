@@ -15,6 +15,7 @@ import controllers.yt_download as ytdl
 import mocks.completed_captions_list
 import mocks.big_key_val_list
 import mocks.relevant_data
+import mocks.ytdlSingleVidMetaData
 
 #variable is used in app.py
 everything_bp = Blueprint('download', __name__)
@@ -84,6 +85,11 @@ def downloadTwtvVid_FIXED_Route():
 @everything_bp.route('/ytdl/getAlreadyDownloadedS3_TEST')
 def getAlreadyDownloadedS3_Route():
     return ytdl.getAlreadyDownloadedS3_TEST("lolgeranimo", ['/videos/5057810', '/videos/28138895', '/videos/6666666'])
+
+
+@everything_bp.route('/main/ytdl/createCustomMetadata_TEST')
+def createCustomMetadata_Route():
+    return mainController.createCustomMetadata( mocks.ytdlSingleVidMetaData.getYtdlSingleVidMetaData() )
 
 
 

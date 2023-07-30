@@ -13,10 +13,10 @@ locals {
 
 resource "aws_lambda_function" "flask_app" {
   function_name = local.lambda_function_name
-  handler       = "app.lambda_handler"
+  handler       = "app.lambda_handler" # Change to your handler location
   runtime       = "python3.8"
   role          = aws_iam_role.lambda_exec.arn
-  filename      = "flask_app.zip"
+  filename      = "flask_app.zip" # Your local ZIP file
 
   environment {
     variables = {

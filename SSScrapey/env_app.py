@@ -36,5 +36,6 @@ WHSP_EXEC_FFMPEG = env_vars['WHSP_EXEC_FFMPEG']
 IS_DEBUG = env_vars['IS_DEBUG']
 JUST_GERA = env_vars['JUST_GERA']
 
-JUST_GERA_ENV = os.getenv('JUST_GERA_ENV')
+CUSTOM_MD_SERVER = os.getenv("CUSTOM_MD_SERVER")
+CUSTOM_MD_KEY = os.getenv("CUSTOM_MD_KEY")
 

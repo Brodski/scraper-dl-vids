@@ -68,6 +68,7 @@ def home():
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
             <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>
             <li> <a href="/main/ytdl/bigBoyChannelDownloader_TEST "> /main/ytdl/bigBoyChannelDownloader_TEST  </a></li>
+            <li> <a href="/main/ytdl/createCustomMetadata_TEST "> /main/ytdl/createCustomMetadata_TEST  </a></li>
             <ul>
                 <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
                 <ul> (uploads)

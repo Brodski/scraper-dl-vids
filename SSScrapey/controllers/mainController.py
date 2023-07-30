@@ -1,4 +1,6 @@
 import urllib
+
+import requests
 # from controllers.yt_download import uploadAudioToS3
 import controllers.seleniumController as seleniumController
 import controllers.rankingController as rankingController
@@ -12,6 +14,7 @@ import json
 import boto3
 from models.AudioResponse import AudioResponse
 from models.VodS3Response import VodS3Response
+from models.Metadata_Ytdl import Metadata_Ytdl
 from models.Vod import Vod
 from typing import List
 
@@ -100,10 +103,81 @@ def initYtdlAudio(channels, *, isDebug=False):
         # HERE
         # HERE
         # HERE
-        # createCustomMetadata(yt_meta)
+        createCustomMetadata(yt_meta)
 
     print("COMPLEEEEEEEEEEEEEEEEEETE")
     return "Compelte init"
+
+# See "manage_dataz()" in custom-metadata-appy.py
+def createCustomMetadata(yt_meta: Metadata_Ytdl): # 
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print("yt_meta")
+    print(yt_meta.__dict__)
+    data = {
+        'id': yt_meta.metadata["id"][1:],
+        'channel': yt_meta.channel,
+        "display_title": yt_meta.metadata["title"],
+        "duration": yt_meta.metadata["duration"],
+        "thumbnail": yt_meta.metadata["thumbnail"],
+        "display_title": yt_meta.metadata["title"],
+        "timestamp": yt_meta.metadata["timestamp"],
+        "view_count": yt_meta.metadata["view_count"],
+        "upload_date": yt_meta.metadata["upload_date"],
+        "duration_string": yt_meta.metadata["duration_string"],
+        "epoch": yt_meta.metadata["requested_downloads"][0]["epoch"],
+        "fulltitle": yt_meta.metadata["fulltitle"]
+    }
+
+    print("data")
+    print("data")
+    print("data")
+    print("data")
+    print("data")
+    print(data)
+    headers = { 
+                'Content-Type': 'application/json',
+                'X-custom-md-key-yeah': env_varz.CUSTOM_MD_KEY
+               }
+    endpoint = env_varz.CUSTOM_MD_SERVER if env_varz.CUSTOM_MD_SERVER else "http://localhost:1111/"
+    response = requests.post(endpoint, data=json.dumps(data), headers=headers)
+    return 'donepost'
+
+
 
 
 # could be better

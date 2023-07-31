@@ -27,9 +27,9 @@ resource "aws_lambda_function" "flask_lambda" {
   handler          = "app.lambda_handler" # Change to your handler location in the ZIP file
   runtime          = "python3.10"
   role             = aws_iam_role.lambda_role.arn
-  filename         = "flask_app.zip" # Your local ZIP file containing the Flask app
+  filename         = "output.zip" # Your local ZIP file containing the Flask app
 
-  source_code_hash = filebase64sha256("flask_app.zip")
+  source_code_hash = filebase64sha256("output.zip")
 
   environment {
     variables = {

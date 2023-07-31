@@ -21,7 +21,7 @@ app = Flask(__name__)
 # 
 # 
 
-def lambda_function(event, context):
+def lambda_handler(event, context):
     return manage_data()
 
 @app.route('/', methods=['GET', 'POST'])

@@ -199,7 +199,8 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
         print()
     return metadata_Ytdl_list
 
-def uploadAudioToS3(yt_meta: Metadata_Ytdl, isDebug=False):
+#  --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3
+def uploadAudioToS3(yt_meta: Metadata_Ytdl):
     print ("000000000000                 00000000000000000")
     print ("000000000000 uploadAudioToS3 00000000000000000")
     print ("000000000000                 00000000000000000")

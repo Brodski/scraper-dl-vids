@@ -43,31 +43,39 @@ def kickit(isDebug=False):
     if isDebug and os.getenv("ENV") == "local":
         print ("ENDING PREMPTIVELY B/C is DEBUG")
         return relevant_data
-    initYtdlAudio(relevant_data, isDebug=isDebug)
+    metadata_Ytdl_list = initYtdlAudio(relevant_data, isDebug=isDebug)
     
-    doUploadStuff()
+    doUploadStuff(relevant_data, metadata_Ytdl_list)
+
 
     return "Finished kickit()"
 ####################################################
 
 def kickit_just_gera(isDebug=False):
     relevant_data = rankingController.addVipList([]) # same ^ but with gera
-    initYtdlAudio(relevant_data, isDebug=isDebug) # relevant_data = data from gnome api
+    metadata_Ytdl_list = initYtdlAudio(relevant_data, isDebug=isDebug) # relevant_data = data from gnome api
 
     if not isDebug:
-        doUploadStuff(relevant_data)
+        doUploadStuff(relevant_data, metadata_Ytdl_list)
 
     return "JUST GERA DONE!"
 
-def doUploadStuff(relevant_data):
+def doUploadStuff(relevant_data, metadata_Ytdl_list):
+    
+    for yt_meta in metadata_Ytdl_list:
+        yt.uploadAudioToS3(yt_meta) 
+        
+        data_custom = createCustomMetadata(yt_meta)
+        manage_data(data_custom)
+
     [missing_captions_list, completed_captions_list] = uploadTodoAndCompletedJsons()
     uploadOverviewStateS3()
     big_key_val_list = uploadEachChannelsCompletedJson(completed_captions_list)
     uploadLightOverviewS3(big_key_val_list, relevant_data)
 
 #####################################################
-# Comes after 3                                     #
-# TODO                                              #
+#                                                   #
+#                                                   #
 # calls yt.addTodoDownlaods(channels)
 # calls yt.scrape4VidHref(^)
 # calls yt.addTodoListS3(^)
@@ -94,57 +102,61 @@ def initYtdlAudio(channels, *, isDebug=False):
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) DOWNLOADED THESE:")
     print (metadata_Ytdl_list)
-    for yt_meta in metadata_Ytdl_list:       
+    for yt_meta in metadata_Ytdl_list:
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
-    for yt_meta in metadata_Ytdl_list:        
-        # SEND mp3 & metadata TO S3 --> channels/vod-audio/<CHN>/<DATE>/<ID>.mp3 .. yt_meta has mp3 file location
-        yt.uploadAudioToS3(yt_meta, isDebug) 
-        # HERE
-        # HERE
-        # HERE
-        # HERE
-        createCustomMetadata(yt_meta)
+    if isDebug:
+        return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
+    return metadata_Ytdl_list
 
-    print("COMPLEEEEEEEEEEEEEEEEEETE")
-    return "Compelte init"
+def manage_data(data_custom):
+    # S3_CUSTOM_METADATA_BASE = 'channels/completed-jsons/custom-metadata/'
+    
+    s3 = boto3.client('s3')
+    
+    vod_id = data_custom.get('id')
+    channel = data_custom.get('channel')
+    
+    key = env_varz.S3_CUSTOM_METADATA_KEYBASE + channel + "/custom-metadata.json"
+
+    print(json.dumps(data_custom, indent=4))
+    print("key=" + key)
+
+    try:
+        resS3 = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=key)
+        custom_metadata_json_file = json.loads(resS3["Body"].read().decode("utf-8"))
+    except:
+        print("Does not exist")
+        custom_metadata_json_file = {}
+
+    print("custom_metadata_s3")
+    print(custom_metadata_json_file)
+
+    vod_metadata = custom_metadata_json_file.get(vod_id)
+
+    if not vod_metadata:
+        print("NOT!!!!!!!!!")
+        vod_metadata = {}
+    for k, value in data_custom.items():
+        print(f'{k}: {value}')
+        vod_metadata[k] = value
+        # if k == "channel":
+        #     continue
+
+    custom_metadata_json_file[vod_id] = vod_metadata
+    
+    print("custom_metadata")
+    print("custom_metadata")
+    print("custom_metadata")
+    print("custom_metadata")
+    print(json.dumps(custom_metadata_json_file , indent=4))
+    # s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=BUCKET_NAME, Key=key)
+
+    return 'done X'
+
+
 
 # See "manage_dataz()" in custom-metadata-appy.py
 def createCustomMetadata(yt_meta: Metadata_Ytdl): # 
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
-    print("yt_meta")
     print("yt_meta")
     print("yt_meta")
     print(yt_meta.__dict__)
@@ -169,14 +181,7 @@ def createCustomMetadata(yt_meta: Metadata_Ytdl): #
     print("data")
     print("data")
     print(data)
-    headers = { 
-                'Content-Type': 'application/json',
-                'X-custom-md-key-yeah': env_varz.CUSTOM_MD_KEY
-               }
-    endpoint = env_varz.CUSTOM_MD_SERVER if env_varz.CUSTOM_MD_SERVER else "http://localhost:1111/"
-    response = requests.post(endpoint, data=json.dumps(data), headers=headers)
-    return 'donepost'
-
+    return data
 
 
 

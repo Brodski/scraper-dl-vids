@@ -57,7 +57,6 @@ def kickit_just_gera(isDebug=False):
 
     if not isDebug:
         doUploadStuff(relevant_data, metadata_Ytdl_list)
-    doUploadStuff(relevant_data, metadata_Ytdl_list)
 
     return "JUST GERA DONE!"
 

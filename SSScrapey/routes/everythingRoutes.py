@@ -43,7 +43,8 @@ def getTopChannels_Route():
 
 @everything_bp.route('/main/ytdl/initYtdlAudio')
 def initYtdlAudio_Route():
-    return mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
+    metadata_Ytdl_list = mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True
+    return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
 
 @everything_bp.route('/main/ytdl/bigBoyChannelDownloader_TEST')
 def bigBoyChannelDownloader_TEST_Route():

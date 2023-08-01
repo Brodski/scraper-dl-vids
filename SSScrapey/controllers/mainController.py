@@ -57,6 +57,7 @@ def kickit_just_gera(isDebug=False):
 
     if not isDebug:
         doUploadStuff(relevant_data, metadata_Ytdl_list)
+    doUploadStuff(relevant_data, metadata_Ytdl_list)
 
     return "JUST GERA DONE!"
 
@@ -104,8 +105,8 @@ def initYtdlAudio(channels, *, isDebug=False):
     print (metadata_Ytdl_list)
     for yt_meta in metadata_Ytdl_list:
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
-    if isDebug:
-        return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
+    # if isDebug:
+    #     return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
     return metadata_Ytdl_list
 
 def manage_data(data_custom):
@@ -320,16 +321,16 @@ def uploadEachChannelsCompletedJson(completed_captions_list: list[Vod]): # /mock
     prepped_rel_data = {}
 
     for vod in completed_captions_list:
-        if big_key_val_list.get(vod['channel']):
-            big_key_val_list[vod['channel']].append(vod)
+        if big_key_val_list.get(vod.channel):
+            big_key_val_list[vod.channel].append(vod)
         else:
-            big_key_val_list[vod['channel']] = []
-            big_key_val_list[vod['channel']].append(vod)
+            big_key_val_list[vod.channel] = []
+            big_key_val_list[vod.channel].append(vod)
     for chan in big_key_val_list:
         key = getIndivChannelKey(chan)
         print("UPLOADING COMPLETED LIST (caps + audio) for: " + chan)
         print("upload to: " + key)
-        print(json.dumps(big_key_val_list[chan], indent=4))
+        print(json.dumps(big_key_val_list[chan], indent=4, default=lambda o: o.__dict__))
         s3.put_object(Body=json.dumps(big_key_val_list[chan], default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
     print("prepped_rel_data")
     print("prepped_rel_data")

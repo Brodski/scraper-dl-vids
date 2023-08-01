@@ -154,25 +154,24 @@ def manage_data(data_custom):
     return 'done X'
 
 
-
 # See "manage_dataz()" in custom-metadata-appy.py
 def createCustomMetadata(yt_meta: Metadata_Ytdl): # 
     print("yt_meta")
     print("yt_meta")
     print(yt_meta.__dict__)
     data = {
-        'id': yt_meta.metadata["id"][1:],
+        'id': yt_meta.metadata.get("id")[1:] if yt_meta.metadata.get("id") else "",
         'channel': yt_meta.channel,
-        "display_title": yt_meta.metadata["title"],
-        "duration": yt_meta.metadata["duration"],
-        "thumbnail": yt_meta.metadata["thumbnail"],
-        "display_title": yt_meta.metadata["title"],
-        "timestamp": yt_meta.metadata["timestamp"],
-        "view_count": yt_meta.metadata["view_count"],
-        "upload_date": yt_meta.metadata["upload_date"],
-        "duration_string": yt_meta.metadata["duration_string"],
-        "epoch": yt_meta.metadata["requested_downloads"][0]["epoch"],
-        "fulltitle": yt_meta.metadata["fulltitle"]
+        "display_title": yt_meta.metadata.get("title"),
+        "duration": yt_meta.metadata.get("duration"),
+        "thumbnail": yt_meta.metadata.get("thumbnail"),
+        "display_title": yt_meta.metadata.get("title"),
+        "timestamp": yt_meta.metadata.get("timestamp"),
+        "view_count": yt_meta.metadata.get("view_count"),
+        "upload_date": yt_meta.metadata.get("upload_date"),
+        "duration_string": yt_meta.metadata.get("duration_string"),
+        "epoch": yt_meta.metadata.get("epoch"),
+        "fulltitle": yt_meta.metadata.get("fulltitle")
     }
 
     print("data")

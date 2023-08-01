@@ -1,10 +1,13 @@
 const configs = require("../configs")
 
+https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
+
+
 // path = /channel/lolgeranimo
 exports.channel = async (req, res) => {
-    // endpoint = <DOMAIN>/channels/completed-jsons/each-channel/lolgeranimo.json
-    const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json"; 
-    const response = await fetch(endpoint);
+    
+    const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json";   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
+    const response = await fetch(endpoint); // mocks/completed_captions_list.py
     console.log("endpoint", endpoint);
     if (!response.ok) {
          throw new Error('HTTP error ' + response.status);
@@ -17,10 +20,26 @@ exports.channel = async (req, res) => {
         
     // res.locals.overviewLight = overviewLight
     if (req.params.id == null) {
+        const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json"; 
+        //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
+        const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
+        console.log("endpoint2", endpoint2);
+        if (!res2.ok) {
+             throw new Error('HTTP error ' + res2.status);
+        }
+        let custom_metadata = await res2.json()
+        console.log("custom_metadata")
+        console.log("custom_metadata")
+        console.log("custom_metadata")
+        console.log("custom_metadata")
+        console.log("custom_metadata")
+        console.log("custom_metadata")
+        console.log(custom_metadata)
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
-            "scrapped_data_s3": scrapped_data_s3
+            "scrapped_data_s3": scrapped_data_s3,
+            "custom_metadata": custom_metadata
         })
     }
 

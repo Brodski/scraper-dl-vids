@@ -74,6 +74,7 @@ def downloadTwtvVid(link:str, isDownload=True):
         # "audioformat": "mp3",
         "quiet": True,
         # "verbose": True,
+        "noprogress": True if env_varz.ENV != "local" else False,
         "parse_metadata" "requested_downloads.filepath:%(filepath):"  # my custom  metadata field
         "overwrites": True,
         'postprocessors': [{

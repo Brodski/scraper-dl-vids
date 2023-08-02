@@ -66,10 +66,12 @@ def doUploadStuff(relevant_data, metadata_Ytdl_list):
         yt.uploadAudioToS3(yt_meta) 
         
         data_custom = createCustomMetadata(yt_meta)
-        manage_data(data_custom)
+        upload_custom_metadata(data_custom)
 
-    [missing_captions_list, completed_captions_list] = uploadTodoAndCompletedJsons()
-    uploadOverviewStateS3()
+    
+    allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/get_all_superS3__BETTER.py.py
+    [missing_captions_list, completed_captions_list] = uploadTodoAndCompletedJsons(allOfIt)
+    uploadOverviewStateS3(allOfIt)
     big_key_val_list = uploadEachChannelsCompletedJson(completed_captions_list)
     uploadLightOverviewS3(big_key_val_list, relevant_data)
 
@@ -108,7 +110,7 @@ def initYtdlAudio(channels, *, isDebug=False):
     #     return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
     return metadata_Ytdl_list
 
-def manage_data(data_custom):
+def upload_custom_metadata(data_custom):
     # S3_CUSTOM_METADATA_BASE = 'channels/completed-jsons/custom-metadata/'
     
     s3 = boto3.client('s3')
@@ -149,12 +151,11 @@ def manage_data(data_custom):
     print("custom_metadata")
     print("custom_metadata")
     print(json.dumps(custom_metadata_json_file , indent=4))
-    # s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=BUCKET_NAME, Key=key)
+    s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=BUCKET_NAME, Key=key)
 
     return 'done X'
 
 
-# See "manage_dataz()" in custom-metadata-appy.py
 def createCustomMetadata(yt_meta: Metadata_Ytdl): # 
     print("yt_meta")
     print("yt_meta")
@@ -185,12 +186,9 @@ def createCustomMetadata(yt_meta: Metadata_Ytdl): #
 
 
 # could be better
-def uploadTodoAndCompletedJsons(isDebug=False):
+def uploadTodoAndCompletedJsons(allOfIt, isDebug=False):
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     print('zzzzzz           uploadTodoAndCompletedJsons            zzzzzzz')
-    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-    allOfIt = _getAllCompletedJsonSuperS3__BETTER() # lotsOfData = mocks/get_all_superS3__BETTER.py.py
-    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
     print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
 
     if allOfIt is None or len(allOfIt)==0:
@@ -303,8 +301,7 @@ def uploadLightOverviewS3(big_key_val_list, relevant_data): # /mocks/big_key_val
 
 
 
-def uploadOverviewStateS3():
-    s3_state_json = _getAllCompletedJsonSuperS3__BETTER() # mocks/get_all_superS3__BETTER.py
+def uploadOverviewStateS3(s3_state_json):
     s3 = boto3.client('s3')
     key = env_varz.S3_OVERVIEW_STATE_JSON
     print("UPLOADING S3 OVERVIEW:")
@@ -372,11 +369,11 @@ def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/getAllCompletedJsonSuperS3
         filename = obj['Key'].split("/")[4:][0]
         vod_id = obj['Key'].split("/")[3:4][0]
         channel = obj['Key'].split("/")[2:3][0]
-        print("@@@@@@@@@@@@@@@@@@@@@")
-        print("Key= " + f"{obj['Key']}")
-        print("channel: " +  (channel))     
-        print("vod_id: " +  (vod_id))
-        print("filename: " + (filename))
+        # print("@@@@@@@@@@@@@@@@@@@@@")
+        # print("Key= " + f"{obj['Key']}")
+        # print("channel: " +  (channel))     
+        # print("vod_id: " +  (vod_id))
+        # print("filename: " + (filename))
         # 1. obj[key] = channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3
         # 2. temp = lolgeranimo/5057810/Calculated-v5057810.mp3
         # 3. channel, vod_i, vod_title = [ lolgeranimo, 5057810, "Calculated-v5057810.mp3" ] 

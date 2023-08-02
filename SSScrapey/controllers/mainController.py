@@ -151,7 +151,7 @@ def upload_custom_metadata(data_custom):
     print("custom_metadata")
     print("custom_metadata")
     print(json.dumps(custom_metadata_json_file , indent=4))
-    s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=BUCKET_NAME, Key=key)
+    s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
 
     return 'done X'
 

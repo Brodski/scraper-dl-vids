@@ -34,8 +34,8 @@ ytdlObjMetaDataList = [
             "end_time":31161
          }
       ],
-      "is_live":false,
-      "was_live":true,
+      "is_live":"false",
+      "was_live":"true",
       "formats":[
          {
             "format_id":"sb1",
@@ -354,10 +354,10 @@ ytdlObjMetaDataList = [
             "format":"160p - 284x160",
             "_filename":"/app/scraper-dl-vids/SSScrapey//assets/audio/How_to_Climb_on_Adc_2_Wins_away_from_GrandMaster_on_Main_doing_some_smurf_games_for_a_bit-v1885839088.mp4",
             "filename":"/app/scraper-dl-vids/SSScrapey//assets/audio/How_to_Climb_on_Adc_2_Wins_away_from_GrandMaster_on_Main_doing_some_smurf_games_for_a_bit-v1885839088.mp4",
-            "__real_download":true,
+            "__real_download":"true",
             "__finaldir":"/app/scraper-dl-vids/SSScrapey/assets/audio",
             "filepath":"/app/scraper-dl-vids/SSScrapey/assets/audio/How_to_Climb_on_Adc_2_Wins_away_from_GrandMaster_on_Main_doing_some_smurf_games_for_a_bit-v1885839088.mp3",
-            "__write_download_archive":true
+            "__write_download_archive":"true"
          }
       ],
       "format_id":"160p",

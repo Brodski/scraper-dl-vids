@@ -33,7 +33,7 @@ import time
 options = Options()
 if env_varz.SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
-    # os.environ["MOZ_HEADLESS"] = "1"
+    os.environ["MOZ_HEADLESS"] = "1"
 
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
 options.add_argument('–-autoplay-policy=user-required') 

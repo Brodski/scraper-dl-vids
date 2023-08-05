@@ -135,7 +135,7 @@ def doWhisperStuff(audio_name_encode, metadata_file_s3):
     print("    " + str(lang_code))
     print("    " + "audio_name_encode=" + audio_name_encode)
     model = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
-    saved_caption_files = gogoWhisperFAST.run(model_size="base", lang_code=lang_code, filename=audio_name_encode)
+    saved_caption_files = gogoWhisperFAST.run(model_size=model, lang_code=lang_code, filename=audio_name_encode)
 
     for filename in saved_caption_files: # [vodx.json, vodx.vtt]
       s3_file_location = uploadCaptionsToS3(filename, todo)

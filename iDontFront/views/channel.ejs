@@ -11,8 +11,32 @@
     </head>    
     <body>
         <h1> <%= title %> </h1>
-        <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div>
+        <!-- <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div> -->
+        <!-- <div style="white-space: pre-line;"> custom_metadata <%= JSON.stringify(custom_metadata) %> </div> -->
+<!--         
+        console.log(custom_metadata[x].timestamp)
+        console.log(custom_metadata[x].fulltitle)
+        console.log(custom_metadata[x].duration_string)
+        console.log(custom_metadata[x].thumbnail) -->
+
+
         <% 
+
+            console.log("custom_metadata.[5057810]")
+            console.log("custom_metadata.[5057810]")
+            console.log("custom_metadata.[5057810]")
+            console.log("custom_metadata.[5057810]")
+            // console.log(custom_metadata[5057810])
+            function getIdInfo(id) {
+              console.log('=================')
+              console.log(id)
+              console.log(id)
+              console.log(id)
+              console.log(id)
+              let x = custom_metadata[id]
+              console.log(custom_metadata[id])
+            }
+
             let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json;
                 
                 // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
@@ -21,7 +45,6 @@
                     id = vod.id;
                     vod_title = vod.title;
                     link_s3 = vod.link_s3; //mp3
-                    console.log(path)
                     href = path + "/" +  id 
                     let lastPeriodIdx = link_s3.lastIndexOf('.');
                     if (lastPeriodIdx !== -1) {
@@ -29,6 +52,10 @@
                         link_s3_vtt = tempName + ".vtt"                
                         link_s3_json = tempName + ".json"
                     } 
+                    console.log(vod_title)
+                    getIdInfo(id)
+
+
                     %>
                     <div> 
                         <a href="<%= href %>"> <%= vod_title %> </a>

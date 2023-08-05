@@ -305,66 +305,40 @@ def getAlreadyDownloadedS3(channel, links):
     print ("xxxxxxxxxxxx                        xxxxxxxxxxxx")
     print ("xxxxxxxxxxxx getAlreadyDownloadedS3 xxxxxxxxxxxx")
     print ("xxxxxxxxxxxx                        xxxxxxxxxxxx")
-    print("links")
-    print(links)
     links_ids = [link.replace("videos/", "") + "/" for link in links]
-    print("links_ids")
-    print(links_ids)
     s3 = boto3.client('s3')
     
     try:
         the_prefix = env_varz.S3_CAPTIONS_KEYBASE + channel
-        print("     (getAlreadyDownloadedS3) channel: "+ channel)
-        print("     (getAlreadyDownloadedS3) key: " + the_prefix)
+        print("(getAlreadyDownloadedS3) channel: "+ channel)
+        print("(getAlreadyDownloadedS3) key-prefex: " + the_prefix)
         responseGetObj = s3.list_objects_v2(Bucket = env_varz.BUCKET_NAME, Prefix= the_prefix)['Contents'] # ex) channels/vod-audio/lolgeranimo/
         responseGetObj = sorted(responseGetObj, key=lambda obj: obj['LastModified'])
+        print("BEFORE links from selenium - links_ids: ")
         print(links_ids)
-        print(links_ids)
-
+        print('=========================')
+        for id in links_ids:
+            print(id)
+        print('=========================')
+        to_remove_ids = []
         for id in links_ids:
             for obj in responseGetObj:
-                print("     (getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
+                print()
+                print(id + "- id in obj['Key']? - " + str(id in obj['Key']))
+                print("(getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
                 if id in obj['Key']:
                     print("YES!")
                     print(id)
                     print(obj['Key'])
-                    links_ids.remove(id)
-                    print(links_ids)
-
-        # for obj in responseGetObj:
-        #     print("     (getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
-        #     for id in links_ids:
-        #         if id in obj['Key']:
-        #             print("YES!")
-        #             print(id)
-        #             print(obj['Key'])
-        #             links_ids.remove(id)
-        #             print(links_ids)
-        print(links_ids)
-        print(links_ids)
-        print(links_ids)
-        print(links_ids)
+                    to_remove_ids.append(id)
+                    break
+        for id in to_remove_ids:
+            links_ids.remove(id)
+        print("AFTER links from selenium - links_ids:")
         print(links_ids)
     except Exception as e:
-        print("     (getAlreadyDownloadedS3) found nothing!")
+        print("(getAlreadyDownloadedS3) found nothing!")
         print(e)
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
-        print("links")
         print("links")
         print([link.replace("videos/", "") + "/" for link in links])
         return [link.replace("videos/", "") + "/" for link in links]

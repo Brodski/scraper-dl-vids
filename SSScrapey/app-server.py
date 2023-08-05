@@ -62,8 +62,11 @@ def home():
             <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>
         </ul>
         <hr/>
-        <li> Init Scrape (part 1, find links) </li>
-        <li><a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a></li>
+            <a href="/main/ytdl/kickit_just_gera_REAL">  /main/ytdl/kickit_just_gera_REAL !! </a>
+        <hr/>
+        <li>
+            <a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a>
+        </li>
         <ul>
             <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
             <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>

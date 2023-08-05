@@ -41,6 +41,11 @@ def getTopChannels_Route():
 
 ####################################################
 
+@everything_bp.route('/main/ytdl/kickit_just_gera_REAL')
+def kickit_just_gera_REAL_REAL_Route():
+    metadata_Ytdl_list = mainController.kickit_just_gera(isDebug=False) # isDebuging = True
+    return json.dumps(metadata_Ytdl_list, default=lambda o: o.__dict__)
+
 @everything_bp.route('/main/ytdl/initYtdlAudio')
 def initYtdlAudio_Route():
     metadata_Ytdl_list = mainController.initYtdlAudio({}, isDebug=True) # isDebuging = True

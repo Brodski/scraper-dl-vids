@@ -33,6 +33,7 @@ import time
 options = Options()
 if env_varz.SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
+    # os.environ["MOZ_HEADLESS"] = "1"
 
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
 options.add_argument('–-autoplay-policy=user-required') 
@@ -76,13 +77,13 @@ def scrape4VidHref(channels, isDebug=False): # gets returns -> {...} = [ { "disp
         print(browser)
         # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-        # firefox_profile = webdriver.FirefoxProfile()
-        # firefox_profile.set_preference("media.block-play-until-visible", False)
-        # firefox_profile.set_preference("media.autoplay.blocking_policy", 5)
-        # firefox_profile.set_preference("media.autoplay.default", 1)
-        # firefox_profile.set_preference("media.autoplay.enabled.user-gestures-needed", False)
-        # firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
-        browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+        firefox_profile = webdriver.FirefoxProfile()
+        firefox_profile.set_preference("media.block-play-until-visible", False)
+        firefox_profile.set_preference("media.autoplay.blocking_policy", 5)
+        firefox_profile.set_preference("media.autoplay.default", 1)
+        firefox_profile.set_preference("media.autoplay.enabled.user-gestures-needed", False)
+        firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
+        browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
     everyChannel = []
     cnt = 0
     for channel in channels:

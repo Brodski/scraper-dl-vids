@@ -24,6 +24,8 @@ exports.channel = async (req, res) => {
         //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
         const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
         console.log("endpoint2", endpoint2);
+        // timestamp = date of upload
+        // epoch = date I ran my scraper
         if (!res2.ok) {
              throw new Error('HTTP error ' + res2.status);
         }

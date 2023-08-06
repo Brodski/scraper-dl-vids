@@ -23,6 +23,14 @@ import env_app as env_varz
 # ]
 def _getCompletedJsonS3():
     s3 = boto3.client('s3')
+    print("env_varz.S3_COMPLETED_TODO_AUDIO")
+    print("env_varz.S3_COMPLETED_TODO_AUDIO")
+    print("env_varz.S3_COMPLETED_TODO_AUDIO")
+    print(env_varz.S3_COMPLETED_TODO_AUDIO)
+    print('os.getenv("AWS_SECRET_ACCESS_KEY")')
+    print('os.getenv("AWS_SECRET_ACCESS_KEY")')
+    print('os.getenv("AWS_SECRET_ACCESS_KEY")')
+    print(os.getenv("AWS_SECRET_ACCESS_KEY"))
     try:
       resAudio = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
       todo_list_pre = json.loads(resAudio["Body"].read().decode("utf-8")) if resAudio != None else {}

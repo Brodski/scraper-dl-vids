@@ -1,0 +1,5 @@
+python .\vast search offers --order=cpu_ram --on-demand 'dph < 0.12  cuda_vers >= 12'
+
+python .\vast search offers --order=cpu_ram --on-demand 'dph < 0.12  cuda_vers >= 12  cpu_ram > 16'
+
+

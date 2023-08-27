@@ -148,7 +148,7 @@ CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     git pull origin master && \ 
     ls && \
     python audio2text-app.py ; \
-    vast --help ; \
+    vastai --help ; \
     vastai destroy instance $CONTAINER_ID; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \

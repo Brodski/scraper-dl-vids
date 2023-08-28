@@ -314,8 +314,6 @@ def getAlreadyDownloadedS3(channel, links):
         print("(getAlreadyDownloadedS3) key-prefex: " + the_prefix)
         responseGetObj = s3.list_objects_v2(Bucket = env_varz.BUCKET_NAME, Prefix= the_prefix)['Contents'] # ex) channels/vod-audio/lolgeranimo/
         responseGetObj = sorted(responseGetObj, key=lambda obj: obj['LastModified'])
-        print("BEFORE links from selenium - links_ids: ")
-        print(links_ids)
         print('=========================')
         for id in links_ids:
             print(id)
@@ -323,8 +321,6 @@ def getAlreadyDownloadedS3(channel, links):
         to_remove_ids = []
         for id in links_ids:
             for obj in responseGetObj:
-                print()
-                print(id + "- id in obj['Key']? - " + str(id in obj['Key']))
                 print("(getAlreadyDownloadedS3) obj[Key]= " + f"{obj['Key']}")
                 if id in obj['Key']:
                     print("YES!")

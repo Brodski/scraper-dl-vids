@@ -28,7 +28,7 @@ from pathlib import Path
 
 import env_app as env_varz
 
-FILE_EXTENSIONS_TO_SAVE = ["json", "vtt"]
+FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt"]
 
 def main():
     ######################################################

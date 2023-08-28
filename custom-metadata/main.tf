@@ -1,5 +1,11 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
+}
+data "archive_file" "lambda_zip" {
+    type = "zip"
+    output_path = "${path.module}/output.zip"
+    # source_dir = "${path.module}/"
+    source_file = "${path.module}/custom-metadata-app.py"
 }
 
 # IAM role for Lambda
@@ -78,4 +84,8 @@ resource "aws_api_gateway_deployment" "flask_deployment" {
 
 output "api_url" {
   value = aws_api_gateway_deployment.flask_deployment.invoke_url
+}
+
+output "path_module" {
+  value = "${path.module}/output.zip"
 }

@@ -3,14 +3,22 @@ import urllib.request
 import urllib.parse
 import json
 import os
-
 from urllib.parse import quote_plus  # Python 3+
-from dotenv import load_dotenv
-
-
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    print("We are in lambda")
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
+api_key = os.environ.get('api_key')
 
+# 'configs'
+dph = "0.12"
+cuda_vers = "12"
+cpu_ram = "16000.0"
+disk_space = "16"
+disk = 16.0 # Gb
+image = "pytorch/pytorch"
 
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
@@ -21,9 +29,6 @@ def requestOffersHttp(query_args):
     theRequest = "https://console.vast.ai/api/v0/bundles?" + query_json 
     url = theRequest
     print("theRequest")
-    print("theRequest")
-    print("theRequest")
-    print("theRequest")
     print(theRequest)
     response = urllib.request.urlopen(url)
     if response.status != 200:
@@ -33,10 +38,10 @@ def requestOffersHttp(query_args):
     json_data = json.loads(data)
     return json_data.get("offers")
 
-def create_instance(instance_id=6150407):
-    instance_id = "6150407"
-    disk = 32.0 # Gb
-    image = "pytorch/pytorch"
+def create_instance(instance_id):
+    # instance_id = "6150407"
+    # disk = 16.0 # Gb
+    # image = "pytorch/pytorch"
     url = "https://console.vast.ai/api/v0/asks/" + instance_id + "/?api_key=" + VAST_API_KEY
     print("url: ")
     print(url)
@@ -66,38 +71,35 @@ def create_instance(instance_id=6150407):
         print(response_data.decode('utf-8'))
     print("DONE :)")
 if __name__ == '__main__':
-    dph = "0.12"
-    cuda_vers = "12"
-    cpu_ram = "16000.0"
-    disk_space = "16"
-    pp = (
-         f'{{'
-            f'"q":{{ '
-                f'"verified": {{"eq": true}},'
-                f'"external": {{"eq": false}},'
-                f'"rentable": {{"eq": true}},'
+    # dph = "0.12"
+    # cuda_vers = "12"
+    # cpu_ram = "16000.0"
+    # disk_space = "16"
+    # specific_request = (
+    #      f'{{'
+    #         f'"q":{{ '
+    #             f'"verified": {{"eq": true}},'
+    #             f'"external": {{"eq": false}},'
+    #             f'"rentable": {{"eq": true}},'
 
-                f'"dph": {{"lt": "{dph}"}},'
-                f'"dph_total": {{"lt": "{dph}"}},'
-                f'"cuda_vers": {{"gte": "{cuda_vers}"}},'
-                f'"cuda_max_good": {{"gte": "{cuda_vers}"}},'
-                f'"cpu_ram": {{"gt": {cpu_ram}}},'
-                # "dph": {"lt": "0.12"},
-                # "dph_total": {"lt": "0.12"},
-                # "cuda_vers": {"gte": "12"},
-                # "cuda_max_good": {"gte": "12"},
-                # "cpu_ram": {"gt": 16000.0},
+    #             f'"dph": {{"lt": "{dph}"}},'
+    #             f'"dph_total": {{"lt": "{dph}"}},'
+    #             f'"cuda_vers": {{"gte": "{cuda_vers}"}},'
+    #             f'"cuda_max_good": {{"gte": "{cuda_vers}"}},'
+    #             f'"cpu_ram": {{"gt": {cpu_ram}}},'
+    #             # "dph": {"lt": "0.12"},
+    #             # "dph_total": {"lt": "0.12"},
+    #             # "cuda_vers": {"gte": "12"},
+    #             # "cuda_max_good": {"gte": "12"},
+    #             # "cpu_ram": {"gt": 16000.0},
+    #             f'"order":[[   "cpu_ram",   "asc"] ],'
 
-                f'"order":[[   "cpu_ram",   "asc"] ],'
+    #             f'"type":"on-demand"'
+    #             f'}}'
+    #         f'}}'
+    # )
 
-                f'"type":"on-demand"'
-                f'}}'
-            f'}}'
-    )
-    # y = json.loads(pp)
-    # json.dumps(y, indent=2)
-    # print(json.loads(pp))
-    zz = '''{
+    everything_request = '''{
             "q":{ 
                 "verified": {"eq": true},
                 "external": {"eq": false},
@@ -107,30 +109,21 @@ if __name__ == '__main__':
                 }
             }
         '''
-    print(zz)
-    dataz = json.loads(zz)
-    print(dataz)
-
+    dataz = json.loads(everything_request)
     x = json.dumps(dataz, indent=2)
     print("======================")
     print("======================")
     print("======================")
     print("======================")
     print("======================")
-    offers = requestOffersHttp(json.loads(zz))
+    offers = requestOffersHttp(json.loads(everything_request))
     x = json.dumps(offers, indent=2)
     print(x)
     i = 0
-    instance_first = None
     print("== GO BABY GO ==")
     counter = 0
     goodOffers = []
     for offer in offers:
-        if i == 0:
-            print("THIS ONE")
-            instance_first = offer
-            i = i + 1
-        # print( offer.get("cpu_ram"))
         if offer.get("cuda_max_good") < int(cuda_vers):
             # print("skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
@@ -146,78 +139,44 @@ if __name__ == '__main__':
         print("======================")
         goodOffers.append(offer)
         counter = counter + 1
-        # itemz = ["gpu_name", "dph_total", "inet_down_cost", "dlperf", "cpu_ram",  "cuda_max_good","inet_up_cost",  "storage_cost", "id"]
-        badly_formated_values = ["gpu_name", "dph_total",  "id"]
-        for item in badly_formated_values:
-            if (item == "inet_up_cost") or (item == "inet_down_cost") or (item == "storage_cost"):
-                z ="{:.5f}".format(offer.get(item))
-                offer['item'] = z
-                print(item + ": " + z)
-                continue
-            print(item + ": " + str(offer.get(item)))
+        # ------> doesnt work
+        # badly_formated_values = ["gpu_name", "dph_total",  "id"]
+        # for item in badly_formated_values:
+        #     if (item == "inet_up_cost") or (item == "inet_down_cost") or (item == "storage_cost"):
+        #         z ="{:. 3f}".format(offer.get(item))
+        #         offer['item'] = z
+        #         print(item + ": " + z)
+        #         continue
+        #     print(item + ": " + str(offer.get(item)))
     
 
     print("offers COUNT: " + str(len(offers)))
     print("counter: " + str(counter))
-    print("instance_first")
-    print("instance_first")
-    print("instance_first")
-    print("instance_first")
-    print("instance_first")
-    print(instance_first)
-    print(instance_first)
-    print(instance_first.get("id"))
-    print(instance_first.get("id"))
-    print(instance_first.get("id"))
-    print(instance_first.get("id"))
-    print(instance_first.get("id"))
-    
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
+    instance_first = goodOffers[0]
+    print("instance_first")
+    print(instance_first.get("id"))
+    print(instance_first.get("id"))
+    print(instance_first.get("id"))
+
+
+    # Print shit
     headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation" ]
+    def printColAux(column):
+        p = f"{column:<8}"
+        print(str(p)[:8] + "  ", end="")
     print()
     for column in headers:
-        # print(f"{str(column[:7]):<7} | ", end="")
-        p = f"{column:<7}"
-        print(str(p)[:7] + "   ", end="")
-        # print(f"{column:<7} | ", end="")
+        printColAux(column)
     print()
     for offer in goodOffers:
-        # print(offer)
         for head in headers:
-            p = f"{offer.get(head):<7}"
-            print(str(p)[:7] + "   ", end="")
+            printColAux(offer.get(head))
         print()
         
 
-    # create_instance()
+    # create_instance(instance_first.get("id"))
     exit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     
     # "id": 6585613,

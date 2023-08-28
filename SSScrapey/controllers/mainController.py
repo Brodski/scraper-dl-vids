@@ -55,8 +55,9 @@ def kickit_just_gera(isDebug=False):
     relevant_data = rankingController.addVipList([]) # same ^ but with gera
     metadata_Ytdl_list = initYtdlAudio(relevant_data, isDebug=isDebug) # relevant_data = data from gnome api
 
-    if not isDebug:
-        doUploadStuff(relevant_data, metadata_Ytdl_list)
+    # if not isDebug:
+    #     doUploadStuff(relevant_data, metadata_Ytdl_list)
+    doUploadStuff(relevant_data, metadata_Ytdl_list)
     print("JUST GERA DONE!")
     return "JUST GERA DONE!"
 
@@ -197,7 +198,7 @@ def uploadTodoAndCompletedJsons(allOfIt, isDebug=False):
     if allOfIt is None or len(allOfIt)==0:
         raise Exception("Something is wrong with '_getCompletedAudioJsonSuperS3' audio json file")
 
-    captions_ext = ['.json', '.vtt']
+    captions_ext = ['.json', '.vtt', '.txt']
     missing_captions_list = []
     completed_captions_list = []
 
@@ -241,8 +242,8 @@ def uploadTodoAndCompletedJsons(allOfIt, isDebug=False):
     s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
     s3.put_object(Body=json.dumps(completed_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_JSON)
 
-    if isDebug and os.getenv("ENV") == "local":
-        return json.loads(json.dumps({"completed_captions_list": completed_captions_list, "missing_captions_list": missing_captions_list}, default=lambda o: o.__dict__))
+    # if isDebug and os.getenv("ENV") == "local":
+    #     return json.loads(json.dumps({"completed_captions_list": completed_captions_list, "missing_captions_list": missing_captions_list}, default=lambda o: o.__dict__))
     return [missing_captions_list, completed_captions_list]
 
 def getIndivChannelKey(chan):

@@ -170,7 +170,8 @@ if __name__ == '__main__':
     todo_list = _getCompletedJsonS3() 
     if isDebug and os.getenv("ENV") == "local":
       todo = Todo(channel="lolgeranimo", id="28138895", title="The Geraniproject! I Love You Guys!!!-v28138895", link_s3="https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.mp3" )
-      todo_list = [todo]
+      todo2 = Todo(channel="lolgeranimo", id="5057810", title="Calculated-v5057810", link_s3="https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.mp3" )
+      todo_list = [todo, todo2]
 
     print("###############")
     for todo in todo_list:

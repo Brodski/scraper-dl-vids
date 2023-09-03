@@ -18,7 +18,7 @@ cuda_vers = "12"
 cpu_ram = "16000.0"
 disk_space = "32"
 disk = 32.0 # Gb
-image = "pytorch/pytorch"
+image = "cbrodski/audio2text:latest"
 
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
@@ -39,9 +39,6 @@ def requestOffersHttp(query_args):
     return json_data.get("offers")
 
 def create_instance(instance_id):
-    # instance_id = "6150407"
-    # disk = 16.0 # Gb
-    # image = "pytorch/pytorch"
     url = "https://console.vast.ai/api/v0/asks/" + instance_id + "/?api_key=" + VAST_API_KEY
     print("url: ")
     print(url)
@@ -88,40 +85,10 @@ def printAsTable(goodOffers):
         print()
 
         
-if __name__ == '__main__':
-    
-    # Create the parser
+def handler_kickit(event, context):
     parser = argparse.ArgumentParser(description="Arg parser :D")
     parser.add_argument("--create-auto",  action="store_true", help="Set if you want to create")
     args = parser.parse_args()
-
-    # dph = "0.12"
-    # cuda_vers = "12"
-    # cpu_ram = "16000.0"
-    # disk_space = "16"
-    # specific_request = (
-    #      f'{{'
-    #         f'"q":{{ '
-    #             f'"verified": {{"eq": true}},'
-    #             f'"external": {{"eq": false}},'
-    #             f'"rentable": {{"eq": true}},'
-
-    #             f'"dph": {{"lt": "{dph}"}},'
-    #             f'"dph_total": {{"lt": "{dph}"}},'
-    #             f'"cuda_vers": {{"gte": "{cuda_vers}"}},'
-    #             f'"cuda_max_good": {{"gte": "{cuda_vers}"}},'
-    #             f'"cpu_ram": {{"gt": {cpu_ram}}},'
-    #             # "dph": {"lt": "0.12"},
-    #             # "dph_total": {"lt": "0.12"},
-    #             # "cuda_vers": {"gte": "12"},
-    #             # "cuda_max_good": {"gte": "12"},
-    #             # "cpu_ram": {"gt": 16000.0},
-    #             f'"order":[[   "cpu_ram",   "asc"] ],'
-
-    #             f'"type":"on-demand"'
-    #             f'}}'
-    #         f'}}'
-    # )
 
     everything_request = '''{
             "q":{ 
@@ -163,15 +130,6 @@ if __name__ == '__main__':
         print("======================")
         goodOffers.append(offer)
         counter = counter + 1
-        # ------> doesnt work
-        # badly_formated_values = ["gpu_name", "dph_total",  "id"]
-        # for item in badly_formated_values:
-        #     if (item == "inet_up_cost") or (item == "inet_down_cost") or (item == "storage_cost"):
-        #         z ="{:. 3f}".format(offer.get(item))
-        #         offer['item'] = z
-        #         print(item + ": " + z)
-        #         continue
-        #     print(item + ": " + str(offer.get(item)))
     
 
     print("offers COUNT: " + str(len(offers)))
@@ -187,11 +145,14 @@ if __name__ == '__main__':
         
     print(args)
     print(args)
-    if args.create_auto:
+    if args.create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
         print(f"create_auto: {args.create_auto}")
-    # create_instance(instance_first.get("id"))
+        # create_instance(instance_first.get("id"))
     exit()
 
+if __name__ == '__main__':
+    test_event = {}  # Populate with a sample event if needed
+    handler_kickit(test_event, None)
     
     # "id": 6585613,
     # "gpu_name": "A100 SXM4",
@@ -211,3 +172,32 @@ if __name__ == '__main__':
     # "inet_down": 950.4,
     # "score": 8.285414375740809,
     # "geolocation": "Czechia, CZ",
+
+
+    # specific_request = (
+    #      f'{{'
+    #         f'"q":{{ '
+    #             f'"verified": {{"eq": true}},'
+    #             f'"external": {{"eq": false}},'
+    #             f'"rentable": {{"eq": true}},'
+
+    #             f'"dph": {{"lt": "{dph}"}},'
+    #             f'"dph_total": {{"lt": "{dph}"}},'
+    #             f'"cuda_vers": {{"gte": "{cuda_vers}"}},'
+    #             f'"cuda_max_good": {{"gte": "{cuda_vers}"}},'
+    #             f'"cpu_ram": {{"gt": {cpu_ram}}},'
+    #             # "dph": {"lt": "0.12"},
+    #             # "dph_total": {"lt": "0.12"},
+    #             # "cuda_vers": {"gte": "12"},
+    #             # "cuda_max_good": {"gte": "12"},
+    #             # "cpu_ram": {"gt": 16000.0},
+    #             f'"order":[[   "cpu_ram",   "asc"] ],'
+
+    #             f'"type":"on-demand"'
+    #             f'}}'
+    #         f'}}'
+    # )
+
+
+
+

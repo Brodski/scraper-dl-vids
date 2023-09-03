@@ -34,7 +34,19 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 # docker run --env-file .env cbrodski/audio2text:latest
 # docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
 # 
-# docker build -t cbrodski/audio2text:v2023.7.13 -f Dockerfile_VastAi_real  .
+# docker build --no-cache -t cbrodski/audio2text:v2023.7.13 -f Dockerfile_VastAi_audio2Text  .
+# docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text  .
+# docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text  .
+# docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text  .
+# docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text  .
+#
+#
+# docker push cbrodski/audio2text:latest
+# docker push cbrodski/audio2text:latest
+# docker push cbrodski/audio2text:latest
+# docker push cbrodski/audio2text:latest
+# docker push cbrodski/audio2text:latest
+#
 ##############################################
 # ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
 # ENV BARBARA="BarbaraWalters.mp3"

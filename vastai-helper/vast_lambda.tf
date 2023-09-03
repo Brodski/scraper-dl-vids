@@ -24,17 +24,7 @@ provider "aws" {
 data "archive_file" "lambda_zip" {
     type = "zip"
     output_path = "${path.module}/output_code.zip"
-    # source_dir = "${path.module}/"
-    # source_dir = "${path.module}/venv2/"
-    source_file = "${path.module}/test.py"
-    # source {
-    #   content  = file("${path.module}/test.py")
-    #   filename = "test.py"
-    # }
-    # source {
-    #   content  = file("${path.module}/.env")
-    #   filename = ".env"
-    # }
+    source_dir = "${path.module}/auto-vast-runner"
 }
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role"
@@ -59,13 +49,12 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_role_attach" {
 }
 
 resource "aws_lambda_function" "example_lambda" {
-  function_name = "my_daily_lambda_function"
+  function_name = "auto-vast-runner"
 
-  # filename = "output_code.zip"
-  filename = data.archive_file.lambda_zip.output_path
+  filename = data.archive_file.lambda_zip.output_path # "output_code.zip"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
-  # source_code_hash = filebase64sha256("output_code.zip")
-  handler = "test.handler" 
+  # handler = "test.handler"
+  handler = "auto-vast-runner.handler_kickit" 
   runtime = "python3.10"
 
   role = aws_iam_role.lambda_execution_role.arn
@@ -74,6 +63,7 @@ resource "aws_lambda_function" "example_lambda" {
     variables = {
       MY_VARIABLE     = "MyValue"
       ANOTHER_VARIABLE = var.api_key
+      IS_CREATE_INSTANCE = "true"
     }
   }
 }
@@ -81,9 +71,10 @@ resource "aws_lambda_function" "example_lambda" {
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "run-lambda-daily"
   description         = "Run Lambda function once a day"
-#   schedule_expression = "cron(0 12 * * ? *)" # daily at 12:00pm UTC
+  schedule_expression = "cron(40 12 * * ? *)" # daily at 12:30am UTC
+  # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
   # schedule_expression = "cron(0 * * * ? *)" # Every minute
-  schedule_expression = "rate(1 minute)"
+  # schedule_expression = "rate(1 minute)"
   # schedule_expression = "rate(1 hour)"
 }
 

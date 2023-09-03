@@ -1,5 +1,7 @@
 # ! Work in progress !  
 
+Dockerfile_SSScrapey -> ran nightly in AWS. Containerizes SSScrapey dir. 
+
 NEED PYTHON 3.10 B/C OF AI-WHISPER  
 
 Start:  

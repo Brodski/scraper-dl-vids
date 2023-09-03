@@ -7,10 +7,12 @@ variable "api_key" {
   # OR
   # export TF_VAR_api_key="your_actual_api_key_here" --- LINUX
   # $env:TF_VAR_api_key = "your_actual_api_key_here" --- WINDOWS
+  # OR
+  # load 'api_key' from the .env file
 }
 
 provider "aws" {
-  region = "us-east-1" # Choose the appropriate region
+  region = "us-east-1"
 }
 # terraform {
 #   backend "s3" {
@@ -23,7 +25,16 @@ data "archive_file" "lambda_zip" {
     type = "zip"
     output_path = "${path.module}/output_code.zip"
     # source_dir = "${path.module}/"
+    # source_dir = "${path.module}/venv2/"
     source_file = "${path.module}/test.py"
+    # source {
+    #   content  = file("${path.module}/test.py")
+    #   filename = "test.py"
+    # }
+    # source {
+    #   content  = file("${path.module}/.env")
+    #   filename = ".env"
+    # }
 }
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role"
@@ -73,6 +84,7 @@ resource "aws_cloudwatch_event_rule" "daily_event" {
 #   schedule_expression = "cron(0 12 * * ? *)" # daily at 12:00pm UTC
   # schedule_expression = "cron(0 * * * ? *)" # Every minute
   schedule_expression = "rate(1 minute)"
+  # schedule_expression = "rate(1 hour)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_lambda_target" {

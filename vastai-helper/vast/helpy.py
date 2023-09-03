@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import json
 import os
+import argparse
 from urllib.parse import quote_plus  # Python 3+
 try:
     from dotenv import load_dotenv
@@ -10,14 +11,13 @@ try:
 except:
     print("We are in lambda")
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
-api_key = os.environ.get('api_key')
 
 # 'configs'
 dph = "0.12"
 cuda_vers = "12"
 cpu_ram = "16000.0"
-disk_space = "16"
-disk = 16.0 # Gb
+disk_space = "32"
+disk = 32.0 # Gb
 image = "pytorch/pytorch"
 
 def requestOffersHttp(query_args):
@@ -70,7 +70,31 @@ def create_instance(instance_id):
         response_data = response.read()
         print(response_data.decode('utf-8'))
     print("DONE :)")
+
+
+def printAsTable(goodOffers):
+    # Print shit
+    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation" ]
+    def printColAux(column):
+        p = f"{column:<8}"
+        print(str(p)[:8] + "  ", end="")
+    print()
+    for column in headers:
+        printColAux(column)
+    print()
+    for offer in goodOffers:
+        for head in headers:
+            printColAux(offer.get(head))
+        print()
+
+        
 if __name__ == '__main__':
+    
+    # Create the parser
+    parser = argparse.ArgumentParser(description="Arg parser :D")
+    parser.add_argument("--create-auto",  action="store_true", help="Set if you want to create")
+    args = parser.parse_args()
+
     # dph = "0.12"
     # cuda_vers = "12"
     # cpu_ram = "16000.0"
@@ -159,22 +183,12 @@ if __name__ == '__main__':
     print(instance_first.get("id"))
     print(instance_first.get("id"))
 
-
-    # Print shit
-    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation" ]
-    def printColAux(column):
-        p = f"{column:<8}"
-        print(str(p)[:8] + "  ", end="")
-    print()
-    for column in headers:
-        printColAux(column)
-    print()
-    for offer in goodOffers:
-        for head in headers:
-            printColAux(offer.get(head))
-        print()
+    printAsTable(goodOffers)
         
-
+    print(args)
+    print(args)
+    if args.create_auto:
+        print(f"create_auto: {args.create_auto}")
     # create_instance(instance_first.get("id"))
     exit()
 

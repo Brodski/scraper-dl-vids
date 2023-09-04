@@ -11,6 +11,8 @@ try:
 except:
     print("We are in lambda")
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 
 # 'configs'
 dph = "0.12"
@@ -19,7 +21,10 @@ cpu_ram = "16000.0"
 disk_space = "32"
 disk = 32.0 # Gb
 image = "cbrodski/audio2text:latest"
+storage_cost = "0.3"
+blacklist_gpus = ["GTX 1070"]
 
+# copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
     query_json = "&".join("{x}={y}".format(x=x, y=quote_plus(y if isinstance(y, str) else json.dumps(y))) for x, y in query_args.items())
@@ -39,19 +44,20 @@ def requestOffersHttp(query_args):
     return json_data.get("offers")
 
 def create_instance(instance_id):
-    url = "https://console.vast.ai/api/v0/asks/" + instance_id + "/?api_key=" + VAST_API_KEY
+    url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
     print("url: ")
     print(url)
     data_dict =  {  
         "client_id": "me",
         "image": image, 
-        "env": {}, 
+        "env": {'AWS_SECRET_ACCESS_KEY': AWS_SECRET_ACCESS_KEY, 'AWS_ACCESS_KEY_ID': AWS_ACCESS_KEY_ID}, 
         "price": None, 
         "disk": disk, 
         "label": None, 
         "extra": None, 
         "onstart": None, 
-        "runtype": "ssh", 
+        # "runtype": "ssh", 
+        "runtype": "args", 
         "image_login": None, 
         "python_utf8": False, 
         "lang_utf8": False, 
@@ -71,7 +77,7 @@ def create_instance(instance_id):
 
 def printAsTable(goodOffers):
     # Print shit
-    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation" ]
+    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
     def printColAux(column):
         p = f"{column:<8}"
         print(str(p)[:8] + "  ", end="")
@@ -127,6 +133,12 @@ def handler_kickit(event, context):
         if offer.get("disk_space") < float(disk_space):
             # print("skipping disk_space: " + str(offer.get("disk_space")))
             continue
+        if offer.get("storage_cost") > float(storage_cost):
+            print("skipping storage_cost: " + str(offer.get("storage_cost")))
+            continue
+        if offer.get("gpu_name") in blacklist_gpus:
+            print("skipping blacklist_gpus: " + str(offer.get("gpu_name")))
+            continue
         print("======================")
         goodOffers.append(offer)
         counter = counter + 1
@@ -147,8 +159,9 @@ def handler_kickit(event, context):
     print(args)
     if args.create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
         print(f"create_auto: {args.create_auto}")
-        # create_instance(instance_first.get("id"))
-    exit()
+        print(f'os.environ.get("IS_CREATE_INSTANCE"): {os.environ.get("IS_CREATE_INSTANCE")}')
+        create_instance(instance_first.get("id"))
+    # exit()
 
 if __name__ == '__main__':
     test_event = {}  # Populate with a sample event if needed

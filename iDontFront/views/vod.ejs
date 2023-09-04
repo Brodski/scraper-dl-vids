@@ -10,28 +10,81 @@
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
         <script defer src="/scripts.js"></script>
+        <script>
+          function seekIframe(time) {
+            console.log("time=" + time)
+            console.log("player=" + player)
+            player.seek(time)
+          }
+        </script>
+        <% 
+          function secondsToHHMMSS(totalSeconds) {
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+            let seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+            hours = String(hours).padStart(2, '0');
+            minutes = String(minutes).padStart(2, '0');
+            seconds = String(seconds).padStart(2, '0');
+
+            return `${hours}:${minutes}:${seconds}`;
+          }
+        %>
     </head>    
     <body>
         <h1> <%= vod.title %> </h1>
         <h2> <%= subtitle %> </h2>
         <div> twitch vod <a href="<%= twitchUrl %>"> <%= twitchUrl %> </a> </div>
-        <% 
-            // console.log(transcript_json)
-            console.log(vod)
-        %>
-                
+
+
+        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+        <div id="mtndew"></div>
+        <script type="text/javascript">
+          var options = {
+            width: 640,
+            height: 360,
+            video: "1889194115",
+            parent: ["localhost", "othersite.example.com"]
+          };
+          var player = new Twitch.Player("mtndew", options);
+          // player.setVolume(0.5);
+        </script>
+        <div>
+          <button 
+            onclick="(() => {
+              console.log('CLICKLEY');
+              console.log(player);
+              player.seek(69)
+            })()"
+            >
+              shit button
+          </button>
+        </div>
         <!-- <% // for (let i=0; i < transcript_json.length; i++) { %> -->
+          <% let i = 0; %>
         <% for (let segment of transcript_json) { 
+            if (i==0) {
+              console.log(segment)
+            }
+            i++
             let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
             let min = Math.floor(parseInt(segment.start) / 60)
             let timestamp = min + "m" + sec + "s";
+            // let sec_floored = Math.floor(segment.start)
+            // console.log("segment.start=" + segment.start )
+            // console.log("sec_floored=" + sec_floored )
         %>
 
             <div> 
                 <span>
-                        <% let start = Number(segment.start).toFixed(2) %>
-                        <% let end = Number(segment.start).toFixed(2) %>
-                    <a href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">[<%= start %> →  <%= end %>]</a>
+                    <% let start = Number(segment.start).toFixed(2) %>
+                    <% let end   = Number(segment.end).toFixed(2) %>
+                    <% let sec_floored = Math.floor(segment.start) %>
+                    <% start = secondsToHHMMSS(sec_floored) %>
+                    <% end = secondsToHHMMSS(sec_floored) %>
+                    <!-- <a href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">[<%= start %> → <%= end %>]</a> -->
+                    <!-- <button href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">twtv</button> -->
+                    <span class="vod_timestamp" onclick="(() => seekIframe(<%= sec_floored %>))()">[<%= start %> → <%= end %>]</span>
                 </span>
                 <span>
                     <%= segment.text %>

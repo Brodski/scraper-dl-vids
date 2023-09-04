@@ -22,7 +22,8 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 # ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 # ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 # ssh -p 40299 root@59.127.107.111 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#
+# ssh -p 15724 root@ssh4.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+# ssh -p 16194 root@ssh4.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #
 # docker run --env-file .env -it cbrodski/audio2text:latest /bin/bash
 # docker run --env-file .env cbrodski/audio2text:latest

@@ -1,4 +1,4 @@
-variable "api_key" {
+variable "VAST_API_KEY" {
   description = "Secret API Key"
   type        = string
   sensitive   = true
@@ -10,17 +10,23 @@ variable "api_key" {
   # OR
   # load 'api_key' from the .env file
 }
+variable "MY_AWS_SECRET_ACCESS_KEY" {
+  description = "Secret AWS Access Key"
+  type        = string
+  sensitive   = true
+  default     = "XX" 
+}
+variable "MY_AWS_ACCESS_KEY_ID" {
+  description = "AWS Access ID"
+  type        = string
+  sensitive   = true
+  default     = "XXX" 
+}
 
 provider "aws" {
   region = "us-east-1"
 }
-# terraform {
-#   backend "s3" {
-#     bucket = "my-terraform-state-bucket" 
-#     key    = "path/to/my/key"            
-#     region = "us-west-1"                 
-#   }
-# }
+
 data "archive_file" "lambda_zip" {
     type = "zip"
     output_path = "${path.module}/output_code.zip"
@@ -62,8 +68,10 @@ resource "aws_lambda_function" "example_lambda" {
   environment {
     variables = {
       MY_VARIABLE     = "MyValue"
-      ANOTHER_VARIABLE = var.api_key
+      VAST_API_KEY    = var.VAST_API_KEY
       IS_CREATE_INSTANCE = "true"
+      MY_AWS_SECRET_ACCESS_KEY = var.MY_AWS_SECRET_ACCESS_KEY
+      MY_AWS_ACCESS_KEY_ID = var.MY_AWS_ACCESS_KEY_ID
     }
   }
 }
@@ -71,7 +79,7 @@ resource "aws_lambda_function" "example_lambda" {
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "run-lambda-daily"
   description         = "Run Lambda function once a day"
-  schedule_expression = "cron(40 12 * * ? *)" # daily at 12:30am UTC
+  schedule_expression = "cron(10 7 * * ? *)"
   # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
   # schedule_expression = "cron(0 * * * ? *)" # Every minute
   # schedule_expression = "rate(1 minute)"

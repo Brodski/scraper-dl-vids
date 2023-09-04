@@ -1,5 +1,8 @@
 # ! Work in progress !  
 
+### auto-vast-runner  
+Runs a daily lambda to start up a audio2Text via Vasti AI
+$ terraform apply -var "VAST_API_KEY=11111111111111111111111111111111"   
 Dockerfile_SSScrapey -> ran nightly in AWS. Containerizes SSScrapey dir. 
 
 NEED PYTHON 3.10 B/C OF AI-WHISPER  

@@ -31,8 +31,12 @@ def _getCompletedJsonS3():
     print('os.getenv("AWS_SECRET_ACCESS_KEY")')
     print('os.getenv("AWS_SECRET_ACCESS_KEY")')
     # print(os.getenv("AWS_SECRET_ACCESS_KEY"))
+    # print(os.getenv("MY_AWS_ACCESS_KEY_ID"))
     try:
+      print("GO!zzz")
       resAudio = s3.get_object(Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
+      print("resAudio")
+      print(resAudio)
       todo_list_pre = json.loads(resAudio["Body"].read().decode("utf-8")) if resAudio != None else {}
     except:
       print("error: completed-audio json file does not exist. There is no audio to download?")

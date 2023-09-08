@@ -1,70 +1,95 @@
-
-
+<%- include("../server-scripts/utilities") %>
 <% let twitchUrl = "https://twitch.tv/videos/" + vod.id %>
 
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale = 1.0">
         <title> <%= vod.title %> </title>
         <link rel="stylesheet" type="text/css" href="/styles.css">
+        <link rel="stylesheet" type="text/css" href="/vod.css">
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
-        <script defer src="/scripts.js"></script>
+        <!-- <script defer src="/scripts.js"></script> -->
+        <script src="/scripts.js"></script>
         <script>
           function seekIframe(time) {
             console.log("time=" + time)
             console.log("player=" + player)
             player.seek(time)
+            // player.play()
           }
         </script>
-        <% 
-          function secondsToHHMMSS(totalSeconds) {
-            let hours = Math.floor(totalSeconds / 3600);
-            let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-            let seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+        
 
-            hours = String(hours).padStart(2, '0');
-            minutes = String(minutes).padStart(2, '0');
-            seconds = String(seconds).padStart(2, '0');
-
-            return `${hours}:${minutes}:${seconds}`;
-          }
-        %>
+        
     </head>    
     <body>
-        <h1> <%= vod.title %> </h1>
-        <h2> <%= subtitle %> </h2>
-        <div> twitch vod <a href="<%= twitchUrl %>"> <%= twitchUrl %> </a> </div>
-
-
-        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
-        <div id="mtndew"></div>
-        <script type="text/javascript">
-          var options = {
-            width: 640,
-            height: 360,
-            video: "1889194115",
-            parent: ["localhost", "othersite.example.com"]
-          };
-          var player = new Twitch.Player("mtndew", options);
-          // player.setVolume(0.5);
-        </script>
-        <div>
-          <button 
-            onclick="(() => {
-              console.log('CLICKLEY');
-              console.log(player);
-              player.seek(69)
-            })()"
-            >
-              shit button
-          </button>
+        <!-- Today_we_Get_GrandMaster-v1889194115.mp3 -->
+        <!-- lolgeranimo: 1889194115 -->
+        <!-- twitch vod https://twitch.tv/videos/1889194115 -->
+        <h1> <%= vod2.display_title %> </h1> 
+        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+        <br/>
+        <div class="vod__json_vtt_txt_link">
+            Raw transcripts: 
+            <span><a href="<%= transcript_s3_vtt %>"> vtt </a></span>
+            <span><a href="<%= transcript_s3_json %>"> json </a></span>
+            <span><a href="<%= transcript_s3_txt %>"> txt </a></span>
         </div>
+
+        <!-- <h2> <%= subtitle %> </h2>  -->
+        <br/>
+        <a class="vod_newtab" href="<%= twitchUrl %>" target="_blank">
+            <svg class="vod_svg_newtab" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 30 30"><path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path> </svg>
+            <div> <%= twitchUrl %> </div> 
+        </a>
+
+        <div>
+            <button 
+                id="toggle-btn"
+                onclick="(() => {
+                    console.log(window.navigator.userAgent)
+                    let iframe = document.querySelector('#twitch-iframe')
+                    iframe.classList.toggle('sticky-iframe')
+                    // let msg = iframe.classList.contains('sticky-iframe') ? '✓' : ''
+                    let msg = iframe.classList.contains('sticky-iframe') ? '☑' : ''
+                    document.querySelector('#on-off-sticky').innerText = msg
+                })()"
+                > Toggle sticky player
+            </button>
+            <span id="on-off-sticky"> </span>
+        </div>
+        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+        <div id="twitch-iframe"></div>
+        <script type="text/javascript">
+            if (isMobile()) {
+                console.log("YES MOBILE!")
+            } 
+            else {
+                console.log("NAAAAH")
+            }
+            // let width = 
+            var options = {
+                width: 640,
+                height: 360,
+                video: <%= vod.id %>,
+                parent: ["localhost", "othersite.example.com"]
+            };
+            var player = new Twitch.Player("twitch-iframe", options);
+            player.setVolume(0.0);
+        </script>
+        <hr/>
         <!-- <% // for (let i=0; i < transcript_json.length; i++) { %> -->
-          <% let i = 0; %>
+        <% 
+            console.log("vod2")
+            console.log(vod2)
+            
+        %>
+        <% let i = 0; %>
         <% for (let segment of transcript_json) { 
             if (i==0) {
-              console.log(segment)
+                console.log(segment)
             }
             i++
             let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
@@ -75,8 +100,9 @@
             // console.log("sec_floored=" + sec_floored )
         %>
 
-            <div> 
-                <span>
+            <div class="vod_cue"> 
+                
+                <!-- <span> -->
                     <% let start = Number(segment.start).toFixed(2) %>
                     <% let end   = Number(segment.end).toFixed(2) %>
                     <% let sec_floored = Math.floor(segment.start) %>
@@ -85,9 +111,11 @@
                     <!-- <a href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">[<%= start %> → <%= end %>]</a> -->
                     <!-- <button href="https://www.twitch.tv/videos/<%= vod.id%>?t=<%= timestamp%>">twtv</button> -->
                     <span class="vod_timestamp" onclick="(() => seekIframe(<%= sec_floored %>))()">[<%= start %> → <%= end %>]</span>
-                </span>
+                <!-- </span> -->
                 <span>
+                    <p>
                     <%= segment.text %>
+                    </p>
                 </span>
             </div>
         <% } %>

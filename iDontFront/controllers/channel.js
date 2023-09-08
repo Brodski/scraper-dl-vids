@@ -1,6 +1,7 @@
 const configs = require("../configs")
+// const { add, subtract } = require('../server-scripts/dates');
 
-https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
+// https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
 
 
 // path = /channel/lolgeranimo
@@ -8,35 +9,35 @@ exports.channel = async (req, res) => {
     
     const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json";   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
     const response = await fetch(endpoint); // mocks/completed_captions_list.py
-    console.log("endpoint", endpoint);
     if (!response.ok) {
          throw new Error('HTTP error ' + response.status);
     }
     let scrapped_data_s3 = await response.json()
-    console.log("scrapped_data_s3")
+    const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json"; 
+    //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
+    const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
+    console.log("endpoint2", endpoint2);
+    // timestamp = date of upload
+    // epoch = date I ran my scraper
+    if (!res2.ok) {
+         throw new Error('HTTP error ' + res2.status);
+    }
+    let custom_metadata = await res2.json();
+    // console.log("scrapped_data_s3")
     // console.log(scrapped_data_s3)
-    console.log("req.params.id")
-    console.log(req.params.id)
-        
+    // console.log("req.params.id")
+    // console.log(req.params.id)
     // res.locals.overviewLight = overviewLight
+
+    //  ***************************************
+    //  ***************************************
+    //  ***************************************
+    //  ***************************************
+    //  CHANNEL PATH
+    // 
+    // 
+    // http://localhost:3333/channel/lolgeranimo
     if (req.params.id == null) {
-        const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json"; 
-        //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
-        const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
-        console.log("endpoint2", endpoint2);
-        // timestamp = date of upload
-        // epoch = date I ran my scraper
-        if (!res2.ok) {
-             throw new Error('HTTP error ' + res2.status);
-        }
-        let custom_metadata = await res2.json()
-        console.log("custom_metadata")
-        console.log("custom_metadata")
-        console.log("custom_metadata")
-        console.log("custom_metadata")
-        console.log("custom_metadata")
-        console.log("custom_metadata")
-        console.log(custom_metadata)
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
@@ -45,6 +46,14 @@ exports.channel = async (req, res) => {
         })
     }
 
+
+    //  ***************************************
+    //  ***************************************
+    //  ***************************************
+    //  ***************************************
+    //  VOD PATH
+    // 
+    // 
     if (req.params.id != null) {
         let vod = scrapped_data_s3.filter( vod => vod.id == req.params.id)[0]
         if (vod == null) {
@@ -57,6 +66,7 @@ exports.channel = async (req, res) => {
             const tempName = vod.link_s3.substring(0, lastPeriodIdx);
             transcript_s3_vtt = tempName + ".vtt"                
             transcript_s3_json = tempName + ".json"
+            transcript_s3_txt = tempName + ".txt"
         } 
 
         let endpoint = transcript_s3_json;
@@ -66,20 +76,6 @@ exports.channel = async (req, res) => {
              throw new Error('HTTP error ' + response.status);
         }
         let transcript_json = await response.json()
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('transcript_res_json')
-        console.log('xd')
-        // console.log(transcript_json)
         vod.channel;
         vod.link_s3;
         vod.title;
@@ -87,7 +83,11 @@ exports.channel = async (req, res) => {
         res.render("../views/vod", { // ---> /channel/lolgeranimo
             "subtitle": vod.channel + ": " + vod.id,
             "transcript_json": transcript_json.segments,
-            "vod": vod
+            "vod": vod,
+            "vod2": custom_metadata[req.params.id],
+            "transcript_s3_vtt": transcript_s3_vtt,                            
+            "transcript_s3_json": transcript_s3_json,                        
+            "transcript_s3_txt": transcript_s3_txt                            
         })
     }
 }

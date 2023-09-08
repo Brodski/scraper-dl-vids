@@ -47,7 +47,7 @@ body {
     width: 100%
 }
 
-.vod_timestamp {
-    color: blue;
-    cursor: pointer;
+
+.d-inline {
+    display: inline;
 }

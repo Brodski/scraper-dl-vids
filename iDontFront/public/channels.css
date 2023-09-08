@@ -1,0 +1,17 @@
+table {
+    border-spacing: 0;
+}
+td {
+    padding: 0;
+}
+
+td:not(:last-child) {
+    padding-right: 8px;
+}
+th {
+    text-align: left;
+}
+
+.channel__duration {
+    text-align: right;
+}

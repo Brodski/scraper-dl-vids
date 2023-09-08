@@ -148,10 +148,7 @@ def doWhisperStuff(audio_name_encode, metadata_file_s3):
     print("    " + "audio_name_encode=" + audio_name_encode)
     model = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
     saved_caption_files = gogoWhisperFAST.run(model_size=model, lang_code=lang_code, filename=audio_name_encode)
-
-    for filename in saved_caption_files: # [vodx.json, vodx.vtt]
-      s3_file_location = uploadCaptionsToS3(filename, todo)
-    return True
+    return saved_caption_files
 
 # todo_list
 # {
@@ -182,7 +179,10 @@ if __name__ == '__main__':
       print("---")
       print(json.dumps(todo, default=lambda o:o.__dict__, indent=4))
       audio_name_encode, metadata_file_s3 = downloadAudio(todo)
-      doWhisperStuff(audio_name_encode, metadata_file_s3)
+      saved_caption_files = doWhisperStuff(audio_name_encode, metadata_file_s3)
+      
+      for filename in saved_caption_files: # [vodx.json, vodx.vtt]
+        s3_file_location = uploadCaptionsToS3(filename, todo)
       try:
         cleanUpFiles(audio_name_encode)
       except:

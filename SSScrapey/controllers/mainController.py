@@ -115,13 +115,10 @@ def upload_custom_metadata(data_custom):
     print ("00000000000000                         00000000000000000")
     print ("00000000000000  upload_custom_metadata 00000000000000000")
     print ("00000000000000                         00000000000000000")
-    # S3_CUSTOM_METADATA_BASE = 'channels/completed-jsons/custom-metadata/'
     
     s3 = boto3.client('s3')
-    
     vod_id = data_custom.get('id')
-    channel = data_custom.get('channel')
-    
+    channel = data_custom.get('channel')    
     key = env_varz.S3_CUSTOM_METADATA_KEYBASE + channel + "/custom-metadata.json"
 
     print(json.dumps(data_custom, indent=4))
@@ -138,16 +135,12 @@ def upload_custom_metadata(data_custom):
     print(custom_metadata_json_file)
 
     vod_metadata = custom_metadata_json_file.get(vod_id)
-
     if not vod_metadata:
         print("NOT!!!!!!!!!")
         vod_metadata = {}
     for k, value in data_custom.items():
         print(f'{k}: {value}')
         vod_metadata[k] = value
-        # if k == "channel":
-        #     continue
-
     custom_metadata_json_file[vod_id] = vod_metadata
     
     print("custom_metadata")

@@ -1,4 +1,17 @@
+<%- include("../server-scripts/utilities") %>
+<% 
+    function epochTo_MM_DD_YYYY(epoch) {
+        const date = new Date(epoch * 1000);
 
+        let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        let day = String(date.getDate()).padStart(2, '0');
+        let year = date.getFullYear();
+        if (epoch == null) {
+            return " "
+        }
+        return `${month}-${day}-${year}`; // MM:DD:YYYY
+    }
+%>
 
 <!DOCTYPE html>
 <html>
@@ -7,60 +20,90 @@
         <link rel="stylesheet" type="text/css" href="/styles.css">
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <link rel="stylesheet" type="text/css" href="/channels.css">
         <script defer src="/scripts.js"></script>
     </head>    
     <body>
         <h1> <%= title %> </h1>
         <!-- <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div> -->
+
         <!-- <div style="white-space: pre-line;"> custom_metadata <%= JSON.stringify(custom_metadata) %> </div> -->
-<!--         
-        console.log(custom_metadata[x].timestamp)
-        console.log(custom_metadata[x].fulltitle)
-        console.log(custom_metadata[x].duration_string)
-        console.log(custom_metadata[x].thumbnail) -->
 
-
+        
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Duration</th>
+                <th>Title</th>
+            </tr>   
+            <% 
+                console.log("scrapped_data_s3")
+                // console.log(scrapped_data_s3)
+                console.log("scrapped_data_s3")
+                console.log("custom_metadata")
+                // console.log(custom_metadata)
+                console.log("custom_metadataxxxxxxxx")
+                let custom_metadata_array = []
+                Object.keys(custom_metadata).forEach(key => {
+                    console.log(key, custom_metadata[key]);
+                    custom_metadata_array.push(custom_metadata[key])
+                });
+                // newest at start
+                custom_metadata_array.sort((a, b) => {
+                    if (a.epoch == null) {
+                        return 1
+                    }
+                    if (b.epoch == null) {
+                        return -1
+                    }
+                    return a.epoch > b.epoch ? -1 : 1
+                });
+                for (let custom_md of custom_metadata_array) {
+                    console.log(custom_md.epoch)
+                    let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json, duration_string, display_title, duration; 
+                    channel         = custom_md.channel
+                    duration_string = custom_md.duration_string // '10:42:21'
+                    duration        = custom_md.duration // 38541
+                    display_title   = custom_md.display_title
+                    id              = custom_md.id
+                    thumbnail       = custom_md.thumbnail
+                    epoch           = custom_md.epoch
+                    link_s3         = scrapped_data_s3
+                    href            = path + "/" +  id 
+            %>
+            <tr>
+                <td><%= epochTo_MM_DD_YYYY(epoch) %></td>
+                <td class="channel__duration"><%= secondsToHHMM(Number(duration)) %></td>
+                <td><a href="<%= href %>"> <%= display_title %> </a></td>
+            </tr>
+                <% } %>
+        </table>
+            
+            %>
         <% 
-
-            console.log("custom_metadata.[5057810]")
-            console.log("custom_metadata.[5057810]")
-            console.log("custom_metadata.[5057810]")
-            console.log("custom_metadata.[5057810]")
-            // console.log(custom_metadata[5057810])
-            function getIdInfo(id) {
-              console.log('=================')
-              console.log(id)
-              console.log(id)
-              console.log(id)
-              console.log(id)
-              let x = custom_metadata[id]
-              console.log(custom_metadata[id])
-            }
-
             let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json;
                 
-                // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
-                for (let vod of scrapped_data_s3) {
-                    channel = vod.channel;
-                    id = vod.id;
-                    vod_title = vod.title;
-                    link_s3 = vod.link_s3; //mp3
-                    href = path + "/" +  id 
-                    let lastPeriodIdx = link_s3.lastIndexOf('.');
-                    if (lastPeriodIdx !== -1) {
-                        const tempName = link_s3.substring(0, lastPeriodIdx);
-                        link_s3_vtt = tempName + ".vtt"                
-                        link_s3_json = tempName + ".json"
-                    } 
-                    console.log(vod_title)
-                    getIdInfo(id)
-
-
-                    %>
-                    <div> 
-                        <a href="<%= href %>"> <%= vod_title %> </a>
-                    </div>
-             <% } %>
+            // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
+            for (let vod of scrapped_data_s3) {
+                channel     = vod.channel;
+                id          = vod.id;
+                vod_title   = vod.title;
+                link_s3     = vod.link_s3; //mp3
+                href        = path + "/" +  id 
+                let lastPeriodIdx = link_s3.lastIndexOf('.');
+                if (lastPeriodIdx !== -1) {
+                    const tempName = link_s3.substring(0, lastPeriodIdx);
+                    link_s3_vtt = tempName + ".vtt"                
+                    link_s3_json = tempName + ".json"
+                    link_s3_txt = tempName + ".txt"
+                } 
+                // console.log('=================')
+                // console.log(vod_title)
+                // console.log(id)
+                // console.log(custom_metadata[id])
+                
+        %>
+        <% } %>
 
     </body>
 </html>
@@ -69,28 +112,28 @@
 scrapped_data_s3 = 
 [
     {
-      channel: 'lolgeranimo',
-      id: '1861789415',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1861789415/2v2v2v2_Pushing_Gladiator-v1861789415.mp3',
-      title: '2v2v2v2_Pushing_Gladiator-v1861789415.mp3'
+        channel: 'lolgeranimo',
+        id: '1861789415',
+        link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1861789415/2v2v2v2_Pushing_Gladiator-v1861789415.mp3',
+        title: '2v2v2v2_Pushing_Gladiator-v1861789415.mp3'
     },
     {
-      channel: 'lolgeranimo',
-      id: '1862390912',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1862390912/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3',
-      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3'
+        channel: 'lolgeranimo',
+        id: '1862390912',
+        link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1862390912/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3',
+        title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3'
     },
     {
-      channel: 'lolgeranimo',
-      id: '1863373278',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863373278/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3',
-      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3'
+        channel: 'lolgeranimo',
+        id: '1863373278',
+        link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863373278/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3',
+        title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3'
     },
     {
-      channel: 'lolgeranimo',
-      id: '1863728745',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863728745/Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3',
-      title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
+        channel: 'lolgeranimo',
+        id: '1863728745',
+        link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863728745/Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3',
+        title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
     }
   ]
 -->

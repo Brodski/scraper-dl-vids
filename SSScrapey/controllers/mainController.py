@@ -104,7 +104,6 @@ def initYtdlAudio(channels, *, isDebug=False):
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) ++++++++++++++++++++++++++")
     print("     (initYtdlAudio) DOWNLOADED THESE:")
-    print (metadata_Ytdl_list)
     for yt_meta in metadata_Ytdl_list:
         print (   "(initYtdlAudio) - " + yt_meta.channel + " @ " + yt_meta.metadata.get("title"))
     # if isDebug:

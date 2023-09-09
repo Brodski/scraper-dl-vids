@@ -79,7 +79,7 @@ resource "aws_lambda_function" "example_lambda" {
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "run-lambda-daily"
   description         = "Run Lambda function once a day"
-  schedule_expression = "cron(10 7 * * ? *)"
+  schedule_expression = "cron(0 13 * * ? *)" # 12 = ECS
   # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
   # schedule_expression = "cron(0 * * * ? *)" # Every minute
   # schedule_expression = "rate(1 minute)"

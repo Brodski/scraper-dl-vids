@@ -3,7 +3,7 @@ import urllib.request
 import urllib.parse
 import json
 import os
-import argparse
+# import argparse
 from urllib.parse import quote_plus  # Python 3+
 try:
     from dotenv import load_dotenv
@@ -91,10 +91,11 @@ def printAsTable(goodOffers):
         print()
 
         
-def handler_kickit(event, context):
-    parser = argparse.ArgumentParser(description="Arg parser :D")
-    parser.add_argument("--create-auto",  action="store_true", help="Set if you want to create")
-    args = parser.parse_args()
+def handler_kickit(event, context): 
+    create_auto = False
+    # parser = argparse.ArgumentParser(description="Arg parser :D")
+    # parser.add_argument("--create-auto",  action="store_true", help="Set if you want to create")
+    # args = parser.parse_args()
 
     everything_request = '''{
             "q":{ 
@@ -116,7 +117,6 @@ def handler_kickit(event, context):
     offers = requestOffersHttp(json.loads(everything_request))
     x = json.dumps(offers, indent=2)
     print(x)
-    i = 0
     print("== GO BABY GO ==")
     counter = 0
     goodOffers = []
@@ -155,10 +155,8 @@ def handler_kickit(event, context):
 
     printAsTable(goodOffers)
         
-    print(args)
-    print(args)
-    if args.create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
-        print(f"create_auto: {args.create_auto}")
+    if create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
+        # print(f"create_auto: {args.create_auto}")
         print(f'os.environ.get("IS_CREATE_INSTANCE"): {os.environ.get("IS_CREATE_INSTANCE")}')
         create_instance(instance_first.get("id"))
     # exit()

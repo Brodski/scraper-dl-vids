@@ -17,17 +17,12 @@ exports.channel = async (req, res) => {
     //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
     const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
     console.log("endpoint2", endpoint2);
-    // timestamp = date of upload
-    // epoch = date I ran my scraper
+    // timestamp = date I ran my scraper
+    // epoch = date of upload
     if (!res2.ok) {
          throw new Error('HTTP error ' + res2.status);
     }
     let custom_metadata = await res2.json();
-    // console.log("scrapped_data_s3")
-    // console.log(scrapped_data_s3)
-    // console.log("req.params.id")
-    // console.log(req.params.id)
-    // res.locals.overviewLight = overviewLight
 
     //  ***************************************
     //  ***************************************
@@ -81,7 +76,7 @@ exports.channel = async (req, res) => {
         vod.title;
         vod.id;
         res.render("../views/vod", { // ---> /channel/lolgeranimo
-            "subtitle": vod.channel + ": " + vod.id,
+            "channel": vod.channel,
             "transcript_json": transcript_json.segments,
             "vod": vod,
             "vod2": custom_metadata[req.params.id],

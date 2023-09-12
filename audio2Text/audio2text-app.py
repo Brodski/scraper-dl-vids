@@ -73,7 +73,14 @@ def uploadCaptionsToS3(filename, todo: Todo):
     print("s3CapFileKey: " + s3CapFileKey)
     s3 = boto3.client('s3')
     try:
-      s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey)
+      content_type = ''
+      if file_abs[-4:] == '.txt':
+        content_type = 'text/plain; charset=utf-8'
+      if file_abs[-5:] ==  '.json':
+        content_type = 'application/json; charset=utf-8'
+      if file_abs[-4:] ==  '.vtt':
+        content_type = 'text/vtt; charset=utf-8'
+      s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
       return s3CapFileKey # channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt
     except:
       print("oops! failed to upload: " + filename)

@@ -61,8 +61,10 @@ def main():
     print("sys.argv: " + str(sys.argv))
     print("args: " + str(args))
     print("args.file: " + str(args.file))
-
-    run(model_size=model_size, filename=filename)
+    # todo = Todo(channel="lolgeranimo", id="28138895", title="The Geraniproject! I Love You Guys!!!-v28138895", link_s3="https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.mp3" )
+    saved_caption_files = run(model_size=model_size, filename=filename)
+    # for filename in saved_caption_files: # [vodx.json, vodx.vtt]
+    #     s3_file_location = uploadCaptionsToS3(filename, todo)
 
 
 ######################################################
@@ -105,25 +107,9 @@ def run(*, model_size, lang_code=None, filename):
 
 
     saved_caption_files = writeCaptionsLocally(result, audio_basename)
-    # removeAudio(audio_basename)
     print( "audio_basename: ")
     print(audio_basename)
     print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    print(audio_basename)
-    # HERE
-    # HERE
-    # HERE
-    # HERE
-    # HERE
-    # HERE
     end_time = time.time() - start_time
 
     print("========================================")
@@ -162,3 +148,4 @@ def writeCaptionsLocally(result, audio_basename):
 
 if __name__ == '__main__':
     main()
+    # TODO these method name are stupid. Had some docker development issues sorta

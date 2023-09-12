@@ -5,7 +5,11 @@
 # apigateway_name = "api-name-test"
 
 
-
+variable "lambda_name" {
+  description = "nav_foot_lambda"
+  type        = string
+  default     = "nav_foot_lambda_fn_DEV"
+}
 variable "r53_lambda_full_domain" {
   description = "r53_lambda_full_domain"
   type        = string
@@ -32,6 +36,7 @@ variable "apigateway_name" {
   default     = "cc-api-gateway"
 }
 
+##############################################
 variable "r53_route_id" {
   description = "The AWS region"
   type = string
@@ -43,3 +48,4 @@ variable "r53_acm_certificate_arn" {
   type = string
   default = "arn:1234567890"
 }
+

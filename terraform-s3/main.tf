@@ -50,7 +50,7 @@ resource "aws_iam_role" "lambda_role" {
 
 resource "aws_iam_role_policy" "lambda_policy" {
   name = "my_lambda_policy"
-  role = aws_iam_role.lambda_role.id
+  role = aws_iam_role.lambda_writer_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"

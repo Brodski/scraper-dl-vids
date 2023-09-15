@@ -17,7 +17,7 @@ module "s3_assets" {
   source      = "./s3-assets"
   s3_asset_bucket_name     = var.s3_asset_bucket_name
   s3_log_bucket_name       = var.s3_log_bucket_name
-  s3_log_bucket_resource     = aws_s3_bucket.log_bucket.bucket
+  s3_log_bucket_resource   = aws_s3_bucket.log_bucket.bucket
 
   r53_s3_asset_full_domain = var.r53_s3_asset_full_domain
   r53_acm_certificate_arn  = var.r53_acm_certificate_arn

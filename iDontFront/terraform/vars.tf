@@ -8,7 +8,7 @@
 variable "lambda_name" {
   description = "nav_foot_lambda"
   type        = string
-  default     = "nav_foot_lambda_fn_DEV"
+  default     = "captions_frontend"
 }
 variable "r53_lambda_full_domain" {
   description = "r53_lambda_full_domain"

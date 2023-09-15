@@ -51,7 +51,7 @@ resource "aws_s3_bucket_policy" "example_bucket_policy" {
 resource "aws_lambda_function" "example_lambda" {
   filename         = "example_lambda-LOCAL.zip"
   function_name = "example-lambda"
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.lambda_writer_role.arn
   handler = "lambda_function.lambda_handler"
   runtime = "python3.8"
   source_code_hash = filebase64sha256("example_lambda-LOCAL.zip")
@@ -85,7 +85,7 @@ resource "aws_iam_role" "lambda_role" {
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_access" {
   policy_arn = aws_iam_policy.s3_access.arn
-  role = aws_iam_role.lambda_role.name
+  role = aws_iam_role.lambda_writer_role.name
 }
 
 resource "aws_iam_policy" "s3_access" {

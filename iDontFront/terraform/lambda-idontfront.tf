@@ -10,18 +10,21 @@ data "archive_file" "lambda_zip" {
     # source_file = "${path.module}/navbar_footer_injector/app.js"
 }
 
-resource "aws_lambda_function" "nav_foot_lambda_fn" {
+resource "aws_lambda_function" "idontfront_lambda" {
   function_name = var.lambda_name
-  handler       = "app.lambdaHandler" 
+  handler       = "iDontFront-app.lambdaHandler" 
   runtime       = "nodejs18.x"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.lambda_writer_role.arn
 
   filename = data.archive_file.lambda_zip.output_path #"my_lambda.zip"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
 
+  memory_size = 512
+
   environment {
     variables = {
       FLASK_ENV = "DEV"
+      IS_LAMBDA = "true"
     }
   }
 }
@@ -31,7 +34,7 @@ resource "aws_lambda_function" "nav_foot_lambda_fn" {
 resource "aws_lambda_permission" "lambda_api" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.nav_foot_lambda_fn.function_name
+  function_name = aws_lambda_function.idontfront_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
   # The /*/* portion grants access from any method on any resource within the API Gateway "REST API".
@@ -39,7 +42,7 @@ resource "aws_lambda_permission" "lambda_api" {
 }
 
 resource "aws_cloudwatch_log_group" "example_lambda_log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.nav_foot_lambda_fn.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.idontfront_lambda.function_name}"
   retention_in_days = 14
 }
 

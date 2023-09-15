@@ -241,7 +241,7 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl):
         # uploads: channels/vod-audio/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
         print ("    UPLOADING MP3 !!!!!!!!!!!!!!!!! ")
         print ("    " + yt_meta.outFile[5:])
-        s3.upload_file(os.path.abspath(yt_meta.outFile[5:]), env_varz.BUCKET_NAME, s3fileKey)
+        s3.upload_file(os.path.abspath(yt_meta.outFile[5:]), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
         print ("    UPLOADING META !!!!!!!!!!!!!!!!! ")
         s3.put_object(Body=json.dumps(yt_meta.__dict__, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return True

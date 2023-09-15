@@ -1,9 +1,10 @@
+// const AWS = require('aws-sdk');
+const serverless = require('serverless-http');
 const express = require('express');
 const path = require('path');
 // const ejs = require('ejs');
 const configs = require("./configs");
 const mainRoutes = require('./routes/mainRoutes');
-
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -17,12 +18,22 @@ app.locals.configs = configs
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
-// app.get('/', (req, res) => {
-//     res.render('index', { title: 'Home' });
-// });
-
 app.use(mainRoutes)
 
-const PORT = process.env.PORT || 3333;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (process.env.IS_LAMBDA == "true") {
+    console.log("YES IS LAMBDA 222!!!" + process.env.IS_LAMBDA)
+    // module.exports.lambdaHandler = serverless(app);
+    module.exports.lambdaHandler = async (event, context) => {
+        console.log("event.path=" + event.path)
+        event.path = event.path === '' ? '/' : event.path
+        const serverlessHandler = serverless(app)
+        const result = await serverlessHandler(event, context)
+        return result
+    }
+}
+else {
+    const PORT = process.env.PORT || 3333;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+

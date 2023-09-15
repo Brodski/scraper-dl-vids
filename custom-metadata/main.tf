@@ -9,7 +9,7 @@ data "archive_file" "lambda_zip" {
 }
 
 # IAM role for Lambda
-resource "aws_iam_role" "lambda_role" {
+resource "aws_iam_role" "lambda_writer_role" {
   name = "lambda_role"
 
   assume_role_policy = jsonencode({
@@ -32,7 +32,7 @@ resource "aws_lambda_function" "flask_lambda" {
   function_name    = "flask_lambda"
   handler          = "app.lambda_handler" # Change to your handler location in the ZIP file
   runtime          = "python3.10"
-  role             = aws_iam_role.lambda_role.arn
+  role             = aws_iam_role.lambda_writer_role.arn
   filename         = "output.zip" # Your local ZIP file containing the Flask app
 
   source_code_hash = filebase64sha256("output.zip")

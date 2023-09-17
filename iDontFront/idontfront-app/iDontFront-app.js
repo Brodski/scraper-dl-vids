@@ -22,7 +22,6 @@ app.use(mainRoutes)
 
 if (process.env.IS_LAMBDA == "true") {
     console.log("YES IS LAMBDA 222!!!" + process.env.IS_LAMBDA)
-    // module.exports.lambdaHandler = serverless(app);
     module.exports.lambdaHandler = async (event, context) => {
         console.log("event.path=" + event.path)
         event.path = event.path === '' ? '/' : event.path

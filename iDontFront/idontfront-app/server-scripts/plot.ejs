@@ -1,0 +1,42 @@
+<% 
+    // <script src="d3.js"></script>
+    // <script src="plot.js"></script>
+    // <script type="module">
+        // const d3 = await import("d3");
+        // const Plot = await import("d3");
+        // import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+        // const { plot } = require("@observablehq/plot");
+        // console.log(plot)
+        // const plot = Plot.rectY({length: 10000}, Plot.binX({y: "count"}, {x: Math.random})).plot();
+        // const div = document.querySelector("#myplot");
+        // div.append(plot);
+        
+    async function loadModule() {
+        // const myModule = await import('./index.js');
+        const Plot = await import('@observablehq/plot');
+        console.log("plot")
+        console.log("plot")
+        console.log("plot")
+        console.log("plot")
+        // console.log(Plot)
+        const plot = Plot.rectY({length: 10000}, Plot.binX({y: "count"}, {x: Math.random})).plot();
+        console.log("plot!!!")
+        console.log(plot)
+        XXX="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    }
+    // loadModule()
+
+    loltest = async () => {
+        console.log("lol1")
+        const Plot = await import('@observablehq/plot');
+        console.log("lol2")
+        console.log("lol")
+        console.log("lol")
+        console.log("lol")
+        return "ass"
+    }
+        // const d3 = require("d3");
+        // const Plot = require("plot");
+
+%>

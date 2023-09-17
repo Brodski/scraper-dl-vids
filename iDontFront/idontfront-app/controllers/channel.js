@@ -50,6 +50,8 @@ exports.channel = async (req, res) => {
     // 
     // 
     if (req.params.id != null) {
+
+
         let vod = scrapped_data_s3.filter( vod => vod.id == req.params.id)[0]
         if (vod == null) {
             res.status(404).render('404')
@@ -75,15 +77,36 @@ exports.channel = async (req, res) => {
         vod.link_s3;
         vod.title;
         vod.id;
+
+        // const d3 = require("../server-scripts/d3")
+        const plot  = require("../server-scripts/plot")
+        const { JSDOM } = require('jsdom');
+
+        let theSvg = await plot()
+        console.log("ASS")
+        console.log("ASS")
+        console.log("ASS")
+        console.log("ASS")
+        console.log(theSvg)
+        console.log(theSvg.outerHTML);
+        // plot().then(result => {
+        //     console.log("result");  // This will log "buttlol"
+        //     console.log("result");  // This will log "buttlol"
+        //     console.log("result");  // This will log "buttlol"
+        //     console.log("result");  // This will log "buttlol"
+        //     console.log(result);  // This will log "buttlol"
+        // })
         res.render("../views/vod", { // ---> /channel/lolgeranimo
             "channel": vod.channel,
             "transcript_json": transcript_json.segments,
             "vod": vod,
             "vod2": custom_metadata[req.params.id],
-            "transcript_s3_vtt": transcript_s3_vtt,                            
-            "transcript_s3_json": transcript_s3_json,                        
-            "transcript_s3_txt": transcript_s3_txt                            
+            "transcript_s3_vtt": transcript_s3_vtt,
+            "transcript_s3_json": transcript_s3_json,
+            "transcript_s3_txt": transcript_s3_txt,
+            "theSvg": theSvg.outerHTML
         })
+
     }
 }
 

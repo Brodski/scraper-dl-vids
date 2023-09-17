@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cHome = require("../controllers/home");
 const cChannel = require("../controllers/channel");
-const cVod = require("../controllers/vod");
+
 
 // require("dotenv").config();
 

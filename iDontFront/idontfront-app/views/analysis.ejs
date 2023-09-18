@@ -1,0 +1,30 @@
+<%- include("../server-scripts/utilities") %>
+<% let twitchUrl = "https://twitch.tv/videos/" + vod.id %>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale = 1.0">
+        <title> <%= channel %> </title>
+        <link rel="stylesheet" type="text/css" href="/fonts.css">
+        <link rel="stylesheet" type="text/css" href="/styles.css">
+        <link rel="stylesheet" type="text/css" href="/vod.css">
+        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
+        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <script src="/scripts.js"></script>
+    </head>    
+    <body>
+
+
+        
+        <div id="myplot"> myplot </div>
+        <%
+            console.log("theSvg")
+            // console.log(theSvg)
+            // console.log(JSON.stringify(theSvg, null, 2));        
+        %>
+        <div> <%- theSvg %></div>
+
+
+    </body>
+</html>

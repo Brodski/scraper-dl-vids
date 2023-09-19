@@ -14,6 +14,18 @@
         <script src="/scripts.js"></script>
     </head>    
     <body>
+        <style>
+            .tooltip {
+                position: absolute;
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                padding: 8px;
+                pointer-events: none;  /* Ensures the tooltip doesn't interfere with other interactions */
+                display: none;  /* Initially hidden */
+            }
+
+        </style>
+        <div class="tooltip"></div>
 
 
         
@@ -24,7 +36,15 @@
             // console.log(JSON.stringify(theSvg, null, 2));        
         %>
         <div> <%- theSvg %></div>
-
+        <script>
+            let figure = document.querySelector("#SUPERID")
+            let rects = figure.querySelectorAll("rect")
+            for (let r of rects) {
+                r.addEventListener("mouseover", (e) => {
+                    console.log(e)
+                })
+            }
+        </script>
 
     </body>
 </html>

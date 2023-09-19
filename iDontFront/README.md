@@ -18,3 +18,7 @@ npm install jsdom
 npm i @observablehq/plot  
 npm i d3  
 npm i stopword  
+
+added to context.js and plot.js --->
+import { JSDOM } from "jsdom";
+const dom = new JSDOM('<!DOCTYPE html><p>Hello</p>');

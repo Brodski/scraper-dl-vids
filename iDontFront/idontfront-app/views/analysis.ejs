@@ -15,21 +15,35 @@
     </head>    
     <body>
         <style>
-            .tooltip {
-                position: absolute;
-                background-color: #f9f9f9;
-                border: 1px solid #ccc;
-                padding: 8px;
-                pointer-events: none;  /* Ensures the tooltip doesn't interfere with other interactions */
-                display: none;  /* Initially hidden */
+            figure {
+                margin: 0;
             }
-
+            #word-count-graph [font-family='hacky-selector-text'] text {
+                display: none;
+            }            
+            #word-count-graph [font-family='hacky-selector-text'] text.on {
+                display: inline;
+            }
+            #word-count-graph rect.on {
+                filter: saturate(200%);
+                stroke: black;
+            }
+            #word-count-graph [aria-label*="label"][aria-label*="y-axis"] {
+                font-size: 15px;
+            }
+            #word-count-graph [aria-label*="label"][aria-label*="x-axis"] {
+                font-size: 15px;
+            }
+            figure svg {
+                margin-left: auto;
+                margin-right: auto;
+            }
         </style>
-        <div class="tooltip"></div>
-
-
         
-        <div id="myplot"> myplot </div>
+        
+        <div> <%- wordcloud %></div>
+
+
         <%
             console.log("theSvg")
             // console.log(theSvg)
@@ -37,11 +51,17 @@
         %>
         <div> <%- theSvg %></div>
         <script>
-            let figure = document.querySelector("#SUPERID")
+            let figure = document.querySelector("#word-count-graph")
             let rects = figure.querySelectorAll("rect")
-            for (let r of rects) {
-                r.addEventListener("mouseover", (e) => {
-                    console.log(e)
+            let tooltips = document.querySelectorAll("#word-count-graph [font-family='hacky-selector-text'] text")
+            for (let i=0; i < rects.length; i++) {
+                rects[i].addEventListener("mouseenter", (e) => {
+                    tooltips[i].classList.add("on")
+                    rects[i].classList.add("on")
+                })
+                rects[i].addEventListener("mouseleave", (e) => {
+                    tooltips[i].classList.remove("on")
+                    rects[i].classList.remove("on")
                 })
             }
         </script>

@@ -8,5 +8,4 @@ async function stopwordz(oldString) {
     return newString
     
 }
-// return loadModule()
 module.exports = stopwordz;

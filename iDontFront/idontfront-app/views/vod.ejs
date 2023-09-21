@@ -48,6 +48,8 @@
         <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
         <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
         <br/>
+        <div> 🔥<a href="/channel/<%= channel %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
+        <br/>
         <div class="vod__json_vtt_txt_link">
             Raw transcripts: 
             <span><a href="<%= transcript_s3_vtt %>"> vtt </a></span>

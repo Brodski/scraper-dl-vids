@@ -103,9 +103,9 @@ exports.channel = async (req, res) => {
         let txt_arr = res_transcript_txt.split(/\s+/)
 
         const stopword  = require("../server-scripts/stopword")
-        let stopwordz_counter_map = new Map();
         let txt_arr_stopwords = await stopword(txt_arr)
         // let txt_arr_stopwords = txt_arr
+        let stopwordz_counter_map = new Map();
         for (let word of txt_arr_stopwords) {
             // Do this here b/c stopword library
             word = word.replaceAll(/[.,!;:'?\+]/g, "");
@@ -123,7 +123,7 @@ exports.channel = async (req, res) => {
 
 
         const plot  = require("../server-scripts/plot")
-        // const { JSDOM } = require('jsdom');
+        const wordcloud  = require("../server-scripts/wordcloud")
         console.log("BAM!")
         console.log("BAM!")
         console.log("BAM!")
@@ -131,9 +131,14 @@ exports.channel = async (req, res) => {
         console.log("BAM!")
         console.log("BAM!")
         console.log(stopwordz_counter)
+        
         let theSvg = await plot(stopwordz_counter)
         console.log("theSvg")
         console.log(theSvg)
+
+        let wordcloudSvg = await wordcloud(stopwordz_counter)
+        console.log("wordcloudSvg")
+        console.log(wordcloudSvg)
 
         res.render("../views/analysis", { // ---> /channel/lolgeranimo
             "channel": vod.channel,
@@ -143,7 +148,8 @@ exports.channel = async (req, res) => {
             // "transcript_s3_vtt": transcript_s3_vtt,
             // "transcript_s3_json": transcript_s3_json,
             // "transcript_s3_txt": transcript_s3_txt,
-            "theSvg": theSvg.outerHTML
+            "theSvg": theSvg.outerHTML,
+            "wordcloud": wordcloudSvg.outerHTML
         })
         return
     }

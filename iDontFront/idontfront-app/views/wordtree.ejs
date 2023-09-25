@@ -1,0 +1,84 @@
+
+<% let title = "Big Dick Captions 😏" %>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
+    <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+    <script defer src="/scripts.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {packages:['wordtree']});
+        function kickIt(sentence_arr, search_val) {
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(sentence_arr
+                // [ ['Phrases'],
+                //     ['cats are better than dogs'],
+                //     ['cats eat kibble'],
+                //     ['cats are better than hamsters'],
+                //     ['cats are awesome'],
+                //     ['cats are people too'],
+                //     ['cats eat mice'],
+                //     ['cats meowing'],
+                //     ['cats in the cradle'],
+                //     ['cats eat mice'],
+                //     ['cats in the cradle lyrics'],
+                //     ['cats eat kibble'],
+                //     ['cats for adoption'],
+                //     ['cats are family'],
+                //     ['cats eat mice'],
+                //     ['cats are better than kittens'],
+                //     ['cats are evil'],
+                //     ['cats are weird'],
+                //     ['cats eat mice'],
+                // ]
+                );
+                var options = {
+                        // colors: ['red', 'black', 'green'],
+                        backgroundColor: 'grey',
+                        width: 1500,
+                        height: 800,
+                        wordtree: {
+                            format: 'implicit',
+                            type: 'double',
+                            word: search_val,
+                        }
+                };
+
+                var chart = new google.visualization.WordTree(document.getElementById('wordtree_basic'));
+                // chart.addEventListener("select", (e) => {
+                //     console.log("CLICKED", e)
+                // })
+                document.getElementById('wordtree_basic').addEventListener("select", (e) => {
+                    console.log("CLICKED", e)
+                })
+                chart.draw(data, options);
+            }
+        }
+    </script>
+  </head>
+  <body>
+    <form>
+        <div>
+            <label for="search">Word Tree search</label>
+            <input id="search"  type="text" placeholder="loser" />
+        </div>
+        <div>
+            <button id="the_button"> Search </button>
+        </div>
+    </form>
+    <script>
+        let google_wont_allow_server_side_render = <%- JSON.stringify(sentence_arr) %>; // sentence_arr
+        document.querySelector('#the_button').onclick = function(e) {
+            // console.log(google_wont_allow_server_side_render)
+            e.preventDefault();
+            let search_val = document.querySelector('#search').value 
+            kickIt(google_wont_allow_server_side_render, search_val);
+        };
+        the_button
+    </script>
+    <div id="wordtree_basic" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>

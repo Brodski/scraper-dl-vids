@@ -43,7 +43,9 @@ async function loadModule(stopwordz_counter) {
             
         // const colorScale = x => d3.interpolateCubehelixLong("purple", "orange")  (colorScaleAux(x)) 
         // const colorScale = x =>  d3.interpolateHslLong("red", "blue")   (colorScaleAux(x)) 
-        const colorScale = x =>  d3.interpolateHslLong("red", "#1b42ba")   (colorScaleAux(x)) 
+        // const colorScale = x =>  d3.interpolateHslLong("red", "#1b42ba")   (colorScaleAux(x)) 
+        // const colorScale = x =>  d3.interpolateHslLong("#1b42ba", "orange")   (colorScaleAux(x)) 
+        const colorScale = x =>  d3.interpolateHslLong("darkblue", "#980000")   (colorScaleAux(x)) 
 
 
         console.log("colorScale 370")
@@ -94,8 +96,10 @@ async function loadModule(stopwordz_counter) {
       }
 
       let wcSvg = WordCloud(stopwordz_counter, {
-        width: 1250,
-        height: 800,
+        // width: 1250,
+        // height: 800,
+        width: 800,
+        height: 500,
         size: (x) => { return x[0].length} 
         // size: (x) => { console.log(x); return x[0].length}  //+ Math.random(),
         // rotate: () => (~~(Math.random() * 6) - 3) * 30

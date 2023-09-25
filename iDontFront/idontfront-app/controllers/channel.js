@@ -71,7 +71,7 @@ exports.channel = async (req, res) => {
     //  VOD PATH
     // 
     // 
-    if (req.params.id != null && !req.path.includes("/analysis")) {
+    if (req.params.id != null && !req.path.includes("/analysis") && !req.path.includes("/wordtree") ) {
 
         let response = await fetch(transcript_s3_json);
         if (!response.ok) {
@@ -87,11 +87,11 @@ exports.channel = async (req, res) => {
             "transcript_s3_vtt": transcript_s3_vtt,
             "transcript_s3_json": transcript_s3_json,
             "transcript_s3_txt": transcript_s3_txt,
-            // "theSvg": theSvg.outerHTML
+            // "freqWord": freqWord.outerHTML
         })
         return
     }
-    if (req.params.id != null && req.path.includes("/analysis")) {
+    const txtAux = async () => {
         if (vod == null) {
             res.status(404).render('404')
         }
@@ -99,12 +99,33 @@ exports.channel = async (req, res) => {
         if (!response.ok) {
              throw new Error('HTTP error ' + response.status);
         }
+        return response
+    }
+
+    if (req.params.id != null && req.path.includes("/wordtree")) {
+        let response = await txtAux();
+        let res_transcript_txt = await response.text() // the .txt file
+        let sentence_arr = res_transcript_txt.split(/\n+/)
+        let sentence_arr2 = []
+        for (let sent of sentence_arr) {
+            let x = sent.replaceAll(/[.,?;:!]/g, '').split(' ')
+            sentence_arr2.push([x.join(' ')])
+        }
+        // const googleChartsMaker = require("../server-scripts/google-charts-maker")
+        // let googleChartsEle = await googleChartsMaker(sentence_arr2)
+        res.render("../views/wordtree", {
+            "sentence_arr": sentence_arr2
+        })
+        return
+    }
+    if (req.params.id != null && req.path.includes("/analysis")) {
+        let response =  await txtAux();
         let res_transcript_txt = await response.text() // the .txt file
         let txt_arr = res_transcript_txt.split(/\s+/)
 
         const stopword  = require("../server-scripts/stopword")
         let txt_arr_stopwords = await stopword(txt_arr)
-        // let txt_arr_stopwords = txt_arr
+        console.log(txt_arr_stopwords)
         let stopwordz_counter_map = new Map();
         for (let word of txt_arr_stopwords) {
             // Do this here b/c stopword library
@@ -123,6 +144,7 @@ exports.channel = async (req, res) => {
 
 
         const plot  = require("../server-scripts/plot")
+        const plot2  = require("../server-scripts/plot2")
         const wordcloud  = require("../server-scripts/wordcloud")
         console.log("BAM!")
         console.log("BAM!")
@@ -131,10 +153,14 @@ exports.channel = async (req, res) => {
         console.log("BAM!")
         console.log("BAM!")
         console.log(stopwordz_counter)
-        
-        let theSvg = await plot(stopwordz_counter)
-        console.log("theSvg")
-        console.log(theSvg)
+
+        let freqWord = await plot(stopwordz_counter)
+        console.log("freqWord")
+        console.log(freqWord)
+
+        let freqWord2 = await plot2(stopwordz_counter)
+        console.log("freqWord")
+        console.log(freqWord)
 
         let wordcloudSvg = await wordcloud(stopwordz_counter)
         console.log("wordcloudSvg")
@@ -148,7 +174,9 @@ exports.channel = async (req, res) => {
             // "transcript_s3_vtt": transcript_s3_vtt,
             // "transcript_s3_json": transcript_s3_json,
             // "transcript_s3_txt": transcript_s3_txt,
-            "theSvg": theSvg.outerHTML,
+            "freqWord": freqWord.outerHTML,
+            "stopwordz_counter": stopwordz_counter,
+            "freqWord2": freqWord2.outerHTML,
             "wordcloud": wordcloudSvg.outerHTML
         })
         return

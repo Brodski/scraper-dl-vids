@@ -1,0 +1,61 @@
+
+figure {
+    margin: 0;
+}
+#word-count-graph [font-family='hacky-selector-text'] text {
+    display: none;
+}            
+#word-count-graph [font-family='hacky-selector-text'] text.on {
+    display: inline;
+}
+#word-count-graph rect.on {
+    filter: saturate(200%);
+    stroke: black;
+}
+#word-count-graph [aria-label*="label"][aria-label*="y-axis"] {
+    font-size: 15px;
+}
+#word-count-graph [aria-label*="label"][aria-label*="x-axis"] {
+    font-size: 15px;
+}
+figure svg {
+    margin-left: auto;
+    margin-right: auto;
+}
+@media (max-width: 768px) {
+    .analysis_wordcloud_container {
+        width: 100%;
+        height: auto;
+    }
+}
+@media (min-width: 769px) {
+    .analysis_wordcloud_container {
+        width: 70%;
+        height: auto;
+
+        /* width: 640px;
+        height: 400px; */
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+table {
+    font-size: 20px;
+    margin-right: 4px;
+}
+th {
+    text-align: left;
+}
+td {
+    padding: 0;
+    max-width: 90px;
+    line-height: 21px;
+}
+.analysis_vertical_word {
+    display: inline-flex;
+}
+svg {
+    position: sticky;
+    top: 20px;
+}

@@ -8,48 +8,39 @@
         <title> <%= channel %> </title>
         <link rel="stylesheet" type="text/css" href="/fonts.css">
         <link rel="stylesheet" type="text/css" href="/styles.css">
-        <link rel="stylesheet" type="text/css" href="/vod.css">
+        <link rel="stylesheet" type="text/css" href="/analysis.css">
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
         <script src="/scripts.js"></script>
     </head>    
     <body>
-        <style>
-            figure {
-                margin: 0;
-            }
-            #word-count-graph [font-family='hacky-selector-text'] text {
-                display: none;
-            }            
-            #word-count-graph [font-family='hacky-selector-text'] text.on {
-                display: inline;
-            }
-            #word-count-graph rect.on {
-                filter: saturate(200%);
-                stroke: black;
-            }
-            #word-count-graph [aria-label*="label"][aria-label*="y-axis"] {
-                font-size: 15px;
-            }
-            #word-count-graph [aria-label*="label"][aria-label*="x-axis"] {
-                font-size: 15px;
-            }
-            figure svg {
-                margin-left: auto;
-                margin-right: auto;
-            }
-        </style>
-        
-        
-        <div> <%- wordcloud %></div>
-
-
-        <%
-            console.log("theSvg")
-            // console.log(theSvg)
-            // console.log(JSON.stringify(theSvg, null, 2));        
-        %>
-        <div> <%- theSvg %></div>
+        <h1> Transcript stats</h1>
+        <h2> <a href="/channel/<%= channel %>/<%= vod.id %>"><%= vod2.display_title %> </a> </h2>
+        <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
+        <div class="analysis_wordcloud_container">
+            <div> <%- wordcloud %></div>
+        </div>
+        <h2> Frequence of Words </h2>
+        <div class="analysis_vertical_word">
+            <table>
+                <tr>
+                    <th> Word </th>
+                    <th> Count </th>
+                </tr>
+            <% 
+                for (let word of stopwordz_counter.slice(0,100)) {
+                    %>
+                    <tr>
+                        <td> <%= word[0] %> </td>
+                        <td> <%= word[1] %> </td>
+                    </tr>
+                    <%
+                }
+             %>
+            </table>
+            <div> <%- //freqWord2 %></div>
+            <div> <%- freqWord %></div>
+        </div>
         <script>
             let figure = document.querySelector("#word-count-graph")
             let rects = figure.querySelectorAll("rect")

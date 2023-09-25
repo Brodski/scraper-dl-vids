@@ -8,7 +8,7 @@ async function loadModule(stopwordz_counter) {
     // document = dom.window.document;
     // const plot = Plot.rectY(stopwordz_counter, Plot.binX({y: "count"}, {x: "word",  fill: "steelblue"})).plot()
 
-    let data = stopwordz_counter.slice(0, 40)
+    let data = stopwordz_counter.slice(0, 140)
     console.log("data")
     console.log("data")
     console.log(data)
@@ -16,47 +16,34 @@ async function loadModule(stopwordz_counter) {
     const colorScale = d3.scaleSequential().range(["lightblue", "darkblue"]).domain([0 , Math.max(...data.map(d => d[1])) ]);
 
     const plot = Plot.plot({
-        marginTop: 20,
-        marginRight: 10,
-        marginBottom: 80,
-        marginLeft: 40,
-        // grid: true,
         // title: "Frequence of Words",
-        // title: "For charts, an informative title",
-        // subtitle: "Subtitle to follow with additional context",
-        // caption: "Figure 1. A chart with a title, subtitle, and caption.",
+        marginTop: 10,
+        marginRight: 20,
+        marginleft: 50,
+        marginBottom: 80,
         
-        y: {
+        x: {
             label: "Count",
             fontSize: 26, 
             grid: true,
+            paddingOuter: 30
         },
-        x: {
-            // label: "Words",
-            tickRotate: -45,
+        y: {
+            // tickRotate: -45,
             domain: data.map(d => d[0]),
         },
         width: 960,
-        height: 500,
+        height: 2500,
         marks: [
-            Plot.barY(data, { 
-                x: d => d[0], 
-                y: d => d[1], 
-                // tip: "x", // tip doesnt work b/c server-side
-                // tip: true
+            Plot.barX(data, { 
+                y: d => d[0], 
+                x: d => d[1], 
                 fill: d => colorScale(d[1]),
                 title: d => `${d[0]}: ${d[1]}`,
-                // stroke: 'black',
             }),
-            // Doesnt work b/c server-side
-            //
-            // Plot.tip(data, Plot.pointerX( {x: d => d[0], y: d => d[1] })),
-            // Plot.tip(['partyin the usa'], {x: "just", y: 111 } ),
-
-            // text above every bar
             Plot.text(data, {
-                x: d => d[0], 
-                y: d => d[1], 
+                y: d => d[0], 
+                x: d => d[1], 
                 text: (d) => `${d[0]}: ${d[1]}`, 
                 dy: -8, 
                 dx: 12,
@@ -64,18 +51,10 @@ async function loadModule(stopwordz_counter) {
                 fontFamily: "hacky-selector-text",
                 fontSize: 14,
                 fontWeight: 700,
-
-                // filter: (_, i) => i % 5 === 4,
             }),
-            // 'title'
-            Plot.text(["Frequence of Words"], {lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
-            
-            // Plot.ruleY([-10, 0, 10])
+            // Plot.text(["Frequence of Words"], {paddingTop: 30, lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
         ],  
     });
-    console.log("plot!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    console.log("plot!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    console.log(plot)
     plot.id = "word-count-graph"
     return plot
 }

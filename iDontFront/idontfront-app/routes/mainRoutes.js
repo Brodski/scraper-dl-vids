@@ -8,7 +8,7 @@ const cChannel = require("../controllers/channel");
 
 // router.get(["/get", "/420"], controller.get_vod_by_id);
 router.get(["/", "/index"], cHome.homepage);
-router.get(["/channel/:name/:id", "/channel/:name", "/channel/:name/:id/analysis"], cChannel.channel);
+router.get(["/channel/:name/:id", "/channel/:name", "/channel/:name/:id/analysis", "/channel/:name/:id/wordtree"], cChannel.channel);
 // router.get("/channel/:name/:id", cVod.vod);
 
 module.exports = router

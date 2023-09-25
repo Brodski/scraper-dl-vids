@@ -7,6 +7,7 @@ td {
 
 tr {
     padding-bottom: 2px;
+    white-space: nowrap;
 }
 
 td:not(:last-child) {

@@ -45,41 +45,49 @@
         <!-- lolgeranimo: 1889194115 -->
         <!-- twitch vod https://twitch.tv/videos/1889194115 -->
         <h1> <%= vod2.display_title %> </h1>
-        <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
-        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
-        <br/>
-        <div> 🔥<a href="/channel/<%= channel %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
-        <br/>
-        <div class="vod__json_vtt_txt_link">
-            Raw transcripts: 
-            <span><a href="<%= transcript_s3_vtt %>"> vtt </a></span>
-            <span><a href="<%= transcript_s3_json %>"> json </a></span>
-            <span><a href="<%= transcript_s3_txt %>"> txt </a></span>
+        <div class="row">   
+            <div class="col-6">
+                <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
+                <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+                <br/>
+                <div> 🔥<a href="/channel/<%= channel %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
+                <br/>
+                <div> 💧🙁  <a href="/channel/<%= channel %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧🙁 </div>
+                <br/>
+                <div class="vod__json_vtt_txt_link">
+                    Raw transcripts: 
+                    <span><a href="<%= transcript_s3_vtt %>"> vtt </a></span>
+                    <span><a href="<%= transcript_s3_json %>"> json </a></span>
+                    <span><a href="<%= transcript_s3_txt %>"> txt </a></span>
+                </div>
+                <br/>
+                <a class="vod_newtab" href="<%= twitchUrl %>" target="_blank">
+                    <svg class="vod_svg_newtab" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 30 30"><path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path> </svg>
+                    <div> <%= twitchUrl %> </div> 
+                </a>
+                <div>
+                    <button 
+                        id="toggle-btn"
+                        onclick="(() => {
+                            console.log(window.navigator.userAgent)
+                            let iframe = document.querySelector('#twitch-iframe')
+                            iframe.classList.toggle('sticky-iframe')
+                            let msg = iframe.classList.contains('sticky-iframe') ? '☑' : '' // '✓'
+                            document.querySelector('#on-off-sticky').innerText = msg
+                        })()"
+                        > Toggle sticky player
+                    </button>
+                    <span id="on-off-sticky"> </span>
+                </div>
+            </div>
+            <div class="col-6">
+                <img src="<%= //vod2.thumbnail %>" />
+    
+            </div>
         </div>
-
-        <br/>
-        <a class="vod_newtab" href="<%= twitchUrl %>" target="_blank">
-            <svg class="vod_svg_newtab" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 30 30"><path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path> </svg>
-            <div> <%= twitchUrl %> </div> 
-        </a>
-
-        <div>
-            <button 
-                id="toggle-btn"
-                onclick="(() => {
-                    console.log(window.navigator.userAgent)
-                    let iframe = document.querySelector('#twitch-iframe')
-                    iframe.classList.toggle('sticky-iframe')
-                    // let msg = iframe.classList.contains('sticky-iframe') ? '✓' : ''
-                    let msg = iframe.classList.contains('sticky-iframe') ? '☑' : ''
-                    document.querySelector('#on-off-sticky').innerText = msg
-                })()"
-                > Toggle sticky player
-            </button>
-            <span id="on-off-sticky"> </span>
-        </div>
-        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
         <div id="twitch-iframe"></div>
+
+        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
         <script type="text/javascript">
             if (isMobile()) {
                 console.log("YES MOBILE!")
@@ -87,11 +95,11 @@
             else {
                 console.log("NAAAAH")
             }
-            // let width = 
             var options = {
                 width: 640,
                 height: 360,
                 video: <%= vod.id %>,
+                autoplay: false,
                 parent: ["localhost", "othersite.example.com"]
             };
             var player = new Twitch.Player("twitch-iframe", options);

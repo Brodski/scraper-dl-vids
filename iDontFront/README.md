@@ -20,7 +20,7 @@ npm i d3
 npm i stopword  
 npm i d3-cloud  
 npm install canvas  (required by jsondom)  
-  
+npm i puppeteer  
   
   
   

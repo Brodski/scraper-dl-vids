@@ -39,15 +39,13 @@
                 <th>Title</th>
             </tr>   
             <% 
-                console.log("scrapped_data_s3")
+                // console.log("scrapped_data_s3")
                 // console.log(scrapped_data_s3)
-                console.log("scrapped_data_s3")
-                console.log("custom_metadata")
+                // console.log("custom_metadata")
                 // console.log(custom_metadata)
-                console.log("custom_metadataxxxxxxxx")
                 let custom_metadata_array = []
                 Object.keys(custom_metadata).forEach(key => {
-                    console.log(key, custom_metadata[key]);
+                    // console.log(key, custom_metadata[key]);
                     custom_metadata_array.push(custom_metadata[key])
                 });
                 // newest at start
@@ -61,51 +59,60 @@
                     return a.epoch > b.epoch ? -1 : 1
                 });
                 for (let custom_md of custom_metadata_array) {
-                    console.log(custom_md.epoch)
-                    let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json, duration_string, display_title, duration; 
-                    channel         = custom_md.channel
-                    duration_string = custom_md.duration_string // '10:42:21'
-                    duration        = custom_md.duration // 38541
-                    display_title   = custom_md.display_title
-                    id              = custom_md.id
-                    thumbnail       = custom_md.thumbnail
-                    epoch           = custom_md.epoch
-                    link_s3         = scrapped_data_s3
-                    href            = path + "/" +  id 
-            %>
-            <tr>
-                <td><%= epochTo_MM_DD_YYYY(epoch) %></td>
-                <td class="channel__duration"><%= secondsToHHMM(Number(duration)) %></td>
-                <td><a href="<%= href %>"> <%= display_title %> </a></td>
-            </tr>
+                    // console.log("-=-=-==--=-=-=-=---=-=-=-=-=-=-=-=-=-=-=")
+                    // console.log("custom_md")
+                    // console.log("custom_md.id=" + custom_md.id)
+                    console.log("custom_md.id=" + custom_md.id)
+                    let channel         = custom_md.channel
+                    let duration_string = custom_md.duration_string // '10:42:21'
+                    let duration        = custom_md.duration // 38541
+                    let display_title   = custom_md.display_title
+                    let id              = custom_md.id
+                    let thumbnail       = custom_md.thumbnail
+                    let epoch           = custom_md.epoch
+                    let link_s3         = scrapped_data_s3
+                    let href            = path + "/" +  id 
+                    let id_string = typeof id == "string" ? custom_md.id : custom_md.id.toString()
+                    if ( keys.includes(id_string)) {
+                        // console.log("YES IS IN! " + custom_md.id)
+                    }
+                    else {
+                        console.log("NOPE NOT THIS ONE " + custom_md.id)
+                        continue;
+                    }
+                    %>
+                <tr>
+                    <td><%= epochTo_MM_DD_YYYY(epoch) %></td>
+                    <td class="channel__duration"><%= secondsToHHMM(Number(duration)) %></td>
+                    <td><a href="<%= href %>"> <%= display_title %> </a></td>
+                </tr>
                 <% } %>
         </table>
             
-            %>
-        <% 
-            let channel, id, vod_title, link_s3, link_s3_vtt, link_s3_json;
-                
+        <%                 
             // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
-            for (let vod of scrapped_data_s3) {
-                channel     = vod.channel;
-                id          = vod.id;
-                vod_title   = vod.title;
-                link_s3     = vod.link_s3; //mp3
-                href        = path + "/" +  id 
-                let lastPeriodIdx = link_s3.lastIndexOf('.');
-                if (lastPeriodIdx !== -1) {
-                    const tempName = link_s3.substring(0, lastPeriodIdx);
-                    link_s3_vtt = tempName + ".vtt"                
-                    link_s3_json = tempName + ".json"
-                    link_s3_txt = tempName + ".txt"
-                } 
+            // for (let vod of scrapped_data_s3) {
+            //     let channel     = vod.channel;
+            //     let id          = vod.id;
+            //     let vod_title   = vod.title;
+            //     let link_s3     = vod.link_s3; //mp3
+            //     let href        = path + "/" +  id 
+            //     let lastPeriodIdx = link_s3.lastIndexOf('.');
+            //     let link_s3_vtt;
+            //     let link_s3_json;
+            //     if (lastPeriodIdx !== -1) {
+            //         const tempName = link_s3.substring(0, lastPeriodIdx);
+            //         link_s3_vtt = tempName + ".vtt"                
+            //         link_s3_json = tempName + ".json"
+            //         link_s3_txt = tempName + ".txt"
+            //     } 
                 // console.log('=================')
                 // console.log(vod_title)
                 // console.log(id)
                 // console.log(custom_metadata[id])
                 
         %>
-        <% } %>
+        <% // } %>
 
     </body>
 </html>

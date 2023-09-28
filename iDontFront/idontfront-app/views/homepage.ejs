@@ -12,42 +12,26 @@
     <body class="homepage">
         <h1>Welcome to <%= title %>™ </h1>
         <h2> Captions available for these channels 🍆💦 : </h2>
-        <div> <%= JSON.stringify(overviewLight) %></div>
+        <div> <%= // JSON.stringify(overviewLight) %></div>
         <div>
             <% 
-            let name;
-            let logo;
-            let path;
-            let twitchurl;
-            let rownum;
-            let displayname;
             overviewLight.sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
             for (let chann of overviewLight) {
-                name = chann.channel;
-                logo = chann.logo
-                path = chann.path
-                twitchurl = chann.twitchurl
-                rownum = chann.rownum
-                displayname = chann.displayname
+                let name = chann.channel;
+                let logo = chann.logo
+                let path = chann.path
+                let twitchurl = chann.twitchurl
+                let rownum = chann.rownum
+                let displayname = chann.displayname
                 let linky = "channel/" + name 
-            %>  
+                %>  
                 <div class="channel_row img">
                     <a class="d-flex" href="<%= linky %>">
                         <img class="" src="<%= chann.logo %>" />
-                        <h2> 
-                            <%= name %> 
-                        </h2>
+                        <h2> <%= name %>  </h2>
                     </a>
                     <!-- <span>Num vods: <%= chann.size %></span> -->
                 </div>
-                <div> <b>logo: </b> <%= logo %></div>
-                <div> <b>path: </b> <%= path %></div>
-                <div> <b>twitchurl: </b> <%= twitchurl %></div>
-                <div> <b>rownum: </b> <%= rownum %></div>
-                <div> <b>displayname: </b> <%= displayname %></div>
-                <div> linky= <a href= <%= linky %> > <%= linky %></a> </div>
-                <div> <%= configs.S3_EACH_CHANNEL_JSON + name %>  </div>
-                
             <% } %> 
         </div>
     </body>

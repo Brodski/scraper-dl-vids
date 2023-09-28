@@ -1,21 +1,17 @@
 const configs = require("../configs")
-// const { add, subtract } = require('../server-scripts/dates');
-
 // https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
 
 
 // path = /channel/lolgeranimo
-exports.channel = async (req, res) => {
-    console.dir("req.path=" + req.path)
-    console.dir("req.path=" + req.path)
-    console.dir("req.path=" + req.path)
-    
+exports.channel = async (req, res) => {    
+    // Get all channels
     const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json";   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
     const response = await fetch(endpoint); // mocks/completed_captions_list.py
     if (!response.ok) {
          throw new Error('HTTP error ' + response.status);
     }
     let scrapped_data_s3 = await response.json()
+
     const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json";  //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json    
     const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
     if (!res2.ok) {
@@ -25,15 +21,21 @@ exports.channel = async (req, res) => {
     }
     let custom_metadata = await res2.json();
 
-    let transcript_s3_vtt, transcript_s3_json, transcript_s3_txt, vod;
+    let transcript_s3_vtt;
+    let transcript_s3_json;
+    let transcript_s3_txt;
+    let vod;
+    // console.log("scrapped_data_s3")
+    // console.log(scrapped_data_s3)
     if (req.params.id != null) {
         vod = scrapped_data_s3.filter( vod => vod.id == req.params.id)[0]
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         console.log("vod")
         console.log(vod)
         if (vod == null) {
             res.status(404)
             res.render('404', {
-                msg: "Transcripts still processing (not really a 404 😢 still in dev)"
+                msg: "😢 😞 😟 😭 😿"
             })
             return
         }
@@ -54,14 +56,50 @@ exports.channel = async (req, res) => {
     // 
     // http://localhost:3333/channel/lolgeranimo
     if (req.params.id == null) {
+
+        const endpoint3 = configs.S3_BUCKET + configs.S3_STATE_OVERVIEW_JSON;   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
+        const response3 = await fetch(endpoint3); // mocks/completed_captions_list.py
+        let keys;
+        let keysWithVtt = [];
+        console.log("endpoint3=" + endpoint3)
+        if (!response3.ok) {
+            throw new Error('HTTP error ' + response3.status);
+        }
+        let overview_state = await response3.json()
+        console.log("overview_state")
+        // console.log(overview_state)
+        if ( req.params.name in overview_state) {
+    
+            keys = Object.keys(overview_state[req.params.name]);
+            console.log("keys")
+            console.log(keys)
+            keys.forEach(k => {
+                let hasCaptions = false;
+                for (let x of overview_state[req.params.name][k]) {
+                    console.log(x);
+                    if (x.endsWith(".vtt")) {
+                        hasCaptions = true;
+                        keysWithVtt.push(k)
+                    }
+                }
+            });
+            console.log("keysWithVtt")
+            console.log(keysWithVtt)
+        }
+
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
             "scrapped_data_s3": scrapped_data_s3,
-            "custom_metadata": custom_metadata
+            "custom_metadata": custom_metadata,
+            "keys": keysWithVtt
         })
         return
     }
+    
+    // if (req.params.id != null) {
+    // }
+
 
 
     //  ***************************************
@@ -146,13 +184,6 @@ exports.channel = async (req, res) => {
         const plot  = require("../server-scripts/plot")
         const plot2  = require("../server-scripts/plot2")
         const wordcloud  = require("../server-scripts/wordcloud")
-        console.log("BAM!")
-        console.log("BAM!")
-        console.log("BAM!")
-        console.log("BAM!")
-        console.log("BAM!")
-        console.log("BAM!")
-        console.log(stopwordz_counter)
 
         let freqWord = await plot(stopwordz_counter)
         console.log("freqWord")

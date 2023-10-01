@@ -25,8 +25,16 @@ exports.channel = async (req, res) => {
     let transcript_s3_json;
     let transcript_s3_txt;
     let vod;
+    // console.log("-----------------------------------------------------")
+    // console.log("-----------------------------------------------------")
+    // console.log("-----------------------------------------------------")
     // console.log("scrapped_data_s3")
     // console.log(scrapped_data_s3)
+    // console.log("=====================================================")
+    // console.log("=====================================================")
+    // console.log("=====================================================")
+    // console.log("custom_metadata")
+    // console.log(custom_metadata)
     if (req.params.id != null) {
         vod = scrapped_data_s3.filter( vod => vod.id == req.params.id)[0]
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -55,10 +63,17 @@ exports.channel = async (req, res) => {
     // 
     // 
     // http://localhost:3333/channel/lolgeranimo
+    let profilePic;
     if (req.params.id == null) {
 
         const endpoint3 = configs.S3_BUCKET + configs.S3_STATE_OVERVIEW_JSON;   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
         const response3 = await fetch(endpoint3); // mocks/completed_captions_list.py
+        let firstKey = Object.keys(custom_metadata)[0]
+        profilePic = custom_metadata[firstKey]?.logo
+        if (profilePic == null && req.params.name == "lolgeranimo") {
+            profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
+        }
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
         let keys;
         let keysWithVtt = [];
         console.log("endpoint3=" + endpoint3)
@@ -76,7 +91,7 @@ exports.channel = async (req, res) => {
             keys.forEach(k => {
                 let hasCaptions = false;
                 for (let x of overview_state[req.params.name][k]) {
-                    console.log(x);
+                    // console.log(x);
                     if (x.endsWith(".vtt")) {
                         hasCaptions = true;
                         keysWithVtt.push(k)
@@ -92,13 +107,12 @@ exports.channel = async (req, res) => {
             "path" : req.path,
             "scrapped_data_s3": scrapped_data_s3,
             "custom_metadata": custom_metadata,
-            "keys": keysWithVtt
+            "keys": keysWithVtt,
+            "profilePic": profilePic
         })
         return
     }
     
-    // if (req.params.id != null) {
-    // }
 
 
 
@@ -152,7 +166,8 @@ exports.channel = async (req, res) => {
         // const googleChartsMaker = require("../server-scripts/google-charts-maker")
         // let googleChartsEle = await googleChartsMaker(sentence_arr2)
         res.render("../views/wordtree", {
-            "sentence_arr": sentence_arr2
+            "sentence_arr": sentence_arr2,
+            "profilePic":profilePic
         })
         return
     }
@@ -208,7 +223,8 @@ exports.channel = async (req, res) => {
             "freqWord": freqWord.outerHTML,
             "stopwordz_counter": stopwordz_counter,
             "freqWord2": freqWord2.outerHTML,
-            "wordcloud": wordcloudSvg.outerHTML
+            "wordcloud": wordcloudSvg.outerHTML,
+            "profilePic": profilePic
         })
         return
     }

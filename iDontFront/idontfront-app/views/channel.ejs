@@ -25,7 +25,10 @@
         <script defer src="/scripts.js"></script>
     </head>    
     <body>
-        <h1> <%= title %> </h1>
+        <div class="d-flex">
+            <img src="<%= profilePic %>">
+            <h1> <%= title %> </h1>
+        </div>
         <h4> <a href="/"> view all channels </a> </h4>
         <!-- <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div> -->
 
@@ -62,7 +65,7 @@
                     // console.log("-=-=-==--=-=-=-=---=-=-=-=-=-=-=-=-=-=-=")
                     // console.log("custom_md")
                     // console.log("custom_md.id=" + custom_md.id)
-                    console.log("custom_md.id=" + custom_md.id)
+                    // console.log("custom_md.id=" + custom_md.id)
                     let channel         = custom_md.channel
                     let duration_string = custom_md.duration_string // '10:42:21'
                     let duration        = custom_md.duration // 38541

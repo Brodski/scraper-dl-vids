@@ -15,7 +15,7 @@ exports.homepage = async (req, res) => {
     
     res.render("../views/homepage", {
         "overviewLight": overviewLight
-    })
+    }) 
 }
 
 // overviewLight = [

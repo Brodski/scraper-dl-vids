@@ -282,7 +282,8 @@ def uploadJsonToS3Test():
     s3.put_object(
         Body=json.dumps(json_object),
         Bucket=env_varz.BUCKET_NAME,
-        Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json
+        ContentType="application/json; charset=utf-8",
+        Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json,
     )
     return "done: \n" + str(myJsonStff)
 

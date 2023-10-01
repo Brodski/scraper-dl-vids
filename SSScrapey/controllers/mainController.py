@@ -147,15 +147,15 @@ def upload_custom_metadata(data_custom):
     print("custom_metadata")
     print("custom_metadata")
     print(json.dumps(custom_metadata_json_file , indent=4))
-    s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    s3.put_object(Body=json.dumps(custom_metadata_json_file, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=key)
 
     return 'done X'
 
 
-def createCustomMetadata(yt_meta: Metadata_Ytdl): # 
+def createCustomMetadata(yt_meta: Metadata_Ytdl): # modks/ytdlSingleVidMetaData
     print("yt_meta")
     print("yt_meta")
-    print(yt_meta.__dict__)
+    print(json.dumps(yt_meta.__dict__, indent=4))
     data = {
         'id': yt_meta.metadata.get("id")[1:] if yt_meta.metadata.get("id") else "",
         'channel': yt_meta.channel,
@@ -168,7 +168,8 @@ def createCustomMetadata(yt_meta: Metadata_Ytdl): #
         "upload_date": yt_meta.metadata.get("upload_date"),
         "duration_string": yt_meta.metadata.get("duration_string"),
         "epoch": yt_meta.metadata.get("epoch"),
-        "fulltitle": yt_meta.metadata.get("fulltitle")
+        "fulltitle": yt_meta.metadata.get("fulltitle"),
+        "logo": yt_meta.logo
     }
 
     print("data")
@@ -177,6 +178,7 @@ def createCustomMetadata(yt_meta: Metadata_Ytdl): #
     print("data")
     print("data")
     print(data)
+    print(yt_meta.logo)
     return data
 
 
@@ -231,8 +233,8 @@ def uploadTodoAndCompletedJsons(allOfIt, isDebug=False):
     print (completed_captions_list)
     print("Uploading completed_captions_list ----> " + env_varz.S3_COMPLETED_CAPTIONS_JSON)
     print("Uploading todo (missing_captions_list) ----> " + env_varz.S3_COMPLETED_TODO_AUDIO)
-    s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
-    s3.put_object(Body=json.dumps(completed_captions_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_JSON)
+    s3.put_object(Body=json.dumps(missing_captions_list, default=lambda o: o.__dict__),   ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_TODO_AUDIO)
+    s3.put_object(Body=json.dumps(completed_captions_list, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=env_varz.S3_COMPLETED_CAPTIONS_JSON)
 
     # if isDebug and os.getenv("ENV") == "local":
     #     return json.loads(json.dumps({"completed_captions_list": completed_captions_list, "missing_captions_list": missing_captions_list}, default=lambda o: o.__dict__))
@@ -291,7 +293,7 @@ def uploadLightOverviewS3(each_completed_big_kv_list, relevant_data): # /mocks/e
     print("UPLOADING LIGHTWEIGHT S3 OVERVIEW:")
     print("upload to: " + key)
     print(json.dumps(light_overview_list, default=lambda o: o.__dict__, indent=4))
-    s3.put_object(Body=json.dumps(light_overview_list, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    s3.put_object(Body=json.dumps(light_overview_list, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=key)
     return json.loads(json.dumps(light_overview_list, default=lambda o: o.__dict__))
 
 
@@ -305,7 +307,7 @@ def uploadOverviewStateS3(s3_state_json):
     print("UPLOADING S3 OVERVIEW:")
     print("upload to: " + key)
     print(json.dumps(s3_state_json, default=lambda o: o.__dict__, indent=4))
-    s3.put_object(Body=json.dumps(s3_state_json, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+    s3.put_object(Body=json.dumps(s3_state_json, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=key)
     return json.loads(json.dumps(s3_state_json, default=lambda o: o.__dict__))
 
 
@@ -331,7 +333,7 @@ def uploadEachChannelsCompletedJson(completed_captions_list: list[Vod]): # /mock
         print("UPLOADING COMPLETED LIST (caps + audio) for: " + chan)
         print("upload to: " + key)
         print(json.dumps(each_completed_big_kv_list[chan], indent=4, default=lambda o: o.__dict__))
-        s3.put_object(Body=json.dumps(each_completed_big_kv_list[chan], default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=key)
+        s3.put_object(Body=json.dumps(each_completed_big_kv_list[chan], default=lambda o: o.__dict__),  ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=key)
     return each_completed_big_kv_list # /mocks/each_completed_big_kv_list.py
 
 # Expected S3 query:

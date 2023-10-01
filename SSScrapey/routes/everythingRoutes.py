@@ -62,7 +62,7 @@ def bigBoyChannelDownloader_TEST_Route():
             "twitchurl":"https://www.twitch.tv/lolgeranimo",
             "url":"lolgeranimo",
             "links":["/videos/5057810","/videos/28138895"],
-            "todos":["/5057810/","//"]
+            "todos":["/5057810/"]
             # "todos":["/5057810/","/28138895/"]
             },
             {

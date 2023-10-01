@@ -197,6 +197,7 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
         print()
         print("    (bigboy) metadata_Ytdl_list:")
         print("    (bigboy) " + str (metadata_Ytdl_list))
+        print("")
         print()
     return metadata_Ytdl_list
 
@@ -243,7 +244,7 @@ def uploadAudioToS3(yt_meta: Metadata_Ytdl):
         print ("    " + yt_meta.outFile[5:])
         s3.upload_file(os.path.abspath(yt_meta.outFile[5:]), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
         print ("    UPLOADING META !!!!!!!!!!!!!!!!! ")
-        s3.put_object(Body=json.dumps(yt_meta.__dict__, default=lambda o: o.__dict__), Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
+        s3.put_object(Body=json.dumps(yt_meta.__dict__, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return True
     except Exception as e:
         print("oops! " + str(e))

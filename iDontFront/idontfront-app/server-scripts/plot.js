@@ -21,7 +21,7 @@ async function loadModule(stopwordz_counter) {
         marginBottom: 80,
         marginLeft: 40,
         // grid: true,
-        // title: "Frequence of Words",
+        // title: "Frequency of Words",
         // title: "For charts, an informative title",
         // subtitle: "Subtitle to follow with additional context",
         // caption: "Figure 1. A chart with a title, subtitle, and caption.",
@@ -68,7 +68,7 @@ async function loadModule(stopwordz_counter) {
                 // filter: (_, i) => i % 5 === 4,
             }),
             // 'title'
-            Plot.text(["Frequence of Words"], {lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
+            Plot.text(["Frequency of Words"], {lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
             
             // Plot.ruleY([-10, 0, 10])
         ],  

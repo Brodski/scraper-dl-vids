@@ -14,9 +14,16 @@
         <script src="/scripts.js"></script>
     </head>    
     <body>
-        <h1> Transcript stats</h1>
+        <div class="d-flex">
+            <img class="profile_main_pic" src="<%= profilePic %>">
+            <h1 class="align-self-center">  Transcript Stats </h1>
+        </div>
         <h2> <a href="/channel/<%= channel %>/<%= vod.id %>"><%= vod2.display_title %> </a> </h2>
         <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
+        <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
+        <br/>
+        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+        <br/>
         <% 
         // let loser =  stopwordz_counter['loser']
         // let subhuman =  stopwordz_counter['subhuman']
@@ -38,25 +45,12 @@
         <div class="analysis_wordcloud_container">
             <div> <%- wordcloud %></div>
         </div>
-        <h2> Frequence of Words </h2>
+        <h2> Frequency of Words </h2>
         <div class="analysis_vertical_word">
-            <table>
-                <tr>
-                    <th> Word </th>
-                    <th> Count </th>
-                </tr>
-            <% 
-                for (let word of stopwordz_counter.slice(0,100)) {
-                    %>
-                    <tr>
-                        <td> <%= word[0] %> </td>
-                        <td> <%= word[1] %> </td>
-                    </tr>
-                    <%
-                }
-             %>
-            </table>
-            <div> <%- //freqWord2 %></div>
+            <div>
+                <%- include('partials/table', {"table_data": bad_words_counter }) %>
+                <%- include('partials/table', {"table_data": stopwordz_counter }) %>
+            </div>
             <div> <%- freqWord %></div>
         </div>
         <script>

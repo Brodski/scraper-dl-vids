@@ -1,19 +1,5 @@
 <%- include("../server-scripts/utilities") %>
 
-<% 
-    function epochTo_MM_DD_YYYY(epoch) {
-        const date = new Date(epoch * 1000);
-
-        let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        let day = String(date.getDate()).padStart(2, '0');
-        let year = date.getFullYear();
-        if (epoch == null) {
-            return " "
-        }
-        return `${month}-${day}-${year}`; // MM:DD:YYYY
-    }
-%>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,13 +12,10 @@
     </head>    
     <body>
         <div class="d-flex">
-            <img src="<%= profilePic %>">
-            <h1> <%= title %> </h1>
+            <img class="profile_main_pic" src="<%= profilePic %>">
+            <h1 class="align-self-center"> <%= title %> </h1>
         </div>
         <h4> <a href="/"> view all channels </a> </h4>
-        <!-- <div> scrapped_data_s3 <%= JSON.stringify(scrapped_data_s3) %> </div> -->
-
-        <!-- <div style="white-space: pre-line;"> custom_metadata <%= JSON.stringify(custom_metadata) %> </div> -->
         <hr/>
         <h3> Transcripts:</h3>
         <table>
@@ -65,14 +48,14 @@
                     // console.log("-=-=-==--=-=-=-=---=-=-=-=-=-=-=-=-=-=-=")
                     // console.log("custom_md")
                     // console.log("custom_md.id=" + custom_md.id)
-                    // console.log("custom_md.id=" + custom_md.id)
                     let channel         = custom_md.channel
                     let duration_string = custom_md.duration_string // '10:42:21'
                     let duration        = custom_md.duration // 38541
                     let display_title   = custom_md.display_title
                     let id              = custom_md.id
                     let thumbnail       = custom_md.thumbnail
-                    let epoch           = custom_md.epoch
+                    let epoch           = custom_md.epoch // epoch = date of upload
+                                                        // timestamp = date I ran my scraper
                     let link_s3         = scrapped_data_s3
                     let href            = path + "/" +  id 
                     let id_string = typeof id == "string" ? custom_md.id : custom_md.id.toString()
@@ -91,36 +74,11 @@
                 </tr>
                 <% } %>
         </table>
-            
-        <%                 
-            // scrapped_data_s3 .sort((a,b) => parseInt(a.rownum) > parseInt(b.rownum) ? 1 : -1)
-            // for (let vod of scrapped_data_s3) {
-            //     let channel     = vod.channel;
-            //     let id          = vod.id;
-            //     let vod_title   = vod.title;
-            //     let link_s3     = vod.link_s3; //mp3
-            //     let href        = path + "/" +  id 
-            //     let lastPeriodIdx = link_s3.lastIndexOf('.');
-            //     let link_s3_vtt;
-            //     let link_s3_json;
-            //     if (lastPeriodIdx !== -1) {
-            //         const tempName = link_s3.substring(0, lastPeriodIdx);
-            //         link_s3_vtt = tempName + ".vtt"                
-            //         link_s3_json = tempName + ".json"
-            //         link_s3_txt = tempName + ".txt"
-            //     } 
-                // console.log('=================')
-                // console.log(vod_title)
-                // console.log(id)
-                // console.log(custom_metadata[id])
-                
-        %>
-        <% // } %>
-
     </body>
 </html>
 
-<!--  scrapped_data_s3 = 
+<%   
+/*scrapped_data_s3 = 
 scrapped_data_s3 = 
 [
     {
@@ -148,4 +106,5 @@ scrapped_data_s3 =
         title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
     }
   ]
--->
+*/
+%>

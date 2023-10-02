@@ -21,6 +21,12 @@ body {
         display: flex;
     }
     .channel_row h2 {
-        padding-left: 12px;
+        padding-left: 8px;
     }
+}
+
+.profile_main_pic {
+    padding-right: 12px;
+    height: 80px;
+    width: 80px;
 }

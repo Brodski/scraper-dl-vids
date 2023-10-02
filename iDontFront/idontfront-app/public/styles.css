@@ -51,3 +51,11 @@ body {
 .d-inline {
     display: inline;
 }
+
+.d-none {
+    display: none;
+}
+
+.align-self-center {
+    align-self: center;
+}

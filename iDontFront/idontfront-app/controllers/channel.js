@@ -1,4 +1,6 @@
 const configs = require("../configs")
+const plot  = require("../server-scripts/plot")
+const wordcloud  = require("../server-scripts/wordcloud")
 // https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
 
 
@@ -16,8 +18,6 @@ exports.channel = async (req, res) => {
     const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
     if (!res2.ok) {
          throw new Error('HTTP error ' + res2.status);
-         // timestamp = date I ran my scraper
-         // epoch = date of upload
     }
     let custom_metadata = await res2.json();
 
@@ -64,15 +64,38 @@ exports.channel = async (req, res) => {
     // 
     // http://localhost:3333/channel/lolgeranimo
     let profilePic;
+    if (profilePic == null && req.params.name == "lolgeranimo") {
+        profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
+    }
     if (req.params.id == null) {
 
         const endpoint3 = configs.S3_BUCKET + configs.S3_STATE_OVERVIEW_JSON;   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
         const response3 = await fetch(endpoint3); // mocks/completed_captions_list.py
         let firstKey = Object.keys(custom_metadata)[0]
         profilePic = custom_metadata[firstKey]?.logo
+        
         if (profilePic == null && req.params.name == "lolgeranimo") {
             profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
         }
+        console.log(custom_metadata)
+        console.log("custom_metadata")
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
+        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
         console.log(" profilePic !!!!!!!!!!!! " + profilePic)
         let keys;
         let keysWithVtt = [];
@@ -139,6 +162,7 @@ exports.channel = async (req, res) => {
             "transcript_s3_vtt": transcript_s3_vtt,
             "transcript_s3_json": transcript_s3_json,
             "transcript_s3_txt": transcript_s3_txt,
+            "profilePic": profilePic
             // "freqWord": freqWord.outerHTML
         })
         return
@@ -167,6 +191,9 @@ exports.channel = async (req, res) => {
         // let googleChartsEle = await googleChartsMaker(sentence_arr2)
         res.render("../views/wordtree", {
             "sentence_arr": sentence_arr2,
+            "channel": vod.channel,
+            "vod": vod,
+            "vod2": custom_metadata[req.params.id],
             "profilePic":profilePic
         })
         return
@@ -196,21 +223,30 @@ exports.channel = async (req, res) => {
 
 
 
-        const plot  = require("../server-scripts/plot")
-        const plot2  = require("../server-scripts/plot2")
-        const wordcloud  = require("../server-scripts/wordcloud")
-
         let freqWord = await plot(stopwordz_counter)
-        console.log("freqWord")
-        console.log(freqWord)
-
-        let freqWord2 = await plot2(stopwordz_counter)
         console.log("freqWord")
         console.log(freqWord)
 
         let wordcloudSvg = await wordcloud(stopwordz_counter)
         console.log("wordcloudSvg")
         console.log(wordcloudSvg)
+        console.log("stopwordz_counter 1")
+        console.log(stopwordz_counter)
+
+        let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic"]
+        let regex = new RegExp(`\\b(${bad_words.join('\\w*\\b|')})`, 'gi'); 
+        let bad_words_counter = []
+        for (let i=0; i < stopwordz_counter.length; i++) {
+            if (regex.test(stopwordz_counter[i][0])) {
+                console.log("yes!")
+                console.log(stopwordz_counter[i])
+                bad_words_counter.push(stopwordz_counter[i])
+            }
+        }
+        console.log(regex)
+        console.log(regex)
+        console.log(regex)
+        console.log(regex)
 
         res.render("../views/analysis", { // ---> /channel/lolgeranimo
             "channel": vod.channel,
@@ -222,9 +258,9 @@ exports.channel = async (req, res) => {
             // "transcript_s3_txt": transcript_s3_txt,
             "freqWord": freqWord.outerHTML,
             "stopwordz_counter": stopwordz_counter,
-            "freqWord2": freqWord2.outerHTML,
             "wordcloud": wordcloudSvg.outerHTML,
-            "profilePic": profilePic
+            "profilePic": profilePic,
+            "bad_words_counter": bad_words_counter
         })
         return
     }

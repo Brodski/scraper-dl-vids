@@ -2,6 +2,7 @@
 <% let title = "Big Dick Captions 😏" %>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="/fonts.css">
     <link rel="stylesheet" type="text/css" href="/styles.css">
     <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
     <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
@@ -61,9 +62,20 @@
   </head>
   <body>
     <form>
+        <div class="d-flex">
+            <img class="profile_main_pic" src="<%= profilePic %>">
+            <h1 class="align-self-center"> Word Tree search </h1>
+        </div>
+        <h2> <a href="/channel/<%= channel %>/<%= vod.id %>"><%= vod2.display_title %> </a> </h2>
+        <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
+        <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
+        <br/>
+        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+        <br/>
         <div>
-            <label for="search">Word Tree search</label>
-            <input id="search"  type="text" placeholder="loser" />
+            <% console.log(vod2) %>
+            <!-- <label for="search"> Word Tree search </label> -->
+            <input id="search"  type="text" placeholder="loser" aria-label="Word Tree search "/>
         </div>
         <div>
             <button id="the_button"> Search </button>

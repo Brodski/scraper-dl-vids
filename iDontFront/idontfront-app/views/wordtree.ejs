@@ -1,5 +1,4 @@
-
-<% let title = "Big Dick Captions 😏" %>
+<%- include("../server-scripts/utilities") %>
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/fonts.css">
@@ -15,26 +14,7 @@
 
             function drawChart() {
                 var data = google.visualization.arrayToDataTable(sentence_arr
-                // [ ['Phrases'],
-                //     ['cats are better than dogs'],
-                //     ['cats eat kibble'],
-                //     ['cats are better than hamsters'],
-                //     ['cats are awesome'],
-                //     ['cats are people too'],
-                //     ['cats eat mice'],
-                //     ['cats meowing'],
-                //     ['cats in the cradle'],
-                //     ['cats eat mice'],
-                //     ['cats in the cradle lyrics'],
-                //     ['cats eat kibble'],
-                //     ['cats for adoption'],
-                //     ['cats are family'],
-                //     ['cats eat mice'],
-                //     ['cats are better than kittens'],
-                //     ['cats are evil'],
-                //     ['cats are weird'],
-                //     ['cats eat mice'],
-                // ]
+                // [ ['Phrases'], ['cats are better than dogs'], ['cats eat kibble'], ['cats are better than hamsters'], ['cats are awesome'], ['cats are people too'], ['cats eat mice'], ['cats meowing'], ['cats in the cradle'], ['cats eat mice'], ['cats in the cradle lyrics'], ['cats eat kibble'], ['cats for adoption'], ['cats are family'], ['cats eat mice'], ['cats are better than kittens'], ['cats are evil'], ['cats are weird'], ['cats eat mice'], ] 
                 );
                 var options = {
                         // colors: ['red', 'black', 'green'],
@@ -49,12 +29,16 @@
                 };
 
                 var chart = new google.visualization.WordTree(document.getElementById('wordtree_basic'));
-                // chart.addEventListener("select", (e) => {
-                //     console.log("CLICKED", e)
-                // })
-                document.getElementById('wordtree_basic').addEventListener("select", (e) => {
-                    console.log("CLICKED", e)
-                })
+
+                google.visualization.events.addListener(chart, 'select', selectHandler);
+
+                function selectHandler(e) {
+                    let search_click_val = chart.getSelection().word
+                    search_history.push(search_click_val)
+                    document.querySelector('#search').value = search_click_val
+                    console.log(search_click_val);
+                    console.log(search_history)
+                }
                 chart.draw(data, options);
             }
         }
@@ -69,7 +53,6 @@
         <h2> <a href="/channel/<%= channel %>/<%= vod.id %>"><%= vod2.display_title %> </a> </h2>
         <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
         <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
-        <br/>
         <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
         <br/>
         <div>
@@ -77,19 +60,38 @@
             <!-- <label for="search"> Word Tree search </label> -->
             <input id="search"  type="text" placeholder="loser" aria-label="Word Tree search "/>
         </div>
-        <div>
-            <button id="the_button"> Search </button>
-        </div>
+        <button id="the_button"> Search </button>
+        <button id="back" class="d-none"> 🡨 </button> <!-- ← 🡠  -->
     </form>
     <script>
-        let google_wont_allow_server_side_render = <%- JSON.stringify(sentence_arr) %>; // sentence_arr
+        function renderBackBtn() {
+
+        }
+        let search_history = []
+        let google_wont_allow_server_side_render = <%- JSON.stringify(sentence_arr) %>;
         document.querySelector('#the_button').onclick = function(e) {
             // console.log(google_wont_allow_server_side_render)
             e.preventDefault();
+            document.querySelector('#back').classList.remove("d-none");
             let search_val = document.querySelector('#search').value 
+
             kickIt(google_wont_allow_server_side_render, search_val);
+
+            search_history.push(search_val)
+
+            console.log(search_history)
         };
-        the_button
+        document.querySelector('#back').onclick = function(e) {
+            e.preventDefault();
+            let search_prev_val = search_history.pop()
+            if (search_prev_val == null) {
+                return
+            }
+            kickIt(google_wont_allow_server_side_render, search_prev_val)
+            document.querySelector('#search').value = search_prev_val
+            console.log(search_history)
+
+        }
     </script>
     <div id="wordtree_basic" style="width: 900px; height: 500px;"></div>
   </body>

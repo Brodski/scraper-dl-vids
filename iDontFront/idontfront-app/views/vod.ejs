@@ -12,12 +12,6 @@
         <link rel="stylesheet" type="text/css" href="/vod.css">
         <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
         <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
-        
-        <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet"> -->
-
-        <!-- <script defer src="/scripts.js"></script> -->
         <script src="/scripts.js"></script>
         <script>
           function seekIframe(time) {
@@ -35,12 +29,9 @@
         </div>
         <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
         <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
-        <br/>
         <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
-        <br/>
         <div> 🔥<a href="/channel/<%= channel %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
-        <br/>
-        <div> 💧🙁  <a href="/channel/<%= channel %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧🙁 </div>
+        <div> 💧 <a href="/channel/<%= channel %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧</div> <!-- 🙁  -->
         <br/>
         <div class="vod__json_vtt_txt_link">
             Raw transcripts: 
@@ -57,7 +48,8 @@
             <button 
                 id="toggle-btn"
                 onclick="(() => {
-                    let iframe = document.querySelector('#twitch-iframe').classList.toggle('sticky-iframe')
+                    let iframe = document.querySelector('#twitch-iframe')
+                    iframe.classList.toggle('sticky-iframe')
                     let msg = iframe.classList.contains('sticky-iframe') ? '☑' : '' // '✓'
                     document.querySelector('#on-off-sticky').innerText = msg
                 })()"
@@ -75,9 +67,10 @@
             else {
                 console.log("NAAAAH")
             }
+            
             var options = {
-                width: 640,
-                height: 360,
+                width: (isMobile() ? '100%' : 640),
+                height: (isMobile() ? 230 : 360),
                 video: <%= vod.id %>,
                 autoplay: false,
                 parent: ["localhost", "othersite.example.com"]
@@ -92,8 +85,9 @@
             console.log(vod2)
             
         %>
-        <% let i = 0; %>
-        <% for (let segment of transcript_json) { 
+        <% 
+            let i = 0;
+            for (let segment of transcript_json) { 
             if (i==0) {
                 console.log(segment)
             }
@@ -101,9 +95,6 @@
             let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
             let min = Math.floor(parseInt(segment.start) / 60)
             let timestamp = min + "m" + sec + "s";
-            // let sec_floored = Math.floor(segment.start)
-            // console.log("segment.start=" + segment.start )
-            // console.log("sec_floored=" + sec_floored )
         %>
 
             <div class="vod_cue"> 

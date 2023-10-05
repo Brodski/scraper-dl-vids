@@ -238,8 +238,7 @@ exports.channel = async (req, res) => {
         let bad_words_counter = []
         for (let i=0; i < stopwordz_counter.length; i++) {
             if (regex.test(stopwordz_counter[i][0])) {
-                console.log("yes!")
-                console.log(stopwordz_counter[i])
+                // console.log(stopwordz_counter[i])
                 bad_words_counter.push(stopwordz_counter[i])
             }
         }

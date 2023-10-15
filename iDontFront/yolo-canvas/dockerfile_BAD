@@ -1,0 +1,28 @@
+FROM lambci/lambda:build-nodejs12.x
+
+WORKDIR /var/task
+
+# Install canvas dependencies
+RUN yum install -y \
+    cairo \
+    cairo-devel \
+    cairomm-devel \
+    libjpeg-turbo \
+    libjpeg-turbo-devel \
+    pango \
+    pango-devel \
+    pangomm \
+    pangomm-devel \
+    giflib-devel
+
+# Add Node.js dependencies
+COPY package*.json ./
+RUN npm install
+
+# Add your function code
+COPY . .
+
+# docker build -t nodecanvas-layer .
+# docker run --rm -v ${PWD}:/var/task -it nodecanvas-layer bash
+#
+# yum install tar

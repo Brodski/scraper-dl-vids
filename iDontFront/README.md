@@ -32,7 +32,12 @@ const dom = new JSDOM('<!DOCTYPE html><p>Hello</p>');
 file: d3-selection/src/create.js  
 import { JSDOM } from "jsdom";  
 const dom = new JSDOM('<!DOCTYPE html><p>Hello</p>');  
-  
+
+file: d3-clioud/build/d3.layout.cloud.js
+const { JSDOM } = require("jsdom");
+const dom = new JSDOM('<!DOCTYPE html><p>Hello</p>');
+let document = dom.window.document;
+
 export default function(name) {  
   let document = dom.window.document;  
   return select(creator(name).call(document.documentElement));  

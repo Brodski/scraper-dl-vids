@@ -27,6 +27,8 @@ if (process.env.IS_LAMBDA == "true") {
         event.path = event.path === '' ? '/' : event.path
         const serverlessHandler = serverless(app)
         const result = await serverlessHandler(event, context)
+        console.log("result")
+        console.log(result)
         return result
     }
 }

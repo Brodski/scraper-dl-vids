@@ -3,11 +3,35 @@
 //
 //
 // stopwordz_counter = [  [ 'just', 370 ],    [ 'im', 229 ],    [ 'right', 224 ],   [ 'dont', 206 ], ]
+const fs = require('fs');
+const { createCanvas } = require("canvas");
+
 async function loadModule(stopwordz_counter) {
     let d3Cloud = require("d3-cloud")
     const d3 = await import('d3');
+    console.log('Current Working Directory:', process.cwd());
+    console.log('LD_LIBRARY_PATH:', process.env.LD_LIBRARY_PATH);
+    
+    
+    const files = fs.readdirSync(process.cwd());
+    console.log("files");
+    console.log(files);
+    if (process.env.IS_LAMBDA == "true") {
+      const files2 = fs.readdirSync("/var/lang/lib");
+      console.log("/var/lang/lib");
+      console.log("files2");
+      console.log("files2");
+      console.log(files2);
 
-    // function WordCloud(text, {
+      
+      process.env.LD_LIBRARY_PATH = process.cwd() + "/lib" + (":" + process.env.LD_LIBRARY_PATH);
+      const files3 = fs.readdirSync(process.cwd() + "/lib");
+      console.log('LD_LIBRARY_PATH 2:', process.env.LD_LIBRARY_PATH);
+      console.log(process.cwd() + "/lib");
+      console.log(files3);
+    } 
+    
+
     function WordCloud(stopwordz_counter, { 
         size = group => group.length + 0.1, // Given a grouping of words, returns the size factor for that word
         word = d => d,                // Given an item of the data array, returns the word
@@ -50,7 +74,6 @@ async function loadModule(stopwordz_counter) {
 
         console.log("colorScale 370")
         console.log(colorScale(370))
-        console.log(colorScale(370))
         console.log(colorScale(0))
 
         console.log(stopwordz_counter)
@@ -75,6 +98,7 @@ async function loadModule(stopwordz_counter) {
         const g = svg.append("g").attr("transform", `translate(${marginLeft},${marginTop})`);
         const cloud = d3Cloud()
             .size([width - marginLeft - marginRight, height - marginTop - marginBottom])
+            .canvas(() => createCanvas(1, 1))
             .words(data)
             .padding(padding)
             .rotate(rotate)
@@ -89,9 +113,13 @@ async function loadModule(stopwordz_counter) {
                     .attr("fill", colorScale(freq))
                     .text(text);
                 });
-      
+        console.log("cloud")
+        console.log(cloud)
+        console.log("cloud1")
         cloud.start();
+        console.log("cloud2")
         invalidation && invalidation.then(() => cloud.stop());
+        console.log("cloud3")
         return svg.node();
       }
 

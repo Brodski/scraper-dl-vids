@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(mainRoutes)
 
+// process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
 if (process.env.IS_LAMBDA == "true") {
     console.log("YES IS LAMBDA 222!!!" + process.env.IS_LAMBDA)
     module.exports.lambdaHandler = async (event, context) => {

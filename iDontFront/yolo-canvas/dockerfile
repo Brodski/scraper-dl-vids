@@ -1,10 +1,25 @@
 FROM public.ecr.aws/lambda/nodejs:16
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# docker build  -t canvas-node .             
+# docker create canvas-node
+# docker run -it --entrypoint /bin/bash canvas-node
+# id=$(docker create canvas-node) 
+# docker cp $id:/root/dist ./canvas-node-d
+# dockr cp b4f6ef325c22794c1f6fc77537aed8b931380b92a903afa1bf1f9b8d94ba3bb4:/root/dist.tar ./canvas-node-d/           
 
+# psuedo code below
+# cp libs ../../idont-front-app/.
+# mv node_modules/canvas ../../idont-front-app/node_modules/canvas
+#   tar -cvf /root/dist.tar -C /root dist
+#   mv /root/dist.tar .
 ARG LIBS=/usr/lib64
 ARG OUT=/root
 
 # DEBUGGING: copy the test file to the container
-# COPY index.js .
+COPY index.js .
 
 # DEBUGGING: store libraries that are part of the image for
 # comparison which libraries are added after "yum install"
@@ -18,7 +33,8 @@ RUN ls $LIBS > before.txt
 
 RUN yum -y update \
 && yum -y groupinstall "Development Tools" \
-&& yum install -y gcc-c++ cairo-devel pango-devel python3
+&& yum install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
+# && yum install -y gcc-c++ cairo-devel pango-devel python3
 
 # DEBUGGING: To check which libraries are added
 RUN ls $LIBS > after.txt
@@ -28,7 +44,7 @@ RUN npm init -y
 # DEBUGGING: canvas is installed as part of chartjs-node-canvas
 # (we install the chartjs-node-canvas so we can run a test)
 # Use this instead of "npm i canvas" only if you want to run a test agains the index.js
-# RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
+RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
 
 RUN npm i canvas --build-from-source
 
@@ -57,32 +73,32 @@ RUN cp -L $LIBS/libpixman-1.so.0 lib/ \
 && cp -L $LIBS/libpango-1.0.so.0 lib/ \
 && cp -L $LIBS/libgobject-2.0.so.0 lib/ \
 && cp -L $LIBS/libglib-2.0.so.0 lib/ \
-# && cp -L $LIBS/libfreetype.so.6 lib/ \
-# && cp -L $LIBS/libstdc++.so.6 lib/ \
-# && cp -L $LIBS/libm.so.6 lib/ \
-# && cp -L $LIBS/libgcc_s.so.1 lib/ \
-# && cp -L $LIBS/libpthread.so.0 lib/ \
-# && cp -L $LIBS/libc.so.6 lib/ \
+&& cp -L $LIBS/libfreetype.so.6 lib/ \
+&& cp -L $LIBS/libstdc++.so.6 lib/ \
+&& cp -L $LIBS/libm.so.6 lib/ \
+&& cp -L $LIBS/libgcc_s.so.1 lib/ \
+&& cp -L $LIBS/libpthread.so.0 lib/ \
+&& cp -L $LIBS/libc.so.6 lib/ \
 && cp -L $LIBS/libfontconfig.so.1 lib/ \
 && cp -L $LIBS/libEGL.so.1 lib/ \
-# && cp -L $LIBS/libdl.so.2 lib/ \
+&& cp -L $LIBS/libdl.so.2 lib/ \
 && cp -L $LIBS/libxcb-shm.so.0 lib/ \
 && cp -L $LIBS/libxcb.so.1 lib/ \
 && cp -L $LIBS/libxcb-render.so.0 lib/ \
 && cp -L $LIBS/libXrender.so.1 lib/ \
 && cp -L $LIBS/libX11.so.6 lib/ \
 && cp -L $LIBS/libXext.so.6 lib/ \
-# && cp -L $LIBS/libz.so.1 lib/ \
+&& cp -L $LIBS/libz.so.1 lib/ \
 && cp -L $LIBS/libGL.so.1 lib/ \
-# && cp -L $LIBS/librt.so.1 lib/ \
+&& cp -L $LIBS/librt.so.1 lib/ \
 && cp -L $LIBS/libpangoft2-1.0.so.0 lib/ \
 && cp -L $LIBS/libthai.so.0 lib/ \
 && cp -L $LIBS/libfribidi.so.0 lib/ \
-# && cp -L $LIBS/libpcre.so.1 lib/ \
-# && cp -L $LIBS/libffi.so.6 lib/ \
-# && cp -L $LIBS/libbz2.so.1 lib/ \
-# && cp -L $LIBS/libexpat.so.1 lib/ \
-# && cp -L $LIBS/libuuid.so.1 lib/ \
+&& cp -L $LIBS/libpcre.so.1 lib/ \
+&& cp -L $LIBS/libffi.so.6 lib/ \
+&& cp -L $LIBS/libbz2.so.1 lib/ \
+&& cp -L $LIBS/libexpat.so.1 lib/ \
+&& cp -L $LIBS/libuuid.so.1 lib/ \
 && cp -L $LIBS/libGLdispatch.so.0 lib/ \
 && cp -L $LIBS/libXau.so.6 lib/ \
 && cp -L $LIBS/libGLX.so.0 lib/ \
@@ -110,10 +126,11 @@ RUN ldd node_modules/canvas/build/Release/canvas.node
 
 # DEBUGGING: run the render test
 # creates a "test.png" in the dist that should show a graph
-# RUN node index.js
+RUN node index.js
 
 # copy to a dist folder
 RUN mkdir $OUT/dist
+# RUN tar -cvf /root/dist.tar -C /root dist
 RUN cp -Lra . $OUT/dist
 
 # DEBUGGING: This tests if moving around our files broke the linking

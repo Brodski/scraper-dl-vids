@@ -16,16 +16,19 @@ async function loadModule(stopwordz_counter) {
     const files = fs.readdirSync(process.cwd());
     console.log("files");
     console.log(files);
+    // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
     if (process.env.IS_LAMBDA == "true") {
       const files2 = fs.readdirSync("/var/lang/lib");
       console.log("/var/lang/lib");
       console.log("files2");
-      console.log("files2");
       console.log(files2);
 
       
-      process.env.LD_LIBRARY_PATH = process.cwd() + "/lib" + (":" + process.env.LD_LIBRARY_PATH);
-      const files3 = fs.readdirSync(process.cwd() + "/lib");
+      // process.env.LD_LIBRARY_PATH =  process.env.LAMBDA_TASK_ROOT + "/lib" + (":" + process.env.LD_LIBRARY_PATH);
+      process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
+      process.env.PKG_CONFIG_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
+      process.env.PATH = process.env.PATH + ":" + process.env.LAMBDA_TASK_ROOT + "/lib"
+      const files3 = fs.readdirSync( process.cwd() + "/lib");
       console.log('LD_LIBRARY_PATH 2:', process.env.LD_LIBRARY_PATH);
       console.log(process.cwd() + "/lib");
       console.log(files3);

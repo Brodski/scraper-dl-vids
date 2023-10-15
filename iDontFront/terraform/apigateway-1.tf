@@ -4,7 +4,7 @@
 # V1 API Gateway
 resource "aws_api_gateway_rest_api" "api_gw_rest" {
   name        = var.apigateway_name
-  description = "API - very cool 123"
+  description = "iDontFront-gw"
   endpoint_configuration {
     types = ["REGIONAL"]
   }

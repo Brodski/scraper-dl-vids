@@ -8,7 +8,7 @@
 variable "lambda_name" {
   description = "nav_foot_lambda"
   type        = string
-  default     = "captions_frontend"
+  default     = "idontfront_app"
 }
 variable "r53_lambda_full_domain" {
   description = "r53_lambda_full_domain"
@@ -33,7 +33,7 @@ variable "s3_log_bucket_name" {
 variable "apigateway_name" {
   description = "apigateway_name"
   type        = string
-  default     = "cc-api-gateway"
+  default     = "idontfront-api-gateway"
 }
 
 ##############################################

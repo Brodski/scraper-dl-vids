@@ -3,7 +3,9 @@
 # LAMBDA 
 # LAMBDA 
 locals {
-  shit =  "${path.module}/Archive.zip"
+  # zip_file_path =  "${path.module}/myzipper2.zip"
+  # zip_file_path =  "${path.module}/iDontFront-app.zip"
+  zip_file_path =  "${path.module}/idontfront_windows.zip"
 }
 
 data "archive_file" "lambda_zip" {
@@ -18,17 +20,17 @@ resource "aws_lambda_function" "idontfront_lambda" {
   depends_on = [ aws_s3_bucket_object.lambda_code ]
   function_name = var.lambda_name
   handler       = "iDontFront-app.lambdaHandler" 
-  runtime       = "nodejs18.x"
+  runtime       = "nodejs16.x"
   role          = aws_iam_role.lambda_writer_role.arn
 
   # filename = data.archive_file.lambda_zip.output_path #"my_lambda.zip"
   # source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
-  source_code_hash = filebase64sha256(local.shit)
+  source_code_hash = filebase64sha256(local.zip_file_path)
 
   memory_size = 512
   timeout = 15 
-  architectures    = ["x86_64"]
-  # architectures    = ["arm64"]
+  # architectures    = ["x86_64"]
+  architectures    = ["arm64"]
 
   s3_bucket        = "idontfront-lambda-zips"
   s3_key           = "my_lambda.zip"
@@ -49,8 +51,8 @@ resource "aws_s3_bucket_object" "lambda_code" {
   key    = "my_lambda.zip"
   # source = data.archive_file.lambda_zip.output_path
   # etag   = filemd5(data.archive_file.lambda_zip.output_path)
-  source = local.shit
-  etag   = filemd5(local.shit)
+  source = local.zip_file_path
+  etag   = filemd5(local.zip_file_path)
 }
 
 
@@ -71,5 +73,5 @@ resource "aws_cloudwatch_log_group" "example_lambda_log_group" {
 
 output "ouput_lambda_zip" {
   # value       = data.archive_file.lambda_zip.output_path
-  value       = local.shit
+  value       = local.zip_file_path
 }

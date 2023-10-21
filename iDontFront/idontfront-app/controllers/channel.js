@@ -233,7 +233,7 @@ exports.channel = async (req, res) => {
         console.log("stopwordz_counter 1")
         console.log(stopwordz_counter)
 
-        let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic", "cock", "dick"]
+        let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic", "cock", "dick", "cancer", "tumor"]
         let regex = new RegExp(`\\b(${bad_words.join('\\w*\\b|')})`, 'gi'); 
         let bad_words_counter = []
         for (let i=0; i < stopwordz_counter.length; i++) {

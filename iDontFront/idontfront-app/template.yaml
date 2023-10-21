@@ -9,27 +9,49 @@ Description: >
 Globals:
   Function:
     Timeout: 15
-
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  MyFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: iDontFront-app.lambdaHandler
-      Runtime: nodejs18.x
+      PackageType: Image
+      ImageUri: hello-lambda:latest  # specify your local image and tag
       Environment:
         Variables:
           IS_LAMBDA: "true"
-      Architectures:
-        # - arm64
-        - x86_64
+          IS_SAM: "true"
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        ApiPathProxy:
+          Type: Api
           Properties:
-            Path: /
-            # Path: /v1
+            Path: /v1/{proxy+}
             Method: get
+        ApiRoot:
+          Type: Api
+          Properties:
+            Path: /v1/
+            Method: get
+# Resources:
+#   HelloWorldFunction:
+#     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#     Properties:
+#       CodeUri: .
+#       Handler: iDontFront-app.lambdaHandler
+#       Runtime: nodejs18.x
+#       Environment:
+#         Variables:
+#           IS_LAMBDA: "true"
+#       Architectures:
+#         # - arm64
+#         - x86_64
+#       Events:
+#         HelloWorld:
+#           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#           Properties:
+#             Path: /v1/{proxy+}
+#             Method: get
+
+
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM

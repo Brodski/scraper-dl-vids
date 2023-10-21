@@ -3,6 +3,10 @@ FROM public.ecr.aws/lambda/nodejs:16
 # https://github.com/vdiezel/docker-node-canvas/tree/main
 # https://github.com/vdiezel/docker-node-canvas/tree/main
 # https://github.com/vdiezel/docker-node-canvas/tree/main
+#
+#
+#
+#
 # docker build  -t canvas-node .             
 # docker create canvas-node
 # docker run -it --entrypoint /bin/bash canvas-node
@@ -44,7 +48,7 @@ RUN npm init -y
 # DEBUGGING: canvas is installed as part of chartjs-node-canvas
 # (we install the chartjs-node-canvas so we can run a test)
 # Use this instead of "npm i canvas" only if you want to run a test agains the index.js
-RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
+# RUN npm i chartjs-node-canvas@^4.1.6 chart.js@^3.9.1 --build-from-source
 
 RUN npm i canvas --build-from-source
 

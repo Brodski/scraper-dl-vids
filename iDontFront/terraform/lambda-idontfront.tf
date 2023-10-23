@@ -19,8 +19,8 @@ data "archive_file" "lambda_zip" {
 resource "aws_lambda_function" "idontfront_lambda" {
   # depends_on = [ aws_s3_bucket_object.lambda_code ] # S3 zip
   function_name = var.lambda_name
-  handler       = "iDontFront-app.lambdaHandler" 
-  runtime       = "nodejs18.x"
+  # handler       = "iDontFront-app.lambdaHandler" 
+  # runtime       = "nodejs18.x"
   role          = aws_iam_role.lambda_writer_role.arn
 
 
@@ -38,8 +38,8 @@ resource "aws_lambda_function" "idontfront_lambda" {
 
   memory_size = 512
   timeout = 15 
-  # architectures    = ["x86_64"]
-  architectures    = ["arm64"]
+  architectures    = ["x86_64"]
+  # architectures    = ["arm64"]
 
 
   environment {

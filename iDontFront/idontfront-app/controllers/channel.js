@@ -60,13 +60,13 @@ exports.channel = async (req, res) => {
     //  CHANNEL
     //  ***************************************
     if (req.params.id == null) {
-        let keysWithVtt = await channelHelper.getVodsCompleted(req.params.name)
+        let completedVods = await channelHelper.getVodsCompleted(req.params.name)
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
             "scrapped_data_s3": scrapped_data_s3,
             "custom_metadata": custom_metadata,
-            "keys": keysWithVtt,
+            "completedVods": completedVods,
             "profilePic": profilePic
         })
         return
@@ -103,7 +103,9 @@ exports.channel = async (req, res) => {
     //  CHANNEL - VOD - WORDTREE
     //  ***************************************
     if (req.params.id != null && req.path.includes("/wordtree")) {
-        let sentence_arr = channelHelper.formatTranscript(transcript_s3_txt)
+        let sentence_arr = await channelHelper.prepWordTree(transcript_s3_txt)
+        console.log("SENTENCE_AAAAAAAAAR")
+        console.log(sentence_arr)
         res.render("../views/wordtree", {
             "sentence_arr": sentence_arr,
             "channel": vod.channel,

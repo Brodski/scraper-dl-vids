@@ -1,11 +1,11 @@
 
-const formatTranscript  = require("./helpers/formatTranscript")
+const prepWordTree  = require("./helpers/prepWordTree")
 const getAnalysis  = require("./helpers/getAnalysis")
 const getVodsCompleted  = require("./helpers/getVodsCompleted")
 
 module.exports = { 
     getVodsCompleted, 
-    formatTranscript,
+    prepWordTree,
     getAnalysis
 }
 

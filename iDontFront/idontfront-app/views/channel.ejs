@@ -59,10 +59,7 @@
                     let link_s3         = scrapped_data_s3
                     let href            = path + "/" +  id 
                     let id_string = typeof id == "string" ? custom_md.id : custom_md.id.toString()
-                    if ( keys.includes(id_string)) {
-                        // console.log("YES IS IN! " + custom_md.id)
-                    }
-                    else {
+                    if ( !completedVods.includes(id_string)) {
                         console.log("NOPE NOT THIS ONE " + custom_md.id)
                         continue;
                     }

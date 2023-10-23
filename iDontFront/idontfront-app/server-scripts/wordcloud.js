@@ -5,6 +5,7 @@
 // stopwordz_counter = [  [ 'just', 370 ],    [ 'im', 229 ],    [ 'right', 224 ],   [ 'dont', 206 ], ]
 const fs = require('fs');
 const { createCanvas } = require("canvas");
+const { JSDOM } = require("jsdom");
 
 async function loadModule(stopwordz_counter) {
     let d3Cloud = require("d3-cloud")
@@ -91,12 +92,17 @@ async function loadModule(stopwordz_counter) {
         //           { text: 'im', size: 127.17579250720462, freq: 229 },
         //           { text: 'right', size: 125.30259365994236, freq: 224 }, ]
         
-          const svg = d3.create("svg")
-            .attr("viewBox", [0, 0, width, height])
-            .attr("width", width)
-            .attr("font-family", fontFamily)
-            .attr("text-anchor", "middle")
-            .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+        const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
+        const window = dom.window;
+        const document = window.document;
+        
+        // Create an SVG element using D3.js
+        const svg = d3.select(document.body).append('svg')
+          .attr("viewBox", [0, 0, width, height])
+          .attr("width", width)
+          .attr("font-family", fontFamily)
+          .attr("text-anchor", "middle")
+          .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
         
         const g = svg.append("g").attr("transform", `translate(${marginLeft},${marginTop})`);
         const cloud = d3Cloud()

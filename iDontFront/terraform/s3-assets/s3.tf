@@ -17,7 +17,7 @@ resource "aws_s3_bucket_policy" "s3test_policy" {
   bucket = aws_s3_bucket.s3_test_assets_bucket.bucket
 
   policy = jsonencode({
-    "Version": "2008-10-17",
+    "Version": "2012-10-17",
     Id      = "MYBUCKETPOLICY"
     "Statement": [
         {

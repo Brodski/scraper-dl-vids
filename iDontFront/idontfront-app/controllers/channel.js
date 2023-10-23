@@ -1,6 +1,5 @@
 const configs = require("../configs")
-const plot  = require("../server-scripts/plot")
-const wordcloud  = require("../server-scripts/wordcloud")
+const channelHelper = require("./channelHelper")
 // https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
 
 
@@ -25,7 +24,8 @@ exports.channel = async (req, res) => {
     let transcript_s3_json;
     let transcript_s3_txt;
     let vod;
-    // console.log("-----------------------------------------------------")
+    let profilePic = getProfilePic(custom_metadata);
+    console.log("-----------------------------------------------------")
     // console.log("-----------------------------------------------------")
     // console.log("-----------------------------------------------------")
     // console.log("scrapped_data_s3")
@@ -55,76 +55,12 @@ exports.channel = async (req, res) => {
             transcript_s3_txt = tempName + ".txt"
         } 
     }
+
     //  ***************************************
+    //  CHANNEL
     //  ***************************************
-    //  ***************************************
-    //  ***************************************
-    //  CHANNEL PATH
-    // 
-    // 
-    // http://localhost:3333/channel/lolgeranimo
-    let profilePic;
-    if (profilePic == null && req.params.name == "lolgeranimo") {
-        profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
-    }
     if (req.params.id == null) {
-
-        const endpoint3 = configs.S3_BUCKET + configs.S3_STATE_OVERVIEW_JSON;   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
-        const response3 = await fetch(endpoint3); // mocks/completed_captions_list.py
-        let firstKey = Object.keys(custom_metadata)[0]
-        profilePic = custom_metadata[firstKey]?.logo
-        
-        if (profilePic == null && req.params.name == "lolgeranimo") {
-            profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
-        }
-        console.log(custom_metadata)
-        console.log("custom_metadata")
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        console.log(" profilePic !!!!!!!!!!!! " + profilePic)
-        let keys;
-        let keysWithVtt = [];
-        console.log("endpoint3=" + endpoint3)
-        if (!response3.ok) {
-            throw new Error('HTTP error ' + response3.status);
-        }
-        let overview_state = await response3.json()
-        console.log("overview_state")
-        // console.log(overview_state)
-        if ( req.params.name in overview_state) {
-    
-            keys = Object.keys(overview_state[req.params.name]);
-            console.log("keys")
-            console.log(keys)
-            keys.forEach(k => {
-                let hasCaptions = false;
-                for (let x of overview_state[req.params.name][k]) {
-                    // console.log(x);
-                    if (x.endsWith(".vtt")) {
-                        hasCaptions = true;
-                        keysWithVtt.push(k)
-                    }
-                }
-            });
-            console.log("keysWithVtt")
-            console.log(keysWithVtt)
-        }
-
+        let keysWithVtt = await channelHelper.getVodsCompleted(req.params.name)
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
@@ -140,12 +76,8 @@ exports.channel = async (req, res) => {
 
 
     //  ***************************************
+    //  CHANNEL - VOD 
     //  ***************************************
-    //  ***************************************
-    //  ***************************************
-    //  VOD PATH
-    // 
-    // 
     if (req.params.id != null && !req.path.includes("/analysis") && !req.path.includes("/wordtree") ) {
 
         let response = await fetch(transcript_s3_json);
@@ -163,34 +95,17 @@ exports.channel = async (req, res) => {
             "transcript_s3_json": transcript_s3_json,
             "transcript_s3_txt": transcript_s3_txt,
             "profilePic": profilePic
-            // "freqWord": freqWord.outerHTML
         })
         return
     }
-    const txtAux = async () => {
-        if (vod == null) {
-            res.status(404).render('404')
-        }
-        let response = await fetch(transcript_s3_txt);
-        if (!response.ok) {
-             throw new Error('HTTP error ' + response.status);
-        }
-        return response
-    }
 
+    //  ***************************************
+    //  CHANNEL - VOD - WORDTREE
+    //  ***************************************
     if (req.params.id != null && req.path.includes("/wordtree")) {
-        let response = await txtAux();
-        let res_transcript_txt = await response.text() // the .txt file
-        let sentence_arr = res_transcript_txt.split(/\n+/)
-        let sentence_arr2 = []
-        for (let sent of sentence_arr) {
-            let x = sent.replaceAll(/[.,?;:!]/g, '').split(' ')
-            sentence_arr2.push([x.join(' ')])
-        }
-        // const googleChartsMaker = require("../server-scripts/google-charts-maker")
-        // let googleChartsEle = await googleChartsMaker(sentence_arr2)
+        let sentence_arr = channelHelper.formatTranscript(transcript_s3_txt)
         res.render("../views/wordtree", {
-            "sentence_arr": sentence_arr2,
+            "sentence_arr": sentence_arr,
             "channel": vod.channel,
             "vod": vod,
             "vod2": custom_metadata[req.params.id],
@@ -198,70 +113,36 @@ exports.channel = async (req, res) => {
         })
         return
     }
+    //  ***************************************
+    //  CHANNEL - VOD - ANALYSIS
+    //  ***************************************
     if (req.params.id != null && req.path.includes("/analysis")) {
-        let response =  await txtAux();
-        let res_transcript_txt = await response.text() // the .txt file
-        let txt_arr = res_transcript_txt.split(/\s+/)
-
-        const stopword  = require("../server-scripts/stopword")
-        let txt_arr_stopwords = await stopword(txt_arr)
-        console.log(txt_arr_stopwords)
-        let stopwordz_counter_map = new Map();
-        for (let word of txt_arr_stopwords) {
-            // Do this here b/c stopword library
-            word = word.replaceAll(/[.,!;:'?\+]/g, "");
-            word = word.toLowerCase()
-            if (stopwordz_counter_map.has(word)) {
-                let count = stopwordz_counter_map.get(word)
-                stopwordz_counter_map.set(word, count + 1)
-            } else {
-                stopwordz_counter_map.set(word, 1);
-            }
-        }
-        const stopwordz_counter = [...stopwordz_counter_map.entries()].sort((a, b) => b[1] - a[1]);
-        console.log(stopwordz_counter)
-
-
-
-        let freqWord = await plot(stopwordz_counter)
-        console.log("freqWord")
-        console.log(freqWord)
-
-        let wordcloudSvg = await wordcloud(stopwordz_counter)
-        console.log("wordcloudSvg")
-        console.log(wordcloudSvg)
-        console.log("stopwordz_counter 1")
-        console.log(stopwordz_counter)
-
-        let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic", "cock", "dick", "cancer", "tumor"]
-        let regex = new RegExp(`\\b(${bad_words.join('\\w*\\b|')})`, 'gi'); 
-        let bad_words_counter = []
-        for (let i=0; i < stopwordz_counter.length; i++) {
-            if (regex.test(stopwordz_counter[i][0])) {
-                // console.log(stopwordz_counter[i])
-                bad_words_counter.push(stopwordz_counter[i])
-            }
-        }
-        console.log(regex)
-        console.log(regex)
-        console.log(regex)
-        console.log(regex)
-
+        let analysisObj = await channelHelper.getAnalysis(transcript_s3_txt)
         res.render("../views/analysis", { // ---> /channel/lolgeranimo
             "channel": vod.channel,
-            // "transcript_json": transcript_json.segments,
             "vod": vod,
             "vod2": custom_metadata[req.params.id],
-            // "transcript_s3_vtt": transcript_s3_vtt,
-            // "transcript_s3_json": transcript_s3_json,
-            // "transcript_s3_txt": transcript_s3_txt,
-            "freqWord": freqWord.outerHTML,
-            "stopwordz_counter": stopwordz_counter,
-            "wordcloud": wordcloudSvg.outerHTML,
-            "profilePic": profilePic,
-            "bad_words_counter": bad_words_counter
+            "wordcloud": analysisObj.wordcloudSvg.outerHTML,
+            "freqWordPlot": analysisObj.freqWordPlot.outerHTML,
+            "badWordPlot": analysisObj.badWordPlot.outerHTML,
+            "word_counter": analysisObj.word_counter,
+            "bad_words_counter": analysisObj.bad_words_counter,
+            "profilePic": profilePic
         })
         return
     }
+
+    function getProfilePic(custom_metadata) {
+        let profilePic;
+        if (req.params.name == "lolgeranimo") {
+            profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
+        } 
+        else {
+            let firstKey = Object.keys(custom_metadata)[0]
+            profilePic = custom_metadata[firstKey]?.logo
+        }
+        return profilePic
+    }
+    
 }
 

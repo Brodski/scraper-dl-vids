@@ -7,7 +7,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_lambda_function" "example" {
   function_name = "your_lambda_function_name"
 
-  image_uri = "your_account_id.dkr.ecr.your_region.amazonaws.com/your_repository:tag"
+  image_uri = "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest"
   # image_uri = "${aws_ecr_repository.example.repository_url}:latest"
 
 

@@ -14,7 +14,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: hello-lambda:latest  # specify your local image and tag
+      ImageUri: hello-lambda:latest
       Environment:
         Variables:
           IS_LAMBDA: "true"

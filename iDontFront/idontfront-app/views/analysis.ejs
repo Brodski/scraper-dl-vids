@@ -24,12 +24,12 @@
         <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
         <br/>
         <% 
-        // let loser =  stopwordz_counter['loser']
-        // let subhuman =  stopwordz_counter['subhuman']
-        // let man =  stopwordz_counter['man']
-        // let ego =  stopwordz_counter['ego']
-        // let fucking =  stopwordz_counter['fucking']
-        // let fuck =  stopwordz_counter['fuck']
+        // let loser =  word_counter['loser']
+        // let subhuman =  word_counter['subhuman']
+        // let man =  word_counter['man']
+        // let ego =  word_counter['ego']
+        // let fucking =  word_counter['fucking']
+        // let fuck =  word_counter['fuck']
 
         // console.log("loser=" loser)
         // console.log("subhuman=" subhuman)
@@ -44,14 +44,22 @@
         <div class="analysis_wordcloud_container">
             <div> <%- wordcloud %></div>
         </div>
+        <h2> Frequency of Swear Words </h2>
+        <div class="analysis_vertical_word">
+            <div>
+                <%- include('partials/table', {"table_data": bad_words_counter, txt: "Swear" }) %>
+            </div>
+            <div> <%- badWordPlot %></div>
+        </div>
+
         <h2> Frequency of Words </h2>
         <div class="analysis_vertical_word">
             <div>
-                <%- include('partials/table', {"table_data": bad_words_counter }) %>
-                <%- include('partials/table', {"table_data": stopwordz_counter }) %>
+                <%- include('partials/table', {"table_data": word_counter, txt: "Word" }) %>
             </div>
-            <div> <%- freqWord %></div>
+            <div> <%- freqWordPlot %></div>
         </div>
+
         <script>
             let figure = document.querySelector("#word-count-graph")
             let rects = figure.querySelectorAll("rect")

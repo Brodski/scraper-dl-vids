@@ -17,23 +17,30 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_lambda_function" "idontfront_lambda" {
-  depends_on = [ aws_s3_bucket_object.lambda_code ]
+  # depends_on = [ aws_s3_bucket_object.lambda_code ] # S3 zip
   function_name = var.lambda_name
   handler       = "iDontFront-app.lambdaHandler" 
   runtime       = "nodejs18.x"
   role          = aws_iam_role.lambda_writer_role.arn
 
+
+  ### Deploy: Docker Container
+  package_type = "Image"
+  image_uri = "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest"
+
+  ### Deploy: Zip S3... see lambda_code resource
+  # s3_bucket        = "idontfront-lambda-zips"
+  # s3_key           = "my_lambda.zip"
+
+  ### Deploy: Local Container
   # filename = data.archive_file.lambda_zip.output_path #"my_lambda.zip"
-  source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
-  # source_code_hash = filebase64sha256(local.zip_file_path)
+  # source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
 
   memory_size = 512
   timeout = 15 
   # architectures    = ["x86_64"]
   architectures    = ["arm64"]
 
-  s3_bucket        = "idontfront-lambda-zips"
-  s3_key           = "my_lambda.zip"
 
   environment {
     variables = {
@@ -45,15 +52,13 @@ resource "aws_lambda_function" "idontfront_lambda" {
   }
 }
 
-resource "aws_s3_bucket_object" "lambda_code" {
-  # bucket = aws_s3_bucket.lambda_bucket.bucket
-  bucket = "idontfront-lambda-zips"
-  key    = "my_lambda.zip"
-  source = data.archive_file.lambda_zip.output_path
-  etag   = filemd5(data.archive_file.lambda_zip.output_path)
-  # source = local.zip_file_path
-  # etag   = filemd5(local.zip_file_path)
-}
+# resource "aws_s3_bucket_object" "lambda_code" {
+#   # bucket = aws_s3_bucket.lambda_bucket.bucket
+#   bucket = "idontfront-lambda-zips"
+#   key    = "my_lambda.zip"
+#   source = data.archive_file.lambda_zip.output_path
+#   etag   = filemd5(data.archive_file.lambda_zip.output_path)
+# }
 
 
 resource "aws_lambda_permission" "lambda_api" {
@@ -73,5 +78,4 @@ resource "aws_cloudwatch_log_group" "example_lambda_log_group" {
 
 output "ouput_lambda_zip" {
   value       = data.archive_file.lambda_zip.output_path
-  # value       = local.zip_file_path
 }

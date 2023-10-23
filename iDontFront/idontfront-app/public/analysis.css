@@ -41,7 +41,7 @@ figure svg {
 }
 
 table {
-    font-size: 20px;
+    font-size: 22px;
     margin-right: 4px;
 }
 th {
@@ -51,6 +51,7 @@ td {
     padding: 0;
     max-width: 90px;
     line-height: 21px;
+    font-weight: normal;
 }
 .analysis_vertical_word {
     display: inline-flex;
@@ -58,4 +59,9 @@ td {
 svg {
     position: sticky;
     top: 20px;
+}
+
+tbody tr:first-child {
+    font-size: 30px;
+    border-bottom: 2pt solid pink;
 }

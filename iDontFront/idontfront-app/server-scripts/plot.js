@@ -1,4 +1,9 @@
-async function loadModule(stopwordz_counter) {
+
+const { JSDOM } = require("jsdom");
+
+async function loadModule(stopwordz_counter, chartTitle) {
+    const dom = new JSDOM('<!DOCTYPE html><p>Hello</p>');
+    // let document = dom.window.document;
     // const myModule = await import('./index.js');
     
     const Plot = await import('@observablehq/plot');
@@ -20,6 +25,7 @@ async function loadModule(stopwordz_counter) {
         marginRight: 10,
         marginBottom: 80,
         marginLeft: 40,
+        document: dom.window.document,
         // grid: true,
         // title: "Frequency of Words",
         // title: "For charts, an informative title",
@@ -68,7 +74,7 @@ async function loadModule(stopwordz_counter) {
                 // filter: (_, i) => i % 5 === 4,
             }),
             // 'title'
-            Plot.text(["Frequency of Words"], {lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
+            Plot.text([chartTitle], {lineWidth: 30, frameAnchor: "top", fontSize: 16, fontWeight: 700}),
             
             // Plot.ruleY([-10, 0, 10])
         ],  

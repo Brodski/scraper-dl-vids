@@ -1,4 +1,8 @@
 cd terraform  
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com
+docker build -t idontfront .
+docker tag idontfront:latest 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest
+docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest
 terraform apply --var-file="sensitive-vars.tfvars"  
 terraform apply --var-file="sensitive-vars.tfvars"  
 terraform apply --var-file="sensitive-vars.tfvars"  
@@ -20,7 +24,7 @@ npm i d3
 npm i stopword  
 npm i d3-cloud  
 npm install canvas  (required by jsondom)  
-npm i puppeteer  
+<!-- npm i puppeteer   -->
   
   
   

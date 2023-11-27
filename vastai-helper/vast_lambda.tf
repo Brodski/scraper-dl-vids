@@ -1,27 +1,21 @@
-variable "VAST_API_KEY" {
-  description = "Secret API Key"
-  type        = string
-  sensitive   = true
-  default     = "x" 
-  # terraform apply -var "api_key=1234567890"
-  # OR
-  # export TF_VAR_api_key="your_actual_api_key_here" --- LINUX
-  # $env:TF_VAR_api_key = "your_actual_api_key_here" --- WINDOWS
-  # OR
-  # load 'api_key' from the .env file
-}
-variable "MY_AWS_SECRET_ACCESS_KEY" {
-  description = "Secret AWS Access Key"
-  type        = string
-  sensitive   = true
-  default     = "XX" 
-}
-variable "MY_AWS_ACCESS_KEY_ID" {
-  description = "AWS Access ID"
-  type        = string
-  sensitive   = true
-  default     = "XXX" 
-}
+# variable "VAST_API_KEY" {
+#   description = "Secret API Key"
+#   type        = string
+#   sensitive   = true
+#   default     = "x" 
+# }
+# variable "MY_AWS_SECRET_ACCESS_KEY" {
+#   description = "Secret AWS Access Key"
+#   type        = string
+#   sensitive   = true
+#   default     = "XX" 
+# }
+# variable "MY_AWS_ACCESS_KEY_ID" {
+#   description = "AWS Access ID"
+#   type        = string
+#   sensitive   = true
+#   default     = "XXX" 
+# }
 
 provider "aws" {
   region = "us-east-1"
@@ -67,11 +61,11 @@ resource "aws_lambda_function" "example_lambda" {
   depends_on = [data.archive_file.lambda_zip]
   environment {
     variables = {
-      MY_VARIABLE     = "MyValue"
-      VAST_API_KEY    = var.VAST_API_KEY
+      # MY_VARIABLE     = "MyValue"
+      # VAST_API_KEY    = var.VAST_API_KEY
       IS_CREATE_INSTANCE = "true"
-      MY_AWS_SECRET_ACCESS_KEY = var.MY_AWS_SECRET_ACCESS_KEY
-      MY_AWS_ACCESS_KEY_ID = var.MY_AWS_ACCESS_KEY_ID
+      # MY_AWS_SECRET_ACCESS_KEY = var.MY_AWS_SECRET_ACCESS_KEY
+      # MY_AWS_ACCESS_KEY_ID = var.MY_AWS_ACCESS_KEY_ID
     }
   }
 }

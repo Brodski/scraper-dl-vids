@@ -1,9 +1,9 @@
-# from urllib import request
+import argparse
+import time
 import urllib.request
 import urllib.parse
 import json
 import os
-# import argparse
 from urllib.parse import quote_plus  # Python 3+
 try:
     from dotenv import load_dotenv
@@ -23,6 +23,7 @@ disk = 32.0 # Gb
 image = "cbrodski/audio2text:latest"
 storage_cost = "0.3"
 blacklist_gpus = ["GTX 1070"]
+blacklist_ids = []
 
 # copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
@@ -74,6 +75,42 @@ def create_instance(instance_id):
         print(response_data.decode('utf-8'))
     print("DONE :)")
 
+# Again, copy pasted
+def show_instances():
+    url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY
+    response = urllib.request.urlopen(url)
+    if response.status != 200:
+        print('sadge')
+        exit()
+    data = response.read()
+    json_data = json.loads(data)
+    # return json_data.get("offers")
+    print ("json_data")
+    print ("json_data")
+    print ("json_data")
+    # print (json_data)
+    rows = json_data.get("instances")
+    for row in rows:
+        row['duration'] = time.time() - row['start_date'] 
+        print("id: " + str(row['id']) + ", time running: " + str(row['duration']))
+    printAsTable(rows)
+    return(rows)
+
+def destroy_instance(id):
+    url = "https://console.vast.ai/api/v0/instances/" + id + "/?api_key=" + VAST_API_KEY
+    data_dict = {}
+    data_json = json.dumps(data_dict).encode('utf-8')
+
+    request = urllib.request.Request(url, data=data_json, method='DELETE')
+    with urllib.request.urlopen(request) as response:
+        response_data = response.read()
+        print(response_data.decode('utf-8'))
+
+        status_code = response.getcode()
+        print("Status Code:", status_code)
+    print("DONE :)")
+
+
 
 def printAsTable(goodOffers):
     # Print shit
@@ -91,11 +128,8 @@ def printAsTable(goodOffers):
         print()
 
         
-def handler_kickit(event, context): 
+def handler_kickit(): 
     create_auto = False
-    # parser = argparse.ArgumentParser(description="Arg parser :D")
-    # parser.add_argument("--create-auto",  action="store_true", help="Set if you want to create")
-    # args = parser.parse_args()
 
     everything_request = '''{
             "q":{ 
@@ -112,40 +146,44 @@ def handler_kickit(event, context):
     print("======================")
     print("======================")
     print("======================")
-    print("======================")
-    print("======================")
     offers = requestOffersHttp(json.loads(everything_request))
-    x = json.dumps(offers, indent=2)
-    print(x)
+    offerz = json.dumps(offers, indent=2)
+    print("offerz[0]")
+    print(offerz[0])
     print("== GO BABY GO ==")
-    counter = 0
+    good_offers_counter = 0
     goodOffers = []
     for offer in offers:
+        id = "id: " + str(offer.get("id"))
         if offer.get("cuda_max_good") < int(cuda_vers):
-            # print("skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
+            print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
         if offer.get("dph_total") > float(dph):
-            # print("skipping dph: " + str(offer.get("dph")))
+            print(id + " skipping dph: " + str(offer.get("dph")))
             continue
         if offer.get("cpu_ram") < float(cpu_ram):
-            # print("skipping cpu_ram: " + str(offer.get("cpu_ram")))
+            print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
             continue
         if offer.get("disk_space") < float(disk_space):
-            # print("skipping disk_space: " + str(offer.get("disk_space")))
+            print(id + " skipping disk_space: " + str(offer.get("disk_space")))
             continue
         if offer.get("storage_cost") > float(storage_cost):
-            print("skipping storage_cost: " + str(offer.get("storage_cost")))
+            print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
             continue
         if offer.get("gpu_name") in blacklist_gpus:
-            print("skipping blacklist_gpus: " + str(offer.get("gpu_name")))
+            print(id + " skipping blacklist_gpus: " + str(offer.get("gpu_name")))
+            continue
+        if str(offer.get("id")) in blacklist_ids:
+            print(id + " skipping blacklist_ids: " + str(offer.get("id")))
             continue
         print("======================")
+        print("ADDING " + id)
         goodOffers.append(offer)
-        counter = counter + 1
+        good_offers_counter = good_offers_counter + 1
     
 
     print("offers COUNT: " + str(len(offers)))
-    print("counter: " + str(counter))
+    print("good_offers_counter: " + str(good_offers_counter))
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
     instance_first = goodOffers[0]
     print("instance_first")
@@ -156,15 +194,58 @@ def handler_kickit(event, context):
     printAsTable(goodOffers)
         
     if create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
-        # print(f"create_auto: {args.create_auto}")
         print(f'os.environ.get("IS_CREATE_INSTANCE"): {os.environ.get("IS_CREATE_INSTANCE")}')
-        create_instance(instance_first.get("id"))
-    # exit()
+        id_create = instance_first.get("id")
+        create_instance(id_create)
+        pollCompletion(id_create, time.time())
+
+def pollCompletion(id_create, start_time):
+    time.sleep(60) 
+    execution_time = (time.time() - start_time) * 60
+    id_create = str(id_create)
+    rows = show_instances()
+    print("execution_time")
+    print(execution_time)
+    for row in rows:
+        row_id = str(row['id'])
+        if row_id == id_create:
+            status_msg = row["status_msg"]
+            actual_status = row["actual_status"]
+            print("status_msg: " + status_msg)
+            print("actual_status: " + actual_status)
+    if "unable to find image" in status_msg.lower():
+        print("nope not ready, end it")
+        try_again(str(row['id']))
+        return
+    if actual_status == "loading" and execution_time > 11: # minutes 
+        try_again(str(row['id']))
+        return
+    if actual_status == "running":
+        print("Running, we're done :)")
+        return
+    return pollCompletion(id_create, start_time)
+
+def try_again(id):
+    print("end it")
+    destroy_instance(id)
+    blacklist_ids.append(id)
+    handler_kickit()
 
 if __name__ == '__main__':
-    test_event = {}  # Populate with a sample event if needed
-    handler_kickit(test_event, None)
     
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--garbage', action='store_true', help='An example flag')
+    args = parser.parse_args()
+    if args.garbage:
+        print("The --garbage flag was used!")
+        pollCompletion("7651097", time.time())
+    else:
+        print("The --garbage flag was not used.")
+        handler_kickit()
+    
+    
+    
+
     # "id": 6585613,
     # "gpu_name": "A100 SXM4",
     # "dlperf": 70.164811,

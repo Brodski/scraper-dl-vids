@@ -303,7 +303,8 @@ instance_fields = (
     ("inet_down", "Net down", "{:0.1f}", None, True),
     ("reliability2", "R", "{:0.1f}", lambda x: x * 100, True),
     ("label", "Label", "{}", None, True),
-    ("duration", "duration(sec)", "{:0.8f}",  lambda x: x/(60.0), True),
+    # ("duration", "duration(sec)", "{:0.8f}",  lambda x: x/(60.0), True), lol no vast is wrong
+    ("duration", "duration(min)", "{:0.8f}",  lambda x: x/(60.0), True),
 )
 
 ipaddr_fields = (
@@ -911,6 +912,10 @@ def destroy__instance(args):
     :param argparse.Namespace args: should supply all the command-line options
     """
     url = apiurl(args, "/instances/{id}/".format(id=args.id))
+    print ("DESTORY INSTANCE")
+    print ("url")
+    print (url)
+    # return
     r = requests.delete(url, json={})
     r.raise_for_status()
     if args.raw:
@@ -1148,10 +1153,14 @@ def stop__instance(args):
     :rtype:
     """
     url = apiurl(args, "/instances/{id}/".format(id=args.id))
+    print("STOP INSTANCE")
+    print(url)
     json_blob ={"state": "stopped"}
     if (args.explain):
         print("request json: ")
         print(json_blob)
+    print("request json: ")
+    print(json_blob)
     r = requests.put(url, json=json_blob)
     r.raise_for_status()
 

@@ -1,6 +1,7 @@
-cd terraform  
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com
+cd idontfront-app
 docker build -t idontfront .
+cd ../terraform  
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com
 docker tag idontfront:latest 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest
 docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:latest
 terraform apply --var-file="sensitive-vars.tfvars"  

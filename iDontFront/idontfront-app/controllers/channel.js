@@ -24,7 +24,7 @@ exports.channel = async (req, res) => {
     let transcript_s3_json;
     let transcript_s3_txt;
     let vod;
-    let profilePic = getProfilePic(custom_metadata);
+    let profilePic = channelHelper.getProfilePic(req, custom_metadata);
     console.log("-----------------------------------------------------")
     // console.log("-----------------------------------------------------")
     // console.log("-----------------------------------------------------")
@@ -61,6 +61,8 @@ exports.channel = async (req, res) => {
     //  ***************************************
     if (req.params.id == null) {
         let completedVods = await channelHelper.getVodsCompleted(req.params.name)
+        // res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // <--- Do not keep a stored version of this response (because of no-store). If, for some reason, there is a cached copy, always validate it with the server before using it (no-cache and must-revalidate).
+        res.setHeader('Cache-Control', 'public, max-age=3600');
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
@@ -104,8 +106,6 @@ exports.channel = async (req, res) => {
     //  ***************************************
     if (req.params.id != null && req.path.includes("/wordtree")) {
         let sentence_arr = await channelHelper.prepWordTree(transcript_s3_txt)
-        console.log("SENTENCE_AAAAAAAAAR")
-        console.log(sentence_arr)
         res.render("../views/wordtree", {
             "sentence_arr": sentence_arr,
             "channel": vod.channel,
@@ -134,17 +134,5 @@ exports.channel = async (req, res) => {
         return
     }
 
-    function getProfilePic(custom_metadata) {
-        let profilePic;
-        if (req.params.name == "lolgeranimo") {
-            profilePic = "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100"
-        } 
-        else {
-            let firstKey = Object.keys(custom_metadata)[0]
-            profilePic = custom_metadata[firstKey]?.logo
-        }
-        return profilePic
-    }
-    
 }
 

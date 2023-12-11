@@ -1,0 +1,419 @@
+Item 1:
+yt_meta.channel = lolgeranimo
+yt_meta.link = /videos/5057810
+yt_meta.metadata = {"id": "v5057810", "title": "Calculated", "description": "Because Draven  ", "duration": 40, "thumbnail": "https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/587ccdf0d9_lolgeranimo_14398227328_243034950/thumb/thumb0-90x60.jpg", "uploader": "LoLGeranimo", "uploader_id": "lolgeranimo", "timestamp": 1431512245, "view_count": 1949, "chapters": [], "is_live": false, "was_live": true, "formats": [{"format_id": "sb1", "format_note": "storyboard", "ext": "mhtml", "protocol": "mhtml", "acodec": "none", "vcodec": "none", "url": "https://d2nvs31859zcd8.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/storyboards/5057810-low-0.jpg", "width": 110, "height": 62, "fps": 0.2, "rows": 2, "columns": 5, "fragments": [{"url": "https://d2nvs31859zcd8.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/storyboards/5057810-low-0.jpg", "duration": 40.0}], "resolution": "110x62", "aspect_ratio": 1.77, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "none", "video_ext": "none", "format": "sb1 - 110x62 (storyboard)"}, {"format_id": "sb0", "format_note": "storyboard", "ext": "mhtml", "protocol": "mhtml", "acodec": "none", "vcodec": "none", "url": "https://d2nvs31859zcd8.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/storyboards/5057810-high-0.jpg", "width": 220, "height": 124, "fps": 0.2, "rows": 2, "columns": 5, "fragments": [{"url": "https://d2nvs31859zcd8.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/storyboards/5057810-high-0.jpg", "duration": 40.0}], "resolution": "220x124", "aspect_ratio": 1.77, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "none", "video_ext": "none", "format": "sb0 - 220x124 (storyboard)"}, {"format_id": "Audio_Only", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/audio_only/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 176.51, "ext": "mp4", "fps": null, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "vcodec": "none", "acodec": "mp4a.40.2", "dynamic_range": null, "resolution": "audio only", "aspect_ratio": null, "filesize_approx": 903731, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 176.51, "format": "Audio_Only - audio only"}, {"format_id": "226p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/mobile/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 268.579, "ext": "mp4", "fps": 19.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 400, "height": 226, "vcodec": "avc1.42C00D", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "400x226", "aspect_ratio": 1.77, "filesize_approx": 1375124, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 268.579, "abr": 0.0, "format": "226p - 400x226"}, {"format_id": "360p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/low/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 596.767, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 640, "height": 360, "vcodec": "avc1.42C01E", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "640x360", "aspect_ratio": 1.78, "filesize_approx": 3055447, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 596.767, "abr": 0.0, "format": "360p - 640x360"}, {"format_id": "480p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/medium/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 857.385, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 852, "height": 480, "vcodec": "avc1.42C01E", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "852x480", "aspect_ratio": 1.77, "filesize_approx": 4389811, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 857.385, "abr": 0.0, "format": "480p - 852x480"}, {"format_id": "720p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/high/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 1561.055, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 1280, "height": 720, "vcodec": "avc1.42C01F", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "1280x720", "aspect_ratio": 1.78, "filesize_approx": 7992601, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 1561.055, "abr": 0.0, "format": "720p - 1280x720"}, {"format_id": "1080p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/chunked/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 2194.681, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": 10, "has_drm": null, "width": 1920, "height": 1080, "vcodec": "avc1.4D4029", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "format_note": "Source", "resolution": "1920x1080", "aspect_ratio": 1.78, "filesize_approx": 11236766, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 2194.681, "abr": 0.0, "format": "1080p - 1920x1080 (Source)"}], "subtitles": {"rechat": [{"url": "https://api.twitch.tv/v5/videos/5057810/comments?client_id=kimne78kx3ncx6brgo4mv6wki5h1ko", "ext": "json"}]}, "webpage_url": "https://www.twitch.tv/videos/5057810", "original_url": "https://www.twitch.tv/videos/5057810", "webpage_url_basename": "5057810", "webpage_url_domain": "twitch.tv", "extractor": "twitch:vod", "extractor_key": "TwitchVod", "playlist": null, "playlist_index": null, "thumbnails": [{"url": "https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/587ccdf0d9_lolgeranimo_14398227328_243034950/thumb/thumb0-90x60.jpg", "id": "0"}], "display_id": "v5057810", "fulltitle": "Calculated", "duration_string": "40", "upload_date": "20150513", "live_status": "was_live", "requested_subtitles": null, "_has_drm": null, "requested_downloads": [{"format_id": "Audio_Only", "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/audio_only/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 176.51, "ext": "mp4", "protocol": "m3u8_native", "vcodec": "none", "acodec": "mp4a.40.2", "resolution": "audio only", "filesize_approx": 903731, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 176.51, "format": "Audio_Only - audio only", "epoch": 1683793839, "_filename": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\Calculated-v5057810.mp4", "__postprocessors": [], "__real_download": false, "__finaldir": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw", "filepath": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\Calculated-v5057810.mp4", "__write_download_archive": true}], "format_id": "Audio_Only", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/587ccdf0d9_lolgeranimo_14398227328_243034950/audio_only/highlight-5057810.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/5057810.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865841%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A5057810%7D&nauthsig=7542d870e83fe6ce5f3c2874beff6699779eb18b", "tbr": 176.51, "ext": "mp4", "fps": null, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "vcodec": "none", "acodec": "mp4a.40.2", "dynamic_range": null, "resolution": "audio only", "aspect_ratio": null, "filesize_approx": 903731, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 176.51, "format": "Audio_Only - audio only"}
+
+
+''''''''''''''''''''''''''
+Item 2:
+yt_meta.channel = lolgeranimo
+yt_meta.link = /videos/28138895
+yt_meta.metadata = {"id": "v28138895", "title": "The Geraniproject! I Love You Guys!!!", "description": "I cannot thank everyone for the most amazing support anyone could ask for &lt;3  ", "duration": 1047, "thumbnail": "https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/f061647ec0_lolgeranimo_18013237200_358006122//thumb/thumb28138895-90x60.jpg", "uploader": "LoLGeranimo", "uploader_id": "lolgeranimo", "timestamp": 1449194330, "view_count": 707, "chapters": [{"title": "League of Legends", "start_time": 0, "end_time": 1047}], "is_live": false, "was_live": true, "formats": [{"format_id": "Audio_Only", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/audio_only/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 152.394, "ext": "mp4", "fps": null, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "vcodec": "none", "acodec": "mp4a.40.2", "dynamic_range": null, "resolution": "audio only", "aspect_ratio": null, "filesize_approx": 20423234, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 152.394, "format": "Audio_Only - audio only"}, {"format_id": "226p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/mobile/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 260.223, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 400, "height": 226, "vcodec": "avc1.42C00D", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "400x226", "aspect_ratio": 1.77, "filesize_approx": 34874045, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 260.223, "abr": 0.0, "format": "226p - 400x226"}, {"format_id": "360p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/low/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 592.248, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 640, "height": 360, "vcodec": "avc1.42C01E", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "640x360", "aspect_ratio": 1.78, "filesize_approx": 79370707, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 592.248, "abr": 0.0, "format": "360p - 640x360"}, {"format_id": "480p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/medium/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 852.471, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 852, "height": 480, "vcodec": "avc1.42C01E", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "852x480", "aspect_ratio": 1.77, "filesize_approx": 114244753, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 852.471, "abr": 0.0, "format": "480p - 852x480"}, {"format_id": "720p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/high/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 1581.954, "ext": "mp4", "fps": 29.999, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "width": 1280, "height": 720, "vcodec": "avc1.42C01F", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "resolution": "1280x720", "aspect_ratio": 1.78, "filesize_approx": 212007147, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 1581.954, "abr": 0.0, "format": "720p - 1280x720"}, {"format_id": "1080p", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/chunked/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 3712.584, "ext": "mp4", "fps": 30.0, "protocol": "m3u8_native", "preference": null, "quality": 10, "has_drm": null, "width": 1920, "height": 1080, "vcodec": "avc1.4D4029", "acodec": "mp4a.40.2", "dynamic_range": "SDR", "format_note": "Source", "resolution": "1920x1080", "aspect_ratio": 1.78, "filesize_approx": 497545657, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "video_ext": "mp4", "audio_ext": "none", "vbr": 3712.584, "abr": 0.0, "format": "1080p - 1920x1080 (Source)"}], "subtitles": {"rechat": [{"url": "https://api.twitch.tv/v5/videos/28138895/comments?client_id=kimne78kx3ncx6brgo4mv6wki5h1ko", "ext": "json"}]}, "webpage_url": "https://www.twitch.tv/videos/28138895", "original_url": "https://www.twitch.tv/videos/28138895", "webpage_url_basename": "28138895", "webpage_url_domain": "twitch.tv", "extractor": "twitch:vod", "extractor_key": "TwitchVod", "playlist": null, "playlist_index": null, "thumbnails": [{"url": "https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/f061647ec0_lolgeranimo_18013237200_358006122//thumb/thumb28138895-90x60.jpg", "id": "0"}], "display_id": "v28138895", "fulltitle": "The Geraniproject! I Love You Guys!!!", "duration_string": "17:27", "upload_date": "20151204", "live_status": "was_live", "requested_subtitles": null, "_has_drm": null, "requested_downloads": [{"format_id": "Audio_Only", "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/audio_only/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 152.394, "ext": "mp4", "protocol": "m3u8_native", "vcodec": "none", "acodec": "mp4a.40.2", "resolution": "audio only", "filesize_approx": 20423234, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 152.394, "format": "Audio_Only - audio only", "epoch": 1683793840, "_filename": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\The Geraniproject! I Love You Guys!!!-v28138895.mp4", "__postprocessors": [], "__real_download": false, "__finaldir": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw", "filepath": "C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\The Geraniproject! I Love You Guys!!!-v28138895.mp4", "__write_download_archive": true}], "format_id": "Audio_Only", "format_index": null, "url": "https://dqrpb9wgowsf5.cloudfront.net/f061647ec0_lolgeranimo_18013237200_358006122/audio_only/highlight-28138895-muted-5T7N0IKHRR.m3u8", "manifest_url": "https://usher.ttvnw.net/vod/28138895.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865842%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A28138895%7D&nauthsig=c2dc6b80edca014aa5a87974b62672037a572928", "tbr": 152.394, "ext": "mp4", "fps": null, "protocol": "m3u8_native", "preference": null, "quality": null, "has_drm": null, "vcodec": "none", "acodec": "mp4a.40.2", "dynamic_range": null, "resolution": "audio only", "aspect_ratio": null, "filesize_approx": 20423234, "http_headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Language": "en-us,en;q=0.5", "Sec-Fetch-Mode": "navigate"}, "audio_ext": "mp4", "video_ext": "none", "abr": 152.394, "format": "Audio_Only - audio only"}
+
+''''''''''''''''''''''''''
+Item 3
+yt_meta.channel = lck
+yt_meta.link = /videos/576354726
+yt_meta.metadata = {
+   "id":"v576354726",
+   "title":"Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]",
+   "description":null,
+   "duration":554,
+   "thumbnail":"https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/ceafbb91c4a685c97865_lck_43574810415_2265345646//thumb/thumb576354726-90x60.jpg",
+   "uploader":"LCK",
+   "uploader_id":"lck",
+   "timestamp":1585274497,
+   "view_count":10262,
+   "chapters":[
+      {
+         "title":"League of Legends",
+         "start_time":0,
+         "end_time":554
+      }
+   ],
+   "is_live":false,
+   "was_live":true,
+   "formats":[
+      {
+         "format_id":"sb1",
+         "format_note":"storyboard",
+         "ext":"mhtml",
+         "protocol":"mhtml",
+         "acodec":"none",
+         "vcodec":"none",
+         "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-low-0.jpg",
+         "width":110,
+         "height":62,
+         "fps":0.2003610108303249,
+         "rows":23,
+         "columns":5,
+         "fragments":[
+            {
+               "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-low-0.jpg",
+               "duration":554.0
+            }
+         ],
+         "resolution":"110x62",
+         "aspect_ratio":1.77,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "audio_ext":"none",
+         "video_ext":"none",
+         "format":"sb1 - 110x62 (storyboard)"
+      },
+      {
+         "format_id":"sb0",
+         "format_note":"storyboard",
+         "ext":"mhtml",
+         "protocol":"mhtml",
+         "acodec":"none",
+         "vcodec":"none",
+         "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-high-0.jpg",
+         "width":220,
+         "height":124,
+         "fps":0.2003610108303249,
+         "rows":10,
+         "columns":5,
+         "fragments":[
+            {
+               "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-high-0.jpg",
+               "duration":184.66666666666666
+            },
+            {
+               "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-high-1.jpg",
+               "duration":184.66666666666666
+            },
+            {
+               "url":"https://d2nvs31859zcd8.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/storyboards/576354726-high-2.jpg",
+               "duration":184.66666666666666
+            }
+         ],
+         "resolution":"220x124",
+         "aspect_ratio":1.77,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "audio_ext":"none",
+         "video_ext":"none",
+         "format":"sb0 - 220x124 (storyboard)"
+      },
+      {
+         "format_id":"Audio_Only",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/audio_only/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":188.935,
+         "ext":"mp4",
+         "fps":null,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "vcodec":"none",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":null,
+         "resolution":"audio only",
+         "aspect_ratio":null,
+         "filesize_approx":13397758,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "audio_ext":"mp4",
+         "video_ext":"none",
+         "abr":188.935,
+         "format":"Audio_Only - audio only"
+      },
+      {
+         "format_id":"160p",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/160p30/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":290.711,
+         "ext":"mp4",
+         "fps":29.968,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "width":284,
+         "height":160,
+         "vcodec":"avc1.4D400C",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "resolution":"284x160",
+         "aspect_ratio":1.77,
+         "filesize_approx":20614898,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":290.711,
+         "abr":0.0,
+         "format":"160p - 284x160"
+      },
+      {
+         "format_id":"360p",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/360p30/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":709.256,
+         "ext":"mp4",
+         "fps":29.968,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "width":640,
+         "height":360,
+         "vcodec":"avc1.4D401E",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "resolution":"640x360",
+         "aspect_ratio":1.78,
+         "filesize_approx":50294761,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":709.256,
+         "abr":0.0,
+         "format":"360p - 640x360"
+      },
+      {
+         "format_id":"480p",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/480p30/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":1374.481,
+         "ext":"mp4",
+         "fps":29.968,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "width":852,
+         "height":480,
+         "vcodec":"avc1.4D401E",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "resolution":"852x480",
+         "aspect_ratio":1.77,
+         "filesize_approx":97467196,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":1374.481,
+         "abr":0.0,
+         "format":"480p - 852x480"
+      },
+      {
+         "format_id":"720p",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/720p30/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":2244.417,
+         "ext":"mp4",
+         "fps":29.968,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "width":1280,
+         "height":720,
+         "vcodec":"avc1.4D401F",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "resolution":"1280x720",
+         "aspect_ratio":1.78,
+         "filesize_approx":159156098,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":2244.417,
+         "abr":0.0,
+         "format":"720p - 1280x720"
+      },
+      {
+         "format_id":"720p60",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/720p60/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":3114.299,
+         "ext":"mp4",
+         "fps":59.937,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":null,
+         "has_drm":null,
+         "width":1280,
+         "height":720,
+         "vcodec":"avc1.4D401F",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "resolution":"1280x720",
+         "aspect_ratio":1.78,
+         "filesize_approx":220841170,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":3114.299,
+         "abr":0.0,
+         "format":"720p60 - 1280x720"
+      },
+      {
+         "format_id":"1080p60",
+         "format_index":null,
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/chunked/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":6358.507,
+         "ext":"mp4",
+         "fps":59.937,
+         "protocol":"m3u8_native",
+         "preference":null,
+         "quality":10,
+         "has_drm":null,
+         "width":1920,
+         "height":1080,
+         "vcodec":"avc1.64002A",
+         "acodec":"mp4a.40.2",
+         "dynamic_range":"SDR",
+         "format_note":"Source",
+         "resolution":"1920x1080",
+         "aspect_ratio":1.78,
+         "filesize_approx":450894448,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "video_ext":"mp4",
+         "audio_ext":"none",
+         "vbr":6358.507,
+         "abr":0.0,
+         "format":"1080p60 - 1920x1080 (Source)"
+      }
+   ],
+   "subtitles":{
+      "rechat":[
+         {
+            "url":"https://api.twitch.tv/v5/videos/576354726/comments?client_id=kimne78kx3ncx6brgo4mv6wki5h1ko",
+            "ext":"json"
+         }
+      ]
+   },
+   "webpage_url":"https://www.twitch.tv/videos/576354726",
+   "original_url":"https://www.twitch.tv/videos/576354726",
+   "webpage_url_basename":"576354726",
+   "webpage_url_domain":"twitch.tv",
+   "extractor":"twitch:vod",
+   "extractor_key":"TwitchVod",
+   "playlist":null,
+   "playlist_index":null,
+   "thumbnails":[
+      {
+         "url":"https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/ceafbb91c4a685c97865_lck_43574810415_2265345646//thumb/thumb576354726-90x60.jpg",
+         "id":"0"
+      }
+   ],
+   "display_id":"v576354726",
+   "fulltitle":"Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]",
+   "duration_string":"9:14",
+   "upload_date":"20200327",
+   "live_status":"was_live",
+   "requested_subtitles":null,
+   "_has_drm":null,
+   "requested_downloads":[
+      {
+         "format_id":"Audio_Only",
+         "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/audio_only/highlight-576354726.m3u8",
+         "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+         "tbr":188.935,
+         "ext":"mp4",
+         "protocol":"m3u8_native",
+         "vcodec":"none",
+         "acodec":"mp4a.40.2",
+         "resolution":"audio only",
+         "filesize_approx":13397758,
+         "http_headers":{
+            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language":"en-us,en;q=0.5",
+            "Sec-Fetch-Mode":"navigate"
+         },
+         "audio_ext":"mp4",
+         "video_ext":"none",
+         "abr":188.935,
+         "format":"Audio_Only - audio only",
+         "epoch":1683793841,
+         "_filename":"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\Clip\uff1a AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp4",
+         "__postprocessors":[
+            
+         ],
+         "__real_download":false,
+         "__finaldir":"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw",
+         "filepath":"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\SSScrapey\\assets\\raw\\Clip\uff1a AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp4",
+         "__write_download_archive":true
+      }
+   ],
+   "format_id":"Audio_Only",
+   "format_index":null,
+   "url":"https://dqrpb9wgowsf5.cloudfront.net/ceafbb91c4a685c97865_lck_43574810415_2265345646/audio_only/highlight-576354726.m3u8",
+   "manifest_url":"https://usher.ttvnw.net/vod/576354726.m3u8?allow_source=true&allow_audio_only=true&allow_spectre=true&player=twitchweb&playlist_include_framerate=true&nauth=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3Anull%2C%22expires%22%3A1683865843%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3Anull%2C%22version%22%3A2%2C%22vod_id%22%3A576354726%7D&nauthsig=24e38bc5ab7b7735032e2329dfe8f0464e1f82d3",
+   "tbr":188.935,
+   "ext":"mp4",
+   "fps":null,
+   "protocol":"m3u8_native",
+   "preference":null,
+   "quality":null,
+   "has_drm":null,
+   "vcodec":"none",
+   "acodec":"mp4a.40.2",
+   "dynamic_range":null,
+   "resolution":"audio only",
+   "aspect_ratio":null,
+   "filesize_approx":13397758,
+   "http_headers":{
+      "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+      "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language":"en-us,en;q=0.5",
+      "Sec-Fetch-Mode":"navigate"
+   },
+   "audio_ext":"mp4",
+   "video_ext":"none",
+   "abr":188.935,
+   "format":"Audio_Only - audio only"
+}

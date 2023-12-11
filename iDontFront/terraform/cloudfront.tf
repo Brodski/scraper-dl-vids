@@ -31,6 +31,10 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "bski-captions-id"
+
+    default_ttl = 43200       # Default TTL set to 12 hour
+    max_ttl     = 172800      # Max TTL set to 48 hours
+    min_ttl     = 0           # Min TTL set to 0 minute
     forwarded_values {
       query_string = false
 
@@ -40,9 +44,6 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     }
     viewer_protocol_policy = "redirect-to-https"
     # viewer_protocol_policy = "allow-all" #One of allow-all, https-only, or redirect-to-https.
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
   }
   # logging_config {
   #   include_cookies = false

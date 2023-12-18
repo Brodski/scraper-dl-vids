@@ -228,7 +228,7 @@ def getScrapeData():
         language = x["language"],
         logo= x["logo"],
         twitchurl= x["twitchurl"],
-        url= x["url"]
+        name_id= x["url"]
       )
       scrapArr.append(scrapped)
     # return initScrapeData

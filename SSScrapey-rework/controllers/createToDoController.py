@@ -50,7 +50,7 @@ import env_file as env_varz
 
 def doItAllSully(*, isDebug=False, isEnd=False):
     topChannels = getTopChannels()
-    topChannels = tidyData(topChannels) # relevant_data = /mocks/initScrapData.py
+    topChannels = instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     topChannels = addVipList(topChannels) # same ^ but with gera
     scrapped_channels = seleniumController.scrape4VidHref(topChannels, isDebug)
 
@@ -82,7 +82,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     for i in range(loopMax):
         startAt = (i * pageSize) 
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
-        url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
+        url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
         response = requests.get(url, headers=headers)
         print ("    (getTopChannels) ----------------------")
         print ("    " + url)
@@ -103,7 +103,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
                     # print('    (getTopChannels) language=' + str(obj.get('language')))
                     # print('    (getTopChannels) viewminutes=' + str(obj.get('viewminutes')))
                     # print('    (getTopChannels) logo=' + str(obj.get('logo')))
-                    # print('    (getTopChannels) rownum=' + str(obj.get('rownum')))
+                    # print('    (getTopChannels) current_rank=' + str(obj.get('current_rank')))
                     cnt= cnt + 1
         else:
             print(f'Error: {response.status_code}')
@@ -112,16 +112,17 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     return complete_json
 
 
-def tidyData(json_object):
+def instantiateJsonToClassObj(json_object):
     relevant_list: List[ScrappedChannel] = []
     for channel in json_object['data']: 
+        # print(channel)
         scrapped_channel = ScrappedChannel(
             displayname=channel.get('displayname'), 
             language=channel.get('language'), 
             logo=channel.get('logo'), 
-            rownum=channel.get('rownum'), 
+            current_rank=channel.get('rownum'), 
             twitchurl=channel.get('twitchurl'), 
-            url=channel.get('url')
+            name_id=channel.get('url')
         )
         relevant_list.append(scrapped_channel)
     return relevant_list
@@ -147,7 +148,12 @@ def addVipList(channels: List[ScrappedChannel]):
             "rownum": -1
         })
     for vip in VIP_LIST:
-        scrapped_channel = ScrappedChannel(displayname=vip.get("displayname"),language=vip.get("language"),logo=vip.get("logo"),twitchurl=vip.get("twitchurl"),url=vip.get("url"),rownum=vip.get("rownum"))
+        scrapped_channel = ScrappedChannel(displayname=vip.get("displayname"),
+                                           language=vip.get("language"),
+                                           logo=vip.get("logo"),
+                                           twitchurl=vip.get("twitchurl"),
+                                           name_id=vip.get("url"),
+                                           current_rank=vip.get("rownum"))
         channels.insert(0,scrapped_channel)
     return channels
 

@@ -3,6 +3,7 @@ import urllib
 import controllers.seleniumController as seleniumController
 import controllers.createToDoController as createToDoController
 import controllers.databaseController as databaseController
+import controllers.MicroDownloader.downloader as downloader
 import mocks.initScrapData
 import mocks.initHrefsData
 import mocks.ytdlObjMetaDataList
@@ -31,37 +32,73 @@ import env_file as env_varz
 # S3        - uploads audio
 # S3        - updates completed json
 #####################################################
+#
+#       Microservice 1
+#
+#####################################################
 def kickit(isDebug=False):
     
     # Make http request to sullygnome. 3rd party website
     topChannels = createToDoController.getTopChannels() 
     
-    scrapped_channels: List[ScrappedChannel] = createToDoController.tidyData(topChannels) # relevant_data = /mocks/initScrapData.py
+    scrapped_channels: List[ScrappedChannel] = createToDoController.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     scrapped_channels: List[ScrappedChannel]  = createToDoController.addVipList(scrapped_channels) # same ^ but with gera
+    # if isDebug:
+    #     scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+    #     print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+    # else:
+    #     scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+    scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
-    if isDebug:
-        scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-        print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-    else:
-        scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+    databaseController.updateDb1(scrapped_channels)
+    return "done'"
 
-    # TODO 
-    # TODO 
-    # TODO 
-    # TODO 
-    # TODO update the TODO table and the VODS table with "scrapped_channels" data (status=in prog)
-    # TODO and make a query right before to check data, (do not overwrite, update, ect)
+    # doUploadStuff(scrapped_channels, metadata_Ytdl_list)
 
-    databaseController.updateDbTodo(scrapped_channels)
+    return "Finished kickit()"
 
-    metadata_Ytdl_list = initYtdlAudio(scrapped_channels, isDebug=isDebug)
+#####################################################
+#
+#       Microservice 2
+#
+#####################################################
+
+def kickDownloader(isDebug=False):
+
+    metadata_Ytdl_list = downloader.getTodoFromDatabase(isDebug=isDebug)
+    vod = metadata_Ytdl_list[0]
+    # downloader.downloadVod(metadata_Ytdl_list[0])
+    downloaded_metadata = downloader.downloadTwtvVid(vod, True)
+    downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
+    meta, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
+
+    # metadata_Ytdl = Metadata_Ytdl(channel['name_id'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, outFile, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
+    # metadata_Ytdl_list.append(metadata_Ytdl)
+
+    # TODO
+    # upload to S3 
+    # updated SQL database as 'completed'
+    return metadata_Ytdl_list
+    
     if len(metadata_Ytdl_list) == 0:
         print("NOTHING TO DO metadata_Ytdl_list is empty")
         return "NOTHING TO DO metadata_Ytdl_list is empty"
     
-    # doUploadStuff(scrapped_channels, metadata_Ytdl_list)
+    # metadata_Ytdl_list = initYtdlAudio(scrapped_channels, isDebug=isDebug)
+    metadata_Ytdl_list: List[Metadata_Ytdl] = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, isDebug=isDebug)
+    
+    return 'kick downlooder'
 
-    return "Finished kickit()"
+
+#####################################################
+#
+#       Microservice 3
+#
+#####################################################
+
+def kickWhisperer():
+    return "kick whisperer"
+
 ####################################################
 
 def kickit_just_gera(isDebug=False):
@@ -262,7 +299,7 @@ def uploadLightOverviewS3(each_completed_big_kv_list, relevant_data): # /mocks/e
         # print(chan)
         prepped_rel_data[chan.get("url")] = {}
         prepped_rel_data[chan.get("url")] = {
-            "rownum": chan.get("rownum"),
+            "current_rank": chan.get("current_rank"),
             "logo": chan.get("logo"),
             "twitchurl": chan.get("twitchurl"),
             "displayname": chan.get("displayname")
@@ -278,7 +315,7 @@ def uploadLightOverviewS3(each_completed_big_kv_list, relevant_data): # /mocks/e
         chanx = prepped_rel_data.get(chan)
         print(chanx)
         if chanx:
-            rnum = chanx.get("rownum")
+            rnum = chanx.get("current_rank")
             twitchurl = chanx.get("twitchurl")
             displayname = chanx.get("displayname")
             logo = chanx.get("logo")
@@ -286,7 +323,7 @@ def uploadLightOverviewS3(each_completed_big_kv_list, relevant_data): # /mocks/e
             "channel": chan,
             "size": len(each_completed_big_kv_list[chan]),
             "path": getIndivChannelKey(chan),
-            "rownum": rnum if rnum else "9999",
+            "current_rank": rnum if rnum else "9999",
             "twitchurl": twitchurl,
             "displayname": displayname,
             "logo": logo
@@ -400,102 +437,3 @@ def _getAllCompletedJsonSuperS3__BETTER(): # -> mocks/getAllCompletedJsonSuperS3
 
 
 
-
-
-
-
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-###########################################################################################################################################################
-
-####################################################
-# 2                                                #
-# IntializeScrape                                  #
-# WE CAN PROB IGNORE THIS                          
-# THIS IS JUST FOR THST CHECKY "GET FEW BEFORE"
-# def getChannelFromS3(): # -> return data = kickit() = json_data
-#     return "COMMENTED OUT CODE!!! junk"
-    # # We first get the key/paths from the s3
-    # # sorted_s3_paths = createToDoController.preGetChannelInS3AndTidy() # returns a List[str] of S3 Keys/Paths that point to the save s3 channels:
-    # # combined_channels_list = createToDoController.getChannelInS3AndTidy(sorted_s3_paths) # returns a List[{dict}] of channels and culled date
-    # combined_channels_list = createToDoController.getChannelInS3AndTidy() # returns a List[{dict}] of channels and culled date
-    # combined_channels_list = createToDoController.addVipList(combined_channels_list) # ^ but with gera
-    # # Returns: 
-    #     #     {
-    #     #     "displayname": "LoLGeranimo",
-    #     #     "language": "English",
-    #     #     "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-    #     #     "twitchurl": "https://www.twitch.tv/lolgeranimo",
-    #     #     "url": "lolgeranimo"
-    #     #   },...,
-    # return combined_channels_list
-#                                                   #
-#####################################################
-
-# Query the s3 with the formated json of top channels
-# def preGetChannelInS3AndTidy() -> List[str]:  
-#     return "commented out code"
-    # # - Note boto3 returns last modified as: datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
-    # # Thus
-    # #     obj['Key']          = channels/ranking/raw/2023-15/100.json = location of metadata
-    # #     obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
-
-    
-    # # REACH_BACK_DAYS = Content / UX thing
-    # # Recall, our S3 saves top X channels every day, REACH will allow us to grab a couple more channels incase 
-    # # a channel begins to slip in ranking not b/c of popularity but b/c IRL stuff or w/e
-    # #
-    # REACH_BACK_DAYS = 5
-    # s3 = boto3.client('s3')
-    # # TODO env var this Prefix
-    # objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
-    # sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
-    # print("-----SORTED (OFFICIAL)---- " + str(REACH_BACK_DAYS) + " days ago")
-    # keyPathList = []
-    # sorted_objects = sorted_objects[-REACH_BACK_DAYS:]
-    # for obj in sorted_objects:
-    #     print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
-    #     keyPathList.append(obj['Key'])
-    # return keyPathList
-
-# def getChannelInS3AndTidy(sorted_s3_paths):
-#     s3 = boto3.client('s3')
-#     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix="channels/ranking/")['Contents']
-#     sorted_objects = sorted(objects, key=lambda obj: obj['LastModified'])
-#     keyPathList = []
-#     for obj in sorted_objects:
-#         print("Key= " + f"{obj['Key']} ----- Last modified= {obj['LastModified']}")
-#         keyPathList.append(obj['Key'])
-#     # return keyPathList
-
-#     print("GETTING ALL CONTENT")
-#     relevant_list = []
-#     already_added_list = []
-#     for key in sorted_s3_paths:
-#         print(key)
-#         responseGetObj = s3.get_object(
-#             Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',
-#             Key = key # ex) 'channels/ranking/2023-04-14.json'
-#         )
-#         binary_data = responseGetObj['Body'].read()
-#         json_string = binary_data.decode('utf-8')
-#         json_object = json.loads(json_string) # { "data":[ { "viewminutes":932768925, "streamedminutes":16245, ... } ] }
-
-#         llist = tidyData(json_object)
-#         for channel in llist:
-#             if channel.get('displayname') in already_added_list:
-#                 continue
-#             already_added_list.append(channel.get('displayname'))
-#             relevant_list.append(channel)
-#     print ("WE DONE")
-#     for r in relevant_list:
-#         print (r['displayname'])
-#     return relevant_list

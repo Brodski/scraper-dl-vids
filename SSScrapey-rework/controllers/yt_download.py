@@ -175,23 +175,20 @@ def bigBoyChannelDownloader(scrapped_channels_with_todos,*, isDebug):
         chn_counter = chn_counter + 1
         
         print ("    (bigboy) ----> TOP -" + str(chn_counter))
-        print ("    (bigboy) ----> Channel: " + channel.get("url"))
+        print ("    (bigboy) ----> Channel: " + channel.get("name_id"))
         todo_count = 0
         for link in channel['todos']:
             if todo_count == vid_download_limit:
                 break
             todo_count = todo_count + 1
-            print ("    (bigboy) ----> " + channel.get("url") + " @ " + link)
+            print ("    (bigboy) ----> " + channel.get("name_id") + " @ " + link)
             print ("    (bigboy) ----> chn_counter #" + str(chn_counter) + " todo_count: " + str(todo_count))
             metadata, outFile = downloadTwtvVid(link, True)
             if metadata == None:
                 continue
-            metadata_Ytdl = Metadata_Ytdl(channel['url'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, outFile, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
+            metadata_Ytdl = Metadata_Ytdl(channel['name_id'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, outFile, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
             metadata_Ytdl_list.append(metadata_Ytdl)
             print("    (bigboy) completed: " + metadata_Ytdl.link + " @ " + metadata_Ytdl.channel)
-            # TODO
-            # upload to S3 
-            # updated SQL database as 'completed'
 
         
         print()
@@ -362,7 +359,7 @@ def addTodoListS3(scrapped_channels:List[ScrappedChannel]):
     for scrap_channel in scrapped_channels:
         print(str(cnt) + ": " + str(scrap_channel))
         cnt = cnt + 1
-        todo_vod_ids = yt.getAlreadyDownloadedS3(scrap_channel['url'], scrap_channel['links']) # url = lolgeranimo, links = ['/videos/5057810', '/videos/28138895']
+        todo_vod_ids = yt.getAlreadyDownloadedS3(scrap_channel['name_id'], scrap_channel['links']) # url = lolgeranimo, links = ['/videos/5057810', '/videos/28138895']
         scrap_channel['todos'] = todo_vod_ids # B/c reference
         print(str(cnt) + " (addTodoS3) BOT ---------")
     return scrapped_channels

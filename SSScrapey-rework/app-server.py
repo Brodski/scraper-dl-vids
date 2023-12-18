@@ -48,6 +48,13 @@ def home():
         </ul>
     </li>
     <hr/>
+    
+    <li><a href="/main/kickDownloader">  mainController.kickDownloader(True) </a></li>
+        <ul>
+        </ul>
+    </li>
+    <hr/>
+
     <ul>
         <li> test </li>
         <ul> 

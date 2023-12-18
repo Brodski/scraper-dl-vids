@@ -64,12 +64,12 @@ scriptPauseVidsJs = """
     }
 """
 
-def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "url":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    if isDebug and os.getenv("ENV") == "local":
-        channels = mocks.initScrapData.getScrapeData()
+def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
+    # if isDebug and os.getenv("ENV") == "local":
+    #     channels = mocks.initScrapData.getScrapeData()
     channelMax = int(env_varz.SELENIUM_NUM_CHANNELS)
-    SLEEP_SCROLL = 3
-    NUM_BOT_SCROLLS = 1
+    SLEEP_SCROLL = 2
+    NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []
     cnt = 0
     browser = None
@@ -88,7 +88,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             cnt = cnt + 1
             if cnt > channelMax:
                 break
-            url = f'https://www.twitch.tv/{channel.url}/videos?filter=archives&sort=time'
+            url = f'https://www.twitch.tv/{channel.name_id}/videos?filter=archives&sort=time'
             print(url)
             browser.get(url)
             print ("--------------------")
@@ -114,9 +114,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                         allHrefs.append(match.group(1)) # /videos/1983739230
                 else:
                     print("skipping a['href'] @ text=" + tag['href'])
-
-            resultz = allHrefs
-            channel.links = resultz
+            channel.links = allHrefs
             everyChannel.append(channel)
             print(channel)
     except Exception as e:

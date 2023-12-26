@@ -18,3 +18,10 @@ class ScrappedChannel:
         self.current_rank = kwargs.get('current_rank')
         self.twitchurl = kwargs.get('twitchurl')
         self.name_id = kwargs.get('name_id')
+
+    def print(self):
+        print(self)
+        for attr in dir(self):
+            # Filtering out special methods/attributes and methods
+            if not attr.startswith("__") and not callable(getattr(self, attr)):
+                print(f"    {attr} = {getattr(self, attr)}")

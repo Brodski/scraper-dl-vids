@@ -33,6 +33,10 @@ ranking_bp = Blueprint('ranking', __name__)
 def kickit_Route():
     return mainController.kickit(True)
 
+@everything_bp.route('/main/ranking/kickit_real')
+def kickit_real_Route():
+    return mainController.kickit(False)
+
 @ranking_bp.route('/getTopChannels')
 def getTopChannels_Route():
     return createToDoController.getTopChannels(isDebug=True)
@@ -140,6 +144,10 @@ def kickit_just_gera_Route():
 @everything_bp.route('/main/kickDownloader')
 def kickDownloader_Route():
     return mainController.kickDownloader(True)
+
+@everything_bp.route('/main/kickDownloader_real')
+def kickDownloader_real_Route():
+    return mainController.kickDownloader(False)
 
 
 

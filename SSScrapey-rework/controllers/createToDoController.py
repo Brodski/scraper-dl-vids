@@ -58,9 +58,6 @@ def doItAllSully(*, isDebug=False, isEnd=False):
         print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
         return json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4)
     return scrapped_channels
-    # TODO
-    # 
-    # updateSqlDatabase
 
 def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
     print ("000000000000                         00000000000000000")

@@ -16,31 +16,25 @@ import MySQLdb
 # load_dotenv()
 import env_file as env_varz
 
-connection = MySQLdb.connect(
-    host    = env_varz.DATABASE_HOST,
-    user    = env_varz.DATABASE_USERNAME,
-    passwd  = env_varz.DATABASE_PASSWORD,
-    db      = env_varz.DATABASE,
-    autocommit  = True,
-    ssl_mode    = "VERIFY_IDENTITY",
-    ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
-)
-
 
 
 def updateDb1(scrapped_channels: List[ScrappedChannel]):
+    connection = MySQLdb.connect(
+        host    = env_varz.DATABASE_HOST,
+        user    = env_varz.DATABASE_USERNAME,
+        passwd  = env_varz.DATABASE_PASSWORD,
+        db      = env_varz.DATABASE,
+        autocommit  = True,
+        ssl_mode    = "VERIFY_IDENTITY",
+        ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+    )
+
     try:
-        for obj in scrapped_channels:
-            for attr in dir(obj):
-                # Filtering out special methods/attributes and methods
-                if not attr.startswith("__") and not callable(getattr(obj, attr)):
-                    print(f"{attr} = {getattr(obj, attr)}")
-
-            
-
-        addNewChannelToDb(scrapped_channels)
-        addRankingsForTodayDb(scrapped_channels) # This is optional
-        updateVodsDb(scrapped_channels)
+        for chan in scrapped_channels:
+            chan.print()
+        addNewChannelToDb(scrapped_channels, connection)
+        # addRankingsForTodayDb(scrapped_channels, connection) # This is optional
+        updateVodsDb(scrapped_channels, connection)
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
@@ -48,7 +42,7 @@ def updateDb1(scrapped_channels: List[ScrappedChannel]):
 
 
 
-def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
+def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel], connection):
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             print("Adding new Ranks:", chan.name_id, chan.current_rank)
@@ -61,7 +55,7 @@ def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
                 print(f"Error occurred: {e}")
                 connection.rollback()
 
-def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
+def addNewChannelToDb(scrapped_channels: List[ScrappedChannel], connection):
     with connection.cursor() as cursor:
         # Make SQL Query
         name_ids = [chn.name_id for chn in scrapped_channels]
@@ -89,7 +83,7 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
                     print(f"Error occurred: {e}")
                     connection.rollback()
                 
-def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
+def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
     max_vods = int(env_varz.YTDL_VIDS_PER_CHANNEL)
     print("max_vods")
     print(max_vods)
@@ -105,7 +99,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 
             placeholders = ', '.join(['%s'] * len(vod_ids))
             # query = f"SELECT NameId FROM Channels WHERE NameId IN ({placeholders})"
-            query = F"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
+            query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
             print("Query:", query)
             print("Values:", vod_ids)
             cursor.execute(query, vod_ids)
@@ -124,7 +118,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if non_existing_ids:
                 trans_status = "todo"            
                 insert_values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
-                sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority) VALUES (%s, %s, %s, %s)"
+                sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 print("insert_values: ", insert_values)
                 print("sql: ", sql )
                 print("values: ", insert_values)
@@ -184,17 +178,21 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 #     Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 #     Duration VARCHAR(255),
 #     DurationString VARCHAR(255),
-#     ViewerCount VARCHAR(255),
+#     ViewCount VARCHAR(255),
 #     WebpageUrl VARCHAR(255),
-#     UploadDate VARCHAR(255),
-#     Timestamp VARCHAR(255),
+#     Thumbnail VARCHAR(255)
+#     UploadDate DATETIME,
 #     TranscriptStatus VARCHAR(255),
 
 #     PRIMARY KEY (Id),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
 # ); 
 
-# ALTER TABLE Rankings CHANGE RankingID RankingId VARCHAR(255);
+# ALTER TABLE Vods CHANGE UploadDate UploadDate DATETIME;
+# ALTER TABLE Vods DROP COLUMN Timestamp;
+
+# ALTER TABLE Vods ADD COLUMN Thumbnail VARCHAR(255);
+# ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 
 
 

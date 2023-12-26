@@ -41,6 +41,7 @@ def home():
     return """
     <h1>Links to all other routes in the app.</h1>
     <li><a href="/main/ranking/kickit">  mainController.kickit(True) </a></li>
+    <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>False</b>) </a></li>
         <ul>
             <li><a href="/ranking/doItAllSully"> Sullygnome -----> createToDoController.doItAllSully() </a></li>
             <li><a href="/ranking/getTopChannels"> Sullygnome -----> createToDoController.getTopChannels() </a></li>
@@ -50,6 +51,7 @@ def home():
     <hr/>
     
     <li><a href="/main/kickDownloader">  mainController.kickDownloader(True) </a></li>
+    <li><a href="/main/kickDownloader_real">  mainController.kickDownloader(<b>False</b>) </a></li>
         <ul>
         </ul>
     </li>

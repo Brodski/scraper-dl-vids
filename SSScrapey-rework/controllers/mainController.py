@@ -4,6 +4,7 @@ import controllers.seleniumController as seleniumController
 import controllers.createToDoController as createToDoController
 import controllers.databaseController as databaseController
 import controllers.MicroDownloader.downloader as downloader
+import controllers.MicroTranscriber.transcriber as transcriber
 import mocks.initScrapData
 import mocks.initHrefsData
 import mocks.ytdlObjMetaDataList
@@ -16,7 +17,7 @@ from models.AudioResponse import AudioResponse
 from models.VodS3Response import VodS3Response
 from models.Metadata_Ytdl import Metadata_Ytdl
 from models.ScrappedChannel import ScrappedChannel
-from models.Vod import Vod
+from controllers.MicroDownloader.Vod import Vod
 from typing import List
 
 import env_file as env_varz
@@ -43,12 +44,11 @@ def kickit(isDebug=False):
     
     scrapped_channels: List[ScrappedChannel] = createToDoController.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     scrapped_channels: List[ScrappedChannel]  = createToDoController.addVipList(scrapped_channels) # same ^ but with gera
-    # if isDebug:
-    #     scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-    #     print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-    # else:
-    #     scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
-    scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+    if isDebug:
+        scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+    else:
+        scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
     databaseController.updateDb1(scrapped_channels)
     return "done'"
@@ -64,30 +64,22 @@ def kickit(isDebug=False):
 #####################################################
 
 def kickDownloader(isDebug=False):
-
-    metadata_Ytdl_list = downloader.getTodoFromDatabase(isDebug=isDebug)
-    vod = metadata_Ytdl_list[0]
-    # downloader.downloadVod(metadata_Ytdl_list[0])
-    downloaded_metadata = downloader.downloadTwtvVid(vod, True)
+    vods_list: List[Vod] = downloader.getTodoFromDatabase(isDebug=isDebug) # limit = 5
+    vod: Vod = downloader.getNeededVod(vods_list)
+    if isDebug:
+        vod = Vod("40792901", "nmplol", "todo", -1, "-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+    print("doing this vod:")
+    print(vod.print())
+    downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
+    if downloaded_metadata == "403":
+        downloader.updateUnauthorizedVod(vod)
+        return "nope gg sub only"
     downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
-    meta, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
-
-    # metadata_Ytdl = Metadata_Ytdl(channel['name_id'], channel['displayname'], channel['language'], channel['logo'], channel['twitchurl'], link, outFile, metadata) # Meta(lolgeranimo, /video/12345123, {... really big ... })
-    # metadata_Ytdl_list.append(metadata_Ytdl)
-
-    # TODO
-    # upload to S3 
-    # updated SQL database as 'completed'
-    return metadata_Ytdl_list
-    
-    if len(metadata_Ytdl_list) == 0:
-        print("NOTHING TO DO metadata_Ytdl_list is empty")
-        return "NOTHING TO DO metadata_Ytdl_list is empty"
-    
-    # metadata_Ytdl_list = initYtdlAudio(scrapped_channels, isDebug=isDebug)
-    metadata_Ytdl_list: List[Metadata_Ytdl] = yt.bigBoyChannelDownloader(scrapped_channels_with_todos, isDebug=isDebug)
-    
-    return 'kick downlooder'
+    downloaded_metadata, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
+    isSuccess = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
+    if (isSuccess):
+        downloader.updateVods_Round2Db(downloaded_metadata, vod.id)
+    return downloaded_metadata
 
 
 #####################################################
@@ -97,6 +89,7 @@ def kickDownloader(isDebug=False):
 #####################################################
 
 def kickWhisperer():
+    transcriber.kickIt()
     return "kick whisperer"
 
 ####################################################

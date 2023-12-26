@@ -68,6 +68,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     # if isDebug and os.getenv("ENV") == "local":
     #     channels = mocks.initScrapData.getScrapeData()
     channelMax = int(env_varz.SELENIUM_NUM_CHANNELS)
+    vodsMax = int(env_varz.SELENIUM_NUM_VODS)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []
@@ -114,7 +115,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                         allHrefs.append(match.group(1)) # /videos/1983739230
                 else:
                     print("skipping a['href'] @ text=" + tag['href'])
-            channel.links = allHrefs
+            channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
             print(channel)
     except Exception as e:

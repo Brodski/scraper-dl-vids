@@ -11,6 +11,7 @@ hrefData = [
          "/videos/40792901",
          "/videos/1470165627"
       ],
+      "current_rank": "-1",
       "todos":[
          
       ]

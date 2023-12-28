@@ -1,3 +1,0 @@
-        tiny    small     med     large-v2 - 
-gpt                       206 s      330 s
-barbra                    

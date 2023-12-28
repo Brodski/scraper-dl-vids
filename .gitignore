@@ -45,3 +45,5 @@ cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb
 sensitive-vars.tfvars
 **/lib/**
 **/canvas/**
+
+**/tests-benchmarks-sorta/**

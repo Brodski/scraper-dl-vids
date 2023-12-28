@@ -1,75 +1,0 @@
-/usr/local/lib/python3.10/site-packages/whisper/timing.py:58: NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.
-  def backtrace(trace: np.ndarray):
-sys.argv
-['./gogoWhisperFAST.py', '-f', 'BarbaraWalters.mp3', '-m', 'tiny']
-BarbaraWalters.mp3
-BarbaraWalters.mp3
-BarbaraWalters.mp3
-Downloading (…)b4bcffb7/config.json:   0%|          | 0.00/2.25k [00:00<?, ?B/s]Downloading (…)b4bcffb7/config.json: 100%|██████████| 2.25k/2.25k [00:00<00:00, 18.4MB/s]
-Downloading (…)cffb7/vocabulary.txt:   0%|          | 0.00/460k [00:00<?, ?B/s]
-Downloading model.bin:   0%|          | 0.00/75.5M [00:00<?, ?B/s][ADownloading (…)cffb7/vocabulary.txt: 100%|██████████| 460k/460k [00:00<00:00, 3.33MB/s]Downloading (…)cffb7/vocabulary.txt: 100%|██████████| 460k/460k [00:00<00:00, 3.30MB/s]
-
-Downloading model.bin:  14%|█▍        | 10.5M/75.5M [00:00<00:01, 58.4MB/s][ADownloading (…)cffb7/tokenizer.json:   0%|          | 0.00/2.20M [00:00<?, ?B/s]
-Downloading model.bin:  28%|██▊       | 21.0M/75.5M [00:00<00:00, 78.6MB/s][A
-Downloading model.bin:  56%|█████▌    | 41.9M/75.5M [00:00<00:00, 96.0MB/s][ADownloading (…)cffb7/tokenizer.json: 100%|██████████| 2.20M/2.20M [00:00<00:00, 7.72MB/s]Downloading (…)cffb7/tokenizer.json: 100%|██████████| 2.20M/2.20M [00:00<00:00, 7.67MB/s]
-
-Downloading model.bin:  83%|████████▎ | 62.9M/75.5M [00:00<00:00, 106MB/s] [A
-Downloading model.bin: 100%|██████████| 75.5M/75.5M [00:00<00:00, 109MB/s][ADownloading model.bin: 100%|██████████| 75.5M/75.5M [00:00<00:00, 100MB/s]
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3
-C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3
-/app/scraper-dl-vids/audio2Text/assets/raw/BarbaraWalters.mp3
-/app/scraper-dl-vids/audio2Text/assets/raw/BarbaraWalters.mp3
-torch.cuda.is_available(): False
-start!
-Detected language 'en' with probability 1.000000
-[0.00s -> 3.20s]  We want to take a moment to pay tribute to Barbara Walters.
-[3.20s -> 8.32s]  She was a trailblazing journalist who spent more than half a century in broadcast news
-[8.32s -> 13.04s]  throughout her iconic career, Barbara Walters shattered glass ceiling after glass ceiling,
-[13.04s -> 18.40s]  breaking bears in an industry once dominated by men, and paving the way for today's female journalists.
-[18.40s -> 24.24s]  She was the first ever woman to co-host NBC's today show and later the first woman to anchor
-[24.24s -> 28.08s]  and network evening news broadcast in a tweet on Saturday,
-[28.08s -> 29.68s]  President Biden said, quote,
-[29.68s -> 32.72s]  Barbara Walters has always been an example of bravery
-[32.72s -> 36.64s]  and truth-breaking barriers while driving our nation forward.
-[36.64s -> 40.48s]  Her legacy will continue as an inspiration for all journalists.
-[40.48s -> 43.60s]  Barbara Walters conducted hundreds of interviews
-[43.60s -> 47.28s]  with newsmakers from the world of politics, sports, and entertainment.
-[47.28s -> 49.60s]  She was famous for asking tough questions,
-[49.60s -> 51.36s]  and sometimes uncomfortable questions,
-[51.36s -> 55.80s]  and forgetting some of the world's most famous people to reveal parts of themselves the
-[55.80s -> 57.86s]  public had not seen before.
-[57.86s -> 63.74s]  Here she was on Meet the Press back in February 1976, pressing then the Prime Minister
-[63.74s -> 64.74s]  of Israel.
-[64.74s -> 68.86s]  We'll have the first questions now from Barbara Walters of NBC News.
-[68.86s -> 73.90s]  Mr. Prime Minister, you have repeatedly said in your speeches that a militarily strong
-[73.90s -> 76.62s]  Israel is necessary to maintain the peace.
-[76.62s -> 81.06s]  Now the Pentagon and the CIA have reported after their military analysis that Israel is
-[81.06s -> 84.38s]  more than strong enough to deter any Arab aggression.
-[84.38s -> 88.90s]  Were you able to convince Congress and President Ford, those who are responsible for deciding
-[88.90s -> 94.22s]  military aid to Israel, that you are right, and that the CIA and the Pentagon are wrong?
-[94.22s -> 100.26s]  Well, first I would like to thank the CIA and the Pentagon for complimenting, as well
-[100.26s -> 102.94s]  for its military strengths.
-[102.94s -> 106.98s]  But I believe that we need more than compliments.
-[106.98s -> 108.98s]  We need hardware.
-[108.98s -> 112.46s]  The Prime Minister, we've heard these arguments now back and forth for a year, and I'd
-[112.46s -> 117.02s]  like to get back to my very first question, which was, how do you expect to have a Geneva
-[117.02s -> 119.02s]  conference we convene without the PLO?
-[119.02s -> 122.90s]  Can you give us any time, any hope, any direction?
-[122.90s -> 128.74s]  Can you realistically be specific about one new action that's going to break the stalemate,
-[128.74s -> 133.02s]  the same conversation back and forth, the way it was for the year, has anything happened
-[133.02s -> 136.74s]  in this week or things basically the way they were before you came to this country?
-[136.74s -> 140.26s]  I believe that they are basically two options
-[140.26s -> 144.40s]  how to move to a space.
-[144.40s -> 146.40s]  Incredible to watch her do her work.
-[146.40s -> 149.36s]  Barbara Walters died on Friday in New York City.
-[149.36s -> 154.77s]  She was 93 years old.
-[154.77s -> 156.77s]  Thanks for watching our YouTube channel.
-[156.77s -> 161.97s]  Follow today's top stories and breaking news by downloading the NBC News app.
-========================================
-Detected language 'en' with probability 1.000000
-
-run time =2.023477077484131
-
-Completed srt: BarbaraWalters.mp3.srt
-Completed: C:/Users/BrodskiTheGreat/Desktop/desktop/Code/scraper-dl-vids/./assets/raw//BarbaraWalters.mp3

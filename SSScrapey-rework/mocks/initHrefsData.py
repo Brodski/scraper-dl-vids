@@ -16,6 +16,19 @@ hrefData = [
          
       ]
    },
+   {
+      "displayname": "台北建東",
+      "language": "Chinese",
+      "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl": "https://www.twitch.tv/jd_onlymusic",
+      "url": "jd_onlymusic",
+      "links": [
+         "/videos/1964894986",
+      ],
+      "current_rank": "-3",
+      "todos":[         
+      ]
+   },
    # {
    #    "displayname":"LoLGeranimo",
    #    "language":"English",

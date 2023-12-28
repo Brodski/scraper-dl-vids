@@ -55,9 +55,10 @@ def getTodoFromDatabase(isDebug=False) -> List[Vod]:
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, ChanCurrentRank = vod_
-        vod = Vod(Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank, TodoDate)
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank = vod_
+        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate)
         resultsArr.append(vod)
+        upload_date = UploadDate
 
     return resultsArr
 
@@ -76,7 +77,6 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
         output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
     except:
         output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(os.getcwd()+'/', output_local_dir)
-        
 
     ydl_opts = {
         # Formatting info --> https://github.com/yt-dlp/yt-dlp#sorting-formats
@@ -125,7 +125,9 @@ def convertVideoToSmallAudio(meta):
     filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
     inFile = "file:" + filepath
     if env_varz.WHSP_EXEC_FFMPEG == "True":
-        outFile =  "".join(inFile.split(".")[:-1]) + ".opus" #opus b/c of the ffmpeg cmd below
+        last_dot_index = inFile.rfind('.')
+        outFile = inFile[:last_dot_index] + ".opus"
+        # outFile =  "".join(inFile.split(".")[:-1]) + ".opus" #opus b/c of the ffmpeg cmd below
     else:
         outFile = inFile
     
@@ -216,16 +218,15 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     # print(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
-        print ("    UPLOADING MP3 & METADATA !!!")
         s3.upload_file(os.path.abspath(outfile[5:]), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
         s3.put_object(Body=json.dumps(downloaded_metadata, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
-        return True
+        return s3fileKey
     except Exception as e:
         print("oops! failed mp3 or metadata upload " + str(e))
-        return False
+        return None
     
 
-def updateVods_Round2Db(downloaded_metadata, vod_id):
+def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
@@ -266,15 +267,13 @@ def updateVods_Round2Db(downloaded_metadata, vod_id):
                     WebpageUrl = %s,
                     UploadDate = FROM_UNIXTIME(%s),
                     Thumbnail = %s,
-                    TranscriptStatus = %s
+                    TranscriptStatus = %s,
+                    S3Audio = %s
                 WHERE Id = %s;
                 """
-            values = (title, duration, duration_string, view_count, webpage_url, timestamp_twtw_uploaded, thumbnail, transcript_status, vod_id)
-            print("sql")
-            print(sql)
-            print(values)
+            values = (title, duration, duration_string, view_count, webpage_url, timestamp_twtw_uploaded, thumbnail, transcript_status, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
-            print(affected_count)
+            print("Updated these many" + str(affected_count))
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()
@@ -282,16 +281,15 @@ def updateVods_Round2Db(downloaded_metadata, vod_id):
         connection.close()
 
 
-def getNeededVod(vods_list: List[Vod]):
-    
+def getNeededVod(vods_list: List[Vod]):    
     vods_dict_temp = {}
     vods_dict = {}
     for vod in vods_list:
+        vod.print()
         vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
     maxVodz = 2
     # maxChans = 3
     for key in vods_dict_temp:
-        print(key)
         filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
         if filtered_objects:
             vods_dict[key] = filtered_objects
@@ -332,3 +330,42 @@ def updateUnauthorizedVod(vod: Vod):
     finally:
         connection.close()
 
+def cleanUpDownloads(downloaded_metadata):
+    x = downloaded_metadata.get("requested_downloads")
+
+    filename_opus = None
+    filename = x[0].get('filepath') 
+    file_abs = os.path.abspath(filename)
+    
+    print("cleanUpFiles requested_downloads")
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print(downloaded_metadata)
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    # print(x)
+    # print(filename)
+    # print(file_abs)
+    print("cleanUpFiles - file_abs= " + file_abs)
+
+    os.remove(file_abs)       
+    if filename.endswith('.mp3'):
+        filename_opus = filename[:-4] + ".opus"
+        file_abs_opus = os.path.abspath(filename_opus) if filename_opus else None
+        print("file_abs_opus")
+        print(file_abs_opus)
+        os.remove(file_abs_opus)
+    print('Deleted: ' + str(file_abs))
+    print('Deleted: ' + str(file_abs_opus))
+    return 

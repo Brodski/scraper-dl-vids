@@ -40,21 +40,31 @@ def home():
     # Links to all other routes in the app.
     return """
     <h1>Links to all other routes in the app.</h1>
-    <li><a href="/main/ranking/kickit">  mainController.kickit(True) </a></li>
-    <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>False</b>) </a></li>
-        <ul>
-            <li><a href="/ranking/doItAllSully"> Sullygnome -----> createToDoController.doItAllSully() </a></li>
-            <li><a href="/ranking/getTopChannels"> Sullygnome -----> createToDoController.getTopChannels() </a></li>
-            <li><a href="/hrefGet/scrape4VidHref/mock"> Selenium -----> seleniumController.scrape4VidHref() </a></li>
-        </ul>
-    </li>
+    <hr/>
+    <h3> Micro Preper </h3>
+        <li><a href="/main/ranking/kickit">  mainController.kickit(True) </a></li>
+        <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>False</b>) </a></li>
+            <ul>
+                <li><a href="/ranking/doItAllSully"> Sullygnome -----> createToDoController.doItAllSully() </a></li>
+                <li><a href="/ranking/getTopChannels"> Sullygnome -----> createToDoController.getTopChannels() </a></li>
+                <li><a href="/hrefGet/scrape4VidHref/mock"> Selenium -----> seleniumController.scrape4VidHref() </a></li>
+            </ul>
+        </li>
+    <hr/>
+    <h3> Micro Downloader </h3>
+        <li><a href="/main/kickDownloader">  mainController.kickDownloader(True) </a></li>
+        <li><a href="/main/kickDownloader_real">  mainController.kickDownloader(<b>False</b>) </a></li>
+            <ul>
+            </ul>
+        </li>
     <hr/>
     
-    <li><a href="/main/kickDownloader">  mainController.kickDownloader(True) </a></li>
-    <li><a href="/main/kickDownloader_real">  mainController.kickDownloader(<b>False</b>) </a></li>
+    <h3> Micro Transcriber </h3>
+        <li><a href="/main/kickTranscriber/kickIt">   mainController.kickWhisperer(True) </a></li>
         <ul>
+            <li><a href="/main/kickTranscriber/getTodoFromDb">  transcriber.getTodoFromDb(True) </a></li>
         </ul>
-    </li>
+
     <hr/>
 
     <ul>

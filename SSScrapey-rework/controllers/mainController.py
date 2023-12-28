@@ -1,8 +1,8 @@
 import urllib
 
-import controllers.seleniumController as seleniumController
-import controllers.createToDoController as createToDoController
-import controllers.databaseController as databaseController
+import controllers.MicroDownloader.seleniumPreper as seleniumPreper
+import controllers.MicroPreper.createToDoController as createToDoController
+import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroDownloader.downloader as downloader
 import controllers.MicroTranscriber.transcriber as transcriber
 import mocks.initScrapData
@@ -48,9 +48,9 @@ def kickit(isDebug=False):
         scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
         # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
     else:
-        scrapped_channels: List[ScrappedChannel] = seleniumController.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+        scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
-    databaseController.updateDb1(scrapped_channels)
+    databasePreper.updateDb1(scrapped_channels)
     return "done'"
 
     # doUploadStuff(scrapped_channels, metadata_Ytdl_list)
@@ -67,18 +67,20 @@ def kickDownloader(isDebug=False):
     vods_list: List[Vod] = downloader.getTodoFromDatabase(isDebug=isDebug) # limit = 5
     vod: Vod = downloader.getNeededVod(vods_list)
     if isDebug:
-        vod = Vod("40792901", "nmplol", "todo", -1, "-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-    print("doing this vod:")
-    print(vod.print())
+        # vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        vod = Vod(id="1964894986", channels_name_id="jd_onlymusic", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        print("doing this vod:")
+        print(vod.print())
     downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
     if downloaded_metadata == "403":
         downloader.updateUnauthorizedVod(vod)
         return "nope gg sub only"
     downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
     downloaded_metadata, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
-    isSuccess = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
-    if (isSuccess):
-        downloader.updateVods_Round2Db(downloaded_metadata, vod.id)
+    s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
+    if (s3fileKey):
+        downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
+    downloader.cleanUpDownloads(downloaded_metadata)
     return downloaded_metadata
 
 
@@ -88,9 +90,41 @@ def kickDownloader(isDebug=False):
 #
 #####################################################
 
-def kickWhisperer():
-    transcriber.kickIt()
-    return "kick whisperer"
+def kickWhisperer(isDebug=False):
+    vods: List[Vod] = transcriber.getTodoFromDb()
+    vod = vods[0] if len(vods) > 0 else None
+    print('IN THEORY, AUDIO TO TEXT THIS:')
+    if not vod and not isDebug:
+        print("jk, vod is null, nothing to do")
+        return "NOTHING TO DO NO VODS READY"
+    if (isDebug):
+        vod.print() if vod else print("Null nod")
+        # tuple =  ('40792901', 'nmplol', 'And you will know my name is the LORD', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus', '-1', 'English')
+        tuple =  ('1964894986', 'jd_onlymusic', '夜市特攻隊「永和樂華夜市」ft. 陳老師', '732', '12:12', 1205, 'https://www.twitch.tv/videos/1964894986', datetime.datetime(2023, 10, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/jd_onlymusic/1964894986/ft.-v1964894986.opus', '-3', 'Chinese')
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank, Language  = tuple
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, upload_date=UploadDate, s3_audio=S3Audio, language=Language)
+    vod.print()
+
+    # Set TranscrptStatus = "processing"
+    transcriber.setSemaphoreDb(vod)
+
+    # All of Transcribing
+    try:
+        relative_path = transcriber.downloadAudio(vod)
+        saved_caption_files = transcriber.doWhisperStuff(vod, relative_path)
+        
+        for filename in saved_caption_files: # [climb_to_chall.json, climb_to_chall.vtt]
+            transcriber.uploadCaptionsToS3(filename, vod)
+            transcriber.setCompletedStatusDb(vod)
+    except Exception as e:
+        print(f"ERROR Transcribing vod: {e}")
+        vod.print()
+        transcriber.unsetProcessingDb(vod)
+
+    transcriber.cleanUpFiles(relative_path)
+    
+
+    return "kicking it"
 
 ####################################################
 

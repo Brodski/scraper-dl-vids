@@ -7,9 +7,10 @@ from flask import jsonify
 # const router = express.Router();
 # from controllers.downloadController import *
 # from controllers.scrapey import *
-import controllers.seleniumController as seleniumController
+import controllers.MicroDownloader.seleniumPreper as seleniumPreper
 import controllers.mainController as mainController
-import controllers.createToDoController as createToDoController
+import controllers.MicroPreper.createToDoController as createToDoController
+import controllers.MicroTranscriber.transcriber as transcriber
 import controllers.yt_download as ytdl
 # or "import controllers.downloadController"
 # --> controllers.downloadController.uploadJsonToS3
@@ -111,7 +112,7 @@ def createCustomMetadata_Route():
 
 @everything_bp.route('/hrefGet/scrape4VidHref/mock')
 def scrape4VidHref_Route():
-    return seleniumController.scrape4VidHref({}, True)
+    return seleniumPreper.scrape4VidHref({}, True)
 
 
 @everything_bp.route('/s3/_getAllCompletedJsonSuperS3__BETTER')
@@ -151,3 +152,15 @@ def kickDownloader_real_Route():
 
 
 
+#################################################
+# @everything_bp.route('/main/kickDownloader')
+# def kickTranscriber_Route():
+#     return mainController.kickWhisperer(True)
+
+@everything_bp.route('/main/kickTranscriber/kickIt')
+def kickTranscriber_Route():
+    return mainController.kickWhisperer(True)
+
+@everything_bp.route('/main/kickTranscriber/getTodoFromDb')
+def kickTranscriber_getTodoFromDb_Route():
+    return transcriber.getTodoFromDb()

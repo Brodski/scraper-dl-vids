@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from flask import jsonify, abort
 import requests
-import controllers.seleniumController as seleniumController
+import controllers.MicroDownloader.seleniumPreper as seleniumPreper
 
 import boto3
 import json
@@ -52,7 +52,7 @@ def doItAllSully(*, isDebug=False, isEnd=False):
     topChannels = getTopChannels()
     topChannels = instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     topChannels = addVipList(topChannels) # same ^ but with gera
-    scrapped_channels = seleniumController.scrape4VidHref(topChannels, isDebug)
+    scrapped_channels = seleniumPreper.scrape4VidHref(topChannels, isDebug)
 
     if isEnd:
         print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
@@ -143,6 +143,14 @@ def addVipList(channels: List[ScrappedChannel]):
             "twitchurl": "https://www.twitch.tv/nmplol",
             "url": "nmplol",
             "rownum": -1
+        })
+        VIP_LIST.append({
+            "displayname": "台北建東",
+            "language": "Chinese",
+            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+            "twitchurl": "https://www.twitch.tv/jd_onlymusic",
+            "url": "nmplol",
+            "rownum": -3
         })
     for vip in VIP_LIST:
         scrapped_channel = ScrappedChannel(displayname=vip.get("displayname"),

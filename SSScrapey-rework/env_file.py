@@ -62,3 +62,6 @@ if os.getenv("ENV") == "local":
     YTDL_VIDS_PER_CHANNEL = env_vars_local['YTDL_VIDS_PER_CHANNEL']
     WHSP_EXEC_FFMPEG  = env_vars_local['WHSP_EXEC_FFMPEG']
     IS_DEBUG = env_vars_local['IS_DEBUG']
+    WHSP_MODEL_SIZE = env_vars_local['WHSP_MODEL_SIZE']
+    WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
+    WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']

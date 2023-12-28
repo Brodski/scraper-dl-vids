@@ -4,9 +4,6 @@ import urllib.request
 import urllib.parse
 import os
 import time
-import boto3
-import gogoWhisperFAST
-import langcodes
 from Todo_model import Todo
 
 from typing import List

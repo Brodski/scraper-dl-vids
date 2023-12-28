@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from flask import jsonify, abort
 import requests
-import controllers.MicroDownloader.seleniumPreper as seleniumPreper
+import controllers.MicroPreper.seleniumPreper as seleniumPreper
 
 import boto3
 import json

@@ -189,15 +189,11 @@ def writeCaptionsLocally(result, audio_basename):
 
 
 def uploadCaptionsToS3(filename, vod: Vod):
-    print ("XXXXXXXXXXXXXX                      XXXXXXXXXXXXXX")
     print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-    print ("XXXXXXXXXXXXXX                      XXXXXXXXXXXXXX")
 
     file_abs = os.path.abspath(env_varz.A2T_ASSETS_CAPTIONS + filename)
-    vod.print()
     s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
-    print("    (uploadCaptionsToS3) filename: " + str(filename))
     print("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
     print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
     print("    (uploadCaptionsToS3) filename: " + filename) 

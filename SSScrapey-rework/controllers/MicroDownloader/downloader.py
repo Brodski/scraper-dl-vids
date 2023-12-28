@@ -63,6 +63,7 @@ def getTodoFromDatabase(isDebug=False) -> List[Vod]:
     return resultsArr
 
 
+# 'API'  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
 def downloadTwtvVid2(vod: Vod, isDownload=True): 
     if vod == None or vod.id == None:
         print("ERROR no vod")

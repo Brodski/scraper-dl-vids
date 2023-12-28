@@ -3,7 +3,9 @@ geckodriver.log
 !BarbaraWalters.mp3
 !OPENASSISTANT TAKES ON CHATGPT!-TFa539R09EQ.mp3
 
-*audio2Text/assets/captions/*
+**/assets/captions/*
+**/assets/audio/*
+**/assets/output/*
 
 testvids/
 t_env/

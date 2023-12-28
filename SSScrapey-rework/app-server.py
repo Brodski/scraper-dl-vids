@@ -83,54 +83,7 @@ def home():
         </ul>
         <hr/>
 
-        <li><a href="/main/kickit_just_gera"> /main/kickit_just_gera </a></li>
-        <li><a href="/main/ranking/kickit"> /main/ranking/kickit </a></li>
-        <ul>
-            <li><a href="/ranking/getTopChannels"> /ranking/getTopChannels </a></li>
-        </ul>
-        <hr/>
-            <a href="/main/ytdl/kickit_just_gera_REAL">  /main/ytdl/kickit_just_gera_REAL !! </a>
-        <hr/>
-        <li>
-            <a href="/main/ytdl/initYtdlAudio"> /main/ytdl/initYtdlAudio </a>
-        </li>
-        <ul>
-            <li><a href="/hrefGet/scrape4VidHref/mock"> /hrefGet/scrape4VidHref/mock </a></li>
-            <li> addTodoListS3: /ytdl/addTodoListS3 (dummy) </li>
-            <li> <a href="/main/ytdl/bigBoyChannelDownloader_TEST "> /main/ytdl/bigBoyChannelDownloader_TEST  </a></li>
-            <li> <a href="/main/ytdl/createCustomMetadata_TEST "> /main/ytdl/createCustomMetadata_TEST  </a></li>
-            <ul>
-                <li><a href="/ytdl/test/downloadTwtvVid_FIXED"> /ytdl/test/downloadTwtvVid_FIXED(/videos/1231231) </a></li>
-                <ul> (uploads)
-                    <li><a href="/s3/uploadOverviewStateS3"> /s3/uploadOverviewStateS3 </a></li>
-                    <li><a href="/s3/uploadEachChannelsCompletedJson"> /s3/uploadEachChannelsCompletedJson </a></li>
-                    <li><a href="/s3/uploadLightOverviewS3"> /s3/uploadLightOverviewS3 </a></li>
-                </ul>
-            </ul>
-        </ul>
         
-        
-        
-        <li><a href="/s3/_getAllCompletedJsonSuperS3__BETTER"> CompS3 /s3/_getAllCompletedJsonSuperS3__BETTER </a></li>
-        
-        
-        <li><a href="/s3/uploadTodoAndCompletedJsons"> TODO audio /s3/uploadTodoAndCompletedJsons </a></li>
-
-        <ul>
-            <li> </li>
-        </ul>
-
-        <hr/>
-
-
-
-        <li> Init Scrape (part 2, find vids) </li>
-        
-
-
-        <li><a href="/ytdl/getAlreadyDownloadedS3_TEST"> /ytdl/getAlreadyDownloadedS3_TEST </a></li>
-
-        <hr/>
     </ul>
 
     """

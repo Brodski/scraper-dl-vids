@@ -1,3 +1,11 @@
+# ################################### #
+# ################################### #
+#                                     #
+#  USED BY THE DAILY LAMBDA FUNCTION  #
+#                                     #
+# ################################### #
+# ################################### #
+
 from controllers.mainController import kickit, kickit_just_gera
 import env_file as env_varz
 

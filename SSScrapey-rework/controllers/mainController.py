@@ -1,14 +1,13 @@
 import urllib
 
-import controllers.MicroDownloader.seleniumPreper as seleniumPreper
-import controllers.MicroPreper.createToDoController as createToDoController
+import controllers.MicroPreper.seleniumPreper as seleniumPreper
+import controllers.MicroPreper.TodoPreper as todoPreper
 import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroDownloader.downloader as downloader
 import controllers.MicroTranscriber.transcriber as transcriber
 import mocks.initScrapData
 import mocks.initHrefsData
 import mocks.ytdlObjMetaDataList
-import controllers.yt_download as yt
 import datetime
 import os
 import json
@@ -40,11 +39,11 @@ import env_file as env_varz
 def kickit(isDebug=False):
     
     # Make http request to sullygnome. 3rd party website
-    topChannels = createToDoController.getTopChannels() 
+    topChannels = todoPreper.getTopChannels() 
 
     # Convert json respone to objects
-    scrapped_channels: List[ScrappedChannel] = createToDoController.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
-    scrapped_channels: List[ScrappedChannel]  = createToDoController.addVipList(scrapped_channels) # same ^ but with gera
+    scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
+    scrapped_channels: List[ScrappedChannel]  = todoPreper.addVipList(scrapped_channels) # same ^ but with gera
 
     # Via selenium & browser. Find videos's url, get anchor tags href
     if isDebug:

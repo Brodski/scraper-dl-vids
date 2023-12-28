@@ -125,25 +125,6 @@ def run(*, model_size, lang_code=None, filename):
 
     return saved_caption_files
 
-# def writeCaptionsLocally(result, audio_basename):
-#     print("------   WRITE FILE   ------")
-#     file_extensions = FILE_EXTENSIONS_TO_SAVE
-#     saved_caption_files = []
-#     for ext in file_extensions:
-#         srt_writer = get_writer(ext, env_varz.A2T_ASSETS_CAPTIONS)
-#         srt_writer(result, audio_basename + ext)
-#         print("audio_basename: " + audio_basename)
-#         print("audio_basename: " + audio_basename)
-#         print("audio_basename: " + audio_basename)
-#         print("audio_basename: " + audio_basename)
-
-#         filename, file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
-#         caption_file = filename + '.' + ext
-#         # pathy = os.path.join(env_varz.A2T_ASSETS_CAPTIONS, caption_base)
-#         # caption_file = os.path.basename(pathy)
-#         saved_caption_files.append(caption_file)
-#         print("Wrote - " + ext + " - " + caption_file)
-#     return saved_caption_files
 
 
 if __name__ == '__main__':

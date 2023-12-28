@@ -219,10 +219,6 @@ def test_yt_dl_paudio():
 
 
 
-@test_bp.route('/date')
-def test_date():
-    return 'Blog Date'
-
 @test_bp.route('/getAllS3Jsons')
 def getAllS3Jsons():
     # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
@@ -258,34 +254,6 @@ def getAllS3Jsons():
         
     return objects
 
-
-
-
-@test_bp.route('/getAllS3Jsons')
-def uploadJsonToS3Test():
-    s3 = boto3.client('s3')
-    myJsonStff = { 
-        "someArry": [
-            { 
-                "hello": "hello dude",
-                "goodbye": "get out of here"
-            },
-            { 
-                "party": "party hard",
-                "gottaRock": "I wanna rock n roll",
-                "gottaRock2": "I wanna rock n roll all night!"
-            }
-        ],
-        "bangbang": "Pop boom bang! ka bam!"
-    }
-    json_object = myJsonStff
-    s3.put_object(
-        Body=json.dumps(json_object),
-        Bucket=env_varz.BUCKET_NAME,
-        ContentType="application/json; charset=utf-8",
-        Key= s3_key_test + str(0) + ".json" # channels/test/raw/2023-15/2.json,
-    )
-    return "done: \n" + str(myJsonStff)
 
 
 

@@ -4,19 +4,13 @@ import controllers.MicroPreper.seleniumPreper as seleniumPreper
 import controllers.MicroPreper.TodoPreper as todoPreper
 import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroDownloader.downloader as downloader
-import controllers.MicroTranscriber.transcriber as transcriber
-import mocks.initScrapData
+import controllers.MicroTranscriber.audio2text_app as audio2text
 import mocks.initHrefsData
-import mocks.ytdlObjMetaDataList
 import datetime
 import os
 import json
-import boto3
-from models.AudioResponse import AudioResponse
-from models.VodS3Response import VodS3Response
-from models.Metadata_Ytdl import Metadata_Ytdl
 from models.ScrappedChannel import ScrappedChannel
-from controllers.MicroDownloader.Vod import Vod
+from models.Vod import Vod
 from typing import List
 
 import env_file as env_varz
@@ -100,42 +94,8 @@ def kickDownloader(isDebug=False):
 #####################################################
 
 def kickWhisperer(isDebug=False):
-    # Setup. Get Vod
-    vods: List[Vod] = transcriber.getTodoFromDb()
-    vod = vods[0] if len(vods) > 0 else None
-    print('IN THEORY, AUDIO TO TEXT THIS:')
-    if not vod and not isDebug:
-        print("jk, vod is null, nothing to do")
-        return "NOTHING TO DO NO VODS READY"
-    if (isDebug):
-        vod.print() if vod else print("Null nod")
-        # tuple =  ('40792901', 'nmplol', 'And you will know my name is the LORD', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus', '-1', 'English')
-        tuple =  ('1964894986', 'jd_onlymusic', '夜市特攻隊「永和樂華夜市」ft. 陳老師', '732', '12:12', 1205, 'https://www.twitch.tv/videos/1964894986', datetime.datetime(2023, 10, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/jd_onlymusic/1964894986/ft.-v1964894986.opus', '-3', 'Chinese')
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank, Language  = tuple
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, upload_date=UploadDate, s3_audio=S3Audio, language=Language)
-    vod.print()
-
-    # Set TranscrptStatus = "processing"
-    transcriber.setSemaphoreDb(vod)
-
-    # All of Transcribing
-    try:
-        relative_path = transcriber.downloadAudio(vod)
-        saved_caption_files = transcriber.doWhisperStuff(vod, relative_path)
-        
-        for filename in saved_caption_files: # [climb_to_chall.json, climb_to_chall.vtt]
-            transcriber.uploadCaptionsToS3(filename, vod)
-            transcriber.setCompletedStatusDb(vod)
-    except Exception as e:
-        print(f"ERROR Transcribing vod: {e}")
-        vod.print()
-        transcriber.unsetProcessingDb(vod)
-
-    transcriber.cleanUpFiles(relative_path)
-    print("Finished step 3 Transcriber-Service")
-    return "Finished step 3 Transcriber-Service"
-
-
+    audio2text.gogo(isDebug)
+    return "Woooo! done!"
 
 
 

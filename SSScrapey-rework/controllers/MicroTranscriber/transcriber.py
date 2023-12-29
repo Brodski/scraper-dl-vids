@@ -1,21 +1,18 @@
+from models.Vod import Vod
+from typing import List
+from whisper.utils import get_writer
+import boto3
+import datetime
+import env_file as env_varz
+import faster_whisper
 import json
+import langcodes
+import MySQLdb
 import os
 import time
-from typing import List
-import urllib.request
-import urllib.parse
-import langcodes
-import boto3
-from controllers.MicroDownloader.Vod import Vod
-import env_file as env_varz
-import datetime
-import MySQLdb
-import faster_whisper
 import torch
-# from flask import Blueprint, current_app
-# import whisper.utils
-from whisper.utils import get_writer
-
+import urllib.parse
+import urllib.request
 def getConnectionDb():
     connection = MySQLdb.connect(
         host    = env_varz.DATABASE_HOST,
@@ -116,7 +113,7 @@ def doWhisperStuff(vod: Vod, relative_path: str):
     compute_type = env_varz.WHSP_COMPUTE_TYPE
     cpu_threads = int(env_varz.WHSP_CPU_THREADS)
 
-    file_abspath = os.path.abspath(relative_path) # C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
+    file_abspath = os.path.abspath(relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 
     # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8)
@@ -188,33 +185,31 @@ def writeCaptionsLocally(result, audio_basename):
     return saved_caption_files
 
 
-def uploadCaptionsToS3(filename, vod: Vod):
+def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-
-    file_abs = os.path.abspath(env_varz.A2T_ASSETS_CAPTIONS + filename)
-    s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
-
     print("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
     print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
-    print("    (uploadCaptionsToS3) filename: " + filename) 
-    print("    (uploadCaptionsToS3) file_abs: " + file_abs)
-    print("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
+
     s3 = boto3.client('s3')
-    try:
-      content_type = ''
-      if file_abs[-4:] == '.txt':
-        content_type = 'text/plain; charset=utf-8'
-      if file_abs[-5:] ==  '.json':
-        content_type = 'application/json; charset=utf-8'
-      if file_abs[-4:] ==  '.vtt':
-        content_type = 'text/vtt; charset=utf-8'
-      s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
-      # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
-      return s3CapFileKey 
-    
-    except Exception as e:
-      print(f"(uploadCaptionsToS3) oops! failed to upload: {filename}: {e}")
-      return False
+
+    for filename in saved_caption_files:
+
+        file_abs = os.path.abspath(env_varz.A2T_ASSETS_CAPTIONS + filename)
+        s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
+
+        print("    (uploadCaptionsToS3) filename: " + filename) 
+        print("    (uploadCaptionsToS3) file_abs: " + file_abs)
+        print("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
+        content_type = ''
+        if file_abs[-4:] == '.txt':
+            content_type = 'text/plain; charset=utf-8'
+        if file_abs[-5:] ==  '.json':
+            content_type = 'application/json; charset=utf-8'
+        if file_abs[-4:] ==  '.vtt':
+            content_type = 'text/vtt; charset=utf-8'
+        s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
+        # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
+        return s3CapFileKey 
     
 def setCompletedStatusDb(vod: Vod):
     connection = getConnectionDb()

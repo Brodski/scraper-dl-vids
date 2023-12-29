@@ -65,8 +65,6 @@ scriptPauseVidsJs = """
 """
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    # if isDebug and os.getenv("ENV") == "local":
-    #     channels = mocks.initScrapData.getScrapeData()
     channelMax = int(env_varz.SELENIUM_NUM_CHANNELS)
     vodsMax = int(env_varz.SELENIUM_NUM_VODS)
     SLEEP_SCROLL = 2

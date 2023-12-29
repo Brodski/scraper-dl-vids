@@ -4,12 +4,7 @@ import subprocess
 import time
 import urllib
 import boto3
-from models.AudioResponse import AudioResponse
-from models.VodS3Response import VodS3Response
-from models.Metadata_Ytdl import Metadata_Ytdl
-from models.ScrappedChannel import ScrappedChannel
-# from models.Vod import Vod
-from controllers.MicroDownloader.Vod import Vod
+from models.Vod import Vod
 from typing import List
 from datetime import datetime
 

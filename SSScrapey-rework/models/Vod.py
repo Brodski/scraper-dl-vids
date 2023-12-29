@@ -2,30 +2,39 @@ import json
 import urllib
 import env_file as env_varz
 from typing import Dict, Any
+from datetime import datetime
 
 class Vod:
-    channel = str
     id = str
-    title = str
-    link_s3 = str
-    link_s3_vtt = str
-    link_s3_json = str
+    channels_name_id = str
+    transcript_status = str
+    priority = int 
+    channel_current_rank = str # optional
+    todo_date = datetime
+    upload_date = datetime
+    s3_audio = str
     language = str
 
-    def __init__(self, *, channel="", id="", title="", link_s3="", language="", link_s3_vtt="", link_s3_json=""):
-        self.channel = channel
-        self.id = id
-        self.title = title
-        self.link_s3 = link_s3
-        if (link_s3 == "" and title != "" and channel != ""):
-            self.link_s3 = self.create_link_s3()
+    def __init__(self,  **kwargs):
+        self.id = kwargs.get('id')
+        self.channels_name_id = kwargs.get('channels_name_id')
+        self.transcript_status = kwargs.get('transcript_status')
+        self.priority = kwargs.get('priority')
+        self.channel_current_rank = kwargs.get('channel_current_rank')
+        self.todo_date = kwargs.get('todo_date')
+        self.upload_date = kwargs.get('upload_date')
+        self.s3_audio = kwargs.get('s3_audio')
+        self.language = kwargs.get('language')
 
-        # if (self.link_s3 != "" and self.link_s3_vtt != ""):
-        #     self.link_s3_vtt = self.link_s3.rsplit(".", 1)[0] + ".vtt"
-        #     self.link_s3_json = self.link_s3.rsplit(".", 1)[0] + ".json"
-
-    def create_link_s3(self):
-        vod_encode = urllib.parse.quote(self.title)
-        vod_path = env_varz.S3_CAPTIONS_KEYBASE + self.channel + "/" + self.id + "/" + vod_encode
-        return env_varz.BUCKET_DOMAIN + "/" + vod_path
+    # TODO def __repr__(self):
+    #      def __str__(self):
+    def print(self):
+        max_attr_length = max(len(attr) for attr in dir(self) if not attr.startswith('__') and not callable(getattr(self, attr)))
+        print(self)
+        for attr in dir(self):
+            # filter out special methods and attributes
+            if not attr.startswith('__') and not callable(getattr(self, attr)):
+                # print(f"    {attr}: {getattr(self, attr)}")
+                value = getattr(self, attr)
+                print(f"    {attr.ljust(max_attr_length)} | {value}")
 

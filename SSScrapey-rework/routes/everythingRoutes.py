@@ -6,10 +6,6 @@ import controllers.MicroPreper.seleniumPreper as seleniumPreper
 import controllers.mainController as mainController
 import controllers.MicroPreper.TodoPreper as TodoPreper
 import controllers.MicroTranscriber.transcriber as transcriber
-import mocks.completed_captions_list
-import mocks.big_key_val_list
-import mocks.relevant_data
-import mocks.ytdlSingleVidMetaData
 
 #variable is used in app.py
 everything_bp = Blueprint('download', __name__)

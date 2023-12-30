@@ -14,6 +14,7 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 # Vast AI SSH
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 # # # #
 # In Vast AI Console:
@@ -23,9 +24,8 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 
 ############################################################
 # Docker build
-#    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text  .
-#    docker build --no-cache -t cbrodski/audio2text:v2023.7.13 -f Dockerfile_VastAi_audio2Text  .
-#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29 -f Dockerfile_VastAi_audio2Text  .
+#    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text_rework  .
+#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ENTRY -f Dockerfile_VastAi_audio2Text_rework  .
 
 # Docker push
 #    docker push cbrodski/audio2text:latest
@@ -33,6 +33,7 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 # Docker run (local)
 #    docker run --env-file .env cbrodski/audio2text:latest
 #    docker run --env-file .env cbrodski/audio2text:v2023.12.29 
+#    docker run --env-file .env cbrodski/audio2text:v2023.12.29.ENTRY 
 
 # Docker run debug
 #    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
@@ -84,12 +85,18 @@ WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
 RUN apt install git-all -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git \
-    && pip install faster-whisper \
-    && pip install -U openai-whisper \
-    && pip install boto3 \
+    && pip install faster-whisper==0.7.1 \
+    && pip install -U openai-whisper==20230314 \
+    && pip install boto3==1.28.40 \
     && pip install python-dotenv \
     && pip install langcodes \
     && pip install language_data 
+    # && pip install faster-whisper \
+    # && pip install -U openai-whisper \
+    # && pip install boto3 \
+    # && pip install python-dotenv \
+    # && pip install langcodes \
+    # && pip install language_data 
 
 
 #########
@@ -124,17 +131,18 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 ######################
 # VASTI AI ENDING IT #
 ######################
-RUN pip install vastai && \ 
-    cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
-    echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
-    head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
+RUN pip install vastai=0.1.7
+# RUN pip install vastai && \ 
+#     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
+#     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
+#     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
 
 WORKDIR /app
 RUN apt-get install -y pkg-config \
     && apt-get install -y gcc libmysqlclient-dev \
     && pip install mysqlclient \
     && pip uninstall torch -y \
-    && pip install torch==2.1.2
+    && pip install torch==2.0.1
     # && pip install torch==2.1.2+cu121
     
 
@@ -144,11 +152,18 @@ WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 # ENTRYPOINT ls && \
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "NOT DONE!!!!!!!!!!!!" ; \
+    pip show openai-whisper ; \
+    pip show faster-whisper ; \
+    pip show vastai ; \
     ls ~/.ssh/ ; \
     echo -n $VAST_CONTAINERLABEL ; \
     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ; \
+    echo $VAST_CONTAINERLABEL > bullshit.txt ; \
+    echo $CONTAINER_ID > bullshit2.txt ; \
+    cat bullshit.txt ; \
+    cat bullshit2.txt ; \
     git pull origin master && \ 
     ls && \
     python kickWhisperer.py ; \

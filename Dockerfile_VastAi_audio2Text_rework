@@ -129,17 +129,36 @@ RUN pip install vastai && \
     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
 
+WORKDIR /app
+RUN apt-get install -y pkg-config \
+    && apt-get install -y gcc libmysqlclient-dev \
+    && pip install mysqlclient \
+    && pip uninstall torch -y \
+    && pip install torch==2.1.2
+    # && pip install torch==2.1.2+cu121
+    
+
+COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 # ENTRYPOINT ls && \
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "NOT DONE!!!!!!!!!!!!" ; \
+    ls ~/.ssh/ ; \
+    echo -n $VAST_CONTAINERLABEL ; \
+    cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
+    echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
+    head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ; \
     git pull origin master && \ 
     ls && \
-    python audio2text_app.py ; \
+    python kickWhisperer.py ; \
     vastai --help ; \
     vastai destroy instance $CONTAINER_ID; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; 
+
+# apt-get install -y pkg-config
+#  apt-get install gcc libmysqlclient-dev
+#  pip install mysqlclient

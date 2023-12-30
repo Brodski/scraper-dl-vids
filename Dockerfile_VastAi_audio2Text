@@ -148,10 +148,10 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 ######################
 # VASTI AI ENDING IT #
 ######################
-RUN pip install vastai && \ 
-    cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
-    echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
-    head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
+# RUN pip install vastai && \ 
+#     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
+#     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
+#     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
 
 
 WORKDIR /app/scraper-dl-vids/audio2Text

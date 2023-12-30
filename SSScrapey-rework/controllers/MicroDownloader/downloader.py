@@ -20,8 +20,7 @@ import yt_dlp
 # load_dotenv()
 import env_file as env_varz
 
-def getTodoFromDatabase(isDebug=False) -> List[Vod]:
-    resultsArr = []
+def getConnection():
     connection = MySQLdb.connect(
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
@@ -29,8 +28,14 @@ def getTodoFromDatabase(isDebug=False) -> List[Vod]:
         db      = env_varz.DATABASE,
         autocommit  = True,
         ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
+    return connection
+
+
+def getTodoFromDatabase(isDebug=False) -> List[Vod]:
+    resultsArr = []
+    connection = getConnection()
     try:
         with connection.cursor() as cursor:
             sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
@@ -241,15 +246,7 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
     thumbnail = downloaded_metadata.get('thumbnail')
     transcript_status = "audio2text_need"
 
-    connection = MySQLdb.connect(
-        host    = env_varz.DATABASE_HOST,
-        user    = env_varz.DATABASE_USERNAME,
-        passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
-        autocommit  = True,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
-    )
+    connection = getConnection()
 
 
     try:
@@ -299,17 +296,7 @@ def getNeededVod(vods_list: List[Vod]):
 
 def updateUnauthorizedVod(vod: Vod):
     print("UPDATING UN-AUTH VOD")
-    
-    connection = MySQLdb.connect(
-        host    = env_varz.DATABASE_HOST,
-        user    = env_varz.DATABASE_USERNAME,
-        passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
-        autocommit  = True,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
-    )
-
+    connection = getConnection()
     t_status = "unauthorized"
     try:
         with connection.cursor() as cursor:

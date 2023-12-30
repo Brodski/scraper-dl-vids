@@ -49,3 +49,4 @@ sensitive-vars.tfvars
 **/canvas/**
 
 **/tests-benchmarks-sorta/**
+**/*.pem

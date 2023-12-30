@@ -21,7 +21,7 @@ def updateDb1(scrapped_channels: List[ScrappedChannel]):
         db      = env_varz.DATABASE,
         autocommit  = True,
         ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": "C:/Users/BrodskiTheGreat/Documents/HeidiSQL/cacert-2023-08-22.pem" } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
 
     try:

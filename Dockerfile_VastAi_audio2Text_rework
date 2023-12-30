@@ -83,9 +83,10 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
 RUN apt install git-all -y \
-    && git clone https://github.com/Brodski/scraper-dl-vids.git \
-    && cd /app/scraper-dl-vids/SSScrapey-rework \
-    && pip install -r requirements.txt
+    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+    
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN pip install -r requirements.txt
     # && pip install faster-whisper==0.7.1 \
     # && pip install -U openai-whisper==20230314 \
     # && pip install boto3==1.28.40 \
@@ -126,8 +127,8 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 ######################
 # VASTI AI ENDING IT #
 ######################
-# RUN pip install vastai==0.1.7
-# RUN pip install vastai && \ 
+# RUN pip install vastai[==0.1.7
+RUN pip install vastai
 #     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
 #     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
 #     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
@@ -135,7 +136,7 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 WORKDIR /app
 RUN apt-get install -y pkg-config \
     && apt-get install -y gcc libmysqlclient-dev \
-    && pip install mysqlclient==2.2.0 \
+    && pip install mysqlclient==2.2.0 
     # && pip uninstall torch -y \
     # && pip install torch==2.0.1
     # && pip install torch==2.1.2+cu121

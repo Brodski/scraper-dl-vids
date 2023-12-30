@@ -16,16 +16,21 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
-# # # #
-# In Vast AI Console:
-# Docker Run: use docker ENTRYPOINT. 
-# -e AWS_SECRET_ACCESS_KEY='xxxxxxxxxxx' -e AWS_ACCESS_KEY_ID='xxxxxxxxxx' -e DATABASE_HOST='xxxxxxxxxxx' -e DATABASE_USERNAME='xxxxxxxxxxxxx' -e DATABASE_PASSWORD='xxxxxxxxxxx' -e DATABASE='idontfront-dev'
-# # # #
 
+# Deploy
+# 1. Go to Vast AI Console:
+# 2. Docker Run: use docker ENTRYPOINT. 
+# 3. -e AWS_SECRET_ACCESS_KEY='xxxxxxxxxxx' -e AWS_ACCESS_KEY_ID='xxxxxxxxxx' -e DATABASE_HOST='xxxxxxxxxxx' -e DATABASE_USERNAME='xxxxxxxxxxxxx' -e DATABASE_PASSWORD='xxxxxxxxxxx' -e DATABASE='idontfront-dev'
+
+
+############################################################
+#                                                          #
+#                        DOCKER BUILD                      #
+#                                                          #
 ############################################################
 # Docker build
 #    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text_rework  .
-#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ENTRY -f Dockerfile_VastAi_audio2Text_rework  .
+#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ver -f Dockerfile_VastAi_audio2Text_rework  .
 
 # Docker push
 #    docker push cbrodski/audio2text:latest
@@ -40,14 +45,8 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 
 # Docker run debug 2
 #    docker run --env-file .env -it cbrodski/audio2text:latest /bin/bash
- 
+############################################################
 
-
-##############################################
-# ENV BENCH_OUTPUT="/app/scraper-dl-vids/docker-benchmarks"
-# ENV BARBARA="BarbaraWalters.mp3"
-# ENV GPT_PODCAST="OPENASSISTANT+TAKES+ON+CHATGPT.mp3"
-# RUN echo "My variable: $BENCH_OUTPUT"
 
 ##########
 # Python #
@@ -85,18 +84,14 @@ WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
 RUN apt install git-all -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git \
-    && pip install faster-whisper==0.7.1 \
-    && pip install -U openai-whisper==20230314 \
-    && pip install boto3==1.28.40 \
-    && pip install python-dotenv \
-    && pip install langcodes \
-    && pip install language_data 
-    # && pip install faster-whisper \
-    # && pip install -U openai-whisper \
-    # && pip install boto3 \
-    # && pip install python-dotenv \
-    # && pip install langcodes \
-    # && pip install language_data 
+    && cd /app/scraper-dl-vids/SSScrapey-rework \
+    && pip install -r requirements.txt
+    # && pip install faster-whisper==0.7.1 \
+    # && pip install -U openai-whisper==20230314 \
+    # && pip install boto3==1.28.40 \
+    # && pip install python-dotenv==1.0.0 \
+    # && pip install langcodes==3.3.0 \
+    # && pip install language_data==1.1
 
 
 #########
@@ -116,7 +111,7 @@ RUN cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
 RUN apt-get update
 RUN apt-get install libcudnn8=8.9.1.23-1+cuda12.1 -y
 RUN apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 -y 
-    # && rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
 
 
 # https://github.com/NVIDIA/nvidia-docker/issues/1644
@@ -131,7 +126,7 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 ######################
 # VASTI AI ENDING IT #
 ######################
-RUN pip install vastai=0.1.7
+# RUN pip install vastai==0.1.7
 # RUN pip install vastai && \ 
 #     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
 #     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
@@ -140,9 +135,9 @@ RUN pip install vastai=0.1.7
 WORKDIR /app
 RUN apt-get install -y pkg-config \
     && apt-get install -y gcc libmysqlclient-dev \
-    && pip install mysqlclient \
-    && pip uninstall torch -y \
-    && pip install torch==2.0.1
+    && pip install mysqlclient==2.2.0 \
+    # && pip uninstall torch -y \
+    # && pip install torch==2.0.1
     # && pip install torch==2.1.2+cu121
     
 
@@ -154,6 +149,7 @@ CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "NOT DONE!!!!!!!!!!!!" ; \
     pip show openai-whisper ; \
     pip show faster-whisper ; \
+    pip show mysqlclient ; \
     pip show vastai ; \
     ls ~/.ssh/ ; \
     echo -n $VAST_CONTAINERLABEL ; \

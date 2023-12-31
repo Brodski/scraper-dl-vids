@@ -40,8 +40,6 @@ def getTodoFromDb():
                     ORDER BY Channels.CurrentRank ASC, Vods.UploadDate ASC
                     LIMIT 100
                 """
-            print("sql")
-            print(sql)
             cursor.execute(sql)
             results = cursor.fetchall()
     except Exception as e:

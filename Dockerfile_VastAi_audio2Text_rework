@@ -34,6 +34,7 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 
 # Docker push
 #    docker push cbrodski/audio2text:latest
+ # docker push cbrodski/audio2text:v2023.12.29.ver
 
 # Docker run (local)
 #    docker run --env-file .env cbrodski/audio2text:latest
@@ -84,15 +85,23 @@ WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
 RUN apt install git-all -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git 
-    
+   
+####################
+# Pip Dependencies #
+####################
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-RUN pip install -r requirements.txt
-    # && pip install faster-whisper==0.7.1 \
+RUN pip install -r requirements.txt 
+    # && pip install faster-whisper===0.10.0 ; \ 
+    # && pip install mysqlclient==2.2.0 
     # && pip install -U openai-whisper==20230314 \
     # && pip install boto3==1.28.40 \
     # && pip install python-dotenv==1.0.0 \
     # && pip install langcodes==3.3.0 \
     # && pip install language_data==1.1
+
+WORKDIR /app
+RUN apt-get install -y pkg-config \
+    && apt-get install -y gcc libmysqlclient-dev 
 
 
 #########
@@ -117,8 +126,6 @@ RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb
 
 # https://github.com/NVIDIA/nvidia-docker/issues/1644
 RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
-# RUN export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
-# RUN export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
 RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
@@ -127,49 +134,25 @@ RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 ######################
 # VASTI AI ENDING IT #
 ######################
-# RUN pip install vastai[==0.1.7
-RUN pip install vastai
+RUN pip install vastai==0.1.8 
+# ! Below commands doesnt working anymore. Env var at CMD now
 #     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
 #     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
 #     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
-
-WORKDIR /app
-RUN apt-get install -y pkg-config \
-    && apt-get install -y gcc libmysqlclient-dev \
-    && pip install mysqlclient==2.2.0 
-    # && pip uninstall torch -y \
-    # && pip install torch==2.0.1
-    # && pip install torch==2.1.2+cu121
-    
 
 COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 # ENTRYPOINT ls && \
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    echo "NOT DONE!!!!!!!!!!!!" ; \
-    pip show openai-whisper ; \
-    pip show faster-whisper ; \
-    pip show mysqlclient ; \
-    pip show vastai ; \
-    ls ~/.ssh/ ; \
-    echo -n $VAST_CONTAINERLABEL ; \
-    cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
-    echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
-    head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ; \
-    echo $VAST_CONTAINERLABEL > bullshit.txt ; \
-    echo $CONTAINER_ID > bullshit2.txt ; \
-    cat bullshit.txt ; \
-    cat bullshit2.txt ; \
-    git pull origin master && \ 
-    ls && \
+    vastai set api-key $VAST_API_KEY ; \
+    git pull origin master ; \ 
     python kickWhisperer.py ; \
-    vastai --help ; \
-    vastai destroy instance $CONTAINER_ID; \
+    echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
-    echo "DONE!!!!!!!!!!!!" ; 
+    vastai destroy instance $CONTAINER_ID
 
 # apt-get install -y pkg-config
 #  apt-get install gcc libmysqlclient-dev

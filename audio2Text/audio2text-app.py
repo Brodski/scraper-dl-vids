@@ -65,6 +65,7 @@ def uploadCaptionsToS3(filename, todo: Todo):
     print("todo:")
     print(json.dumps(todo, default=lambda o: o.__dict__, indent=4))
     s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + todo.channel + "/" + todo.id + "/" + filename
+                # channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt
 
     print("channel: " + todo.channel)  
     print("vod_id: " + todo.id) 
@@ -81,7 +82,7 @@ def uploadCaptionsToS3(filename, todo: Todo):
       if file_abs[-4:] ==  '.vtt':
         content_type = 'text/vtt; charset=utf-8'
       s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
-      return s3CapFileKey # channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt
+      return s3CapFileKey 
     except:
       print("oops! failed to upload: " + filename)
       return False

@@ -1,5 +1,6 @@
 
 import json
+import re
 import subprocess
 import time
 import urllib
@@ -106,17 +107,17 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
         try:
             meta = ydl.extract_info(vidUrl, download=isDownload) 
         except Exception as e:
+            pattern = r"Video \d+ does not exist"
             if "HTTP Error 403" in str(e):
                 print("Failed b/c 403. Probably private or sub only.")
                 return "403"
+            if re.search(pattern, str(e)):
+                print("Failed b/c 'that content is unavailable'. Probably deleted")
+                return "404"
             else:
                 print ("Failed to extract vid!!: " + vidUrl + " : " + str(e))
                 return None
-
     print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
-    if meta == None:
-        print("  (dlTwtvVid) Something failed with downloadTwtvVid2")
-        return -1
     return meta
     
 
@@ -294,10 +295,10 @@ def getNeededVod(vods_list: List[Vod]):
     print(vod.print())
     return vod
 
-def updateUnauthorizedVod(vod: Vod):
-    print("UPDATING UN-AUTH VOD")
+def updateErrorVod(vod: Vod, error_msg: str):
+    print(f"Something failed with downloadTwtvVid2. Channel-Vod: {vod.channels_name_id}-{vod.id}. Error type: {error_msg}")
     connection = getConnection()
-    t_status = "unauthorized"
+    t_status = error_msg
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -319,29 +320,6 @@ def cleanUpDownloads(downloaded_metadata):
     filename_opus = None
     filename = x[0].get('filepath') 
     file_abs = os.path.abspath(filename)
-    
-    print("cleanUpFiles requested_downloads")
-    print()
-    print()
-    print()
-    print()
-    print()
-    print()
-    print()
-    print()
-    print(downloaded_metadata)
-    print()
-    print()
-    print()
-    print()
-    print()
-    print()
-    print()
-    # print(x)
-    # print(filename)
-    # print(file_abs)
-    print("cleanUpFiles - file_abs= " + file_abs)
-
     os.remove(file_abs)       
     if filename.endswith('.mp3'):
         filename_opus = filename[:-4] + ".opus"

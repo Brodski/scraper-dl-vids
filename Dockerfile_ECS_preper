@@ -1,8 +1,17 @@
+# BUILD
+# docker build --no-cache -t cbrodski/prepper:v2023.12.31.1 -f Dockerfile_ECS_preper  .
+
+# RUN DEBUG
+# docker run --env-file .\.env cbrodski/prepper:v2023.12.31.1
+# docker run --env-file .\.env -it cbrodski/prepper:v2023.12.31.1 /bin/bash
+
+# PUSH
+# docker push cbrodski/prepper:v2023.12.31.1
 FROM python:3.10.13-bullseye
 
-##########################
-# Dependencies & Project #
-##########################
+###########
+# Project #
+###########
 WORKDIR /app
 RUN apt update 
 RUN apt-get update
@@ -21,8 +30,13 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
     && pip --version \
     && rm get-pip.py 
     
+################
+# Dependencies #
+################
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 RUN pip install -r requirements_preper.txt
+RUN apt-get install -y firefox-esr
+# RUN apt-get install default-mysql-server
 # pip install beautifulsoup4==4.12.2
 # pip install selenium==4.16.0
 # pip install webdriver-manager==4.0.1

@@ -59,8 +59,15 @@ def kickDownloader(isDebug=False):
     # Download vod from twitch
     downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
     if downloaded_metadata == "403":
-        downloader.updateUnauthorizedVod(vod)
+        downloader.updateErrorVod(vod,"unauthorized")
         return "nope gg sub only"
+    if downloaded_metadata == "404":
+        downloader.updateErrorVod(vod, "deleted")
+        return "nope gg sub only"
+    if downloaded_metadata == None:
+        downloader.updateErrorVod(vod, "unknown")
+        return "nope gg. Some other error"
+        
     
     # Post process vod
     downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)

@@ -75,14 +75,12 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel], connection):
                 
 def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
     max_vods = int(env_varz.YTDL_VIDS_PER_CHANNEL)
-    print("max_vods")
-    print(max_vods)
-    print(type(max_vods))
+    print("max_vods " + str(max_vods))
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
-            print("0000000000000000000000000000000000000000000000")
             print("000000000     updateVodsDb (loop)    000000000")
-            print("0000000000000000000000000000000000000000000000")
+            print("Scrapped Channel: " + str(chan.name_id))
+            print("Scrapped Links: " + str(chan.links))
             # Prepare a parameterized query for IN clause
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
@@ -90,30 +88,23 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
             placeholders = ', '.join(['%s'] * len(vod_ids))
             # query = f"SELECT NameId FROM Channels WHERE NameId IN ({placeholders})"
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
-            print("Query:", query)
-            print("Values:", vod_ids)
             cursor.execute(query, vod_ids)
 
             # Get results
             existing_ids = [row[0] for row in cursor.fetchall()]
             non_existing_ids = set(vod_ids) - set(existing_ids)
             previous_existing_ids = set(existing_ids) - set(non_existing_ids)
-            print("---------------------------")
-            print("Existing IDs:", existing_ids)
-            print("Non-existing IDs:", list(non_existing_ids))
-            print("Previous-existing IDs:", list(previous_existing_ids))
-            print("---------------------------")
+            print("Previous-existing IDs (old):", list(previous_existing_ids))
+            print("Non-existing IDs (new):", list(non_existing_ids))
 
             # Add new vods to the TODO list
             if non_existing_ids:
                 trans_status = "todo"            
-                insert_values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
+                values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
-                print("insert_values: ", insert_values)
-                print("sql: ", sql )
-                print("values: ", insert_values)
+                print("Updating these: " + str(values))
                 try:
-                    cursor.executemany(sql, insert_values)
+                    cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction
                 except Exception as e:
                     print(f"Error occurred: {e}")
@@ -124,15 +115,14 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
             if previous_existing_ids:
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
-                print("previous_existing_ids", previous_existing_ids)
-                print("values", values)
                 try:
+                    print("Updating these: " + str(values))
                     cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction
                 except Exception as e:
                     print(f"Error occurred: {e}")
                     connection.rollback()
-
+    print("Completed update!")
 
 # YYYY-MM-DD
 # CREATE TABLE Rankings (

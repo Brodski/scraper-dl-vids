@@ -1,21 +1,20 @@
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup
+from models.ScrappedChannel import ScrappedChannel
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from typing import List
+from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import env_file as env_varz
-import mocks.initScrapData
-from models.ScrappedChannel import ScrappedChannel
-import re
+import mocks.initHrefsData
 import os
+import re
 import time
-from typing import List
 
 ###
 # Assembly AI multi lingual speech recognition
@@ -65,6 +64,10 @@ scriptPauseVidsJs = """
 """
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
+    if isDebug:
+        scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+        return scrapped_channels
     channelMax = int(env_varz.SELENIUM_NUM_CHANNELS)
     vodsMax = int(env_varz.SELENIUM_NUM_VODS)
     SLEEP_SCROLL = 2

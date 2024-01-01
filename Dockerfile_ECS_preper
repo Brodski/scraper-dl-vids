@@ -1,0 +1,21 @@
+FROM python:3.10.13-bullseye
+####################
+# Pip Dependencies #
+####################
+WORKDIR /app
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
+RUN apt install git-all -y \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN pip install -r requirements_not_trans.txt 
+
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+# ENTRYPOINT ls && \
+CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    git pull origin master ; \ 
+    python kickPreper.py ; \
+    echo "" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; 

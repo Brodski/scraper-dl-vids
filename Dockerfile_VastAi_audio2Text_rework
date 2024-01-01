@@ -2,7 +2,32 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 
 ############################################################
 #                                                          #
-#                     USEFULL COMMANDS                     #
+#                        DOCKER BUILD                      #
+#                                                          #
+############################################################
+# Docker build
+#    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text_rework  .
+#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ver -f Dockerfile_VastAi_audio2Text_rework  .
+#    docker build --no-cache -t cbrodski/prepper:v2023.12.31.1 -f Dockerfile_ECS_preper  .
+
+# Docker push
+#    docker push cbrodski/audio2text:latest
+#    docker push cbrodski/audio2text:v2023.12.29.ver
+
+# Docker run (local)
+#    docker run --env-file .env cbrodski/audio2text:latest
+#    docker run --env-file .env cbrodski/audio2text:v2023.12.29 
+#    docker run --env-file .env cbrodski/audio2text:v2023.12.29.ENTRY 
+
+# Docker run debug
+#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
+
+# Docker run debug 2
+#    docker run --env-file .env -it cbrodski/audio2text:latest /bin/bash
+
+############################################################
+#                                                          #
+#                     VAST AI COMMANDS                     #
 #                                                          #
 ############################################################
 # Vast AI Search:
@@ -23,29 +48,6 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 # 3. -e AWS_SECRET_ACCESS_KEY='xxxxxxxxxxx' -e AWS_ACCESS_KEY_ID='xxxxxxxxxx' -e DATABASE_HOST='xxxxxxxxxxx' -e DATABASE_USERNAME='xxxxxxxxxxxxx' -e DATABASE_PASSWORD='xxxxxxxxxxx' -e DATABASE='idontfront-dev'
 
 
-############################################################
-#                                                          #
-#                        DOCKER BUILD                      #
-#                                                          #
-############################################################
-# Docker build
-#    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text_rework  .
-#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ver -f Dockerfile_VastAi_audio2Text_rework  .
-
-# Docker push
-#    docker push cbrodski/audio2text:latest
- # docker push cbrodski/audio2text:v2023.12.29.ver
-
-# Docker run (local)
-#    docker run --env-file .env cbrodski/audio2text:latest
-#    docker run --env-file .env cbrodski/audio2text:v2023.12.29 
-#    docker run --env-file .env cbrodski/audio2text:v2023.12.29.ENTRY 
-
-# Docker run debug
-#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
-
-# Docker run debug 2
-#    docker run --env-file .env -it cbrodski/audio2text:latest /bin/bash
 ############################################################
 
 
@@ -99,6 +101,9 @@ RUN pip install -r requirements.txt
     # && pip install langcodes==3.3.0 \
     # && pip install language_data==1.1
 
+#########
+# MYSQL #
+#########
 WORKDIR /app
 RUN apt-get install -y pkg-config \
     && apt-get install -y gcc libmysqlclient-dev 
@@ -153,7 +158,3 @@ CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     vastai destroy instance $CONTAINER_ID
-
-# apt-get install -y pkg-config
-#  apt-get install gcc libmysqlclient-dev
-#  pip install mysqlclient

@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 from models.ScrappedChannel import ScrappedChannel
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
@@ -30,7 +31,8 @@ import time
 #
 ######################################################################################### 
 ######################################################################################### 
-options = Options()
+# options = Options()
+options = FirefoxOptions()
 if env_varz.SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
     os.environ["MOZ_HEADLESS"] = "1"

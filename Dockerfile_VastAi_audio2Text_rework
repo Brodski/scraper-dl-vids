@@ -85,7 +85,8 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 ###########
 WORKDIR /app
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
-RUN apt install git-all -y \
+# RUN apt install git-all -y \
+RUN apt install git -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git 
    
 ####################

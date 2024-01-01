@@ -1,19 +1,31 @@
 FROM python:3.10.13-bullseye
-####################
-# Pip Dependencies #
-####################
+
+##########################
+# Dependencies & Project #
+##########################
 WORKDIR /app
+RUN apt update 
+RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
-RUN apt install git-all -y \
-    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+# RUN apt install git-all -y 
+# RUN git clone https://github.com/Brodski/scraper-dl-vids.git 
+
+
+#######
+# Pip #
+#######    
+WORKDIR /app
+RUN apt install curl  -y 
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py pip==23.0.1 \
+    && pip --version \
+    && rm get-pip.py 
+# WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+# RUN pip install -r requirements_not_trans.txt 
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-RUN pip install -r requirements_not_trans.txt 
-
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-# ENTRYPOINT ls && \
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    git pull origin master ; \ 
+    # git pull origin master ; \ 
     python kickPreper.py ; \
     echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \

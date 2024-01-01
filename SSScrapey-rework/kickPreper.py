@@ -1,4 +1,4 @@
-import controllers.MicroPreper as audio2text_app
+import controllers.MicroPreper.preperGo as preperGo
 
 if __name__ == "__main__":
-    audio2text_app.gogo()
+    preperGo.gogo()

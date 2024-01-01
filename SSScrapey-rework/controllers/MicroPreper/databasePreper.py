@@ -1,15 +1,10 @@
+from datetime import datetime
+from dotenv import load_dotenv
 from models.ScrappedChannel import ScrappedChannel
 from typing import List
-from datetime import datetime
-
-from dotenv import load_dotenv
-
-import os
-import MySQLdb
-
-
-# load_dotenv()
 import env_file as env_varz
+import MySQLdb
+import os
 
 
 

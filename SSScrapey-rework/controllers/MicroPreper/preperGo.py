@@ -1,18 +1,16 @@
-
-import controllers.MicroPreper.seleniumPreper as seleniumPreper
-import controllers.MicroPreper.TodoPreper as todoPreper
-import controllers.MicroPreper.databasePreper as databasePreper
-import datetime
-import os
-import json
 from models.ScrappedChannel import ScrappedChannel
 from models.Vod import Vod
 from typing import List
+import controllers.MicroPreper.databasePreper as databasePreper
+import controllers.MicroPreper.seleniumPreper as seleniumPreper
+import controllers.MicroPreper.TodoPreper as todoPreper
+import datetime
 import env_file as env_varz
+import json
+import os
 
 def gogo(isDebug=False):
     print ("IT'S RUNNING! WOOOOOOOOOO")
-    return 'nice'
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannels() 
 

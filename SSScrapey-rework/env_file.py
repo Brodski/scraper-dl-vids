@@ -61,5 +61,6 @@ if os.getenv("ENV") == "local":
     WHSP_EXEC_FFMPEG  = env_vars_local['WHSP_EXEC_FFMPEG']
     IS_DEBUG = env_vars_local['IS_DEBUG']
     WHSP_MODEL_SIZE = env_vars_local['WHSP_MODEL_SIZE']
-    WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
-    WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']
+    WHSP_COMPUTE_TYPE = env_vars_local['WHSP_COMPUTE_TYPE']
+    WHSP_CPU_THREADS = env_vars_local['WHSP_CPU_THREADS']
+    SSL_FILE = env_vars_local['SSL_FILE']

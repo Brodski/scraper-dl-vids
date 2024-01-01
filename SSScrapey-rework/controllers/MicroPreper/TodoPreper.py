@@ -1,24 +1,12 @@
 from __future__ import unicode_literals
-
-import time
-from typing import List, Tuple, Dict
 from models.ScrappedChannel import ScrappedChannel
-# import asyncio
-# from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-from flask import jsonify, abort
-import requests
+from typing import List, Tuple, Dict
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
-
-import boto3
+import env_file as env_varz
 import json
 import os
-
-import env_file as env_varz
+import requests
+import time
 
 
 

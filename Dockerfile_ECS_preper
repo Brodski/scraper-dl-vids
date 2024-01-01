@@ -7,9 +7,9 @@ WORKDIR /app
 RUN apt update 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
-# RUN apt install git-all -y 
-# RUN git clone https://github.com/Brodski/scraper-dl-vids.git 
-
+RUN apt install git -y 
+RUN git clone https://github.com/Brodski/scraper-dl-vids.git 
+COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 #######
 # Pip #
@@ -20,12 +20,21 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
     && python get-pip.py pip==23.0.1 \
     && pip --version \
     && rm get-pip.py 
-# WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-# RUN pip install -r requirements_not_trans.txt 
+    
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN pip install -r requirements_preper.txt
+# pip install beautifulsoup4==4.12.2
+# pip install selenium==4.16.0
+# pip install webdriver-manager==4.0.1
+# pip install mysqlclient==2.2.0 
 
+
+######
+# GO #
+######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    # git pull origin master ; \ 
+    git pull origin master ; \ 
     python kickPreper.py ; \
     echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \

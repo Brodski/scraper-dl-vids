@@ -224,9 +224,10 @@ def getAllS3Jsons():
     # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
     # obj['Key']          = channels/ranking/raw/2023-15/100.json
     # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+    s3_ranking_raw = "channels/ranking/raw"
     s3 = boto3.client('s3')
     objList = []
-    objects = s3.list_objects_v2(Bucket=env_varz.env_varz.BUCKET_NAME, Prefix=env_varz.S3_RANKING_RAW)
+    objects = s3.list_objects_v2(Bucket=env_varz.env_varz.BUCKET_NAME, Prefix=s3_ranking_raw)
     print ("objects")
     print (objects)
     print (objects.get('Contents'))
@@ -260,14 +261,15 @@ def getAllS3Jsons():
 @test_bp.route('/doS3Stuff')
 def doS3Stuff():
     s3Aws = os.getenv('env_varz.BUCKET_NAME')
+    test_dir = "mydirectory"
     print(f'AWS_BUCKET Key: {s3Aws}')
 
     s3 = boto3.client('s3')
-    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_TEST_DIR)['Contents']
+    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir)['Contents']
 
     for obj in objects:
         print(obj['Key'])
-    response = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=env_varz.S3_TEST_DIR) 
+    response = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir) 
     print (response)
     print('================')
     print('================')

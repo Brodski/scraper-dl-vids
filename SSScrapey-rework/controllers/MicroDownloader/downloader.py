@@ -27,26 +27,44 @@ def getConnection():
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
         db      = env_varz.DATABASE,
-        autocommit  = True,
+        autocommit  = False,
         ssl_mode    = "VERIFY_IDENTITY",
         ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
-
-def getTodoFromDatabase(isDebug=False) -> List[Vod]:
+# Logic below determins which Todo/highest_priority_vod
+# Get last 5 recent vods from every channel. Take from the most popular channel
+def getTodoFromDatabase(isDebug=False) -> Vod:
+    highest_priority_vod = None #
     resultsArr = []
     connection = getConnection()
+    maxVodz = env_varz.DWN_QUERY_PER_RECENT
     try:
         with connection.cursor() as cursor:
-            sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
-                        FROM Vods
-                        JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-                        # WHERE Vods.TranscriptStatus = 'todo'
-                        ORDER BY Channels.CurrentRank ASC, Vods.TodoDate ASC, Vods.Priority ASC
-                        LIMIT 100
+            sql = f"""  SELECT 
+                            subquery.*
+                        FROM (
+                            SELECT 
+                                Vods.*,
+                                Channels.CurrentRank,
+                                # ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
+                                ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC) as rn
+                            FROM Vods 
+                            JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+                            # WHERE Vods.TranscriptStatus = 'todo'
+                            ) AS subquery 
+                        WHERE subquery.rn <= {maxVodz}
+                        ORDER BY CurrentRank
                         """
-            # sql = "SELECT Vods.* FROM Vods JOIN Channels ON Vods.ChannelNameId = Channels.NameId WHERE Vods.TranscriptStatus = 'todo' ORDER BY Channels.CurrentRank ASC, Vods.Priority ASC LIMIT 4";
+            # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
+            #             FROM Vods
+            #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+            #             WHERE Vods.TranscriptStatus = 'todo'
+            #             # ORDER BY Channels.CurrentRank ASC, Vods.TodoDate ASC, Vods.Priority ASC
+            #             ORDER BY Vods.TodoDate ASC, Channels.CurrentRank ASC, Vods.Priority ASC
+            #             LIMIT 100
+            #             """
             cursor.execute(sql)
             results = cursor.fetchall()
     except Exception as e:
@@ -54,14 +72,82 @@ def getTodoFromDatabase(isDebug=False) -> List[Vod]:
         return []
     finally:
         connection.close()
+    print("Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank = vod_
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank, rownum, *others = vod_
         vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate)
+        vod.print()
         resultsArr.append(vod)
-        upload_date = UploadDate
 
-    return resultsArr
+    highest_priority_vod = None
+    #Recall, results arr is sorted by priority via smart sql query
+    print("FINDING??")
+    for vod in resultsArr:
+        vod.print()
+        if vod.transcript_status == "todo":
+            highest_priority_vod = vod
+            break
+    print("!!! highest_priority_vod: !!!")
+    highest_priority_vod.print()
+    if isDebug:
+        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        # vod = Vod(id="1964894986", channels_name_id="jd_onlymusic", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        print("(debug) highest_priority_vod is this vod:")
+        highest_priority_vod.print()
+    return highest_priority_vod
+
+def getNeededVod_OLD(vods_list: List[Vod]):    
+    maxVodz = 2
+    print("[][][][][][][][][][][][][][][][][][][][]")
+    vods_dict_temp = {}
+    vods_dict = {}
+    for vod in vods_list:
+        vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
+    for key in vods_dict_temp:
+        print(f"{key}: {vods_dict_temp[key]}")
+        for x in vods_dict_temp[key]:
+            x.print()
+        filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
+        if filtered_objects:
+            vods_dict[key] = filtered_objects
+
+    keyHighestPrioChan = list(vods_dict.keys())[0]
+    vod: Vod = vods_dict[keyHighestPrioChan][0]
+    print("NEXT VOD IN THEORY")
+    vod.print()
+    return vod
+
+def lockVodDb(vod: Vod, isDebug=False):
+    print("LOCKING VOD DB: " + str(vod.id))
+    connection = getConnection()
+    transcript_dl_status = "downloading"
+    try:
+        with connection.cursor() as cursor:
+            sql = f"SELECT Id, ChannelNameId, TranscriptStatus FROM Vods WHERE Id = {vod.id};"
+            cursor.execute(sql)
+            result = cursor.fetchone()  # Use fetchone() since we expect only one row for a specific id
+            # id = result[0]
+            # channel_name_id = result[1]
+            # transcript_status = result[2]
+            if (result is None or result[2] != "todo") and isDebug != True:
+                return False
+            sql = """
+                UPDATE Vods
+                SET TranscriptStatus = %s
+                WHERE Id = %s;
+                """
+            values = (transcript_dl_status, vod.id)
+            affected_count = cursor.execute(sql, values)
+            print(f"DB. Set {vod.id} to 'downloading', affected_count: : {affected_count}")
+        connection.commit()
+        return True
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        connection.rollback()
+        return False
+    finally:
+        connection.close()
 
 
 # 'API'  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
@@ -248,8 +334,6 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
     transcript_status = "audio2text_need"
 
     connection = getConnection()
-
-
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -268,32 +352,13 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
             values = (title, duration, duration_string, view_count, webpage_url, timestamp_twtw_uploaded, thumbnail, transcript_status, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
             print("Updated these many" + str(affected_count))
+        connection.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()
     finally:
         connection.close()
 
-
-def getNeededVod(vods_list: List[Vod]):    
-    vods_dict_temp = {}
-    vods_dict = {}
-    for vod in vods_list:
-        vod.print()
-        vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
-    maxVodz = 2
-    # maxChans = 3
-    for key in vods_dict_temp:
-        filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
-        if filtered_objects:
-            vods_dict[key] = filtered_objects
-
-    print (vods_dict)
-    keyHighestPrioChan = list(vods_dict.keys())[0]
-    vod = vods_dict[keyHighestPrioChan][0]
-    print("NEXT VOD IN THEORY")
-    print(vod.print())
-    return vod
 
 def updateErrorVod(vod: Vod, error_msg: str):
     print(f"Something failed with downloadTwtvVid2. Channel-Vod: {vod.channels_name_id}-{vod.id}. Error type: {error_msg}")
@@ -308,6 +373,7 @@ def updateErrorVod(vod: Vod, error_msg: str):
                 """
             values = (t_status, vod.id)
             affected_count = cursor.execute(sql, values)
+        connection.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()
@@ -330,3 +396,4 @@ def cleanUpDownloads(downloaded_metadata):
     print('Deleted: ' + str(file_abs))
     print('Deleted: ' + str(file_abs_opus))
     return 
+

@@ -16,30 +16,30 @@ hrefData = [
          
       ]
    },
-   {
-      "displayname": "台北建東",
-      "language": "Chinese",
-      "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-      "twitchurl": "https://www.twitch.tv/jd_onlymusic",
-      "url": "jd_onlymusic",
-      "links": [
-         "/videos/1964894986",
-      ],
-      "current_rank": "-3",
-      "todos":[         
-      ]
-   },
    # {
-   #    "displayname":"LoLGeranimo",
-   #    "language":"English",
-   #    "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-   #    "twitchurl":"https://www.twitch.tv/lolgeranimo",
-   #    "url":"lolgeranimo",
-   #    "links":[
-   #       "/videos/5057810",
-   #       "/videos/28138895"
+   #    "displayname": "台北建東",
+   #    "language": "Chinese",
+   #    "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+   #    "twitchurl": "https://www.twitch.tv/jd_onlymusic",
+   #    "url": "jd_onlymusic",
+   #    "links": [
+   #       "/videos/1964894986",
+   #    ],
+   #    "current_rank": "-3",
+   #    "todos":[         
    #    ]
    # },
+   {
+      "displayname":"LoLGeranimo",
+      "language":"English",
+      "logo":"https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+      "twitchurl":"https://www.twitch.tv/lolgeranimo",
+      "url":"lolgeranimo",
+      "links":[
+         "/videos/5057810",
+         "/videos/28138895"
+      ]
+   },
    # {
    #    "displayname":"LCK",
    #    "language":"English",
@@ -52,21 +52,6 @@ hrefData = [
    #    ]
    # }
 ]
-
-# above is much smaller than irl. eg:
-# hrefData = [
-#    {
-#       "displayname":"LoLGeranimo",
-#       "url":"lolgeranimo",
-#       "links":[
-#          "/videos/5057810",
-#          "/videos/28138895"
-#          "/videos/5057810",
-#          "/videos/28138895"
-#       ]
-#    },
-# ],
-# ...
 
 def getHrefsData():
     channels = []

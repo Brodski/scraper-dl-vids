@@ -51,9 +51,9 @@ def home():
             </ul>
         </li>
     <hr/>
-    <h3> Micro Downloader </h3>
-        <li><a href="/main/kickDownloader">  mainController.kickDownloader(True) </a></li>
-        <li><a href="/main/kickDownloader_real">  mainController.kickDownloader(<b>False</b>) </a></li>
+    <h3> Micro Downloader </h3>     
+        <li><a href="/main/kickDownloader">  mainController.kickDownloader(Debug=TRUE)  </a></li>
+        <li><a href="/main/kickDownloader_real">  mainController.kickDownloader(<b>Debug=FALSE</b>) </a></li>
             <ul>
             </ul>
         </li>

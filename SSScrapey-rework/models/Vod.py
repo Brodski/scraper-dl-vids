@@ -26,15 +26,18 @@ class Vod:
         self.s3_audio = kwargs.get('s3_audio')
         self.language = kwargs.get('language')
 
-    # TODO def __repr__(self):
-    #      def __str__(self):
+    # def __repr__(self):
+    # def __str__(self):
+
     def print(self):
+        print(f"VOD - {self.channels_name_id} {self.id}. Status: {self.transcript_status}")
+
+    def printDebug(self):
         max_attr_length = max(len(attr) for attr in dir(self) if not attr.startswith('__') and not callable(getattr(self, attr)))
-        print(self)
+        print(self.channels_name_id + ": " + self.__repr__() )
         for attr in dir(self):
             # filter out special methods and attributes
             if not attr.startswith('__') and not callable(getattr(self, attr)):
-                # print(f"    {attr}: {getattr(self, attr)}")
                 value = getattr(self, attr)
                 print(f"    {attr.ljust(max_attr_length)} | {value}")
 

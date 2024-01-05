@@ -1,20 +1,17 @@
-
+from datetime import datetime
+import sys
+from dotenv import load_dotenv
+from models.Vod import Vod
+from pathlib import Path
+from typing import List
+import boto3
 import json
+import MySQLdb
+import os
 import re
 import subprocess
 import time
 import urllib
-import boto3
-from models.Vod import Vod
-from typing import List
-from datetime import datetime
-
-from dotenv import load_dotenv
-from flask import Blueprint, current_app
-from flask import jsonify, abort
-
-import os
-import MySQLdb
 import yt_dlp
 
 
@@ -82,14 +79,14 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
 
     highest_priority_vod = None
     #Recall, results arr is sorted by priority via smart sql query
-    print("FINDING??")
     for vod in resultsArr:
         vod.print()
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
     print("!!! highest_priority_vod: !!!")
-    highest_priority_vod.print()
+    if highest_priority_vod:
+        highest_priority_vod.print()
     if isDebug:
         highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # vod = Vod(id="1964894986", channels_name_id="jd_onlymusic", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
@@ -160,9 +157,15 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
     vidUrl = "https://www.twitch.tv/videos/" + vod.id
     start_time = time.time()
 
+
+    main_script_path = sys.argv[0]
+    absolute_path = os.path.realpath(main_script_path)
+    app_root = os.path.dirname(absolute_path)
+
     print("  (dlTwtvVid) vidUrl= " + vidUrl)
+    print("  (dlTwtvVid) app_root= " + str(app_root))
     try:
-        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(current_app.root_path, output_local_dir)
+        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(app_root, output_local_dir)
     except:
         output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(os.getcwd()+'/', output_local_dir)
 
@@ -397,3 +400,29 @@ def cleanUpDownloads(downloaded_metadata):
     print('Deleted: ' + str(file_abs_opus))
     return 
 
+# SELECT 
+#     subquery.*,
+#     Channels.CurrentRank
+# FROM (
+#     SELECT 
+#         Vods.*,
+#         ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
+#     FROM Vods 
+# ) AS subquery
+# JOIN Channels ON subquery.ChannelNameId = Channels.NameId 
+# WHERE subquery.rn <= 2;
+
+
+
+# SELECT 
+#     subquery.*
+# FROM (
+#     SELECT 
+#         Vods.*,
+#         Channels.CurrentRank,
+#         ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
+#     FROM Vods 
+# 	JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+# ) AS subquery 
+# WHERE subquery.rn <= 2
+# ORDER BY CurrentRank

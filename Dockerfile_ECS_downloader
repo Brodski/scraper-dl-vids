@@ -1,0 +1,65 @@
+####################################################################
+# BUILD
+# docker build --no-cache -t cbrodski/downloader:v2024.1.5.1 -f Dockerfile_ECS_downloader  .
+
+# DEBUG `RUN`
+# docker run --env-file .\.env cbrodski/downloader:v2024.1.5.1
+# docker run --env-file .\.env -it cbrodski/downloader:v2024.1.5.1 /bin/bash
+
+# PUSH
+# docker push cbrodski/downloader:v2024.1.5.1
+####################################################################
+FROM python:3.10.13-bullseye
+
+LABEL version="1.0"
+LABEL description="Runs MicroPreper. Gets recent links from top channels."
+LABEL maintainer="your-email@example.com"
+LABEL url="https://github.com/Brodski/scraper-dl-vids"
+LABEL build_date="2024-01-01"
+LABEL vendor="Bski Inc."
+LABEL license="MIT"
+
+
+###########
+# Project #
+###########
+WORKDIR /app
+RUN apt update 
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
+RUN apt install git -y 
+RUN git clone https://github.com/Brodski/scraper-dl-vids.git 
+COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
+
+#######
+# Pip #
+#######    
+WORKDIR /app
+RUN apt install curl  -y 
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py pip==23.0.1 \
+    && pip --version \
+    && rm get-pip.py 
+    
+################
+# Dependencies #
+################
+# WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+# RUN pip install -r requirements_preper.txt
+# RUN apt-get install -y firefox-esr
+#
+# THIS NOT NEEDED!!!! RUN apt-get install default-mysql-server
+# pip install beautifulsoup4==4.12.2
+# pip install selenium==4.16.0
+# pip install webdriver-manager==4.0.1
+# pip install mysqlclient==2.2.0 
+
+
+######
+# GO #
+######
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    git pull origin master ; \ 
+    python kickPreper.py ; \
+    echo "DONE!!!!!!!!!!!!" ; 

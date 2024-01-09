@@ -196,7 +196,7 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
     if env_varz.ENV != "local":
-        yt_dlp_cmd.append['--no-progress']
+        yt_dlp_cmd.append('--no-progress')
         
     try:
         print("  (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
@@ -493,8 +493,6 @@ def cleanUpDownloads(downloaded_metadata):
     last_dot_index = filename.rfind('.')
     for ex in extenstions:
         file_ = filename[:last_dot_index] + ex
-        print("file+")
-        print(file_)
         file_abs = os.path.abspath(file_)
         if os.path.exists(file_abs) and os.path.isfile(file_abs):
             os.remove(file_abs)

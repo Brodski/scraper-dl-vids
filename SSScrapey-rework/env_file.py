@@ -8,6 +8,7 @@ if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_dev')
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
+    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
 elif os.getenv("ENV") == "prod":
     env_vars = dotenv_values('.env_public')
 else:

@@ -44,17 +44,16 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 ################
 # Dependencies #
 ################
-# WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-# RUN pip install -r requirements_preper.txt
-# RUN apt-get install -y firefox-esr
-#
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN pip install -r requirements_downloader.txt \
+    && apt-get install ffmpeg -y 
+    #  pip install mysqlclient==2.2.0 &&
+    #  pip install boto3==1.28.40 &&
+    #  pip install yt-dlp==2023.12.30 &&
+    #  pip install python-dotenv==1.0.0 &&
+
 # TODO THIS LINE NOT NEEDED in other places!!!! RUN apt-get install default-mysql-server
-# pip install mysqlclient==2.2.0 
-# pip install boto3==1.28.40
-# pip install yt-dlp==2023.12.30
-# pip install mysqlclient==2.2.0
-# pip install python-dotenv==1.0.0
-# apt-get install ffmpeg -y 
+
 ######
 # GO #
 ######

@@ -13,6 +13,7 @@ import subprocess
 import time
 import urllib
 import yt_dlp
+import subprocess
 
 
 # load_dotenv()
@@ -64,16 +65,20 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
             #             """
             cursor.execute(sql)
             results = cursor.fetchall()
+            column_names = [desc[0] for desc in cursor.description]
+            print ("    (getTodoFromDatabase) vod_ column_names")
+            print(column_names)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"    (getTodoFromDatabase) An error occurred: {e}")
         return []
     finally:
         connection.close()
-    print("Vod candidates:")
+    print("    (getTodoFromDatabase) Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank, rownum, *others = vod_
-        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate)
+        # print (vod_)
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, ChanCurrentRank, rownum = vod_
+        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate)
         vod.print()
         resultsArr.append(vod)
 
@@ -84,13 +89,18 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
-    print("!!! highest_priority_vod: !!!")
+    print("    (getTodoFromDatabase) highest_priority_vod:")
     if highest_priority_vod:
-        highest_priority_vod.print()
+        highest_priority_vod.printDebug()
     if isDebug:
+        # 'https://www.twitch.tv/videos/1783465374' # pro leauge
+        # 'https://www.twitch.tv/videos/1791750006' # lolgera
+        # 'https://www.twitch.tv/videos/1792255936' # sub only
+        # 'https://www.twitch.tv/videos/1792342007' # live
+        # 'www.twitch.tv/videos/28138895'
         highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        # vod = Vod(id="1964894986", channels_name_id="jd_onlymusic", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        print("(debug) highest_priority_vod is this vod:")
+        # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
         highest_priority_vod.print()
     return highest_priority_vod
 
@@ -116,7 +126,7 @@ def getNeededVod_OLD(vods_list: List[Vod]):
     return vod
 
 def lockVodDb(vod: Vod, isDebug=False):
-    print("LOCKING VOD DB: " + str(vod.id))
+    print("    (lockVodDb) LOCKING VOD DB: " + str(vod.id))
     connection = getConnection()
     transcript_dl_status = "downloading"
     try:
@@ -136,7 +146,7 @@ def lockVodDb(vod: Vod, isDebug=False):
                 """
             values = (transcript_dl_status, vod.id)
             affected_count = cursor.execute(sql, values)
-            print(f"DB. Set {vod.id} to 'downloading', affected_count: : {affected_count}")
+            print(f"    (lockVodDb) Set {vod.id} to 'downloading', affected_count: : {affected_count}")
         connection.commit()
         return True
     except Exception as e:
@@ -145,29 +155,86 @@ def lockVodDb(vod: Vod, isDebug=False):
         return False
     finally:
         connection.close()
+def downloadTwtvVidFAST(vod: Vod, isDownload=True): 
+    print ("000000000000                     00000000000000000")
+    print ("000000000000 downloadTwtvVidFAST 00000000000000000")
+    print ("000000000000                     00000000000000000")
+    if vod == None or vod.id == None:
+        print("ERROR no vod")
+        return
 
+    start_time = time.time()
+    # format paths and direct where to download file
+    main_script_path = sys.argv[0]
+    absolute_path = os.path.realpath(main_script_path)
+    app_root = os.path.dirname(absolute_path)
+    app_root = os.path.normpath(app_root)
+    output_local_dir = os.path.normpath("assets/audio") # TODO!!!!!!!!!!
+    vidUrl = "https://www.twitch.tv/videos/" + vod.id
+
+    print("  (dlTwtvVid) vidUrl= " + vidUrl)
+    output_template = os.path.join(app_root, output_local_dir, '%(title)s-%(id)s.%(ext)s')
+    # output_template = 'C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework/assets/audio/%(title)s-%(id)s.%(ext)s'
+
+    # How to trim video without downloading it entirely  https://github.com/yt-dlp/yt-dlp/issues/2220
+    yt_dlp_cmd = [
+                    'yt-dlp', vidUrl, 
+                    '--dump-json',
+                    '--output', output_template,
+                    '--extract-audio', 
+                    '--force-overwrites', # dev
+                    '--no-continue', # dev
+                    '--format', 'worst', 
+                    '--quiet',
+                    '--no-simulate', #unique to yt-dlp via command line
+                    # '--parse-metadata', 'requested_downloads_filepath:%(filepath):',
+                    '--audio-format', 'mp3', 
+                    '--restrict-filenames', 
+                    '--downloader', 'ffmpeg', 
+                    '--downloader-args', 'ffmpeg_i: -ss 00 -to 269', 
+                    '--audio-quality', '0',
+                    '--no-progress' if env_varz.ENV != "local" else  ""   
+                  ]
+    if env_varz.ENV != "local":
+        yt_dlp_cmd.append['--no-progress']
+        
+    try:
+        print("  (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
+        meta = _execSubprocCmd(yt_dlp_cmd)
+        meta = json.loads(meta)
+    except Exception as e:
+        print ("xxxFailed to extract vid!!: " + vidUrl + " : " + str(e))
+        pattern = r"Video \d+ does not exist"
+        if "HTTP Error 403" in str(e):
+            print("Failed b/c 403. Probably private or sub only.")
+            return "403"
+        if re.search(pattern, str(e)):
+            print("Failed b/c 'that content is unavailable'. Probably deleted")
+            return "404"
+        else:
+            print ("Failed to extract vid!!: " + vidUrl + " : " + str(e))
+            return None
+
+    print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
+    return meta
+    
 
 # 'API'  https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L137-L312
 def downloadTwtvVid2(vod: Vod, isDownload=True): 
     if vod == None or vod.id == None:
         print("ERROR no vod")
         return
-
-    output_local_dir = "assets/audio"
-    vidUrl = "https://www.twitch.tv/videos/" + vod.id
     start_time = time.time()
-
-
+    output_local_dir = "assets/audio"
+    output_local_dir = os.path.normpath("assets/audio") # TODO!!!!!!!!!!
+    vidUrl = "https://www.twitch.tv/videos/" + vod.id
     main_script_path = sys.argv[0]
     absolute_path = os.path.realpath(main_script_path)
     app_root = os.path.dirname(absolute_path)
 
     print("  (dlTwtvVid) vidUrl= " + vidUrl)
     print("  (dlTwtvVid) app_root= " + str(app_root))
-    try:
-        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(app_root, output_local_dir)
-    except:
-        output_template = '{}/{}/%(title)s-%(id)s.%(ext)s'.format(os.getcwd()+'/', output_local_dir)
+    output_template = os.path.join(app_root, output_local_dir, '%(title)s-%(id)s.%(ext)s')
 
     ydl_opts = {
         # Formatting info --> https://github.com/yt-dlp/yt-dlp#sorting-formats
@@ -179,12 +246,17 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
         "restrictfilenames": True,
         # "audioformat": "worst",
         # "listformats": True,      # FOR DEBUGGING
-        # "audioformat": "mp3",
         "quiet": True,
+        # "download_ranges": "*0:00:00-0:00:30", # aka '--download_sections'
+        # "download_ranges": "*10:15-inf", # aka '--download_sections'
         # "verbose": True,
         "noprogress": True if env_varz.ENV != "local" else False,
         "parse_metadata" "requested_downloads.filepath:%(filepath):"  # my custom  metadata field
         "overwrites": True,
+        'downloader': 'ffmpeg',
+        'downloader_args': {
+            'ffmpeg_i': ['-ss', '300', '-to', '369']
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -192,8 +264,13 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
         #     # 'preferredquality': '192',  # https://github.com/ytdl-org/youtube-dl/blob/195f22f679330549882a8234e7234942893a4902/youtube_dl/postprocessor/ffmpeg.py#L302
         }],
     }
+    print("  x(dlTwtvVid) output_template ... " + output_template)
+    print("  x(dlTwtvVid) downloading ... " + vidUrl)
+    print("  x(dlTwtvVid) downloading ... " + vidUrl)
+    print("  x(dlTwtvVid) downloading ... " + vidUrl)
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
+            print("  (dlTwtvVid) downloading ... " + vidUrl)
             meta = ydl.extract_info(vidUrl, download=isDownload) 
         except Exception as e:
             pattern = r"Video \d+ does not exist"
@@ -207,24 +284,31 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
                 print ("Failed to extract vid!!: " + vidUrl + " : " + str(e))
                 return None
     print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
+    print("CLASSIC")
+    print("CLASSIC")
+    print("CLASSIC")
+    print("CLASSIC")
+    print("CLASSIC")
+    print(meta)
     return meta
     
 
 
 def convertVideoToSmallAudio(meta):
     start_time = time.time()
-    filepath = meta.get('requested_downloads')[0].get('filepath')  #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
-    inFile = "file:" + filepath
-    if env_varz.WHSP_EXEC_FFMPEG == "True":
-        last_dot_index = inFile.rfind('.')
-        outFile = inFile[:last_dot_index] + ".opus"
-        # outFile =  "".join(inFile.split(".")[:-1]) + ".opus" #opus b/c of the ffmpeg cmd below
+    # filepath = meta.get('requested_downloads')[0].get('filepath')  
+    filepath = meta.get('_filename') #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
+
+    last_dot_index = filepath.rfind('.')
+    inFile = "file:" + filepath[:last_dot_index] + ".mp3" 
+    if env_varz.DWN_COMPRESS_AUDIO == "True":
+        outFile = "file:" + filepath[:last_dot_index] + ".opus" #opus b/c of the ffmpeg cmd below
     else:
         outFile = inFile
     
-    print("  (dlTwtvVid) filepath= "+filepath)
-    print("  (dlTwtvVid) inFile= "+inFile)
-    print("  (dlTwtvVid) outFile= "+outFile)
+    # print("  (dlTwtvVid) filepath= "+filepath)
+    # print("  (dlTwtvVid) inFile= "+inFile)
+    # print("  (dlTwtvVid) outFile= "+outFile)
 
     # Debugging commands:
     # ffmpeg -i '.\Adc Academy - Informative Adc Stream - GrandMaster today？ [v1792628012].mp3' -c:a libopus -ac 1 -ar 16000 -b:a 33K -vbr constrained gera33k.opus
@@ -234,24 +318,40 @@ def convertVideoToSmallAudio(meta):
 
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     ffmpeg_command = [ 'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', outFile ]
-    if env_varz.WHSP_EXEC_FFMPEG == "True":
-        _execFFmpegCmd(ffmpeg_command)
+    if env_varz.DWN_COMPRESS_AUDIO == "True":
+        print("    (convertVideoToSmallAudio): compressing Audio....")
+        _execSubprocCmd(ffmpeg_command)
 
     time_diff = time.time() - start_time    
-    print("     FFMpeg cmd time = ", str(time_diff))
-    print('---------BOT----------x')
+    print("    (convertVideoToSmallAudio): run time = ", str(time_diff))
     return meta, outFile
-    
-def _execFFmpegCmd(ffmpeg_command):
+
+
+def _execCmd(command):
+    print("    (exec2) _execCmd: starting subprocess!")
+    print("    (exec2) command=" + " ".join(command))
+    # print(command)
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as proc:
+        output, errors = proc.communicate()
+
+        print("Output:", output.decode())
+        print("Errors:", errors.decode())
+        if proc.returncode != 0:
+            print("Command failed with return code", proc.returncode)
+    return output
+
+def _execSubprocCmd(ffmpeg_command):
     try:
-        # print("    (exec) FFMPEG: starting subprocess!")
-        print("    (exec) ffmpeg_command=" + " ".join(ffmpeg_command))
+        print("    (exec) Starting subprocess!")
+        # print("    (exec) ffmpeg_command=" + " ".join(ffmpeg_command))
         stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        # print("    (exec) FFMPEG:  PIPE COMPLETE")
+        print("    (exec) SUBPROCESS PIPE COMPLETE")
         # print(stdoutput)
+        # print("    (exec) stderr:")
         # print(stderr)
+        # print("    (exec) returncode:")
         # print(returncode)
-        return True
+        return stdoutput
     except subprocess.CalledProcessError as e:
         print("Failed to run ffmpeg command:")
         print(e)
@@ -291,25 +391,23 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     print ("000000000000 uploadAudioToS3 00000000000000000")
     print ("000000000000                 00000000000000000")
 
-    ext = downloaded_metadata.get("requested_downloads")[0].get('ext')
+    # ext = downloaded_metadata.get("requested_downloads")[0].get('ext')
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id
     vod_title = os.path.basename(outfile)
     vod_encode = urllib.parse.quote(vod_title)
     s3fileKey = caption_keybase + "/" + vod_encode
     s3metaKey = caption_keybase + "/metadata.json"
+    outfile_aux = outfile[5:]
     print("")
     print("    (uploadAudioToS3) uploading channel: " + vod.channels_name_id)
-    print("    (uploadAudioToS3)  vod_id:" + vod.id)
+    print("    (uploadAudioToS3) vod_id:" + vod.id)
     print("    (uploadAudioToS3) meta.get(fulltitle)= " + downloaded_metadata.get('fulltitle'))
-    print("    (uploadAudioToS3) ext = " + ext)
     print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("    (uploadAudioToS3) metaKey= " + s3metaKey)
-    print ("    " + outfile[5:])
     print("")
     # print(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
-        s3.upload_file(os.path.abspath(outfile[5:]), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
+        s3.upload_file(os.path.abspath(outfile_aux), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
         s3.put_object(Body=json.dumps(downloaded_metadata, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return s3fileKey
     except Exception as e:
@@ -321,10 +419,12 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
-        elif meta.get('requested_downloads')[0].get('title'):
-            title = meta.get('title')[0].get('title')
+        # elif meta.get('requested_downloads')[0].get('title'):
+        #     title = meta.get('title')[0].get('title')
+        elif meta.get('fulltitle'):
+            title = meta.get('fulltitle')
         else: 
-            title = meta.get('fulltitle') 
+            title = vod_id
         return title
 
     title = getTitle(downloaded_metadata)
@@ -332,8 +432,8 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
     duration_string = downloaded_metadata.get('duration_string')
     view_count = downloaded_metadata.get('view_count')
     webpage_url = downloaded_metadata.get('webpage_url')
-    timestamp_twtw_uploaded = downloaded_metadata.get('timestamp') # upload_date
     thumbnail = downloaded_metadata.get('thumbnail')
+    stream_epoch = int(downloaded_metadata.get('timestamp'))
     transcript_status = "audio2text_need"
 
     connection = getConnection()
@@ -346,18 +446,19 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
                     DurationString = %s,
                     ViewCount = %s,
                     WebpageUrl = %s,
-                    UploadDate = FROM_UNIXTIME(%s),
                     Thumbnail = %s,
                     TranscriptStatus = %s,
+                    StreamDate = FROM_UNIXTIME(%s),
+                    DownloadDate = NOW(),
                     S3Audio = %s
                 WHERE Id = %s;
                 """
-            values = (title, duration, duration_string, view_count, webpage_url, timestamp_twtw_uploaded, thumbnail, transcript_status, s3fileKey, vod_id)
+            values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
-            print("Updated these many" + str(affected_count))
+            print("    (updateVods_Round2Db) Updated these many: " + str(affected_count))
         connection.commit()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"    (updateVods_Round2Db) Error occurred: {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -384,20 +485,20 @@ def updateErrorVod(vod: Vod, error_msg: str):
         connection.close()
 
 def cleanUpDownloads(downloaded_metadata):
-    x = downloaded_metadata.get("requested_downloads")
-
-    filename_opus = None
-    filename = x[0].get('filepath') 
-    file_abs = os.path.abspath(filename)
-    os.remove(file_abs)       
-    if filename.endswith('.mp3'):
-        filename_opus = filename[:-4] + ".opus"
-        file_abs_opus = os.path.abspath(filename_opus) if filename_opus else None
-        print("file_abs_opus")
-        print(file_abs_opus)
-        os.remove(file_abs_opus)
-    print('Deleted: ' + str(file_abs))
-    print('Deleted: ' + str(file_abs_opus))
+    if env_varz.ENV == "local":
+        print("Local Env. NOT cleaning up files")
+        return
+    extenstions = ['.mp3', '.mp4', '.opus']
+    filename = downloaded_metadata.get('_filename') 
+    last_dot_index = filename.rfind('.')
+    for ex in extenstions:
+        file_ = filename[:last_dot_index] + ex
+        print("file+")
+        print(file_)
+        file_abs = os.path.abspath(file_)
+        if os.path.exists(file_abs) and os.path.isfile(file_abs):
+            os.remove(file_abs)
+            print('Deleted: ' + str(file_abs))
     return 
 
 # SELECT 

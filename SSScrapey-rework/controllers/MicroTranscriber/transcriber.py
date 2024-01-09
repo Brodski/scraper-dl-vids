@@ -37,7 +37,8 @@ def getTodoFromDb():
                     FROM Vods
                     JOIN Channels ON Vods.ChannelNameId = Channels.NameId
                     WHERE Vods.TranscriptStatus = 'audio2text_need'
-                    ORDER BY Channels.CurrentRank ASC, Vods.UploadDate ASC
+                    ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate ASC
+                    # ORDER BY Channels.CurrentRank ASC, Vods.UploadDate ASC
                     LIMIT 100
                 """
             cursor.execute(sql)
@@ -49,7 +50,7 @@ def getTodoFromDb():
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, UploadDate, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, ChanCurrentRank, Language  = vod_
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, ChanCurrentRank, Language  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, upload_date=UploadDate, s3_audio=S3Audio, language=Language)
         resultsArr.append(vod)
     print("resultsArr")
@@ -216,10 +217,11 @@ def setCompletedStatusDb(vod: Vod):
         with connection.cursor() as cursor:
             sql = """
                 UPDATE Vods
-                SET TranscriptStatus = %s
+                SET TranscriptStatus = %s,
+                Model = %s
                 WHERE Id = %s;
                 """
-            values = (t_status, vod.id)
+            values = (t_status, vod.id, env_varz.WHSP_MODEL_SIZE)
             affected_count = cursor.execute(sql, values)
     except Exception as e:
         print(f"Error occurred: {e}")

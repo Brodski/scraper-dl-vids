@@ -3,12 +3,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_ecs_cluster" "my_cluster" {
-  name = "my-cluster"
+resource "aws_ecs_cluster" "download_cluster" {
+  name = "download-cluster"
 }
 
-resource "aws_ecs_task_definition" "my_task" {
-  family                   = "my-task" #some name unique
+resource "aws_ecs_task_definition" "download_task" {
+  family                   = "download_task" #some name unique
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   # cpu                      = "256" # 0.25 vCPU
@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "my_task" {
   }
   container_definitions = jsonencode([
     {
-      name              = "my-container",
+      name              = "downloader-container",
       essential         = true
       image             = "cbrodski/preper:official_v1"
       # image             = "cbrodski/ssscrapey:v2.5"
@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "my_task" {
         options = {
           # awslogs-group: "/ecs/fargate-example-logs",
           awslogs-create-group  = "true"
-          awslogs-group         = aws_cloudwatch_log_group.my_log_group.name
+          awslogs-group         = aws_cloudwatch_log_group.download_log_group.name
           awslogs-region        = "us-east-1"
           awslogs-stream-prefix = "ecs"
         }
@@ -50,12 +50,12 @@ resource "aws_ecs_task_definition" "my_task" {
 
 resource "aws_cloudwatch_event_target" "ecs" {
   rule        = aws_cloudwatch_event_rule.schedule.name
-  arn         = aws_ecs_cluster.my_cluster.arn
+  arn         = aws_ecs_cluster.download_cluster.arn
   role_arn    = aws_iam_role.ecs_events_role.arn 
   input       = jsonencode({})
   ecs_target {
     task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.my_task.arn
+    task_definition_arn = aws_ecs_task_definition.download_task.arn
     launch_type         = "FARGATE"
     platform_version    = "LATEST"
 
@@ -68,20 +68,20 @@ resource "aws_cloudwatch_event_target" "ecs" {
         "subnet-03a939bf02aaff07d",
         "subnet-0468a4b6cab55c7af"
       ]
-      security_groups = [aws_security_group.my_sg.id]
+      security_groups = [aws_security_group.download_sg.id]
       # assign_public_ip = true
       assign_public_ip = false
     }
   }
 }
 
-resource "aws_cloudwatch_log_group" "my_log_group" {
-  name = "my-log-group"
+resource "aws_cloudwatch_log_group" "download_log_group" {
+  name = "download_log_group"
   retention_in_days = 30 // Optional: Set the retention for your logs
 }
 
 resource "aws_cloudwatch_event_rule" "schedule" {
-  name                = "my-scheduled-rule"
+  name                = "download_schedule"
   description         = "Trigger ECS task daily"
   # schedule_expression = "rate(1 day)"
   schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
@@ -89,8 +89,8 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 
-resource "aws_security_group" "my_sg" {
-  name        = "my_sg"
+resource "aws_security_group" "download_sg" {
+  name        = "download_sg"
   description = "ECS Security Group with no inbound traffic"
   vpc_id      = "vpc-0ee690d031cd7a0e6"
 
@@ -153,7 +153,7 @@ resource "aws_iam_policy" "cloudwatch_events_ecs" {
       {
         Effect = "Allow",
         Action = [ "ecs:RunTask" ],
-        Resource = "*" #[ aws_ecs_task_definition.my_task.arn ]
+        Resource = "*" #[ aws_ecs_task_definition.download_task.arn ]
       }
     ]
   })

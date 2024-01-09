@@ -48,18 +48,18 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 # RUN pip install -r requirements_preper.txt
 # RUN apt-get install -y firefox-esr
 #
-# THIS NOT NEEDED!!!! RUN apt-get install default-mysql-server
-# pip install beautifulsoup4==4.12.2
-# pip install selenium==4.16.0
-# pip install webdriver-manager==4.0.1
+# TODO THIS LINE NOT NEEDED in other places!!!! RUN apt-get install default-mysql-server
 # pip install mysqlclient==2.2.0 
-
-
+# pip install boto3==1.28.40
+# pip install yt-dlp==2023.12.30
+# pip install mysqlclient==2.2.0
+# pip install python-dotenv==1.0.0
+# apt-get install ffmpeg -y 
 ######
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     git pull origin master ; \ 
-    python kickPreper.py ; \
+    python kickDownloader.py ; \
     echo "DONE!!!!!!!!!!!!" ; 

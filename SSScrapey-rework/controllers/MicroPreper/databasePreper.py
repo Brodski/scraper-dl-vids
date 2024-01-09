@@ -20,8 +20,8 @@ def updateDb1(scrapped_channels: List[ScrappedChannel]):
     )
 
     try:
-        for chan in scrapped_channels:
-            chan.print()
+        # for chan in scrapped_channels:
+        #     chan.print()
         addNewChannelToDb(scrapped_channels, connection)
         # addRankingsForTodayDb(scrapped_channels, connection) # This is optional
         updateVodsDb(scrapped_channels, connection)
@@ -91,17 +91,17 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
             existing_ids = [row[0] for row in cursor.fetchall()]
             non_existing_ids = set(vod_ids) - set(existing_ids)
             previous_existing_ids = set(existing_ids) - set(non_existing_ids)
-            print("Channel: " + str(chan.name_id))
-            print("Links: " + str(vod_ids))
-            print("Existing IDs (old):", list(previous_existing_ids))
-            print("New IDs (new):", list(non_existing_ids))
+            print("    (updateVodsDb) Channel: " + str(chan.name_id))
+            print("    (updateVodsDb) Links: " + str(vod_ids))
+            print("    (updateVodsDb) Old IDs :", list(previous_existing_ids))
+            print("    (updateVodsDb) New IDs :", list(non_existing_ids))
+            print("")
 
             # Add new vods to the Vods table
             if non_existing_ids:
                 trans_status = "todo"            
                 values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
-                print("Updating these: " + str(values))
                 try:
                     cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction
@@ -114,13 +114,12 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
                 try:
-                    print("Updating these: " + str(values))
                     cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction
                 except Exception as e:
                     print(f"Error occurred: {e}")
                     connection.rollback()
-    print("Completed update!")
+    print("    (updateVodsDb) Completed update!")
 
 # YYYY-MM-DD
 # CREATE TABLE Rankings (
@@ -152,7 +151,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
 # CREATE TABLE Vods (
 #     Id VARCHAR(255),
 #     ChannelNameId VARCHAR(255),
-
+#     Model VARCHAR(255);
 #     Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 #     Duration VARCHAR(255),
 #     DurationString VARCHAR(255),
@@ -163,15 +162,18 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
 #     TranscriptStatus VARCHAR(255),
 #     TodoDate DATETIME
 #     S3Link VARCHAR(255)
-
+#      
 #     PRIMARY KEY (Id),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
 # ); 
 
 # ALTER TABLE Vods CHANGE UploadDate UploadDate DATETIME;
 # ALTER TABLE Vods DROP COLUMN Timestamp;
+# ALTER TABLE Vods ADD Model VARCHAR(255);
 
 # ALTER TABLE Vods ADD COLUMN Thumbnail VARCHAR(255);
+# ALTER TABLE Vods ADD COLUMN DownloadDate VARCHAR(255);
+# ALTER TABLE Vods ADD COLUMN StreamDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
 
@@ -221,7 +223,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
 # ADD DurationString VARCHAR(255);
 # ADD ViewerCount VARCHAR(255);
 # ADD WebpageUrl VARCHAR(255);
-# ADD UploadDate VARCHAR(255);
+# ADD UploadDate DATETIME;
 # ADD Timestamp VARCHAR(255);
 
 

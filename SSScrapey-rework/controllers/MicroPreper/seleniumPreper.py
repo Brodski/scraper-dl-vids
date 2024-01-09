@@ -83,19 +83,20 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     firefox_profile.set_preference("media.autoplay.default", 1)
     firefox_profile.set_preference("media.autoplay.enabled.user-gestures-needed", False)
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
-    
+
     try:
         browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
         print(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:
-            cnt = cnt + 1
             if cnt > channelMax:
                 break
+            cnt = cnt + 1
             url = f'https://www.twitch.tv/{channel.name_id}/videos?filter=archives&sort=time'
-            print(url)
             browser.get(url)
+            idx_print = url.find('?filter')
             print ("--------------------")
             print (str(cnt) + ": " + browser.title)
+            print(url[:idx_print])
             time.sleep(2)
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
@@ -116,10 +117,11 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                     if match and tag['href'] not in allHrefs:
                         allHrefs.append(match.group(1)) # /videos/1983739230
                 else:
-                    print("skipping a['href'] @ text=" + tag['href'])
+                    # print("skipping a['href'] @ text=" + tag['href'])
+                    pass
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
-            print(channel)
+            print(f"Got {len(everyChannel)} vids for {browser.title}")
     except Exception as e:
         print("An error occurred :(")
         print(f"{e}")

@@ -14,7 +14,9 @@ class Vod:
     upload_date = datetime
     s3_audio = str
     language = str
-
+    model = str
+    download_date = str
+    stream_date = str
     def __init__(self,  **kwargs):
         self.id = kwargs.get('id')
         self.channels_name_id = kwargs.get('channels_name_id')
@@ -25,6 +27,9 @@ class Vod:
         self.upload_date = kwargs.get('upload_date')
         self.s3_audio = kwargs.get('s3_audio')
         self.language = kwargs.get('language')
+        self.model = kwargs.get('model')
+        self.download_date = kwargs.get('download_date')
+        self.stream_date = kwargs.get('stream_date')
 
     # def __repr__(self):
     # def __str__(self):

@@ -137,7 +137,7 @@ def addVipList(channels: List[ScrappedChannel]):
             "language": "Chinese",
             "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
             "twitchurl": "https://www.twitch.tv/jd_onlymusic",
-            "url": "nmplol",
+            "url": "jd_onlymusic",
             "rownum": -3
         })
     for vip in VIP_LIST:

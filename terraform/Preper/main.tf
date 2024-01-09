@@ -84,8 +84,9 @@ resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "my-scheduled-rule"
   description         = "Trigger ECS task daily"
   # schedule_expression = "rate(1 day)"
-  schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
+  # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
   # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
+  schedule_expression = "rate(7 days)" # every 7 days
 }
 
 

@@ -13,7 +13,7 @@ def gogo(isDebug=False):
     print ("IT'S RUNNING! WOOOOOOOOOO")
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannels() 
-
+    
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     scrapped_channels: List[ScrappedChannel]  = todoPreper.addVipList(scrapped_channels) # same ^ but with gera

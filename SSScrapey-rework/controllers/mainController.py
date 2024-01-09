@@ -11,7 +11,7 @@ import urllib
 import controllers.MicroDownloader.downloader as downloader
 import controllers.MicroTranscriber.audio2text_app as audio2text
 import controllers.MicroPreper.preperGo as preperGo
-import controllers.MicroDownloader.go as downloadGo
+import controllers.MicroDownloader.downloaderGo as downloadGo
 import mocks.initHrefsData
 import datetime
 import os

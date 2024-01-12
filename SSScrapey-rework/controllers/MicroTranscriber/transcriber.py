@@ -187,7 +187,6 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
     print("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
     print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
-    print("    (uploadCaptionsToS3) saved_caption_files: " + str(saved_caption_files) )
 
     s3 = boto3.client('s3')
 
@@ -196,9 +195,7 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
         print("    (uploadCaptionsToS3) filename: " + filename) 
-        print("    (uploadCaptionsToS3) file_abs: " + file_abs)
         print("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
-        print("     s3CapFileKey: " + s3CapFileKey)
         content_type = ''
         if file_abs[-4:] == '.txt':
             content_type = 'text/plain; charset=utf-8'
@@ -208,9 +205,11 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
             content_type = 'text/vtt; charset=utf-8'
         s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
         # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
-        return s3CapFileKey 
+    return s3CapFileKey 
 
 def setCompletedStatusDb(vod: Vod):
+    print("setCompletedStatusDb")
+    vod.print()
     connection = getConnectionDb()
     t_status = "completed"
     try:
@@ -223,6 +222,7 @@ def setCompletedStatusDb(vod: Vod):
                 """
             values = (t_status, env_varz.WHSP_MODEL_SIZE, vod.id)
             affected_count = cursor.execute(sql, values)
+            print("values: " + str(values))
             print("affected_count: " + str(affected_count))
     except Exception as e:
         print(f"Error occurred: {e}")

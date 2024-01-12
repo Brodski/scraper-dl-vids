@@ -77,7 +77,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
     print("000000000000000000000000000000000000000")
     print("000000000     updateVodsDb    000000000")
     print("000000000000000000000000000000000000000")
-    max_vods = int(env_varz.YTDL_VIDS_PER_CHANNEL)
+    max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 

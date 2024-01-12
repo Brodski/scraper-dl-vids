@@ -17,7 +17,7 @@ LABEL maintainer="your-email@example.com"
 LABEL url="https://github.com/Brodski/scraper-dl-vids"
 LABEL build_date="2024-01-01"
 LABEL vendor="Bski Inc."
-LABEL license="MIT"
+LABEL license="Bski"
 
 
 ###########
@@ -47,7 +47,6 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 RUN pip install -r requirements_preper.txt
 RUN apt-get install -y firefox-esr
-# THIS NOT NEEDED!!!! RUN apt-get install default-mysql-server
 # pip install beautifulsoup4==4.12.2
 # pip install selenium==4.16.0
 # pip install webdriver-manager==4.0.1

@@ -86,7 +86,7 @@ def downloadAudio(vod: Vod):
     audio_name_encode = urllib.parse.quote(audio_name)
     meta_url = audio_url.replace(audio_name, "metadata.json")
     audio_url = audio_url.replace(audio_name, audio_name_encode)    
-    relative_filename = env_varz.A2T_ASSETS_AUDIO +  audio_name_encode
+    relative_filename = env_varz.WHSP_A2T_ASSETS_AUDIO +  audio_name_encode
     bucket_domain = env_varz.BUCKET_DOMAIN
     relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     print("    (downloadAudio) bucket_domain=" + bucket_domain)
@@ -170,11 +170,11 @@ def writeCaptionsLocally(result, audio_basename):
     print("------   WRITE FILE   ------")
     print("abs_path: " + abs_path)
     print("audio_basename: " + audio_basename)
-    print("env_varz.A2T_ASSETS_CAPTIONS: " + env_varz.A2T_ASSETS_CAPTIONS)
+    print("env_varz.WHSP_A2T_ASSETS_CAPTIONS: " + env_varz.WHSP_A2T_ASSETS_CAPTIONS)
     filename_without_ext , file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
 
     for ext in FILE_EXTENSIONS_TO_SAVE:
-        srt_writer = get_writer(ext, env_varz.A2T_ASSETS_CAPTIONS)
+        srt_writer = get_writer(ext, env_varz.WHSP_A2T_ASSETS_CAPTIONS)
         srt_writer(result, audio_basename + ext)
 
         caption_file = filename_without_ext  + '.' + ext
@@ -193,7 +193,7 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
 
     for filename in saved_caption_files:
 
-        file_abs = os.path.abspath(env_varz.A2T_ASSETS_CAPTIONS + filename)
+        file_abs = os.path.abspath(env_varz.WHSP_A2T_ASSETS_CAPTIONS + filename)
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
         print("    (uploadCaptionsToS3) filename: " + filename) 

@@ -31,7 +31,7 @@ import time
 ######################################################################################### 
 ######################################################################################### 
 options = Options()
-if env_varz.SELENIUM_IS_HEADLESS == "True":
+if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
     os.environ["MOZ_HEADLESS"] = "1"
 
@@ -68,8 +68,8 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
         scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
         # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
         return scrapped_channels
-    channelMax = int(env_varz.SELENIUM_NUM_CHANNELS)
-    vodsMax = int(env_varz.SELENIUM_NUM_VODS)
+    channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
+    vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []

@@ -3,8 +3,8 @@
 # docker build --no-cache -t cbrodski/downloader:v2024.1.5.1 -f Dockerfile_ECS_downloader  .
 
 # DEBUG `RUN`
-# docker run --env-file .\.env cbrodski/downloader:v2024.1.5.1
-# docker run --env-file .\.env -it cbrodski/downloader:v2024.1.5.1 /bin/bash
+# docker run --env-file .\.env -e ENV=dev cbrodski/downloader:v2024.1.5.1
+# docker run --env-file .\.env -e ENV=dev -it cbrodski/downloader:v2024.1.5.1 /bin/bash
 
 # PUSH
 # docker push cbrodski/downloader:v2024.1.5.1
@@ -12,12 +12,12 @@
 FROM python:3.10.13-bullseye
 
 LABEL version="1.0"
-LABEL description="Runs MicroPreper. Gets recent links from top channels."
+LABEL description="Runs MicroDownloader. Downloads audio, compresses it, puts in s3, ready for Transcriber"
 LABEL maintainer="your-email@example.com"
 LABEL url="https://github.com/Brodski/scraper-dl-vids"
 LABEL build_date="2024-01-01"
 LABEL vendor="Bski Inc."
-LABEL license="MIT"
+LABEL license="Bski"
 
 
 ###########
@@ -51,8 +51,6 @@ RUN pip install -r requirements_downloader.txt \
     #  pip install boto3==1.28.40 &&
     #  pip install yt-dlp==2023.12.30 &&
     #  pip install python-dotenv==1.0.0 &&
-
-# TODO THIS LINE NOT NEEDED in other places!!!! RUN apt-get install default-mysql-server
 
 ######
 # GO #

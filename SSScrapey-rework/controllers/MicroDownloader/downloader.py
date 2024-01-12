@@ -191,13 +191,15 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
                     '--audio-format', 'mp3', 
                     '--restrict-filenames', 
                     '--downloader', 'ffmpeg', 
-                    '--downloader-args', 'ffmpeg_i: -ss 00 -to 269', 
                     '--audio-quality', '0',
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
     if env_varz.ENV != "local":
         yt_dlp_cmd.append('--no-progress')
-        
+    else:
+        yt_dlp_cmd.append('--downloader-args')
+        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 269')
+
     try:
         print("  (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
         meta = _execSubprocCmd(yt_dlp_cmd)

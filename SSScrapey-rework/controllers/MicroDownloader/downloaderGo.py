@@ -5,12 +5,14 @@ import env_file as env_varz
 
 def goDownloadBatch(isDebug=False):
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
+    print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
-        print("===================================")
-        print(f"    DOWNLOAD BATCH - INDEX: {i}  ")
-        print("===================================")
+        print("===========================================")
+        print(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
+        print("===========================================")
         x = download(isDebug)
         print(f"Finished Index {i}")
+        print(f"download_batch_size: {i}")
     return x
 
 def download(isDebug=False):

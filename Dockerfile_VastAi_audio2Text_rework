@@ -7,17 +7,15 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 ############################################################
 # Docker build
 #    docker build --no-cache -t cbrodski/audio2text:latest -f Dockerfile_VastAi_audio2Text_rework  .
-#    docker build --no-cache -t cbrodski/audio2text:v2023.12.29.ver -f Dockerfile_VastAi_audio2Text_rework  .
-#    docker build --no-cache -t cbrodski/prepper:v2023.12.31.1 -f Dockerfile_ECS_preper  .
+#    docker build --no-cache -t cbrodski/audio2text:v2023.1.11.1 -f Dockerfile_VastAi_audio2Text_rework  .
 
 # Docker push
 #    docker push cbrodski/audio2text:latest
-#    docker push cbrodski/audio2text:v2023.12.29.ver
+#    docker push cbrodski/audio2text:v2023.1.11.1 
 
 # Docker run (local)
-#    docker run --env-file .env cbrodski/audio2text:latest
-#    docker run --env-file .env cbrodski/audio2text:v2023.12.29 
-#    docker run --env-file .env cbrodski/audio2text:v2023.12.29.ENTRY 
+#    docker run --env-file .env -e ENV=dev cbrodski/audio2text:latest
+#    docker run --env-file .env -e ENV=dev cbrodski/audio2text:v2023.1.11.1 
 
 # Docker run debug
 #    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/audio2text:latest
@@ -89,6 +87,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt install git -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git 
    
+#########
+# MYSQL #
+#########
+WORKDIR /app
+RUN apt-get install -y pkg-config \ 
+    && apt-get install -y gcc libmysqlclient-dev
+
 ####################
 # Pip Dependencies #
 ####################
@@ -102,13 +107,6 @@ RUN pip install -r requirements_transcriber.txt
     # && pip install langcodes==3.3.0 \
     # && pip install language_data==1.1
 
-#########
-# MYSQL #
-#########
-WORKDIR /app
-# TODO prob dont need this
-RUN apt-get install -y pkg-config \ 
-    && apt-get install -y gcc libmysqlclient-dev  
 
 
 #########
@@ -153,7 +151,8 @@ WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 # ENTRYPOINT ls && \
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     vastai set api-key $VAST_API_KEY ; \
-    git pull origin master ; \ 
+    git reset --hard origin/master ; \
+    git pull origin master --force; \ 
     python kickWhisperer.py ; \
     echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \

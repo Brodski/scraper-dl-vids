@@ -51,7 +51,7 @@ def getTodoFromDb():
     for vod_ in results:
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, ChanCurrentRank, Language  = vod_
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, upload_date=UploadDate, s3_audio=S3Audio, language=Language)
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language)
         resultsArr.append(vod)
     print("resultsArr")
     print(resultsArr)

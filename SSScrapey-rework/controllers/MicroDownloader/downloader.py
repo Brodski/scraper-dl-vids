@@ -172,7 +172,6 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
     output_local_dir = os.path.normpath("assets/audio") # TODO!!!!!!!!!!
     vidUrl = "https://www.twitch.tv/videos/" + vod.id
 
-    print("  (dlTwtvVid) vidUrl= " + vidUrl)
     output_template = os.path.join(app_root, output_local_dir, '%(title)s-%(id)s.%(ext)s')
     # output_template = 'C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework/assets/audio/%(title)s-%(id)s.%(ext)s'
 
@@ -201,7 +200,7 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 269')
 
     try:
-        print("  (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
+        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:
@@ -217,7 +216,7 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
             print ("Failed to extract vid!!: " + vidUrl + " : " + str(e))
             return None
 
-    print('  (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
+    print('    (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
     return meta
     
 
@@ -328,26 +327,24 @@ def convertVideoToSmallAudio(meta):
     print("    (convertVideoToSmallAudio): run time = ", str(time_diff))
     return meta, outFile
 
+# def _execCmd(command):
+#     print("    (exec2) _execCmd: starting subprocess!")
+#     print("    (exec2) command=" + " ".join(command))
+#     # print(command)
+#     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as proc:
+#         output, errors = proc.communicate()
 
-def _execCmd(command):
-    print("    (exec2) _execCmd: starting subprocess!")
-    print("    (exec2) command=" + " ".join(command))
-    # print(command)
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as proc:
-        output, errors = proc.communicate()
-
-        print("Output:", output.decode())
-        print("Errors:", errors.decode())
-        if proc.returncode != 0:
-            print("Command failed with return code", proc.returncode)
-    return output
+#         print("Output:", output.decode())
+#         print("Errors:", errors.decode())
+#         if proc.returncode != 0:
+#             print("Command failed with return code", proc.returncode)
+#     return output
 
 def _execSubprocCmd(ffmpeg_command):
     try:
         print("    (exec) Starting subprocess!")
         # print("    (exec) ffmpeg_command=" + " ".join(ffmpeg_command))
         stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        print("    (exec) SUBPROCESS PIPE COMPLETE")
         # print(stdoutput)
         # print("    (exec) stderr:")
         # print(stderr)
@@ -400,12 +397,10 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     s3fileKey = caption_keybase + "/" + vod_encode
     s3metaKey = caption_keybase + "/metadata.json"
     outfile_aux = outfile[5:]
-    print("")
     print("    (uploadAudioToS3) uploading channel: " + vod.channels_name_id)
     print("    (uploadAudioToS3) vod_id:" + vod.id)
     print("    (uploadAudioToS3) meta.get(fulltitle)= " + downloaded_metadata.get('fulltitle'))
     print("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
-    print("")
     # print(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
@@ -457,7 +452,7 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
                 """
             values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
-            print("    (updateVods_Round2Db) Updated these many: " + str(affected_count))
+            print("    (updateVods_Round2Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
         connection.commit()
     except Exception as e:
         print(f"    (updateVods_Round2Db) Error occurred: {e}")

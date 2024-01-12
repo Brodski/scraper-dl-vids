@@ -147,7 +147,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             values = (transcript_dl_status, vod.id)
             affected_count = cursor.execute(sql, values)
             print(f"    (lockVodDb) Set {vod.id} to 'downloading', affected_count: : {affected_count}")
-        connection.commit()
+            connection.commit()
         return True
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -453,7 +453,7 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
             values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
             print("    (updateVods_Round2Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
-        connection.commit()
+            connection.commit()
     except Exception as e:
         print(f"    (updateVods_Round2Db) Error occurred: {e}")
         connection.rollback()
@@ -474,7 +474,7 @@ def updateErrorVod(vod: Vod, error_msg: str):
                 """
             values = (t_status, vod.id)
             affected_count = cursor.execute(sql, values)
-        connection.commit()
+            connection.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()

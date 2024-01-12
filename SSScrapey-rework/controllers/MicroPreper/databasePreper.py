@@ -40,7 +40,7 @@ def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel], connection):
             values = (chan.name_id, int(chan.current_rank))
             try:
                 cursor.execute(sql, values)
-                # connection.commit() # since autocommit we dont need line
+                connection.commit()
             except Exception as e:
                 print(f"Error occurred: {e}")
                 connection.rollback()
@@ -69,6 +69,7 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel], connection):
                 values = (chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id)
                 try:
                     cursor.execute(sql, values)
+                    connection.commit()
                 except Exception as e:
                     print(f"Error occurred: {e}")
                     connection.rollback()
@@ -166,7 +167,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
 #     TranscriptStatus VARCHAR(255),
 #     TodoDate DATETIME
 #     S3Link VARCHAR(255)
-#      
+#     StreamDate DATETIME;
+#  
 #     PRIMARY KEY (Id),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
 # ); 

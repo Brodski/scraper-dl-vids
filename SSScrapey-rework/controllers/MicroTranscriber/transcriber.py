@@ -69,6 +69,7 @@ def setSemaphoreDb(vod: Vod):
                 """
             values = (t_status, vod.id)
             affected_count = cursor.execute(sql, values)
+            connection.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()
@@ -222,6 +223,7 @@ def setCompletedStatusDb(vod: Vod):
                 """
             values = (t_status, env_varz.WHSP_MODEL_SIZE, vod.id)
             affected_count = cursor.execute(sql, values)
+            connection.commit()
             print("values: " + str(values))
             print("affected_count: " + str(affected_count))
     except Exception as e:
@@ -242,6 +244,7 @@ def unsetProcessingDb(vod: Vod):
                 """
             values = (t_status, vod.id)
             affected_count = cursor.execute(sql, values)
+            connection.commit()
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()

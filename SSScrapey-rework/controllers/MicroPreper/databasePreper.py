@@ -14,7 +14,7 @@ def updateDb1(scrapped_channels: List[ScrappedChannel]):
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
         db      = env_varz.DATABASE,
-        autocommit  = True,
+        autocommit  = False,
         ssl_mode    = "VERIFY_IDENTITY",
         ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
@@ -72,6 +72,8 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel], connection):
                 except Exception as e:
                     print(f"Error occurred: {e}")
                     connection.rollback()
+                finally:
+                    connection.close()
                 
 def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
     print("000000000000000000000000000000000000000")
@@ -119,6 +121,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel], connection):
                 except Exception as e:
                     print(f"Error occurred: {e}")
                     connection.rollback()
+                finally:
+                    connection.close()
     print("    (updateVodsDb) Completed update!")
 
 # YYYY-MM-DD

@@ -187,7 +187,7 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
     print("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
     print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
-    print("    (uploadCaptionsToS3) saved_caption_files: " + saved_caption_files) 
+    print("    (uploadCaptionsToS3) saved_caption_files: " + str(saved_caption_files) )
 
     s3 = boto3.client('s3')
 

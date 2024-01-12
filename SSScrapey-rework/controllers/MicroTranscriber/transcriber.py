@@ -211,9 +211,13 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         except:
             print("SHIT WENT WRONGGGGGGGGGG!@")
         return s3CapFileKey 
-    
+
 def setCompletedStatusDb(vod: Vod):
     print("updating database ...")
+
+    secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+    print("AWS Secret Access Key:", secret_access_key)
     vod.print()
     connection = getConnectionDb()
     t_status = "completed"
@@ -227,6 +231,7 @@ def setCompletedStatusDb(vod: Vod):
                 """
             values = (t_status, vod.id, env_varz.WHSP_MODEL_SIZE)
             affected_count = cursor.execute(sql, values)
+            print("affected_count: " + str(affected_count))
     except Exception as e:
         print(f"Error occurred: {e}")
         connection.rollback()

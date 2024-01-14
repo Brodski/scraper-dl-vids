@@ -1,0 +1,37 @@
+<% let title = "Big Dick Captions 😏" %>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> <%= title %> </title>
+        <link rel="stylesheet" type="text/css" href="/styles.css">
+        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
+        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <script defer src="/scripts.js"></script>
+    </head>
+    <body class="homepage">
+        <h1>Welcome to <%= title %>™ </h1>
+        <h2> Captions available for these channels 🍆💦 : </h2>
+        <div> <%= // JSON.stringify(overviewLight) %></div>
+        <div>
+            <% 
+            for (let chann of channelsList) {
+                let nameId = chann.nameId;
+                let logo = chann.logo
+                let lang = chann.language
+                // let path = chann.path
+                // let twitchUrl = chann.twitchUrl
+                // let currentRank = chann.currentRank
+                let displayName = chann.displayName
+                %>  
+                <div class="channel_row img">
+                    <a class="d-flex" href="<%= "channel/" + nameId %>">
+                        <img class="" src="<%= chann.logo %>" />
+                        <h2> <%= displayName %>  </h2>
+                    </a>
+                    <!-- <span>Num vods: <%= chann.size %></span> -->
+                </div>
+            <% } %> 
+        </div>
+    </body>
+</html>

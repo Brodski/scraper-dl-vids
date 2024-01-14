@@ -1,0 +1,21 @@
+/* @font-face {
+    font-family: 'cabin';
+    src: url('font-assets/cabin/Cabin-VariableFont_wdth\,wght.ttf') format('truetype'); 
+}
+@font-face {
+    font-family: 'oswald';
+    src: url('font-assets/oswald/Oswald-VariableFont_wght.ttf') format('truetype'); 
+}
+@font-face {
+    font-family: 'press-start-2p';
+    src: url('font-assets/press-start-2p/PressStart2P-Regular.ttf') format('truetype'); 
+} */
+@font-face {
+    font-family: 'PT Serif';
+    src: url('font-assets/pt_serif/PTSerif-Regular.ttf') format('truetype'); 
+}
+
+body {
+    font-family: serif;
+    font-family: 'PT Serif', serif;
+}

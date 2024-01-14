@@ -1,0 +1,149 @@
+<%- include("../server-scripts/utilities") %>
+<% let twitchUrl = "https://twitch.tv/videos/" + vod.id %>
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale = 1.0">
+        <title> <%= channel %> </title>
+        <link rel="stylesheet" type="text/css" href="/fonts.css">
+        <link rel="stylesheet" type="text/css" href="/styles.css">
+        <link rel="stylesheet" type="text/css" href="/vod.css">
+        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
+        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <script src="/scripts.js"></script>
+        <script>
+          function seekIframe(time) {
+            console.log("time=" + time)
+            console.log("player=" + player)
+            player.seek(time)
+            // player.play()
+          }
+        </script>
+    </head>    
+    <body>
+        <div class="d-flex">
+            <img class="profile_main_pic" src="<%= profilePic %>">
+            <h1> <%= vod2.display_title %> </h1>
+        </div>
+        <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
+        <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
+        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+        <div> 🔥<a href="/channel/<%= channel %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
+        <div> 💧 <a href="/channel/<%= channel %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧</div> <!-- 🙁   -->
+        <br/>
+        <div class="vod__json_vtt_txt_link">
+            Raw transcripts: 
+            <span><a href="<%= transcript_s3_vtt %>"> vtt </a></span>
+            <span><a href="<%= transcript_s3_json %>"> json </a></span>
+            <span><a href="<%= transcript_s3_txt %>"> txt </a></span>
+        </div>
+        <br/>
+        <a class="vod_newtab" href="<%= twitchUrl %>" target="_blank">
+            <svg class="vod_svg_newtab" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 30 30"><path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path> </svg>
+            <div> <%= twitchUrl %> </div> 
+        </a>
+        <div>
+            <button 
+                id="toggle-btn"
+                onclick="(() => {
+                    let iframe = document.querySelector('#twitch-iframe')
+                    iframe.classList.toggle('sticky-iframe')
+                    let msg = iframe.classList.contains('sticky-iframe') ? '☑' : '' // '✓'
+                    document.querySelector('#on-off-sticky').innerText = msg
+                })()"
+                > Toggle sticky player
+            </button>
+            <span id="on-off-sticky"> </span>
+        </div>
+        <div id="twitch-iframe"></div>
+
+        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+        <script type="text/javascript">
+            if (isMobile()) {
+                console.log("YES MOBILE!")
+            } 
+            else {
+                console.log("NAAAAH")
+            }
+            
+            var options = {
+                width: (isMobile() ? '100%' : 640),
+                height: (isMobile() ? 230 : 360),
+                video: <%= vod.id %>,
+                autoplay: false,
+                parent: ["localhost", "othersite.example.com"]
+            };
+            var player = new Twitch.Player("twitch-iframe", options);
+            player.setVolume(0.0);
+        </script>
+        <hr/>
+        <!-- <% // for (let i=0; i < transcript_json.length; i++) { %> -->
+        <% 
+            console.log("vod2")
+            console.log(vod2)
+            
+        %>
+        <% 
+            let i = 0;
+            for (let segment of transcript_json) { 
+            if (i==0) {
+                console.log(segment)
+            }
+            i++
+            let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
+            let min = Math.floor(parseInt(segment.start) / 60)
+            let timestamp = min + "m" + sec + "s";
+        %>
+
+            <div class="vod_cue"> 
+                <% 
+                let start = Number(segment.start).toFixed(2)
+                let end   = Number(segment.end).toFixed(2)
+                let sec_floored = Math.floor(segment.start)
+                start = secondsToHHMMSS(sec_floored)
+                end = secondsToHHMMSS(sec_floored) 
+                %>
+                <span class="vod_timestamp" onclick="(() => seekIframe(<%= sec_floored %>))()">[<%= start %> → <%= end %>]</span>
+                <span>
+                    <p>
+                    <%= segment.text %>
+                    </p>
+                </span>
+            </div>
+        <% } %>
+
+    </body>
+</html>
+
+<% /*
+ scrapped_data_s3 = 
+scrapped_data_s3 = 
+[
+    {
+      channel: 'lolgeranimo',
+      id: '1861789415',
+      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1861789415/2v2v2v2_Pushing_Gladiator-v1861789415.mp3',
+      title: '2v2v2v2_Pushing_Gladiator-v1861789415.mp3'
+    },
+    {
+      channel: 'lolgeranimo',
+      id: '1862390912',
+      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1862390912/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3',
+      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3'
+    },
+    {
+      channel: 'lolgeranimo',
+      id: '1863373278',
+      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863373278/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3',
+      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3'
+    },
+    {
+      channel: 'lolgeranimo',
+      id: '1863728745',
+      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863728745/Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3',
+      title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
+    }
+  ]
+*/ %>

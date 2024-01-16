@@ -1,0 +1,29 @@
+$ terraform apply -var-file="./vars_prod.tfvars"
+
+$ terraform apply -var-file="./vars_dev.tfvars"
+
+$ terraform apply -var "VAST_API_KEY=xxxxxxxxxxxxxxxx"  
+                -var "MY_AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxx" 
+                -var "MY_AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxx"
+
+
+                Plan: 14 to add, 0 to change, 0 to destroy.
+╷
+│ Error: Invalid value for input variable
+│
+│   on ./vars_dev.tfvars line 1:
+│    1: sensitive_info = {
+│    2:     # auto-vast-runner.py
+│    3:     VAST_API_KEY="xxxxxxxx"
+│    4:     MY_AWS_SECRET_ACCESS_KEY="xxxxxxxxxxxxx"
+│    5:     MY_AWS_ACCESS_KEY_ID="xxxxxxxx"
+│    6:     # lambda > transcriber app
+│    7:     ENV="dev"
+│    8:     DATABASE_HOST="aws.connect.psdb.cloud"
+│    9:     DATABASE_USERNAME="xxxxxxxxxxxxxxx"
+│   10:     DATABASE_PASSWORD="xxxxxxxxxxxxxxxxxxxx"
+│   11:     DATABASE="idontfront-dev"
+│   12: }
+│
+│ The given value is not suitable for var.sensitive_info declared at variables.tf:1,1-26: attributes "AWS_ACCESS_KEY_ID" and
+│ "AWS_SECRET_ACCESS_KEY" are required.

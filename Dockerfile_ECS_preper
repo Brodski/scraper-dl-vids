@@ -1,10 +1,11 @@
 ####################################################################
 # BUILD
-# docker build --no-cache -t cbrodski/prepper:v2023.1.11.1 -f Dockerfile_ECS_preper  .
+# docker build --no-cache -t cbrodski/preper:v2023.1.11.1 -f Dockerfile_ECS_preper  .
+# docker build --no-cache -t cbrodski/preper:official_v2 -f Dockerfile_ECS_preper  .
 
 # DEBUG `RUN`
-# docker run --env-file .\.env -e ENV=dev cbrodski/prepper:v2023.1.11.1
-# docker run --env-file .\.env -it -e ENV=dev cbrodski/prepper:v2023.1.11.1 /bin/bash
+# docker run --env-file .\.env -e ENV=dev cbrodski/preper:v2023.1.11.1
+# docker run --env-file .\.env -it -e ENV=dev cbrodski/preper:v2023.1.11.1 /bin/bash
 
 # PUSH
 # docker push cbrodski/prepper:v2023.1.11.1

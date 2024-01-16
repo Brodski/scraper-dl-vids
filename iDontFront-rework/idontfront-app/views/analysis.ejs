@@ -15,35 +15,23 @@
     </head>    
     <body>
         <div class="d-flex">
-            <img class="profile_main_pic" src="<%= profilePic %>">
+            <img class="profile_main_pic" src="<%= channel.logo %>">
             <h1 class="align-self-center">  Transcript Stats </h1>
         </div>
-        <h2> <a href="/channel/<%= channel %>/<%= vod.id %>"><%= vod2.display_title %> </a> </h2>
-        <h2><a href="/channel/<%= channel %>"> <%= channel %> </a></h2>
-        <div> <b> <%= epochTo_MM_DD_YYYY(vod2.epoch) %> </b></div>
-        <div> <b>Duration: <%= secondsToHHMM(Number(vod2.duration)) %> </b></div>
+        <h2> <a href="/channel/<%= channel.nameId %>/<%= vod.id %>"><%= vod.title %> </a> </h2>
+        <h2><a href="/channel/<%= channel.nameId %>"> <%= channel.displayName %> </a></h2>
+        <div> <b> <%= epochTo_MM_DD_YYYY(vod.streamDate) %> </b></div>
+        <div> <b>Duration: <%= secondsToHHMM(Number(vod.duration)) %> </b></div>
         <br/>
-        <% 
-        // let loser =  word_counter['loser']
-        // let subhuman =  word_counter['subhuman']
-        // let man =  word_counter['man']
-        // let ego =  word_counter['ego']
-        // let fucking =  word_counter['fucking']
-        // let fuck =  word_counter['fuck']
 
-        // console.log("loser=" loser)
-        // console.log("subhuman=" subhuman)
-        // console.log("man=" man)
-        // console.log("ego=" ego)
-        // console.log("fucking=" fucking)
-        // console.log("fuck=" fuck)
-
-
-
-         %>
+        <!-- BIG ASS WORDCLOUD SVG  -->
+        <!-- BIG ASS WORDCLOUD SVG  -->
+        <!-- BIG ASS WORDCLOUD SVG  -->
         <div class="analysis_wordcloud_container">
             <div> <%- wordcloud %></div>
         </div>
+
+
         <h2> Frequency of Swear Words </h2>
         <div class="analysis_vertical_word">
             <div>
@@ -61,18 +49,20 @@
         </div>
 
         <script>
-            let figure = document.querySelector("#word-count-graph")
-            let rects = figure.querySelectorAll("rect")
-            let tooltips = document.querySelectorAll("#word-count-graph [font-family='hacky-selector-text'] text")
-            for (let i=0; i < rects.length; i++) {
-                rects[i].addEventListener("mouseenter", (e) => {
-                    tooltips[i].classList.add("on")
-                    rects[i].classList.add("on")
-                })
-                rects[i].addEventListener("mouseleave", (e) => {
-                    tooltips[i].classList.remove("on")
-                    rects[i].classList.remove("on")
-                })
+            let figures = document.querySelectorAll("#word-count-graph")
+            for (let i=0; i<figures.length; i++) {
+                let rects = figures[i].querySelectorAll("rect")
+                let tooltips =  figures[i].querySelectorAll("#word-count-graph [font-family='hacky-selector-text'] text")
+                for (let i=0; i < rects.length; i++) {
+                    rects[i].addEventListener("mouseenter", (e) => {
+                        tooltips[i].classList.add("on")
+                        rects[i].classList.add("on")
+                    })
+                    rects[i].addEventListener("mouseleave", (e) => {
+                        tooltips[i].classList.remove("on")
+                        rects[i].classList.remove("on")
+                    })
+                }
             }
         </script>
 

@@ -44,14 +44,14 @@ def getTodoFromDb():
             cursor.execute(sql)
             results = cursor.fetchall()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"Error occurred (getTodoFromDb): {e}")
         connection.rollback()
     finally:
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, ChanCurrentRank, Language  = vod_
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language)
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles,       ChanCurrentRank, Language  = vod_
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles)
         resultsArr.append(vod)
     print("resultsArr")
     print(resultsArr)
@@ -71,7 +71,7 @@ def setSemaphoreDb(vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"Error occurred (setSemaphoreDb): {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -190,7 +190,7 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
 
     s3 = boto3.client('s3')
-
+    transcripts_s3_key_arr = []
     for filename in saved_caption_files:
         file_abs = os.path.abspath(env_varz.WHSP_A2T_ASSETS_CAPTIONS + filename)
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
@@ -204,30 +204,37 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
             content_type = 'application/json; charset=utf-8'
         if file_abs[-4:] ==  '.vtt':
             content_type = 'text/vtt; charset=utf-8'
-        s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
-        # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
-    return s3CapFileKey 
+        try:
+            s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
+            transcripts_s3_key_arr.append(s3CapFileKey)
+        except Exception as e:
+            print(f"failed to upload: {file_abs}. Error {str(e)}")
 
-def setCompletedStatusDb(vod: Vod):
+        # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
+    return transcripts_s3_key_arr 
+
+def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
     print("setCompletedStatusDb")
     vod.print()
     connection = getConnectionDb()
     t_status = "completed"
+    transcripts_keys = json.dumps(transcripts_s3_key_arr) 
     try:
         with connection.cursor() as cursor:
             sql = """
                 UPDATE Vods
                 SET TranscriptStatus = %s,
-                Model = %s
+                Model = %s,
+                S3CaptionFiles = %s
                 WHERE Id = %s;
                 """
-            values = (t_status, env_varz.WHSP_MODEL_SIZE, vod.id)
+            values = (t_status, env_varz.WHSP_MODEL_SIZE, transcripts_keys, vod.id)
             affected_count = cursor.execute(sql, values)
             connection.commit()
             print("values: " + str(values))
             print("affected_count: " + str(affected_count))
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"Error occurred (setCompletedStatusDb): {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -246,7 +253,7 @@ def unsetProcessingDb(vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"Error occurred (unsetProcessingDb): {e}")
         connection.rollback()
     finally:
         connection.close()

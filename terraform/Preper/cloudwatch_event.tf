@@ -1,0 +1,35 @@
+resource "aws_cloudwatch_event_rule" "schedule" {
+  name                = "my-scheduled-rule"
+  description         = "Trigger ECS task daily"
+  schedule_expression = "cron(25 17 * * ? *)" # 10:15am mtn
+  # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
+  # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
+#   schedule_expression = "rate(7 days)" # every 7 days
+}
+
+resource "aws_cloudwatch_event_target" "ecs" {
+  rule        = aws_cloudwatch_event_rule.schedule.name
+  arn         = aws_ecs_cluster.preper_cluster.arn
+  role_arn    = var.iam_role_ecs_events_arn
+  input       = jsonencode({})
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.my_task.arn
+    launch_type         = "FARGATE"
+    platform_version    = "LATEST"
+
+    network_configuration {
+      subnets = [
+        "subnet-074266770b3907a40",
+        "subnet-043e9152b83b9f7a6",
+        "subnet-0df87e95c1aa86d23",
+        "subnet-03439b2eec2465d4f",
+        "subnet-03a939bf02aaff07d",
+        "subnet-0468a4b6cab55c7af"
+      ]
+      security_groups = [var.sg_name_id]
+      assign_public_ip = false
+    }
+  }
+}
+

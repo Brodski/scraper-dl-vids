@@ -12,8 +12,8 @@ except:
     print("We are in lambda") # ?????? Why did i write this
 
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
-AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
-AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_U)SERNAME')

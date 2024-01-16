@@ -1,22 +1,3 @@
-# variable "VAST_API_KEY" {
-#   description = "Secret API Key"
-#   type        = string
-#   sensitive   = true
-#   default     = "x" 
-# }
-# variable "MY_AWS_SECRET_ACCESS_KEY" {
-#   description = "Secret AWS Access Key"
-#   type        = string
-#   sensitive   = true
-#   default     = "XX" 
-# }
-# variable "MY_AWS_ACCESS_KEY_ID" {
-#   description = "AWS Access ID"
-#   type        = string
-#   sensitive   = true
-#   default     = "XXX" 
-# }
-
 provider "aws" {
   region = "us-east-1"
 }
@@ -28,18 +9,15 @@ data "archive_file" "lambda_zip" {
 }
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [
-      {
+    Statement = [ {
         Action = "sts:AssumeRole",
         Effect = "Allow",
         Principal = {
           Service = "lambda.amazonaws.com"
         }
-      }
-    ]
+      }]
   })
 }
 # Attach the AWSLambdaBasicExecutionRole policy to the role
@@ -61,11 +39,14 @@ resource "aws_lambda_function" "example_lambda" {
   depends_on = [data.archive_file.lambda_zip]
   environment {
     variables = {
-      # MY_VARIABLE     = "MyValue"
-      # VAST_API_KEY    = var.VAST_API_KEY
       IS_CREATE_INSTANCE = "true"
-      # MY_AWS_SECRET_ACCESS_KEY = var.MY_AWS_SECRET_ACCESS_KEY
-      # MY_AWS_ACCESS_KEY_ID = var.MY_AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY = var.sensitive_configs.AWS_SECRET_ACCESS_KEY
+      AWS_ACCESS_KEY_ID = var.sensitive_configs.AWS_ACCESS_KEY_ID
+      ENV = var.sensitive_configs.ENV
+      DATABASE_HOST = var.sensitive_configs.DATABASE_HOST
+      DATABASE_USERNAME = var.sensitive_configs.DATABASE_USERNAME
+      DATABASE_PASSWORD = var.sensitive_configs.DATABASE_PASSWORD
+      DATABASE = var.sensitive_configs.DATABASE      
     }
   }
 }
@@ -73,11 +54,8 @@ resource "aws_lambda_function" "example_lambda" {
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "run-lambda-daily"
   description         = "Run Lambda function once a day"
-  schedule_expression = "cron(0 13 * * ? *)" # 12 = ECS
-  # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
-  # schedule_expression = "cron(0 * * * ? *)" # Every minute
+  schedule_expression = "cron(0 13 * * ? *)" 
   # schedule_expression = "rate(1 minute)"
-  # schedule_expression = "rate(1 hour)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_lambda_target" {

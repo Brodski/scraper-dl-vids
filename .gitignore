@@ -55,3 +55,6 @@ sensitive-vars.tfvars
 
 **/tests-benchmarks-sorta/**
 **/*.pem
+
+**/vars_dev.tfvars
+**/vars_prod.tfvars

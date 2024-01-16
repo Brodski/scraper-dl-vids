@@ -13,11 +13,11 @@ async function getAnalysis(transcript_s3_txt) {
     if (!response.ok) {
          throw new Error('HTTP error ' + response.status);
     }
-
     let res_transcript_txt = await response.text() // the .txt file
     let txt_arr = res_transcript_txt.split(/\s+/)
+
     const word_counter = removeStopWords(txt_arr)
-    const bad_words_counter = word_counter.filter(([word]) => regex.test(word));
+    let bad_words_counter = word_counter.filter(([word]) => regex.test(word));
 
     // const word_counter = [...word_counter.entries()].sort((a, b) => b[1] - a[1]);
     console.log("word_counter")

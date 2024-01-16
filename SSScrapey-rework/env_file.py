@@ -12,7 +12,24 @@ elif os.getenv("ENV") == "dev":
     env_vars['IS_DEBUG'] = False
 elif os.getenv("ENV") == "prod":
     env_vars = dotenv_values('.env_public_prod')
-    load_dotenv(dotenv_prod_path, override=True)
+    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
+    env_vars['IS_DEBUG'] = False
+    try:
+        load_dotenv(dotenv_prod_path, override=True)
+    except Exception as e:
+        print("failed to load dotenv")
+        print(str(e))
+    # variables passed from terraform > lambda
+    print("PROD")
+    print("PROD")
+    print("PROD")
+    print("PROD")
+    print('ENV: ' + os.getenv("ENV"))
+    print('DATABASE_HOST: ' + os.getenv("DATABASE_HOST"))
+    print('DATABASE_USERNAME: ' + os.getenv("DATABASE_USERNAME"))
+    print('DATABASE_PASSWORD: ' + os.getenv("DATABASE_PASSWORD"))
+    print('DATABASE: ' + os.getenv("DATABASE"))
+
 else:
     print("ENV is None! NEED ENV")
     sys.exit(1)  # Exit the script with an error code
@@ -32,6 +49,7 @@ PREP_SULLY_NUM_CHANNELS = env_vars['PREP_SULLY_NUM_CHANNELS']
 
 WHSP_A2T_ASSETS_AUDIO = env_vars['WHSP_A2T_ASSETS_AUDIO']
 WHSP_A2T_ASSETS_CAPTIONS = env_vars['WHSP_A2T_ASSETS_CAPTIONS']
+WHSP_BATCH_SIZE = env_vars['WHSP_BATCH_SIZE']
 WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
 WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']
 WHSP_EXEC_FFMPEG = env_vars['WHSP_EXEC_FFMPEG']

@@ -9,7 +9,7 @@ import env_file as env_varz
 import json
 import os
 
-def gogo(isDebug=False):
+def prepare(isDebug=False):
     print ("IT'S RUNNING! WOOOOOOOOOO")
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannels() 

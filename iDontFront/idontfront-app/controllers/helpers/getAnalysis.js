@@ -4,6 +4,9 @@ const plot  = require("../../server-scripts/plot")
 const wordcloud  = require("../../server-scripts/wordcloud")
 
 async function getAnalysis(transcript_s3_txt) {
+    console.log("getAnalysis transcript_s3_txt")
+    console.log("getAnalysis transcript_s3_txt")
+    console.log(transcript_s3_txt)
 
     let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic", "cock", "dick", "cancer", "tumor"]
     

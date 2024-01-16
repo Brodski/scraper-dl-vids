@@ -1,15 +1,18 @@
-######################################
-# 
-# 
-# THIS IS JUST A TEST HELPER. LIKE A UI
-# 
-# 
+#####################################
+#                                   #
+#                                   #
+#                                   #
+#            TEST FILE              #
+#      (used to help me test)       #
+#                                   #
+#                                   #
+#                                   #
 #####################################
 
 import urllib
 
 import controllers.MicroDownloader.downloader as downloader
-import controllers.MicroTranscriber.audio2text_app as audio2text
+import controllers.MicroTranscriber.transcriberGo as audio2text
 import controllers.MicroPreper.preperGo as preperGo
 import controllers.MicroDownloader.downloaderGo as downloadGo
 import mocks.initHrefsData
@@ -38,7 +41,7 @@ import env_file as env_varz
 #
 #####################################################
 def kickit(isDebug=False):
-    preperGo.gogo(isDebug)
+    preperGo.prepare(isDebug)
     return "Finished step 1 Preper-Service"
 
 #####################################################
@@ -59,6 +62,6 @@ def kickDownloader(isDebug=False):
 #####################################################
 
 def kickWhisperer(isDebug=False):
-    audio2text.gogo(isDebug)
+    audio2text.goTranscribeBatch(isDebug)
     return "Woooo! done!"
 

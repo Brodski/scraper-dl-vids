@@ -54,8 +54,16 @@ async function loadModule(stopwordz_counter) {
         rotate = 0,                   // a constant or function to rotate the words
         invalidation                  // when this promise resolves, stop the simulation
       } = {}) {
+        maxWords = (stopwordz_counter.length > 110 ? 110 : stopwordz_counter.length);
         // const words = typeof text === "string" ? text.split(/\W+/g) : Array.from(text);
+        console.log("stopwordz_counter")
+        console.log("stopwordz_counter")
+        console.log("stopwordz_counter")
+        console.log("stopwordz_counter")
+        console.log(stopwordz_counter)
         const words = stopwordz_counter.map( d => d[0])
+        console.log("words")
+        console.log(words)
 
         let minValue = stopwordz_counter[maxWords - 1][1] // [just, 110]
         let maxValue = stopwordz_counter[0][1]

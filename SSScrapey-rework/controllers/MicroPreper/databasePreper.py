@@ -8,10 +8,6 @@ import os
 
 def getConnection():
     print('got connection')
-    print(env_varz.DATABASE_HOST)
-    print(env_varz.DATABASE_USERNAME)
-    print(env_varz.DATABASE_PASSWORD)
-    print(env_varz.DATABASE)
     connection = MySQLdb.connect(
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
@@ -100,6 +96,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000000000000000000000000000000000")
     connection = getConnection()
     max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
+    print("scrapped_channels")
+    print(str(scrapped_channels))
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 
@@ -107,7 +105,10 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 
             placeholders = ', '.join(['%s'] * len(vod_ids))
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
+            print("query")
+            print(query)
             cursor.execute(query, vod_ids)
+            print("post query")
 
             # Get results
             existing_ids = [row[0] for row in cursor.fetchall()]
@@ -137,6 +138,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if previous_existing_ids:
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
+                print("xxx" + str( values))
                 try:
                     cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction

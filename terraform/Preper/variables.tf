@@ -7,6 +7,9 @@ variable "iam_role_ecs_exec_arn" {
 variable "sg_name_id" {
     type        = string
 }
+variable "docker_image" {
+  type = string
+}
 variable "sensitive_info" {
   type = object({
     AWS_SECRET_ACCESS_KEY   = string

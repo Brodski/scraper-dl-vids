@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "download_task" {
     {
       name              = "downloader-container",
       essential         = true
-      image             = "cbrodski/prezzzzzzzzzzper:official_v1"
+      image             = var.docker_image
       environment = [
         { name = "AWS_SECRET_ACCESS_KEY"
           value =var.sensitive_info.AWS_SECRET_ACCESS_KEY 

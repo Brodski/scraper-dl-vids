@@ -26,7 +26,7 @@ def updateDb1(scrapped_channels: List[ScrappedChannel]):
         # addRankingsForTodayDb(scrapped_channels) # This is optional
         updateVodsDb(scrapped_channels)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {str(e)}")
 
 
 
@@ -66,6 +66,8 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
         if new_channels:
             sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId) VALUES (%s, %s, %s, %s, %s, %s)"
             values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id) for chan in new_channels]
+            print("VALUES!")
+            print(str(values))
             try:
                 cursor.executemany(sql, values)
                 connection.commit()

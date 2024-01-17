@@ -2,9 +2,8 @@ resource "aws_ecs_cluster" "preper_cluster" {
   name = "preper-cluster"
 }
 
-
-resource "aws_ecs_task_definition" "my_task" {
-  family                   = "my-task" #some name unique
+resource "aws_ecs_task_definition" "preper_task" {
+  family                   = "preper_task" 
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   # cpu                      = "256" # 0.25 vCPU
@@ -18,9 +17,9 @@ resource "aws_ecs_task_definition" "my_task" {
   }
   container_definitions = jsonencode([
     {
-      name              = "my-container",
+      name              = "preper_container"
       essential         = true # this is required. S/t with aws
-      image             = "cbrodski/preper:official_v1"
+      image             = var.docker_image
       environment = [
         { name = "AWS_SECRET_ACCESS_KEY"
           value =var.sensitive_info.AWS_SECRET_ACCESS_KEY 
@@ -43,7 +42,7 @@ resource "aws_ecs_task_definition" "my_task" {
         { name = "DATABASE"
           value =var.sensitive_info.DATABASE 
         },
-      ],
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {

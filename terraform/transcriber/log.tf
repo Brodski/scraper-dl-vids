@@ -1,4 +1,4 @@
 resource "aws_cloudwatch_log_group" "name" {
-    name = "/aws/lambda/${aws_lambda_function.example_lambda.function_name}"
+    name = "/ecs/scraper/${var.sensitive_info.ENV}_transcriber_auto_vast"
     retention_in_days = 30
 }

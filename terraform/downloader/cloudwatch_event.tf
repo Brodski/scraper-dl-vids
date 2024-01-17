@@ -1,3 +1,10 @@
+resource "aws_cloudwatch_event_rule" "schedule" {
+  name                = "download_schedule"
+  description         = "Trigger ECS task daily"
+  # schedule_expression = "rate(1 day)"
+  schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
+  # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
+}
 resource "aws_cloudwatch_event_target" "ecs" {
   rule        = aws_cloudwatch_event_rule.schedule.name
   arn         = aws_ecs_cluster.download_cluster.arn
@@ -23,12 +30,4 @@ resource "aws_cloudwatch_event_target" "ecs" {
       assign_public_ip = false
     }
   }
-}
-
-resource "aws_cloudwatch_event_rule" "schedule" {
-  name                = "download_schedule"
-  description         = "Trigger ECS task daily"
-  # schedule_expression = "rate(1 day)"
-  schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
-  # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
 }

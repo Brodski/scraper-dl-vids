@@ -7,6 +7,11 @@ import MySQLdb
 import os
 
 def getConnection():
+    print('got connection')
+    print(env_varz.DATABASE_HOST)
+    print(env_varz.DATABASE_USERNAME)
+    print(env_varz.DATABASE_PASSWORD)
+    print(env_varz.DATABASE)
     connection = MySQLdb.connect(
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
@@ -118,6 +123,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if non_existing_ids:
                 trans_status = "todo"            
                 values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
+                print("vvalues")
+                print(str(values))
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 try:
                     cursor.executemany(sql, values)

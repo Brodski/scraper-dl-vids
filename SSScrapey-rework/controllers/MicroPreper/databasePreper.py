@@ -100,9 +100,10 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print(str(scrapped_channels))
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
+            chan.print()
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
-
+            print("vod_ids=" + str(vod_ids))
             placeholders = ', '.join(['%s'] * len(vod_ids))
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
             print("query")

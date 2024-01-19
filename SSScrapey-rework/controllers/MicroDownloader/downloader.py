@@ -55,6 +55,69 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank
                         """
+# SELECT ass.* FROM (
+#     SELECT 
+#         V.ChannelNameId, 
+#         V.StreamDate,
+#         C.CurrentRank,
+#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.StreamDate DESC) as RowNum
+#     FROM 
+#         Vods V
+#     INNER JOIN 
+#         Channels C ON V.ChannelNameId = C.NameId
+#     LEFT JOIN 
+#         Rankings R ON V.ChannelNameId = R.ChannelNameId
+# ) AS ass
+# WHERE 
+#     RowNum <= 2
+# ORDER BY 
+#     CurrentRank, ChannelNameId, StreamDate DESC;
+            
+
+
+
+# SELECT 
+#     ass.* 
+# FROM (
+#     SELECT 
+#         V.ChannelNameId, 
+#         V.TodoDate,
+#         C.CurrentRank,
+#         RR.Ranking,
+#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.TodoDate DESC) as RowNum
+#     FROM 
+#         Vods V
+#     INNER JOIN 
+#         Channels C ON V.ChannelNameId = C.NameId
+#     LEFT JOIN 
+#         (
+#             SELECT 
+#                 ChannelNameId,
+#                 Ranking,
+#                 TodoDate
+#             FROM (
+#                 SELECT 
+#                     R.ChannelNameId,
+#                     R.Ranking,
+#                     R.TodoDate,
+#                     ROW_NUMBER() OVER (PARTITION BY R.ChannelNameId ORDER BY R.TodoDate DESC) AS RowNum
+#                 FROM 
+#                     Rankings R
+#             ) AS RankedRankings
+#             WHERE 
+#                 RowNum = 1
+#         ) AS RR ON V.ChannelNameId = RR.ChannelNameId
+# ) AS ass
+# WHERE 
+#     RowNum <= 2
+# ORDER BY 
+#     ass.Ranking, ass.ChannelNameId, ass.TodoDate DESC;
+
+
+
+
+
+
             # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
             #             FROM Vods
             #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId

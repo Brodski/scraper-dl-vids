@@ -112,7 +112,7 @@ exports.channel = async (req, res) => {
     if (req.params.id != null && !req.path.includes("/analysis") && !req.path.includes("/wordtree") ) {
         let db = new DatabaseSingleton();
         let [resultsChan, fields2] = await db.getChannel(req.params.name)
-        let [resultsVods, fields1] = await db.get1Vod(req.params.id)
+        let [resultsVods, fields1] = await db.getVodById(req.params.id)
         let vods = resultsVods.map( x => new Vod(x))
         let channels = resultsChan.map( x => new Channel(x))
         console.log("TRANSCRIPT - VOD") 
@@ -158,7 +158,7 @@ exports.channel = async (req, res) => {
     if (req.params.id != null && req.path.includes("/wordtree")) {
         let db = new DatabaseSingleton();
         let [resultsChan, fields2] = await db.getChannel(req.params.name)
-        let [resultsVods, fields1] = await db.get1Vod(req.params.id)
+        let [resultsVods, fields1] = await db.getVodById(req.params.id)
         let vods = resultsVods.map( x => new Vod(x))
         let channels = resultsChan.map( x => new Channel(x))
         txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
@@ -182,7 +182,7 @@ exports.channel = async (req, res) => {
     if (req.params.id != null && req.path.includes("/analysis")) {
         let db = new DatabaseSingleton();
         let [resultsChan, fields2] = await db.getChannel(req.params.name)
-        let [resultsVods, fields1] = await db.get1Vod(req.params.id)
+        let [resultsVods, fields1] = await db.getVodById(req.params.id)
         let vods = resultsVods.map( x => new Vod(x))
         let channels = resultsChan.map( x => new Channel(x))
         txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();

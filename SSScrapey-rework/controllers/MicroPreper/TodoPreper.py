@@ -36,17 +36,6 @@ import time
 ######################################################################################### 
 
 
-def doItAllSully(*, isDebug=False, isEnd=False):
-    topChannels = getTopChannels()
-    topChannels = instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
-    topChannels = addVipList(topChannels) # same ^ but with gera
-    scrapped_channels = seleniumPreper.scrape4VidHref(topChannels, isDebug)
-
-    if isEnd:
-        print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-        return json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4)
-    return scrapped_channels
-
 def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
     print ("000000000000                         00000000000000000")
     print ("000000000000 getTopChannels - sully  00000000000000000")
@@ -112,7 +101,7 @@ def instantiateJsonToClassObj(json_object):
         relevant_list.append(scrapped_channel)
     return relevant_list
 
-def addVipList(channels: List[ScrappedChannel]):
+def addVipList(channels: List[ScrappedChannel], isDebug=False):
     VIP_LIST = [
         {
             "displayname": "LoLGeranimo",
@@ -123,7 +112,7 @@ def addVipList(channels: List[ScrappedChannel]):
             "rownum": -2
         }
     ]
-    if os.getenv("ENV") == "local":
+    if os.getenv("ENV") == "local" and isDebug:
         VIP_LIST.append({
             "displayname": "Nmplol",
             "language": "English",

@@ -19,31 +19,22 @@ def getConnection():
     )
     return connection
 
-def updateDb1(scrapped_channels: List[ScrappedChannel]):
-    try:
-        # for chan in scrapped_channels:
-        #     chan.print()
-        addNewChannelToDb(scrapped_channels)
-        # addRankingsForTodayDb(scrapped_channels) # This is optional
-        updateVodsDb(scrapped_channels)
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-
-
 
 def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
-        for chan in scrapped_channels:
-            print("Adding new Ranks:", chan.name_id, chan.current_rank)
-            sql = "INSERT INTO Rankings (Date, Time, Datetime, ChannelNameId, Ranking)  VALUES(CURRENT_DATE(), CURRENT_TIME(), NOW(), %s, %s)"
-            values = (chan.name_id, int(chan.current_rank))
-            try:
-                cursor.execute(sql, values)
-                connection.commit()
-            except Exception as e:
-                print(f"Error occurred (addRankingsForTodayDb): {e}")
-                connection.rollback()
+        values = [(chan.name_id, int(chan.current_rank)) for chan in scrapped_channels]
+        sql = "INSERT INTO Rankings (TodoDate, ChannelNameId, Ranking) VALUES (NOW(), %s, %s)"
+        print("Adding new Ranks:", str(values))
+        print("Adding new sql:", str(sql))
+        try:
+            with connection.cursor() as cursor:
+                cursor.executemany(sql, values)  # Batch insert
+            connection.commit()
+        except Exception as e:
+            print(f"Error occurred (addRankingsForTodayDb): {e}")
+            connection.rollback()
+    connection.close()
 
 def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
@@ -90,6 +81,33 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
         # finally:
     connection.close()
                 
+def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
+    connection = getConnection()
+    with connection.cursor() as cursor:
+        # A. Depriorities all old ones by pushing it down in Ranking
+        # values = [(len(scrapped_channels), chan.name_id) for chan in scrapped_channels]
+        sql = "UPDATE Channels SET CurrentRank = CurrentRank + %s"
+        try:
+            values = (len(scrapped_channels),) # Ensure that the value is passed as a tuple
+            affected_count = cursor.execute(sql, values)
+            print("Updating Ranks. affected_count:", str(affected_count))
+            connection.commit()
+        except Exception as e:
+            print(f"Error occurred (updateChannelRankingLazily A): {e}")
+            connection.rollback()
+
+        # B. Set priroity for current & new round
+        values = [(chan.current_rank, chan.name_id) for chan in scrapped_channels]
+        sql = "UPDATE Channels SET CurrentRank = %s WHERE NameId = %s"
+        try:
+            cursor.executemany(sql, values)
+            connection.commit()
+        except Exception as e:
+            print(f"Error occurred (updateChannelRankingLazily B): {e}")
+            connection.rollback()
+
+    connection.close()
+
 def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000000000000000000000000000000000")
     print("000000000     updateVodsDb    000000000")
@@ -103,6 +121,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             chan.print()
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
+            if len(vod_ids) == 0:
+                continue
             print("vod_ids=" + str(vod_ids))
             placeholders = ', '.join(['%s'] * len(vod_ids))
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
@@ -205,6 +225,10 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 # ALTER TABLE Vods ADD COLUMN StreamDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
+# ALTER TABLE Rankings ADD COLUMN TodoDate DATETIME;
+# ALTER TABLE Rankings DROP COLUMN Date;
+# ALTER TABLE Rankings DROP COLUMN Time;
+# ALTER TABLE Rankings DROP COLUMN Datetime;
 
 # ALTER TABLE Vods CHANGE S3Link S3Audio VARCHAR(255);
 

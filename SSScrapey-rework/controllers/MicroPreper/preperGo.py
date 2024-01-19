@@ -16,12 +16,18 @@ def prepare(isDebug=False):
     
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
-    scrapped_channels: List[ScrappedChannel]  = todoPreper.addVipList(scrapped_channels) # same ^ but with gera
+    scrapped_channels: List[ScrappedChannel] = todoPreper.addVipList(scrapped_channels, isDebug) # same ^ but with gera
 
     # Via selenium & browser. Find videos's url, get anchor tags href
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
     # Done
-    databasePreper.updateDb1(scrapped_channels)
+    try:
+        databasePreper.addNewChannelToDb(scrapped_channels)
+        databasePreper.addRankingsForTodayDb(scrapped_channels) # Optional??
+        databasePreper.updateChannelRankingLazily(scrapped_channels)
+        databasePreper.updateVodsDb(scrapped_channels)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
     print("Finished step 1 Preper-Service")
     return "Finished step 1 Preper-Service"

@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "preper-schedule"
   description         = "Trigger ECS task daily"
-  schedule_expression = "cron(57 3 * * ? *)"
+  schedule_expression = "cron(37 6 * * ? *)"
 
   # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
   # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC

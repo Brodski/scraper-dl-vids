@@ -24,10 +24,6 @@ def kickit_real_Route():
 @ranking_bp.route('/getTopChannels')
 def getTopChannels_Route():
     return TodoPreper.getTopChannels(isDebug=True)
-@ranking_bp.route('/doItAllSully')
-def doItAllSully_Route():
-    return TodoPreper.doItAllSully(isDebug=True, isEnd=True)
-
 #################################################
 # 1 Preper
 #################################################

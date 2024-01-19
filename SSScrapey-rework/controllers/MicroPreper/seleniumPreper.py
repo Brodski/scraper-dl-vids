@@ -112,7 +112,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                 inner_text = tag.get_text(separator="|").lower()
                 # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
                 # TODO bugs may occure for marathon vids (_isVidFinished)
-                if ( not (("hours" in inner_text) or ("minutes" in inner_text))):
+                if ( not (("hours" in inner_text) or ("minutes" in inner_text) or ("today" in inner_text))):
                     match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
                     if match and tag['href'] not in allHrefs:
                         allHrefs.append(match.group(1)) # /videos/1983739230

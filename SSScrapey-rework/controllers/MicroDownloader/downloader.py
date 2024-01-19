@@ -217,14 +217,35 @@ def lockVodDb(vod: Vod, isDebug=False):
         return False
     finally:
         connection.close()
-def downloadTwtvVidFAST(vod: Vod, isDownload=True): 
+
+def isVodTooBig(vod: Vod):
+    print(" ---- downloadPreCheck ----")
+    vidUrl = "https://www.twitch.tv/videos/" + vod.id
+    yt_dlp_cmd = [
+        'yt-dlp', vidUrl, 
+        '--dump-json',
+    ]
+    try:
+        print("    (downloadPreCheck) YT_DLP: getting metadata ... " + vidUrl)        
+        meta = _execSubprocCmd(yt_dlp_cmd)
+        meta = json.loads(meta)
+        duration = meta['duration']
+        print("duration: " + str(duration))
+        if duration > 86400: # 86400 sec = 24 hours
+            return True
+    except Exception as e:
+        print ("Failed to get vid's metadata!: " + vidUrl + " : " + str(e))
+    return False
+
+def downloadTwtvVidFAST(vod: Vod): 
     print ("000000000000                     00000000000000000")
     print ("000000000000 downloadTwtvVidFAST 00000000000000000")
     print ("000000000000                     00000000000000000")
     if vod == None or vod.id == None:
         print("ERROR no vod")
         return
-
+    if isVodTooBig(vod):
+        return "vod too big"
     start_time = time.time()
     # format paths and direct where to download file
     main_script_path = sys.argv[0]
@@ -258,6 +279,7 @@ def downloadTwtvVidFAST(vod: Vod, isDownload=True):
     if env_varz.ENV != "local":
         yt_dlp_cmd.append('--no-progress')
     else:
+        # download only first 269 seconds
         yt_dlp_cmd.append('--downloader-args')
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 269')
 
@@ -354,8 +376,6 @@ def downloadTwtvVid2(vod: Vod, isDownload=True):
     print("CLASSIC")
     print(meta)
     return meta
-    
-
 
 def convertVideoToSmallAudio(meta):
     start_time = time.time()

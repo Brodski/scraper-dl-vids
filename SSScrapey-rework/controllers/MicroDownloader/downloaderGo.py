@@ -26,13 +26,15 @@ def download(isDebug=False):
         print("No VODS todo!")
         return "No VODS todo!"
     # downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
-    downloaded_metadata = downloader.downloadTwtvVidFAST(vod, True)
+    downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
     if downloaded_metadata == "403":
         downloader.updateErrorVod(vod,"unauthorized")
         return "nope gg sub only"
     if downloaded_metadata == "404":
         downloader.updateErrorVod(vod, "deleted")
         return "nope gg sub only"
+    if downloaded_metadata == "vod too big":
+        downloader.updateErrorVod("too_big")
     if downloaded_metadata == None:
         downloader.updateErrorVod(vod, "unknown")
         return "nope gg. Some other error"

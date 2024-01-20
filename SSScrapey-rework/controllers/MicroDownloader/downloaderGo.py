@@ -34,7 +34,7 @@ def download(isDebug=False):
         downloader.updateErrorVod(vod, "deleted")
         return "nope gg sub only"
     if downloaded_metadata == "vod too big":
-        downloader.updateErrorVod("too_big")
+        downloader.updateErrorVod(vod, "too_big")
     if downloaded_metadata == None:
         downloader.updateErrorVod(vod, "unknown")
         return "nope gg. Some other error"

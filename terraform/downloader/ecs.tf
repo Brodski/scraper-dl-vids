@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "download_task" {
   }
   container_definitions = jsonencode([
     {
-      name              = "downloader-container",
+      name              = "downloader_container",
       essential         = true
       image             = var.docker_image
       environment = [

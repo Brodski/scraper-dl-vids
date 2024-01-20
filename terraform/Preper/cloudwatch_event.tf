@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "preper-schedule"
   description         = "Trigger ECS task daily"
-  schedule_expression = "cron(37 6 * * ? *)"
+  schedule_expression = "cron(18 6 * * ? *)"
 
   # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
   # schedule_expression = "cron(30 12 * * ? *)" # daily at 11:00am UTC
@@ -29,7 +29,7 @@ resource "aws_cloudwatch_event_target" "ecs" {
         "subnet-0468a4b6cab55c7af"
       ]
       security_groups = [var.sg_name_id]
-      assign_public_ip = true
+      assign_public_ip = true # required to pull from docker
     }
   }
 }

@@ -58,8 +58,6 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
         if new_channels:
             sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId) VALUES (%s, %s, %s, %s, %s, %s)"
             values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id) for chan in new_channels]
-            print("VALUES!")
-            print(str(values))
             try:
                 cursor.executemany(sql, values)
                 connection.commit()
@@ -114,8 +112,6 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000000000000000000000000000000000")
     connection = getConnection()
     max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
-    print("scrapped_channels")
-    print(str(scrapped_channels))
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             chan.print()
@@ -123,13 +119,9 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             vod_ids = [ link.split('/')[-1] for link in links]
             if len(vod_ids) == 0:
                 continue
-            print("vod_ids=" + str(vod_ids))
             placeholders = ', '.join(['%s'] * len(vod_ids))
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
-            print("query")
-            print(query)
             cursor.execute(query, vod_ids)
-            print("post query")
 
             # Get results
             existing_ids = [row[0] for row in cursor.fetchall()]
@@ -145,8 +137,6 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if non_existing_ids:
                 trans_status = "todo"            
                 values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
-                print("vvalues")
-                print(str(values))
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 try:
                     cursor.executemany(sql, values)
@@ -159,7 +149,6 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if previous_existing_ids:
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
-                print("xxx" + str( values))
                 try:
                     cursor.executemany(sql, values)
                     connection.commit()  # Commit the transaction

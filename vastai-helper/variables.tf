@@ -1,4 +1,4 @@
-variable "IS_CREATE_INSTANCE" {
+variable "IS_VASTAI_CREATE_INSTANCE" {
   type = string
   default = "true"
 }

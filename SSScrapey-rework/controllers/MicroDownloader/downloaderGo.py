@@ -29,15 +29,24 @@ def download(isDebug=False):
     downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
     if downloaded_metadata == "403":
         downloader.updateErrorVod(vod,"unauthorized")
-        return "nope gg sub only"
+        msg = "nope gg. 403 sub only"
+        print(msg)
+        return msg
     if downloaded_metadata == "404":
         downloader.updateErrorVod(vod, "deleted")
-        return "nope gg sub only"
+        msg = "nope gg. 404 delete"
+        print(msg)
+        return msg
     if downloaded_metadata == "vod too big":
         downloader.updateErrorVod(vod, "too_big")
+        msg = "nope gg. too big"
+        print(msg)
+        return msg
     if downloaded_metadata == None:
         downloader.updateErrorVod(vod, "unknown")
-        return "nope gg. Some other error"
+        msg = "nope gg. Some other error"
+        print(msg)
+        return msg
 
     # Post process vod
     downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)

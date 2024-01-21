@@ -1,9 +1,12 @@
-variable "IS_CREATE_INSTANCE" {
-  type = string
-  default = "true"
-}
 variable "iam_role_lambda_exec_arn" {
   type = string
+}
+variable "docker_image" {
+  type = string
+}
+variable "IS_VASTAI_CREATE_INSTANCE" {
+  type = string
+  default = "true"
 }
 variable "sensitive_info" {
   type = object({

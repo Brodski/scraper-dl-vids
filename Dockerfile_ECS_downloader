@@ -59,7 +59,9 @@ RUN pip install -r requirements_downloader.txt \
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    git reset --hard origin/master && \
+    git reset --hard origin/master ; \
+    ls ; \
     git pull origin master --force && \ 
-    python kickDownloader.py ; \
+    python --version ; \
+    python kickDownloader.py && \
     echo "DONE!!!!!!!!!!!!" ; 

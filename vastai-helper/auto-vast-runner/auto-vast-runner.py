@@ -192,8 +192,8 @@ def handler_kickit():
 
     printAsTable(goodOffers)
         
-    if create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
-        print(f'os.environ.get("IS_CREATE_INSTANCE"): {os.environ.get("IS_CREATE_INSTANCE")}')
+    if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
+        print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         id_create = instance_first.get("id")
         create_instance(id_create)
         pollCompletion(id_create, time.time())

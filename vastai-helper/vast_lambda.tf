@@ -39,7 +39,7 @@ resource "aws_lambda_function" "example_lambda" {
   depends_on = [data.archive_file.lambda_zip]
   environment {
     variables = {
-      IS_CREATE_INSTANCE = "true"
+      IS_VASTAI_CREATE_INSTANCE = "true"
       AWS_SECRET_ACCESS_KEY = var.sensitive_configs.AWS_SECRET_ACCESS_KEY
       AWS_ACCESS_KEY_ID = var.sensitive_configs.AWS_ACCESS_KEY_ID
       ENV = var.sensitive_configs.ENV

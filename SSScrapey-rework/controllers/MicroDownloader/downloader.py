@@ -230,7 +230,7 @@ def isVodTooBig(vod: Vod):
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
         duration = meta['duration']
-        print("duration: " + str(duration))
+        print("    (downloadPreCheck) duration: " + str(duration))
         if duration > 86400: # 86400 sec = 24 hours
             return True
     except Exception as e:

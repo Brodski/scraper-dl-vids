@@ -11,6 +11,12 @@ try:
 except:
     print("We are in lambda") # ?????? Why did i write this
 
+#########################################################################
+#                                                                       #
+# Note: handler_kickit() is the "main()" Defined in lambda_vastai.tf    #
+# Vars: vars_prod.tf locally on -> terraform -> lambda -> python        #  
+#                                                                       #
+#########################################################################
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -19,6 +25,7 @@ DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_U)SERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
 DATABASE = os.environ.get('DATABASE')
+DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 
 # 'configs'
 dph = "0.12"
@@ -26,7 +33,7 @@ cuda_vers = "12"
 cpu_ram = "16000.0"
 disk_space = "32"
 disk = 32.0 # Gb
-image = "cbrodski/transcriber:latest" # UPDATED
+image = DOCKER 
 storage_cost = "0.3"
 blacklist_gpus = ["GTX 1070"]
 blacklist_ids = []
@@ -192,8 +199,8 @@ def handler_kickit():
 
     printAsTable(goodOffers)
         
-    if create_auto or os.environ.get("IS_CREATE_INSTANCE") == "true": # env set in vast_lambda.tf
-        print(f'os.environ.get("IS_CREATE_INSTANCE"): {os.environ.get("IS_CREATE_INSTANCE")}')
+    if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
+        print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         id_create = instance_first.get("id")
         create_instance(id_create)
         pollCompletion(id_create, time.time())
@@ -279,7 +286,3 @@ if __name__ == '__main__':
     #             f'}}'
     #         f'}}'
     # )
-
-
-
-

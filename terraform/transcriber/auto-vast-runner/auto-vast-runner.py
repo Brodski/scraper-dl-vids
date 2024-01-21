@@ -56,6 +56,7 @@ def requestOffersHttp(query_args):
     return json_data.get("offers")
 
 def create_instance(instance_id):
+    print("wtf 3: " + str(instance_id))
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
     print("create_instance url: ")
     print(url)
@@ -212,7 +213,9 @@ def handler_kickit(event, context):
     print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         
     if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
+        print("wtf 1: " + str(instance_first.get("id")))
         id_create = instance_first.get("id")
+        print("wtf 2: " + str(id_create))
         create_instance(id_create)
         pollCompletion(id_create, time.time(), counter_try_again)
 

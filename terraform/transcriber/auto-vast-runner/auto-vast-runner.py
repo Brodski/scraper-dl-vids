@@ -57,7 +57,7 @@ def requestOffersHttp(query_args):
 
 def create_instance(instance_id):
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
-    print("url: ")
+    print("create_instance url: ")
     print(url)
     data_dict =  {  
         "client_id": "me",
@@ -86,6 +86,11 @@ def create_instance(instance_id):
         "force": False
         }
     data_json = json.dumps(data_dict).encode('utf-8')
+    print("ending early LOCAL")
+    print("ending early LOCAL")
+    print("ending early LOCAL")
+    print("ending early LOCAL")
+    return
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
     with urllib.request.urlopen(request) as response:
@@ -164,6 +169,8 @@ def handler_kickit(event, context):
     print("offerz[0]")
     print(offerz[0])
     print("== GO BABY GO ==")
+    print("== All offers below ==")
+    printAsTable(offers)
     good_offers_counter = 0
     goodOffers = []
     for offer in offers:
@@ -172,7 +179,7 @@ def handler_kickit(event, context):
             print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
         if offer.get("dph_total") > float(dph):
-            print(id + " skipping dph: " + str(offer.get("dph")))
+            print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue
         if offer.get("cpu_ram") < float(cpu_ram):
             print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
@@ -189,7 +196,7 @@ def handler_kickit(event, context):
         if str(offer.get("id")) in blacklist_ids:
             print(id + " skipping blacklist_ids: " + str(offer.get("id")))
             continue
-        print("======================")
+        # print("======================")
         print("ADDING " + id)
         goodOffers.append(offer)
         good_offers_counter = good_offers_counter + 1
@@ -198,19 +205,19 @@ def handler_kickit(event, context):
     print("offers COUNT: " + str(len(offers)))
     print("good_offers_counter: " + str(good_offers_counter))
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
-    instance_first = goodOffers[0]
-    print("instance_first: " + str(instance_first.get("id")))
-
+    print("+++++ Good offers: +++++")
     printAsTable(goodOffers)
+    instance_first = goodOffers[0]
+    print("instance_first: ", instance_first.get("id"))
+    print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         
     if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
-        print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         id_create = instance_first.get("id")
         create_instance(id_create)
         pollCompletion(id_create, time.time(), counter_try_again)
 
 def pollCompletion(id_create, start_time, counter_try_again):
-    if counter_try_again > 10:
+    if counter_try_again > 14:
         print(f"counter_try_again > 10. Ending. counter_try_again={counter_try_again}")
         return
     time.sleep(60) 
@@ -226,7 +233,7 @@ def pollCompletion(id_create, start_time, counter_try_again):
             actual_status = row["actual_status"]
             print("status_msg: " + status_msg)
             print("actual_status: " + actual_status)
-    if "unable to find image" in status_msg.lower():
+    if status_msg and "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
         try_again(str(row['id']), counter_try_again+1)
         return

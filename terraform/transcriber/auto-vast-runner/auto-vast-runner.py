@@ -18,8 +18,8 @@ except:
 #                                                                       #
 #########################################################################
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_U)SERNAME')
@@ -38,6 +38,7 @@ storage_cost = "0.3"
 blacklist_gpus = ["GTX 1070"]
 blacklist_ids = []
 
+counter_try_again = 0
 # copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
@@ -140,7 +141,10 @@ def printAsTable(goodOffers):
         print()
 
         
-def handler_kickit(): 
+def handler_kickit(event, context):
+    print("handler_kickit() beign")
+    print("event:")
+    print(event)
     create_auto = False
 
     everything_request = '''{
@@ -203,9 +207,12 @@ def handler_kickit():
         print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         id_create = instance_first.get("id")
         create_instance(id_create)
-        pollCompletion(id_create, time.time())
+        pollCompletion(id_create, time.time(), counter_try_again)
 
-def pollCompletion(id_create, start_time):
+def pollCompletion(id_create, start_time, counter_try_again):
+    if counter_try_again > 10:
+        print(f"counter_try_again > 10. Ending. counter_try_again={counter_try_again}")
+        return
     time.sleep(60) 
     execution_time = (time.time() - start_time) * 60
     id_create = str(id_create)
@@ -221,10 +228,10 @@ def pollCompletion(id_create, start_time):
             print("actual_status: " + actual_status)
     if "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
-        try_again(str(row['id']))
+        try_again(str(row['id']), counter_try_again+1)
         return
     if actual_status == "loading" and execution_time > 11: # minutes 
-        try_again(str(row['id']))
+        try_again(str(row['id']), counter_try_again+1)
         return
     if actual_status == "running":
         print("Running, we're done :)")
@@ -235,10 +242,10 @@ def try_again(id):
     print("end it")
     destroy_instance(id)
     blacklist_ids.append(id)
-    handler_kickit()
+    handler_kickit(None, None)
 
 if __name__ == '__main__':
-    handler_kickit()
+    handler_kickit(None, None)
     
     
     

@@ -225,6 +225,8 @@ def pollCompletion(id_create, start_time, counter_try_again):
         print(f"counter_try_again > 10. Ending. counter_try_again={counter_try_again}")
         return
     time.sleep(30) 
+    status_msg = None
+    actual_status = None
     execution_time = (time.time() - start_time) * 60
     id_create = str(id_create)
     rows = show_instances()
@@ -238,6 +240,9 @@ def pollCompletion(id_create, start_time, counter_try_again):
             print("status_msg: " + status_msg)
             print("actual_status: " + actual_status)
             break
+    
+    print("(after loop) status_msg: " + status_msg)
+    print("(after loop) actual_status: " + actual_status)
     if status_msg and "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
         try_again(str(row['id']), counter_try_again+1)

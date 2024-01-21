@@ -89,12 +89,15 @@ def create_instance(instance_id):
         "force": False
         }
     data_json = json.dumps(data_dict).encode('utf-8')
+    if os.environ.get('ENV') == None or os.environ.get('ENV') == "local":
+        print("ending early b/c local")
+        return
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
         print(response_data.decode('utf-8'))
-    print("DONE :)")
+    print("Created :)")
 
 # Again, copy pasted
 def show_instances():
@@ -109,6 +112,7 @@ def show_instances():
     for row in rows:
         row['duration'] = time.time() - row['start_date'] 
         print("id: " + str(row['id']) + ", time running: " + str(row['duration']))
+    print("- My current running instances (if any) -")
     printAsTable(rows)
     return(rows)
 
@@ -167,8 +171,8 @@ def handler_kickit(event, context):
     print("offerz[0]")
     print(offerz[0])
     print("== GO BABY GO ==")
-    print("== All offers below ==")
-    printAsTable(offers)
+    # print("== All offers below ==")
+    # printAsTable(offers)
     good_offers_counter = 0
     goodOffers = []
     for offer in offers:
@@ -220,7 +224,7 @@ def pollCompletion(id_create, start_time, counter_try_again):
     if counter_try_again > 14:
         print(f"counter_try_again > 10. Ending. counter_try_again={counter_try_again}")
         return
-    time.sleep(60) 
+    time.sleep(30) 
     execution_time = (time.time() - start_time) * 60
     id_create = str(id_create)
     rows = show_instances()
@@ -233,14 +237,16 @@ def pollCompletion(id_create, start_time, counter_try_again):
             actual_status = row["actual_status"]
             print("status_msg: " + status_msg)
             print("actual_status: " + actual_status)
+            break
     if status_msg and "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
         try_again(str(row['id']), counter_try_again+1)
         return
-    if actual_status == "loading" and execution_time > 11: # minutes 
+    if actual_status and actual_status == "loading" and execution_time > 11: # minutes 
+        print("nope not ready and execution_time > 11min, end it")
         try_again(str(row['id']), counter_try_again+1)
         return
-    if actual_status == "running":
+    if actual_status and actual_status == "running":
         print("Running, we're done :)")
         return
     return pollCompletion(id_create, start_time)

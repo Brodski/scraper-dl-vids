@@ -89,11 +89,6 @@ def create_instance(instance_id):
         "force": False
         }
     data_json = json.dumps(data_dict).encode('utf-8')
-    print("ending early LOCAL")
-    print("ending early LOCAL")
-    print("ending early LOCAL")
-    print("ending early LOCAL")
-    return
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
     with urllib.request.urlopen(request) as response:

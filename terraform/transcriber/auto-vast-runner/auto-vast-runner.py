@@ -57,6 +57,8 @@ def requestOffersHttp(query_args):
 
 def create_instance(instance_id):
     print("wtf 3: " + str(instance_id))
+    print("wtf VAST_API_KEY: " + str(VAST_API_KEY))
+    print("wtf 2 VAST_API_KEY: " + os.environ.get('VAST_API_KEY'))
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
     print("create_instance url: ")
     print(url)

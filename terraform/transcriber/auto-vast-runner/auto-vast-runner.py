@@ -77,7 +77,8 @@ def create_instance(instance_id):
                 'DATABASE_HOST': DATABASE_HOST,
                 'DATABASE_USERNAME': DATABASE_USERNAME,
                 'DATABASE_PASSWORD': DATABASE_PASSWORD,
-                'DATABASE': DATABASE
+                'DATABASE': DATABASE,
+                'VAST_API_KEY': VAST_API_KEY
             },
         "price": None, 
         "disk": disk, 

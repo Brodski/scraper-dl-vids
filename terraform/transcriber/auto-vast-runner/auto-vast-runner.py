@@ -104,7 +104,7 @@ def create_instance(instance_id):
     print("Created :)")
 
 # Again, copy pasted
-def show_instances():
+def show_my_instances():
     url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY
     response = urllib.request.urlopen(url)
     if response.status != 200:
@@ -182,25 +182,25 @@ def handler_kickit(event, context):
     for offer in offers:
         id = "id: " + str(offer.get("id"))
         if offer.get("cuda_max_good") < int(cuda_vers):
-            print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
+            # print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
         if offer.get("dph_total") > float(dph):
-            print(id + " skipping dph: " + str(offer.get("dph_total")))
+            # print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue
         if offer.get("cpu_ram") < float(cpu_ram):
-            print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
+            # print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
             continue
         if offer.get("disk_space") < float(disk_space):
-            print(id + " skipping disk_space: " + str(offer.get("disk_space")))
+            # print(id + " skipping disk_space: " + str(offer.get("disk_space")))
             continue
         if offer.get("storage_cost") > float(storage_cost):
-            print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
+            # print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
             continue
         if offer.get("gpu_name") in blacklist_gpus:
-            print(id + " skipping blacklist_gpus: " + str(offer.get("gpu_name")))
+            # print(id + " skipping blacklist_gpus: " + str(offer.get("gpu_name")))
             continue
         if str(offer.get("id")) in blacklist_ids:
-            print(id + " skipping blacklist_ids: " + str(offer.get("id")))
+            # print(id + " skipping blacklist_ids: " + str(offer.get("id")))
             continue
         # print("======================")
         print("ADDING " + id)
@@ -227,18 +227,17 @@ def handler_kickit(event, context):
     }
 
 def pollCompletion(id_create, start_time, counter_try_again):
-    print(f'---- start time epoch: {str(start_time)} -----')
-    print(f'polling {str(id_create)} for completion')
-    if counter_try_again > 14: # 14 min
-        print(f"counter_try_again > 14. Ending. counter_try_again={counter_try_again}")
+    print(f'----- polling {str(id_create)} for completion -----')
+    if counter_try_again > 13: # 13 min
+        print(f"counter_try_again > 13. Ending. counter_try_again={counter_try_again}")
         return
-    time.sleep(60) 
     status_msg = None
     actual_status = None
     execution_time = (time.time() - start_time) * 60
     id_create = str(id_create)
-    rows = show_instances()
+    rows = show_my_instances()
     print("execution_time: ", execution_time)
+    print(rows)
     for row in rows:
         row_id = str(row['id'])
         if row_id == id_create:
@@ -254,13 +253,15 @@ def pollCompletion(id_create, start_time, counter_try_again):
         print("nope not ready, end it")
         try_again(str(row['id']))
         return
-    if actual_status and actual_status == "loading" and execution_time > 11: # 11 minutes. Image is stuck loading
-        print("nope not ready and execution_time > 11min, end it")
+    if actual_status and actual_status == "loading" and execution_time > 10: # 10 minutes. Image is stuck loading
+        print("nope not ready and execution_time > 10min, end it")
         try_again(str(row['id']))
         return
     if actual_status and actual_status == "running":
         print("Running, we're done :)")
         return
+    print('sleeping for 60 sec')
+    time.sleep(60) 
     return pollCompletion(id_create, start_time, counter_try_again+1)
 
 def try_again(id):

@@ -37,7 +37,7 @@ def transcribe(isDebug=False):
         vod = getDebugVod(vod)
     vod.print()
 
-    # Set TranscrptStatus = "processing"
+    # Set TranscrptStatus = "transcribing"
     transcriber.setSemaphoreDb(vod)
 
     # Do the transcribing

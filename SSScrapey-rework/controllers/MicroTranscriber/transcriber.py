@@ -59,7 +59,7 @@ def getTodoFromDb():
 
 def setSemaphoreDb(vod: Vod):
     connection = getConnectionDb()
-    t_status = "processing"
+    t_status = "transcribing"
     try:
         with connection.cursor() as cursor:
             sql = """

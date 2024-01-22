@@ -17,6 +17,12 @@ except:
 # Vars: vars_prod.tf locally on -> terraform -> lambda -> python        #  
 #                                                                       #
 #########################################################################
+
+print("os.environ.get('DOCKER')", os.environ.get('DOCKER'))
+print("os.environ.get('DATABASE_HOST')", os.environ.get('DATABASE_HOST'))
+print("DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')", DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME'))
+
+
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
 AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
@@ -25,7 +31,6 @@ DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
 DATABASE = os.environ.get('DATABASE')
-print("os.environ.get('DOCKER')", os.environ.get('DOCKER'))
 DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 
 # 'configs'

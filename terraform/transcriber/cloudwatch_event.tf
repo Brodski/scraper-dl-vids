@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "run-lambda-daily"
   description         = "Run Lambda function once a day"
-  schedule_expression = "cron(0 13 * * ? *)" 
+  schedule_expression = "cron(14 6 * * ? *)" 
   # schedule_expression = "rate(1 minute)"
 }
 

@@ -22,10 +22,10 @@ resource "aws_ecs_task_definition" "preper_task" {
       image             = var.docker_image
       environment = [
         { name = "AWS_SECRET_ACCESS_KEY"
-          value =var.sensitive_info.AWS_SECRET_ACCESS_KEY 
+          value =var.sensitive_info.MY_AWS_SECRET_ACCESS_KEY 
         },
         { name = "AWS_ACCESS_KEY_ID"
-          value =var.sensitive_info.AWS_ACCESS_KEY_ID 
+          value =var.sensitive_info.MY_AWS_ACCESS_KEY_ID 
         },
         { name = "ENV"
           value =var.sensitive_info.ENV 

@@ -22,9 +22,10 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
-DATABASE_USERNAME = os.environ.get('DATABASE_U)SERNAME')
+DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
 DATABASE = os.environ.get('DATABASE')
+print("os.environ.get('DOCKER')", os.environ.get('DOCKER'))
 DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 
 # 'configs'
@@ -219,6 +220,10 @@ def handler_kickit(event, context):
         print("wtf 2: " + str(id_create))
         create_instance(id_create)
         pollCompletion(id_create, time.time(), counter_try_again)
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Completed vastai init!! ')
+    }
 
 def pollCompletion(id_create, start_time, counter_try_again):
     if counter_try_again > 14:
@@ -237,12 +242,12 @@ def pollCompletion(id_create, start_time, counter_try_again):
         if row_id == id_create:
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]
-            print("status_msg: " + status_msg)
-            print("actual_status: " + actual_status)
+            print("status_msg: ", status_msg)
+            print("actual_status: ", actual_status)
             break
     
-    print("(after loop) status_msg: " + status_msg)
-    print("(after loop) actual_status: " + actual_status)
+    print("(after loop) status_msg: ", status_msg)
+    print("(after loop) actual_status: ", actual_status)
     if status_msg and "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
         try_again(str(row['id']), counter_try_again+1)
@@ -254,7 +259,7 @@ def pollCompletion(id_create, start_time, counter_try_again):
     if actual_status and actual_status == "running":
         print("Running, we're done :)")
         return
-    return pollCompletion(id_create, start_time)
+    return pollCompletion(id_create, start_time, counter_try_again+1)
 
 def try_again(id):
     print("end it")

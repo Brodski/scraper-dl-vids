@@ -16,7 +16,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
-DATABASE_USERNAME = os.environ.get('DATABASE_U)SERNAME')
+DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
 DATABASE = os.environ.get('DATABASE')
 

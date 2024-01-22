@@ -22,7 +22,6 @@ module "downloader" {
 
 module "transcriber" {
     source                      = "./transcriber"
-    iam_role_lambda_exec_arn    = aws_iam_role.lambda_execution_role.arn
     sensitive_info              = var.sensitive_info
     docker_image                = "cbrodski/transcriber:official_v2"
 }

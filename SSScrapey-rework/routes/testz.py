@@ -2,7 +2,7 @@ from flask import Blueprint, current_app
 import yt_dlp
 import time
 
-import boto3
+# import boto3
 import json
 import datetime
 
@@ -219,76 +219,76 @@ def test_yt_dl_paudio():
 
 
 
-@test_bp.route('/getAllS3Jsons')
-def getAllS3Jsons():
-    # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
-    # obj['Key']          = channels/ranking/raw/2023-15/100.json
-    # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
-    s3_ranking_raw = "channels/ranking/raw"
-    s3 = boto3.client('s3')
-    objList = []
-    objects = s3.list_objects_v2(Bucket=env_varz.env_varz.BUCKET_NAME, Prefix=s3_ranking_raw)
-    print ("objects")
-    print (objects)
-    print (objects.get('Contents'))
-    if objects.get('Contents') is None:
-        return "NOTHIGN!"
-    objects = objects['Contents']
+# @test_bp.route('/getAllS3Jsons')
+# def getAllS3Jsons():
+#     # "LastModified": datetime.datetime(2023,4,10,7,44,12,"tzinfo=tzutc()
+#     # obj['Key']          = channels/ranking/raw/2023-15/100.json
+#     # obj['LastModified'] = Last modified: 2023-04-11 06:54:39+00:00
+#     s3_ranking_raw = "channels/ranking/raw"
+#     s3 = boto3.client('s3')
+#     objList = []
+#     objects = s3.list_objects_v2(Bucket=env_varz.env_varz.BUCKET_NAME, Prefix=s3_ranking_raw)
+#     print ("objects")
+#     print (objects)
+#     print (objects.get('Contents'))
+#     if objects.get('Contents') is None:
+#         return "NOTHIGN!"
+#     objects = objects['Contents']
 
-    for obj in objects:
-        objList.append(obj)
-    sorted_objects = sorted(objList, key=lambda obj: obj['LastModified'])
-    print ("objList")
-    print ("objList")
-    print (objList)
-    print("-----SORTED----")
-    for obj in sorted_objects:
-        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+#     for obj in objects:
+#         objList.append(obj)
+#     sorted_objects = sorted(objList, key=lambda obj: obj['LastModified'])
+#     print ("objList")
+#     print ("objList")
+#     print (objList)
+#     print("-----SORTED----")
+#     for obj in sorted_objects:
+#         print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
 
         
-    x = datetime.datetime(2023, 4, 11, 6, 54, 39, 0, tzinfo=datetime.timezone.utc)
-    filtered_objects = filter(lambda obj: obj['LastModified'] > x, sorted_objects)
-    print("-----FILTER ----")
-    print (x)
-    for obj in filtered_objects:
-        print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
+#     x = datetime.datetime(2023, 4, 11, 6, 54, 39, 0, tzinfo=datetime.timezone.utc)
+#     filtered_objects = filter(lambda obj: obj['LastModified'] > x, sorted_objects)
+#     print("-----FILTER ----")
+#     print (x)
+#     for obj in filtered_objects:
+#         print(f"{obj['Key']} - Last modified: {obj['LastModified']}")
         
-    return objects
+#     return objects
 
 
 
 
-@test_bp.route('/doS3Stuff')
-def doS3Stuff():
-    s3Aws = os.getenv('env_varz.BUCKET_NAME')
-    test_dir = "mydirectory"
-    print(f'AWS_BUCKET Key: {s3Aws}')
+# @test_bp.route('/doS3Stuff')
+# def doS3Stuff():
+#     s3Aws = os.getenv('env_varz.BUCKET_NAME')
+#     test_dir = "mydirectory"
+#     print(f'AWS_BUCKET Key: {s3Aws}')
 
-    s3 = boto3.client('s3')
-    objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir)['Contents']
+#     s3 = boto3.client('s3')
+#     objects = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir)['Contents']
 
-    for obj in objects:
-        print(obj['Key'])
-    response = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir) 
-    print (response)
-    print('================')
-    print('================')
-    print('================')
-    print('================')
-    for content in response.get('Contents', []):
-        object_key = content.get('Key')
-        print (object_key)
-        # local_file_path = 'local/path/to/save/' + object_key.split('/')[-1]
-        # s3.download_file(env_varz.BUCKET_NAME, object_key, local_file_path)
-    print('================')
-    responseGetObj = s3.get_object(
-            Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',
-            # Key = 'mydirectory/twitch-stuff.json'
-            Key = 'mydirectory/testiq.png'
-        )
-    dataz = responseGetObj['Body'].read()
-    print("len(dataz)=" + str(len(dataz)))
-    return dataz
+#     for obj in objects:
+#         print(obj['Key'])
+#     response = s3.list_objects_v2(Bucket=env_varz.BUCKET_NAME, Prefix=test_dir) 
+#     print (response)
+#     print('================')
+#     print('================')
+#     print('================')
+#     print('================')
+#     for content in response.get('Contents', []):
+#         object_key = content.get('Key')
+#         print (object_key)
+#         # local_file_path = 'local/path/to/save/' + object_key.split('/')[-1]
+#         # s3.download_file(env_varz.BUCKET_NAME, object_key, local_file_path)
+#     print('================')
+#     responseGetObj = s3.get_object(
+#             Bucket = 'my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket',
+#             # Key = 'mydirectory/twitch-stuff.json'
+#             Key = 'mydirectory/testiq.png'
+#         )
+#     dataz = responseGetObj['Body'].read()
+#     print("len(dataz)=" + str(len(dataz)))
+#     return dataz
 
 
 @test_bp.route('/testGetTop500Channels_NameCompleted')

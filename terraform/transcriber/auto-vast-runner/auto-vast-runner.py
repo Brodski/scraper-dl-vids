@@ -62,9 +62,6 @@ def requestOffersHttp(query_args):
     return json_data.get("offers")
 
 def create_instance(instance_id):
-    print("wtf 3: " + str(instance_id))
-    print("wtf VAST_API_KEY: " + str(VAST_API_KEY))
-    print("wtf 2 VAST_API_KEY: " + os.environ.get('VAST_API_KEY'))
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
     print("create_instance url: ")
     print(url)
@@ -221,9 +218,7 @@ def handler_kickit(event, context):
     print(f'os.environ.get("IS_VASTAI_CREATE_INSTANCE"): {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
         
     if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
-        print("wtf 1: " + str(instance_first.get("id")))
         id_create = instance_first.get("id")
-        print("wtf 2: " + str(id_create))
         create_instance(id_create)
         pollCompletion(id_create, time.time(), counter_try_again)
     return {
@@ -232,17 +227,18 @@ def handler_kickit(event, context):
     }
 
 def pollCompletion(id_create, start_time, counter_try_again):
-    if counter_try_again > 14:
-        print(f"counter_try_again > 10. Ending. counter_try_again={counter_try_again}")
+    print(f'---- start time epoch: {str(start_time)} -----')
+    print(f'polling {str(id_create)} for completion')
+    if counter_try_again > 14: # 14 min
+        print(f"counter_try_again > 14. Ending. counter_try_again={counter_try_again}")
         return
-    time.sleep(30) 
+    time.sleep(60) 
     status_msg = None
     actual_status = None
     execution_time = (time.time() - start_time) * 60
     id_create = str(id_create)
     rows = show_instances()
-    print("execution_time")
-    print(execution_time)
+    print("execution_time: ", execution_time)
     for row in rows:
         row_id = str(row['id'])
         if row_id == id_create:
@@ -256,11 +252,11 @@ def pollCompletion(id_create, start_time, counter_try_again):
     print("(after loop) actual_status: ", actual_status)
     if status_msg and "unable to find image" in status_msg.lower():
         print("nope not ready, end it")
-        try_again(str(row['id']), counter_try_again+1)
+        try_again(str(row['id']))
         return
-    if actual_status and actual_status == "loading" and execution_time > 11: # minutes 
+    if actual_status and actual_status == "loading" and execution_time > 11: # 11 minutes. Image is stuck loading
         print("nope not ready and execution_time > 11min, end it")
-        try_again(str(row['id']), counter_try_again+1)
+        try_again(str(row['id']))
         return
     if actual_status and actual_status == "running":
         print("Running, we're done :)")

@@ -20,7 +20,7 @@ except:
 
 print("os.environ.get('DOCKER')", os.environ.get('DOCKER'))
 print("os.environ.get('DATABASE_HOST')", os.environ.get('DATABASE_HOST'))
-print("DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')", DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME'))
+print("DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')", os.environ.get('DATABASE_USERNAME'))
 
 
 VAST_API_KEY = os.environ.get('VAST_API_KEY')

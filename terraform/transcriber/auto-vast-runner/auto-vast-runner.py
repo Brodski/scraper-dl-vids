@@ -101,7 +101,7 @@ def create_instance(instance_id):
     id = None
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
-        res_json = response_data.decode('utf-8')
+        res_json = json.loads(response_data.decode('utf-8'))
         id = res_json.get("new_contract")
     print("Created :)")
     return id

@@ -98,10 +98,13 @@ def create_instance(instance_id):
         return
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
+    id = None
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
-        print(response_data.decode('utf-8'))
+        res_json = response_data.decode('utf-8')
+        id = res_json.get("new_contract")
     print("Created :)")
+    return id
 
 # Again, copy pasted
 def show_my_instances():
@@ -219,30 +222,32 @@ def handler_kickit(event, context):
         
     if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
         id_create = instance_first.get("id")
-        create_instance(id_create)
-        pollCompletion(id_create, time.time(), counter_try_again)
+        id_contract = create_instance(id_create)
+        pollCompletion(id_contract, time.time(), counter_try_again)
+        # pollCompletion(id_create, time.time(), counter_try_again)
     return {
         'statusCode': 200,
         'body': json.dumps('Completed vastai init!! ')
     }
 
-def pollCompletion(id_create, start_time, counter_try_again):
-    print(f'----- polling {str(id_create)} for completion -----')
-    if counter_try_again > 13: # 13 min
-        print(f"counter_try_again > 13. Ending. counter_try_again={counter_try_again}")
+def pollCompletion(id_contract, start_time, counter_try_again):
+    # id_create = id_contract
+    print(f'----- polling {str(id_contract)} for completion -----')
+    if counter_try_again > 9: # 9 min
+        print(f"counter_try_again > 9. Ending. counter_try_again={counter_try_again}")
         return
     status_msg = None
     actual_status = None
     execution_time = (time.time() - start_time) * 60
-    id_create = str(id_create)
+    id_contract = str(id_contract)
     rows = show_my_instances()
     print("execution_time: ", execution_time)
     for row in rows:
         print(row)
         row_id = str(row['id'])
         print("row_id", row_id)
-        print("id_create", id_create)
-        if row_id == id_create:
+        print("id_contract", id_contract)
+        if row_id == id_contract:
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]
             print("status_msg: ", status_msg)
@@ -255,8 +260,8 @@ def pollCompletion(id_create, start_time, counter_try_again):
         print("nope not ready, end it")
         try_again(str(row['id']))
         return
-    if actual_status and actual_status == "loading" and execution_time > 10: # 10 minutes. Image is stuck loading
-        print("nope not ready and execution_time > 10min, end it")
+    if actual_status and actual_status == "loading" and execution_time > 8: # 10 minutes. Image is stuck loading
+        print("nope not ready and execution_time > 8 min, end it")
         try_again(str(row['id']))
         return
     if actual_status and actual_status == "running":
@@ -264,7 +269,7 @@ def pollCompletion(id_create, start_time, counter_try_again):
         return
     print('sleeping for 60 sec')
     time.sleep(60) 
-    return pollCompletion(id_create, start_time, counter_try_again+1)
+    return pollCompletion(id_contract, start_time, counter_try_again+1)
 
 def try_again(id):
     print("end it")

@@ -237,9 +237,11 @@ def pollCompletion(id_create, start_time, counter_try_again):
     id_create = str(id_create)
     rows = show_my_instances()
     print("execution_time: ", execution_time)
-    print(rows)
     for row in rows:
+        print(row)
         row_id = str(row['id'])
+        print("row_id", row_id)
+        print("id_create", id_create)
         if row_id == id_create:
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]

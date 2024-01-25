@@ -76,7 +76,6 @@ def setSemaphoreDb(vod: Vod):
     finally:
         connection.close()
 
-        
 def downloadAudio(vod: Vod):
     print("######################################")
     print("             downloadAudio            ")
@@ -91,12 +90,8 @@ def downloadAudio(vod: Vod):
     bucket_domain = env_varz.BUCKET_DOMAIN
     relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     print("    (downloadAudio) bucket_domain=" + bucket_domain)
-    print("    (downloadAudio) audio_url=" + str(audio_url))
-    print("    (downloadAudio) audio_name=" + str(audio_name))
-    print("    (downloadAudio) audio_name_encode=" + str(audio_name_encode))
-    print("    (downloadAudio) meta_url=" + str(meta_url))
-    print("    (downloadAudio) relative_filename=" + str(relative_filename))    
-    print("    (downloadAudio) relative_path: " + relative_filename)
+    print("    (downloadAudio) audio_name=" + str(audio_name)) 
+    print("    (downloadAudio) relative_path: " + relative_path)
 
     return relative_path
 
@@ -258,16 +253,21 @@ def unsetProcessingDb(vod: Vod):
     finally:
         connection.close()
 
+def deleteAudioS3(vod: Vod):
+    print(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
+    s3 = boto3.client('s3')
+    response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
+    # channels/vod-audio/gamesdonequick/2039503329/Awesome_Games_Done_Quick_2024_-_Bonus_Showrunner_Showcase_-_ft._%40Asuka424_%40ChurchnSarge_-_hotfix-v2039503329.opus
+
 def cleanUpFiles(relative_path: str):
-    print("cleanUpFiles")
-    print("relative_path: " + relative_path)
+    print("     (cleanUpFiles) relative_path: " + relative_path)
     try:
         file_abs = os.path.abspath(relative_path)
-        print("cleanUpFiles - file_abs= " + file_abs)
+        print("     (cleanUpFiles) file_abs= " + file_abs)
         if os.getenv("ENV") != "local":
-            print("DELETING IT!!!!!!!")
+            print("     (cleanUpFiles) DELETING IT!!!!!!!")
             os.remove(file_abs)
     except Exception as e:
-        print('failed to run cleanUpFiles() on: ' + relative_path)
+        print('     (cleanUpFiles) failed to run cleanUpFiles() on: ' + relative_path)
         print(str(e))
     return 

@@ -4,7 +4,6 @@ from typing import List
 import controllers.MicroTranscriber.transcriber as transcriber
 import json
 import os
-import requests
 import time
 import urllib.parse
 import urllib.request
@@ -20,7 +19,7 @@ def goTranscribeBatch(isDebug=False):
         print("===========================================")
         x = transcribe(isDebug)
         print(f"Finished Index {i}")
-        print(f"download_batch_size: {i}")
+        print(f"download_batch_size: {i+1}")
     return x
 
 
@@ -45,7 +44,8 @@ def transcribe(isDebug=False):
         relative_path = transcriber.downloadAudio(vod)
         saved_caption_files = transcriber.doWhisperStuff(vod, relative_path)
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
-        transcriber.setCompletedStatusDb(transcripts_s3_key_arr,vod)
+        transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
+        transcriber.deleteAudioS3(vod)
     except Exception as e:
         print(f"ERROR Transcribing vod: {e}")
         vod.print()

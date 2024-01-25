@@ -4,8 +4,12 @@ data "archive_file" "lambda_zip" {
     source_dir = "${path.module}/auto-vast-runner"
 }
 
+locals {
+  lambda_name = "${var.sensitive_info.ENV}_auto-vast-runner"
+  log_name = "/lambda/scraper/${local.lambda_name}"
+}
 resource "aws_lambda_function" "vast_lambda" {
-  function_name = "auto-vast-runner"
+  function_name = "${local.lambda_name}"
 
   filename = data.archive_file.lambda_zip.output_path # "output_code.zip"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
@@ -15,7 +19,12 @@ resource "aws_lambda_function" "vast_lambda" {
   timeout = 600 # 10 minutes
 
   role = aws_iam_role.lambda_execution_role.arn
-  depends_on = [data.archive_file.lambda_zip]
+    
+  logging_config {
+    log_format = "Text"
+    log_group = local.log_name
+  }
+
   environment {
     variables = {
       IS_VASTAI_CREATE_INSTANCE = var.IS_VASTAI_CREATE_INSTANCE

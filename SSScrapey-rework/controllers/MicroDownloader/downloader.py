@@ -276,9 +276,9 @@ def downloadTwtvVidFAST(vod: Vod):
                     '--audio-quality', '0',
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
-    if env_varz.ENV != "local":
-        yt_dlp_cmd.append('--no-progress')
-    else:
+    # if env_varz.ENV != "local":
+    #     yt_dlp_cmd.append('--no-progress')
+    if env_varz.ENV == "local" or env_varz.DWN_IS_SHORT_DEV_DL:
         # download only first 269 seconds
         yt_dlp_cmd.append('--downloader-args')
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 269')

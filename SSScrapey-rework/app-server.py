@@ -59,7 +59,8 @@ def home():
     <hr/>
     
     <h3> Micro Transcriber </h3>
-        <li><a href="/main/kickTranscriber/kickIt">   mainController.kickWhisperer(True) </a></li>
+        <li><a href="/main/kickTranscriber/kickIt">   mainController.kickWhisperer(Debug=True) </a></li>
+        <li><a href="/main/kickTranscriber/kickIt_real">   mainController.kickWhisperer(<b>Debug=FALSE</b>) </a></li>
         <ul>
             <li><a href="/main/kickTranscriber/getTodoFromDb">  transcriber.getTodoFromDb(True) </a></li>
         </ul>

@@ -51,6 +51,11 @@ def kickDownloader_real_Route():
 def kickTranscriber_Route():
     return mainController.kickWhisperer(True)
 
+@everything_bp.route('/main/kickTranscriber/kickIt_real')
+def kickTranscriber_real_Route():
+    return mainController.kickWhisperer(False)
+
+
 @everything_bp.route('/main/kickTranscriber/getTodoFromDb')
 def kickTranscriber_getTodoFromDb_Route():
     return transcriber.getTodoFromDb()

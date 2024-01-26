@@ -200,7 +200,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 #     TodoDate DATETIME
 #     S3Link VARCHAR(255)
 #     StreamDate DATETIME;
-#  
+#     TranscribeDate DATETIME
+#
 #     PRIMARY KEY (Id),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
 # ); 
@@ -214,6 +215,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 # ALTER TABLE Vods ADD COLUMN StreamDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
+# ALTER TABLE Vods ADD COLUMN TranscribeDate DATETIME;
 # ALTER TABLE Rankings ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Rankings DROP COLUMN Date;
 # ALTER TABLE Rankings DROP COLUMN Time;

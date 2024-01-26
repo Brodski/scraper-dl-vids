@@ -13,6 +13,8 @@ import time
 import torch
 import urllib.parse
 import urllib.request
+import controllers.MicroTranscriber.cloudwatch as cloudwatch
+
 def getConnectionDb():
     connection = MySQLdb.connect(
         host    = env_varz.DATABASE_HOST,
@@ -26,7 +28,7 @@ def getConnectionDb():
     return connection
 
 def getTodoFromDb():
-    print("Getting Todo's from Db")
+    print("     (getTodoFromDb) Getting Todo's from Db")
     resultsArr = []
     connection = getConnectionDb()
     
@@ -43,6 +45,9 @@ def getTodoFromDb():
                 """
             cursor.execute(sql)
             results = cursor.fetchall()
+            column_names = [desc[0] for desc in cursor.description]
+            print ("    (getTodoFromDb) vod_ column_names")
+            print(column_names)
     except Exception as e:
         print(f"Error occurred (getTodoFromDb): {e}")
         connection.rollback()
@@ -50,8 +55,8 @@ def getTodoFromDb():
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles,       ChanCurrentRank, Language  = vod_
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles)
+        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,       ChanCurrentRank, Language  = vod_
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         resultsArr.append(vod)
     print("resultsArr")
     print(resultsArr)
@@ -88,7 +93,11 @@ def downloadAudio(vod: Vod):
     audio_url = audio_url.replace(audio_name, audio_name_encode)    
     relative_filename = env_varz.WHSP_A2T_ASSETS_AUDIO +  audio_name_encode
     bucket_domain = env_varz.BUCKET_DOMAIN
-    relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
+    try:
+        relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
+    except:
+        print("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
+        return None
     print("    (downloadAudio) bucket_domain=" + bucket_domain)
     print("    (downloadAudio) audio_name=" + str(audio_name)) 
     print("    (downloadAudio) relative_path: " + relative_path)
@@ -220,7 +229,8 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
                 UPDATE Vods
                 SET TranscriptStatus = %s,
                 Model = %s,
-                S3CaptionFiles = %s
+                S3CaptionFiles = %s,
+                TranscribeDate = NOW()
                 WHERE Id = %s;
                 """
             values = (t_status, env_varz.WHSP_MODEL_SIZE, transcripts_keys, vod.id)
@@ -255,12 +265,13 @@ def unsetProcessingDb(vod: Vod):
 
 def deleteAudioS3(vod: Vod):
     print(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
-    s3 = boto3.client('s3')
-    response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
+    if os.getenv("ENV") != "local":
+        s3 = boto3.client('s3')
+        response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
     # channels/vod-audio/gamesdonequick/2039503329/Awesome_Games_Done_Quick_2024_-_Bonus_Showrunner_Showcase_-_ft._%40Asuka424_%40ChurchnSarge_-_hotfix-v2039503329.opus
 
 def cleanUpFiles(relative_path: str):
-    print("     (cleanUpFiles) relative_path: " + relative_path)
+    print("     (cleanUpFiles) relative_path: ", relative_path)
     try:
         file_abs = os.path.abspath(relative_path)
         print("     (cleanUpFiles) file_abs= " + file_abs)
@@ -268,6 +279,6 @@ def cleanUpFiles(relative_path: str):
             print("     (cleanUpFiles) DELETING IT!!!!!!!")
             os.remove(file_abs)
     except Exception as e:
-        print('     (cleanUpFiles) failed to run cleanUpFiles() on: ' + relative_path)
+        print('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
         print(str(e))
     return 

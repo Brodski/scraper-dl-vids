@@ -22,7 +22,6 @@ logger = Cloudwatch.log
 
 def goTranscribeBatch(isDebug=False):
     logger("Hello sucker! " + str(time.time()))
-    # logger("Hello sucker!", time.time())
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):

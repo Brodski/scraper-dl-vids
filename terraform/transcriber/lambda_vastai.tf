@@ -6,7 +6,7 @@ data "archive_file" "lambda_zip" {
 
 locals {
   lambda_name = "${var.sensitive_info.ENV}_auto-vast-runner"
-  log_name = "/lambda/scraper/${local.lambda_name}"
+  log_name = "/scraper/${local.lambda_name}"
 }
 resource "aws_lambda_function" "vast_lambda" {
   function_name = "${local.lambda_name}"
@@ -15,7 +15,6 @@ resource "aws_lambda_function" "vast_lambda" {
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   handler = "auto-vast-runner.handler_kickit" 
   runtime = "python3.10"
-  # architectures = ["x86_64"] # ["arm64"]
   timeout = 600 # 10 minutes
 
   role = aws_iam_role.lambda_execution_role.arn

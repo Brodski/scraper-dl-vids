@@ -62,8 +62,7 @@ def requestOffersHttp(query_args):
 
 def create_instance(instance_id):
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
-    print("create_instance url: ")
-    print(url)
+    print("create_instance url: ", url)
     data_dict =  {  
         "client_id": "me",
         "image": image, 
@@ -119,6 +118,7 @@ def show_my_instances():
         row['duration'] = time.time() - row['start_date'] 
         print("id: " + str(row['id']) + ", time running: " + str(row['duration']))
     print("- My current running instances (if any) -")
+    print(url)
     printAsTable(rows)
     return(rows)
 
@@ -232,7 +232,7 @@ def pollCompletion(id_contract, start_time, counter_try_again):
     # id_create = id_contract
     print(f'----- polling {str(id_contract)} for completion -----')
     if counter_try_again > 11: # 11 min
-        print(f"counter_try_again > 11. Ending. counter_try_again={counter_try_again}")
+        print(f"    (pollCompletion) counter_try_again > 11. Ending. counter_try_again={counter_try_again}")
         return
     status_msg = None
     actual_status = None
@@ -241,38 +241,39 @@ def pollCompletion(id_contract, start_time, counter_try_again):
     rows = show_my_instances()
     print("exec_time_minutes: ", exec_time_minutes)
     for row in rows:
-        print(row)
+        # print(row)
         row_id = str(row['id'])
-        print("row_id", row_id)
-        print("id_contract", id_contract)
+        print("    (pollCompletion) row_id", row_id)
+        print("    (pollCompletion) id_contract", id_contract)
+        print("    (pollCompletion) status_msg: ", row.get("status_msg"))
+        print("    (pollCompletion) actual_status: ", row.get("actual_status"))
         if row_id == id_contract:
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]
-            print("status_msg: ", status_msg)
-            print("actual_status: ", actual_status)
             break
     
-    print("(after loop) status_msg: ", status_msg)
-    print("(after loop) actual_status: ", actual_status)
     if status_msg and "unable to find image" in status_msg.lower():
-        print("nope not ready, end it")
+        print("    (pollCompletion) nope not ready, end it")
         try_again(str(row['id']))
         return
     if actual_status and actual_status == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
-        print("nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
+        print("    (pollCompletion) nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
         try_again(str(row['id']))
         return
     if actual_status and actual_status == "running":
-        print("Running, we're done :)")
+        print("    (pollCompletion) Running, we're done :)")
         return
-    print('sleeping for 60 sec')
+    print('    (pollCompletion) sleeping for 60 sec')
     time.sleep(60) 
     return pollCompletion(id_contract, start_time, counter_try_again+1)
 
 def try_again(id):
-    print("end it")
+    print("   ! (try_again) end it")
     destroy_instance(id)
     blacklist_ids.append(id)
+    print("   ! (try_again) Try again")
+    print("   ! (try_again) Try again")
+    print("   ! (try_again) Try again")
     handler_kickit(None, None)
 
 if __name__ == '__main__':

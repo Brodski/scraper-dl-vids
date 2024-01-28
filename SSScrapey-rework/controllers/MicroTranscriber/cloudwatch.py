@@ -46,7 +46,8 @@ class Cloudwatch:
         # print("---------------------------------------------")
         # print(cls.cw_client, f"{cls.LOG_GROUP_NAME} --- {cls.LOG_STREAM_NAME}")
         if not args:
-            args = ("",)
+            print()
+            return
 
         try:
             msg = " ".join(str(arg) for arg in args)

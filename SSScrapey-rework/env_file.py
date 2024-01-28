@@ -3,6 +3,12 @@ import os
 import sys
 
 load_dotenv()
+print('os.getenv("ENV"):', os.getenv("ENV"))
+print('os.getenv("ENV"):', os.getenv("ENV"))
+print('os.getenv("ENV"):', os.getenv("ENV"))
+print('os.getenv("ENV"):', os.getenv("ENV"))
+print('os.getenv("ENV"):', os.getenv("ENV"))
+
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_local')

@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "transcriber_schedule" {
   name                = "transcriber_schedule"
   description         = "Run transcriber function once a day"
-  schedule_expression = "cron(0 9 * * ? *)" 
+  schedule_expression = "cron(3 6 * * ? *)" 
   # schedule_expression = "rate(1 minute)"
 }
 

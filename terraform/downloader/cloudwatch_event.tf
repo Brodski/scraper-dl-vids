@@ -3,7 +3,7 @@ resource "aws_cloudwatch_event_rule" "schedule" {
   description         = "Trigger ECS task daily"
   # schedule_expression = "rate(1 day)"
   # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
-  schedule_expression = "cron(47 10 * * ? *)" # 8_05
+  schedule_expression = "cron(58 4 * * ? *)" # 8_05
 }
 resource "aws_cloudwatch_event_target" "ecs" {
   rule        = aws_cloudwatch_event_rule.schedule.name

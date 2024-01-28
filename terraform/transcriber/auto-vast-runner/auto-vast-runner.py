@@ -44,7 +44,6 @@ storage_cost = "0.3"
 blacklist_gpus = ["GTX 1070"]
 blacklist_ids = []
 
-counter_try_again = 0
 # copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
@@ -223,8 +222,7 @@ def handler_kickit(event, context):
     if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
         id_create = instance_first.get("id")
         id_contract = create_instance(id_create)
-        pollCompletion(id_contract, time.time(), counter_try_again)
-        # pollCompletion(id_create, time.time(), counter_try_again)
+        pollCompletion(id_contract, time.time(), 0)
     return {
         'statusCode': 200,
         'body': json.dumps('Completed vastai init!! ')
@@ -233,15 +231,15 @@ def handler_kickit(event, context):
 def pollCompletion(id_contract, start_time, counter_try_again):
     # id_create = id_contract
     print(f'----- polling {str(id_contract)} for completion -----')
-    if counter_try_again > 9: # 9 min
-        print(f"counter_try_again > 9. Ending. counter_try_again={counter_try_again}")
+    if counter_try_again > 11: # 11 min
+        print(f"counter_try_again > 11. Ending. counter_try_again={counter_try_again}")
         return
     status_msg = None
     actual_status = None
-    execution_time = (time.time() - start_time) * 60
+    exec_time_minutes = (time.time() - start_time) / 60
     id_contract = str(id_contract)
     rows = show_my_instances()
-    print("execution_time: ", execution_time)
+    print("exec_time_minutes: ", exec_time_minutes)
     for row in rows:
         print(row)
         row_id = str(row['id'])
@@ -260,8 +258,8 @@ def pollCompletion(id_contract, start_time, counter_try_again):
         print("nope not ready, end it")
         try_again(str(row['id']))
         return
-    if actual_status and actual_status == "loading" and execution_time > 8: # 10 minutes. Image is stuck loading
-        print("nope not ready and execution_time > 8 min, end it")
+    if actual_status and actual_status == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
+        print("nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
         try_again(str(row['id']))
         return
     if actual_status and actual_status == "running":

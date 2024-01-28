@@ -13,7 +13,12 @@ import time
 import torch
 import urllib.parse
 import urllib.request
-import controllers.MicroTranscriber.cloudwatch as cloudwatch
+from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+
+def logger():
+    pass
+logger = Cloudwatch.log
+
 
 def getConnectionDb():
     connection = MySQLdb.connect(
@@ -28,7 +33,7 @@ def getConnectionDb():
     return connection
 
 def getTodoFromDb():
-    print("     (getTodoFromDb) Getting Todo's from Db")
+    logger("     (getTodoFromDb) Getting Todo's from Db")
     resultsArr = []
     connection = getConnectionDb()
     
@@ -47,9 +52,9 @@ def getTodoFromDb():
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
             print ("    (getTodoFromDb) vod_ column_names")
-            print(column_names)
+            logger(column_names)
     except Exception as e:
-        print(f"Error occurred (getTodoFromDb): {e}")
+        logger(f"Error occurred (getTodoFromDb): {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -58,8 +63,8 @@ def getTodoFromDb():
         Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,       ChanCurrentRank, Language  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         resultsArr.append(vod)
-    print("resultsArr")
-    print(resultsArr)
+    logger("resultsArr")
+    logger(resultsArr)
     return resultsArr
 
 def setSemaphoreDb(vod: Vod):
@@ -76,15 +81,15 @@ def setSemaphoreDb(vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        print(f"Error occurred (setSemaphoreDb): {e}")
+        logger(f"Error occurred (setSemaphoreDb): {e}")
         connection.rollback()
     finally:
         connection.close()
 
 def downloadAudio(vod: Vod):
-    print("######################################")
-    print("             downloadAudio            ")
-    print("######################################")
+    logger("######################################")
+    logger("             downloadAudio            ")
+    logger("######################################")
     audio_url = f"{env_varz.BUCKET_DOMAIN}/{vod.s3_audio}"
 
     audio_name = os.path.basename(audio_url) # A trick to get the file name. eg) filename = "Calculated-v5057810.mp3"
@@ -96,16 +101,16 @@ def downloadAudio(vod: Vod):
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     except:
-        print("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
+        logger("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
         return None
-    print("    (downloadAudio) bucket_domain=" + bucket_domain)
-    print("    (downloadAudio) audio_name=" + str(audio_name)) 
-    print("    (downloadAudio) relative_path: " + relative_path)
+    logger("    (downloadAudio) bucket_domain=" + bucket_domain)
+    logger("    (downloadAudio) audio_name=" + str(audio_name)) 
+    logger("    (downloadAudio) relative_path: " + relative_path)
 
     return relative_path
 
 def doWhisperStuff(vod: Vod, relative_path: str):
-    print("Starting WhisperStuff!")
+    logger("Starting WhisperStuff!")
     def get_language_code(full_language_name):
         try:
             language_code = langcodes.find(full_language_name).language
@@ -125,25 +130,26 @@ def doWhisperStuff(vod: Vod, relative_path: str):
 
     start_time = time.time()
 
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("    Channel=" + vod.channels_name_id)
-    print("    s3_audio=" + vod.s3_audio)
-    print("    relative_path=" + relative_path)
-    print("    file_abspath=" + file_abspath)
-    print("    file_name: " + file_name)
-    print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    print("    model_size: " + model_size)
+    logger("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    logger("    Channel=" + vod.channels_name_id)
+    logger("    s3_audio=" + vod.s3_audio)
+    logger("    relative_path=" + relative_path)
+    logger("    file_abspath=" + file_abspath)
+    logger("    file_name: " + file_name)
+    logger("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+    logger("    model_size: " + model_size)
 
     # segments, info = model.transcribe(audio_abs_path, language="en")
     # segments, info = model.transcribe(audio_abs_path, language="en", condition_on_previous_text=False, vad_filter=True)
     segments, info = model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
     
 
-    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+    logger(f"Detected language {info.language} with probability {str(info.language_probability)}")
 
     result = {  "segments": [] }
     for segment in segments: # generator()
-        print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+        # logger("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text)) 
+        logger(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}") 
         result["segments"].append({
             "start" : segment.start,
             "end" :   segment.end,
@@ -153,17 +159,17 @@ def doWhisperStuff(vod: Vod, relative_path: str):
     saved_caption_files = writeCaptionsLocally(result, file_name)
     end_time = time.time() - start_time
 
-    print("========================================")
-    print("Complete!")
-    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-    print()
-    print("run time =" + str(end_time))
-    print()
-    print("Saved files: " + str(saved_caption_files))
-    print()
-    print("model_size: " + model_size)
-    print()
-    print("========================================")
+    logger("========================================")
+    logger("Complete!")
+    logger(f"Detected language {info.language} with probability {str(info.language_probability)}")
+    logger()
+    logger("run time =" + str(end_time))
+    logger()
+    logger("Saved files: " + str(saved_caption_files))
+    logger()
+    logger("model_size: " + model_size)
+    logger()
+    logger("========================================")
 
     return saved_caption_files
 
@@ -172,9 +178,9 @@ def writeCaptionsLocally(result, audio_basename):
     FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt"]
     saved_caption_files = []
     abs_path = os.path.abspath(audio_basename) 
-    print("------   WRITE FILE   ------")
-    print("abs_path: " + abs_path)
-    print("audio_basename: " + audio_basename)
+    logger("------   WRITE FILE   ------")
+    logger("abs_path: " + abs_path)
+    logger("audio_basename: " + audio_basename)
     filename_without_ext , file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
 
     for ext in FILE_EXTENSIONS_TO_SAVE:
@@ -183,15 +189,15 @@ def writeCaptionsLocally(result, audio_basename):
 
         caption_file = filename_without_ext  + '.' + ext
         saved_caption_files.append(caption_file)
-        print("Wrote - " + ext + " - " + caption_file)
+        logger("Wrote - " + ext + " - " + caption_file)
 
     return saved_caption_files
 
 
 def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     print ("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-    print("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
-    print("    (uploadCaptionsToS3) vod_id: " + vod.id) 
+    logger("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
+    logger("    (uploadCaptionsToS3) vod_id: " + vod.id) 
 
     s3 = boto3.client('s3')
     transcripts_s3_key_arr = []
@@ -199,8 +205,8 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         file_abs = os.path.abspath(env_varz.WHSP_A2T_ASSETS_CAPTIONS + filename)
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
-        print("    (uploadCaptionsToS3) filename: " + filename) 
-        print("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
+        logger("    (uploadCaptionsToS3) filename: " + filename) 
+        logger("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
         content_type = ''
         if file_abs[-4:] == '.txt':
             content_type = 'text/plain; charset=utf-8'
@@ -212,13 +218,13 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
             s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
             transcripts_s3_key_arr.append(s3CapFileKey)
         except Exception as e:
-            print(f"failed to upload: {file_abs}. Error {str(e)}")
+            logger(f"failed to upload: {file_abs}. Error {str(e)}")
 
         # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
     return transcripts_s3_key_arr 
 
 def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
-    print("setCompletedStatusDb")
+    logger("setCompletedStatusDb")
     vod.print()
     connection = getConnectionDb()
     t_status = "completed"
@@ -236,10 +242,10 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
             values = (t_status, env_varz.WHSP_MODEL_SIZE, transcripts_keys, vod.id)
             affected_count = cursor.execute(sql, values)
             connection.commit()
-            print("values: " + str(values))
-            print("affected_count: " + str(affected_count))
+            logger("values: " + str(values))
+            logger("affected_count: " + str(affected_count))
     except Exception as e:
-        print(f"Error occurred (setCompletedStatusDb): {e}")
+        logger(f"Error occurred (setCompletedStatusDb): {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -258,27 +264,27 @@ def unsetProcessingDb(vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        print(f"Error occurred (unsetProcessingDb): {e}")
+        logger(f"Error occurred (unsetProcessingDb): {e}")
         connection.rollback()
     finally:
         connection.close()
 
 def deleteAudioS3(vod: Vod):
-    print(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
+    logger(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
     if os.getenv("ENV") != "local":
         s3 = boto3.client('s3')
         response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
     # channels/vod-audio/gamesdonequick/2039503329/Awesome_Games_Done_Quick_2024_-_Bonus_Showrunner_Showcase_-_ft._%40Asuka424_%40ChurchnSarge_-_hotfix-v2039503329.opus
 
 def cleanUpFiles(relative_path: str):
-    print("     (cleanUpFiles) relative_path: ", relative_path)
+    logger("     (cleanUpFiles) relative_path: ", relative_path)
     try:
         file_abs = os.path.abspath(relative_path)
-        print("     (cleanUpFiles) file_abs= " + file_abs)
+        logger("     (cleanUpFiles) file_abs= " + file_abs)
         if os.getenv("ENV") != "local":
-            print("     (cleanUpFiles) DELETING IT!!!!!!!")
+            logger("     (cleanUpFiles) DELETING IT!!!!!!!")
             os.remove(file_abs)
     except Exception as e:
-        print('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
-        print(str(e))
+        logger('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
+        logger(str(e))
     return 

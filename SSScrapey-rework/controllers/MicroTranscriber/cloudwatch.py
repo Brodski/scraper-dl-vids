@@ -10,7 +10,9 @@ from botocore.exceptions import ClientError
 class Cloudwatch:
     cw_client = boto3.client('logs', region_name='us-east-1')
     LOG_GROUP_NAME = '/vastai/transcriber/' + env_varz.ENV
-    LOG_STREAM_NAME = f'{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}'
+    LOG_STREAM_NAME = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}'
+
+    # Create Log Group
     try:
         res = cw_client.create_log_group(logGroupName=LOG_GROUP_NAME)
         print('res', res)
@@ -19,7 +21,7 @@ class Cloudwatch:
     except Exception as e:
         print(f"Cloudwatch error 1: {e}")
 
-
+    # Create Log Stream
     try:
         res2 = cw_client.create_log_stream(logGroupName=LOG_GROUP_NAME, logStreamName=LOG_STREAM_NAME)
         print('res2', res2)
@@ -28,30 +30,41 @@ class Cloudwatch:
     except Exception as e:
         print(f"Cloudwatch error 2: {e}")
 
+    # Create retention policy
+    try:
+        res3 = cw_client.put_retention_policy(
+            logGroupName=LOG_GROUP_NAME,
+            retentionInDays=1 # 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365 ...  more
+        ) 
+        time.sleep(1)
+    except Exception as e:
+        print(f"Cloudwatch error 3: {e}")
+
     @classmethod
-    def push_logs(cls, message):
+    def log(cls, *args):
+        # print("---------------------------------------------")
+        # print(cls.cw_client, f"{cls.LOG_GROUP_NAME} --- {cls.LOG_STREAM_NAME}")
+        if not args:
+            args = ("",)
+
         try:
-            response = cls.cw_client.describe_log_streams(logGroupName=cls.LOG_GROUP_NAME, logStreamNamePrefix=cls.LOG_STREAM_NAME)
+            msg = " ".join(str(arg) for arg in args)
+        except Exception as error:
+            print(f"Failed it: {error}")
+            print(args)
+        print(msg)
 
-            if 'logStreams' in response and len(response['logStreams']) > 0:
-                sequence_token = response['logStreams'][0].get('uploadSequenceToken')
-
-            log_event = {
-                'logGroupName': cls.LOG_GROUP_NAME,
-                'logStreamName': cls.LOG_STREAM_NAME,
-                'logEvents': [
-                    {
-                        'timestamp': int(round(time.time() * 1000)),  # Current time in milliseconds
-                        'message': message
-                    }
-                ]
-            }
-
-            # If sequence token exists, add it to the request
-            if 'sequenceToken' in locals():
-                log_event['sequenceToken'] = sequence_token
-            print("--------- putting some shit ----------")
-            print(log_event)
-            cls.cw_client.put_log_events(**log_event)
-        except ClientError as error:
-            print(f"Failed to send log event to CloudWatch: {error}")
+        if env_varz.WHSP_IS_CLOUDWATCH:
+            try:
+                log_res = cls.cw_client.put_log_events(
+                    logGroupName=cls.LOG_GROUP_NAME,
+                    logStreamName=cls.LOG_STREAM_NAME,
+                    logEvents=[
+                        {
+                            'timestamp': int(time.time() * 1000),  # Current time in milliseconds
+                            'message': msg
+                        }
+                    ]
+                )
+            except Exception as error:
+                print(f"Failed to send log event to CloudWatch: {error}")

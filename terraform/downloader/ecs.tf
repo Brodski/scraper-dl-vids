@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "download_cluster" {
-  name = "download-cluster"
+  name = "${var.sensitive_info.ENV}_download_cluster"
 }
 
 resource "aws_ecs_task_definition" "download_task" {

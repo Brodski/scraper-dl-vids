@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "preper_cluster" {
-  name = "preper-cluster"
+  name = "${var.sensitive_info.ENV}_preper_cluster"
 }
 
 resource "aws_ecs_task_definition" "preper_task" {

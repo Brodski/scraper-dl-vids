@@ -69,7 +69,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
         # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
         return scrapped_channels
     channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
-    vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS)
+    vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []

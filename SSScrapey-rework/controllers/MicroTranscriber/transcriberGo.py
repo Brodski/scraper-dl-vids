@@ -5,27 +5,34 @@ import controllers.MicroTranscriber.transcriber as transcriber
 import json
 import os
 import time
+import boto3
 import urllib.parse
 import urllib.request
 import env_file as env_varz
 # import controllers.MicroTranscriber.cloudwatch as cloudwatch
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch
+from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 
 
+# def logger():
+#     pass
+# logger = Cloudwatch.log
+def logger():
+    pass
+logger = Cloudwatch.log
 
 def goTranscribeBatch(isDebug=False):
-    Cloudwatch.push_logs("Hello sucker! " + str(time.time()))
-    # print("Hello sucker!", time.time())
+    logger("Hello sucker! " + str(time.time()))
+    # logger("Hello sucker!", time.time())
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
-    print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
+    logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
-        print("===========================================")
-        print(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
-        print("===========================================")
+        logger("===========================================")
+        logger(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
+        logger("===========================================")
         x = transcribe(isDebug)
-        print(f"Finished Index {i}")
-        print(f"download_batch_size: {i+1}")
-    Cloudwatch.push_logs("FINISHED! " + str(time.time()))
+        logger(f"Finished Index {i}")
+        logger(f"download_batch_size: {i+1}")
+    logger("FINISHED! " + str(time.time()))
     return x
 
 
@@ -35,9 +42,9 @@ def transcribe(isDebug=False):
     vods_list = transcriber.getTodoFromDb()
     vod = vods_list[0] if len(vods_list) > 0 else None
     relative_path = None
-    print('IN THEORY, AUDIO TO TEXT THIS:')
+    logger('IN THEORY, AUDIO TO TEXT THIS:')
     if not vod and not isDebug:
-        print("jk, vod is null, nothing to do")
+        logger("jk, vod is null, nothing to do")
         return "NOTHING TO DO NO VODS READY"
     if isDebug:
         vod = getDebugVod(vod)
@@ -48,7 +55,7 @@ def transcribe(isDebug=False):
 
     # Do the transcribing
     try:
-        print('downloading vod ...')
+        logger('downloading vod ...')
         vod.printDebug()
         relative_path = transcriber.downloadAudio(vod)
         saved_caption_files = transcriber.doWhisperStuff(vod, relative_path)
@@ -56,16 +63,16 @@ def transcribe(isDebug=False):
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
         transcriber.deleteAudioS3(vod)
     except Exception as e:
-        print(f"ERROR Transcribing vod: {e}")
+        logger(f"ERROR Transcribing vod: {e}")
         vod.print()
         transcriber.unsetProcessingDb(vod)
 
     transcriber.cleanUpFiles(relative_path)
-    print("Finished step 3 Transcriber-Service")
+    logger("Finished step 3 Transcriber-Service")
     return "Finished step 3 Transcriber-Service"
 
 def getDebugVod(vod: Vod):
-    vod.print() if vod else print("Null nod")
+    vod.print() if vod else logger("Null nod")
     tuple =  ('40792901', 'nmplol', 'And you will know my name is the LORD', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus', '-1', 'English')
     # tuple =  ('1964894986', 'jd_onlymusic', '夜市特攻隊「永和樂華夜市」ft. 陳老師', '732', '12:12', 1205, 'https://www.twitch.tv/videos/1964894986',datetime.datetime(2023, 10, 2, 18, 26, 30),'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/jd_onlymusic/1964894986/ft.-v1964894986.opus','-3', 'Chinese')
     # tuple =  ('28138895', 'lolgeranimo', 'The Geraniproject! I Love You Guys!!!', '1047', '17:26', 786, 'https://www.twitch.tv/videos/28138895',datetime.datetime(2023, 10, 2, 18, 26, 30),'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus','-2', 'English')

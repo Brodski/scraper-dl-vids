@@ -5,7 +5,7 @@ import sys
 load_dotenv()
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
-    env_vars = dotenv_values('.env_public_dev')
+    env_vars = dotenv_values('.env_public_local')
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
     env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
@@ -25,9 +25,8 @@ elif os.getenv("ENV") == "prod":
     print("PROD")
     print("PROD")
     print('ENV: ' + os.getenv("ENV"))
+    print('ENV: ' + os.getenv("ENV"))
     print('DATABASE_HOST: ' + os.getenv("DATABASE_HOST"))
-    print('DATABASE_USERNAME: ' + os.getenv("DATABASE_USERNAME"))
-    print('DATABASE_PASSWORD: ' + os.getenv("DATABASE_PASSWORD"))
     print('DATABASE: ' + os.getenv("DATABASE"))
 
 else:
@@ -45,7 +44,7 @@ DWN_IS_SHORT_DEV_DL = env_vars['DWN_IS_SHORT_DEV_DL']
 PREP_DB_UPDATE_VODS_NUM = env_vars['PREP_DB_UPDATE_VODS_NUM']
 PREP_SELENIUM_IS_HEADLESS = env_vars['PREP_SELENIUM_IS_HEADLESS']
 PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
-PREP_SELENIUM_NUM_VODS = env_vars['PREP_SELENIUM_NUM_VODS']
+PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
 PREP_SULLY_NUM_CHANNELS = env_vars['PREP_SULLY_NUM_CHANNELS']
 
 WHSP_A2T_ASSETS_AUDIO = env_vars['WHSP_A2T_ASSETS_AUDIO']
@@ -54,6 +53,7 @@ WHSP_BATCH_SIZE = env_vars['WHSP_BATCH_SIZE']
 WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
 WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']
 WHSP_MODEL_SIZE = env_vars['WHSP_MODEL_SIZE']
+WHSP_IS_CLOUDWATCH = env_vars['WHSP_IS_CLOUDWATCH']
 
 ENV = os.getenv("ENV")
 DATABASE_HOST = os.getenv("DATABASE_HOST")

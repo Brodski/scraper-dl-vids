@@ -278,7 +278,7 @@ def downloadTwtvVidFAST(vod: Vod):
                   ]
     # if env_varz.ENV != "local":
     #     yt_dlp_cmd.append('--no-progress')
-    if env_varz.ENV == "local" or env_varz.DWN_IS_SHORT_DEV_DL:
+    if env_varz.DWN_IS_SHORT_DEV_DL:
         # download only first 669 seconds
         yt_dlp_cmd.append('--downloader-args')
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
@@ -288,7 +288,7 @@ def downloadTwtvVidFAST(vod: Vod):
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:
-        print ("xxxFailed to extract vid!!: " + vidUrl + " : " + str(e))
+        print ("    (dlTwtvVid) Failed to extract vid!!: " + vidUrl + " : " + str(e))
         pattern = r"Video \d+ does not exist"
         if "HTTP Error 403" in str(e):
             print("Failed b/c 403. Probably private or sub only.")

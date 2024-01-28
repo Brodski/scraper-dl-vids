@@ -44,7 +44,7 @@ def transcribe(isDebug=False):
     relative_path = None
     logger('IN THEORY, AUDIO TO TEXT THIS:')
     if not vod and not isDebug:
-        logger("jk, vod is null, nothing to do")
+        logger("jk, vod is null, nothing to do. no audio2text_need")
         return "NOTHING TO DO NO VODS READY"
     if isDebug:
         vod = getDebugVod(vod)

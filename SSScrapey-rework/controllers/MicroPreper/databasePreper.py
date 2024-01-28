@@ -129,8 +129,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             previous_existing_ids = set(existing_ids) - set(non_existing_ids)
             print("    (updateVodsDb) Channel: " + str(chan.name_id))
             print("    (updateVodsDb) Links: " + str(vod_ids))
-            print("    (updateVodsDb) Old IDs :", list(previous_existing_ids))
-            print("    (updateVodsDb) New IDs :", list(non_existing_ids))
+            print("    (updateVodsDb) Updating priorities on IDs :", list(previous_existing_ids))
+            print("    (updateVodsDb) Adding new IDs :", list(non_existing_ids))
             print("")
 
             # Add new vods to the Vods table

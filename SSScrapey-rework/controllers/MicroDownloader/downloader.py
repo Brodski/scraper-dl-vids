@@ -14,6 +14,7 @@ import time
 import urllib
 import yt_dlp
 import subprocess
+from controllers.MicroDownloader.errorEnum import Errorz
 
 
 # load_dotenv()
@@ -245,7 +246,7 @@ def downloadTwtvVidFAST(vod: Vod):
         print("ERROR no vod")
         return
     if isVodTooBig(vod):
-        return "vod too big"
+        return Errorz.TOO_BIG
     start_time = time.time()
     # format paths and direct where to download file
     main_script_path = sys.argv[0]
@@ -292,13 +293,13 @@ def downloadTwtvVidFAST(vod: Vod):
         pattern = r"Video \d+ does not exist"
         if "HTTP Error 403" in str(e):
             print("Failed b/c 403. Probably private or sub only.")
-            return "403"
+            return Errorz.UNAUTHORIZED_403
         if re.search(pattern, str(e)):
             print("Failed b/c 'that content is unavailable'. Probably deleted")
-            return "404"
+            return Errorz.DELETED_404
         else:
             print ("Failed to extract vid!!: " + vidUrl + " : " + str(e))
-            return None
+            return Errorz.UNKNOWN
 
     print('    (dlTwtvVid) Download complete: time=' + str(time.time() - start_time))
     return meta

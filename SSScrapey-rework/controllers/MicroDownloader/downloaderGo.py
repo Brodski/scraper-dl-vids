@@ -2,17 +2,26 @@ import controllers.MicroDownloader.downloader as downloader
 from models.Vod import Vod
 from typing import List
 import env_file as env_varz
+from controllers.MicroDownloader.errorEnum import Errorz
 
 def goDownloadBatch(isDebug=False):
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
-    for i in range(0, download_batch_size):
+    # for i in range(0, download_batch_size):
+    i = 0
+    gaurdrail = 25
+    while i < download_batch_size and i < gaurdrail:
+        gaurdrail -= 1
         print("===========================================")
         print(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
         x = download(isDebug)
+        if x == Errorz.TOO_BIG or x == Errorz.DELETED_404 or x == Errorz.UNAUTHORIZED_403:
+            print("We skipped a download, trying next entry. Error:", x)
+            continue
         print(f"Finished Index {i}")
         print(f"download_batch_size: {i}")
+        i += 1
     return x
 
 def download(isDebug=False):
@@ -27,26 +36,22 @@ def download(isDebug=False):
         return "No VODS todo!"
     # downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
     downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
-    if downloaded_metadata == "403":
+    if downloaded_metadata == Errorz.UNAUTHORIZED_403:
         downloader.updateErrorVod(vod,"unauthorized")
-        msg = "nope gg. 403 sub only"
-        print(msg)
-        return msg
-    if downloaded_metadata == "404":
+        print("nope gg. 403 sub only")
+        return Errorz.UNAUTHORIZED_403
+    if downloaded_metadata == Errorz.DELETED_404:
         downloader.updateErrorVod(vod, "deleted")
-        msg = "nope gg. 404 delete"
-        print(msg)
-        return msg
-    if downloaded_metadata == "vod too big":
+        print("nope gg. 404 delete")
+        return Errorz.DELETED_404
+    if downloaded_metadata == Errorz.TOO_BIG:
         downloader.updateErrorVod(vod, "too_big")
-        msg = "nope gg. too big"
-        print(msg)
-        return msg
-    if downloaded_metadata == None:
+        print("nope gg. too big")
+        return Errorz.TOO_BIG
+    if downloaded_metadata == None or downloaded_metadata == Errorz.UNKNOWN:
         downloader.updateErrorVod(vod, "unknown")
-        msg = "nope gg. Some other error"
-        print(msg)
-        return msg
+        print("nope gg. Some other error")
+        return Errorz.UNKNOWN
 
     # Post process vod
     downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)

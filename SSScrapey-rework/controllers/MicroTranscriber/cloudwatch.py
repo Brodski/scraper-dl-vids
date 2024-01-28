@@ -10,7 +10,8 @@ from botocore.exceptions import ClientError
 class Cloudwatch:
     cw_client = boto3.client('logs', region_name='us-east-1')
     LOG_GROUP_NAME = '/vastai/transcriber/' + env_varz.ENV
-    LOG_STREAM_NAME = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}'
+    stream_name = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}' if env_varz.ENV != "local" else "local"
+    LOG_STREAM_NAME =  stream_name
 
     # Create Log Group
     try:

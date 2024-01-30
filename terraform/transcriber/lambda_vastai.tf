@@ -18,7 +18,7 @@ resource "aws_lambda_function" "vast_lambda" {
   timeout = 600 # 10 minutes
 
   role = aws_iam_role.lambda_execution_role.arn
-    
+
   logging_config {
     log_format = "Text"
     log_group = local.log_name

@@ -4,11 +4,8 @@
 <html>
     <head>
         <title> <%= channel.displayName %> </title>
-        <link rel="stylesheet" type="text/css" href="/styles.css">
-        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
-        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
+        <%- include('partials/head_meta.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/channels.css">
-        <script defer src="/scripts.js"></script>
     </head>    
     <body>
         <div class="d-flex">

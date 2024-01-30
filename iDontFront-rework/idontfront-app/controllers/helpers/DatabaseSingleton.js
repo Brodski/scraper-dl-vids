@@ -1,16 +1,17 @@
 const mysql = require('mysql2'); // mysql2 supports promise-based interface
 const path = require('path');
 const fs = require('fs');
-const Channel = require("../../models/Channel")
-const Vod = require("../../models/Vod")
-
-
-console.log("process.env.NODE_ENV: ", process.env.NODE_ENV)
+const Vod = require(path.resolve(__dirname, "../../models/Vod"))
+const Channel = require(path.resolve(__dirname, "../../models/Channel"))
+// `../../` does not work on the lambda docker 🤷🏿 `const Channel = require("../../models/Channel")`
+// const Channel = require("../../models/Channel")
+// const Vod = require("../../models/Vod")
 
 class DatabaseSingleton {
     constructor() {
         if (!DatabaseSingleton.instance) {
             console.log("DB SINGLETON HAS BEEN INIT!")
+            const certPath = path.resolve(__dirname, '../../cacert-2023-08-22.pem');
             this.pool = mysql.createPool({
                 connectionLimit: 10, 
                 host: process.env.DATABASE_HOST,
@@ -18,12 +19,13 @@ class DatabaseSingleton {
                 password: process.env.DATABASE_PASSWORD,
                 database: process.env.DATABASE,
                 ssl: {
-                    ca: fs.readFileSync('../../cacert-2023-08-22.pem'),
+                    ca: fs.readFileSync(certPath),
                 }
             }).promise();
             DatabaseSingleton.instance = this;
         }
         console.log("db singleton, BAM!")
+        console.log("TEST IMAGE GOGOGOG")
         return DatabaseSingleton.instance;
     }
 

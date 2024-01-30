@@ -3,10 +3,4 @@
 
 provider "aws" {
   region = "us-east-1"
-  # alias  = "navbar_footer_injector__alias"
-}
-
-
-output "s3_assets_output" {
-  value = module.s3_assets
 }

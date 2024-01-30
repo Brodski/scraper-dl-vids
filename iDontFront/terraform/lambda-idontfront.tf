@@ -12,12 +12,9 @@ data "archive_file" "lambda_zip" {
     type = "zip"
     output_path = "${path.module}/my_lambda.zip"
     source_dir = "${path.module}/../idontfront-app/"
-    # source_dir = "${path.module}/navbar_footer_injector/"
-    # source_file = "${path.module}/navbar_footer_injector/app.js"
 }
 
 resource "aws_lambda_function" "idontfront_lambda" {
-  # depends_on = [ aws_s3_bucket_object.lambda_code ] # S3 zip
   function_name = var.lambda_name
   # handler       = "iDontFront-app.lambdaHandler" 
   # runtime       = "nodejs18.x"

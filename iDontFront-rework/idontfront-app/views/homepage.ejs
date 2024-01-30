@@ -4,10 +4,7 @@
 <html>
     <head>
         <title> <%= title %> </title>
-        <link rel="stylesheet" type="text/css" href="/styles.css">
-        <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
-        <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
-        <script defer src="/scripts.js"></script>
+        <%- include('partials/head_meta.ejs') %> 
     </head>
     <body class="homepage">
         <h1>Welcome to <%= title %>™ </h1>

@@ -13,7 +13,6 @@ async function loadModule(stopwordz_counter) {
     console.log('Current Working Directory:', process.cwd());
     console.log('LD_LIBRARY_PATH:', process.env.LD_LIBRARY_PATH);
     
-    
     const files = fs.readdirSync(process.cwd());
     console.log("files");
     console.log(files);

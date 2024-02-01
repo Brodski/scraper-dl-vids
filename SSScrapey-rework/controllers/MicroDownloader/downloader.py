@@ -115,10 +115,6 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
 #     ass.Ranking, ass.ChannelNameId, ass.TodoDate DESC;
 
 
-
-
-
-
             # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
             #             FROM Vods
             #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
@@ -228,7 +224,7 @@ def isVodTooBig(vod: Vod):
         '--dump-json',
     ]
     try:
-        print("    (downloadPreCheck) YT_DLP: getting metadata ... " + vidUrl)        
+        print("    (downloadPreCheck) YT_DLP: getting metadata ... " + vidUrl)
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
         duration = meta['duration']
@@ -280,13 +276,16 @@ def downloadTwtvVidFAST(vod: Vod):
                   ]
     # if env_varz.ENV != "local":
     #     yt_dlp_cmd.append('--no-progress')
+    print("env_varz.DWN_IS_SHORT_DEV_DL", env_varz.DWN_IS_SHORT_DEV_DL)
     if env_varz.DWN_IS_SHORT_DEV_DL:
+        print("YES DWN_IS_SHORT_DEV_DL == True") 
         # download only first 669 seconds
         yt_dlp_cmd.append('--downloader-args')
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
 
     try:
-        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)        
+        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)      
+        print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:

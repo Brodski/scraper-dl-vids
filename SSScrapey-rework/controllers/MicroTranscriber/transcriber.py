@@ -45,7 +45,6 @@ def getTodoFromDb():
                     JOIN Channels ON Vods.ChannelNameId = Channels.NameId
                     WHERE Vods.TranscriptStatus = 'audio2text_need'
                     ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate ASC
-                    # ORDER BY Channels.CurrentRank ASC, Vods.UploadDate ASC
                     LIMIT 100
                 """
             cursor.execute(sql)
@@ -60,7 +59,8 @@ def getTodoFromDb():
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,       ChanCurrentRank, Language  = vod_
+        # Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,       ChanCurrentRank, Language  = vod_
+        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,       ChanCurrentRank, Language  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         resultsArr.append(vod)
     logger("resultsArr")

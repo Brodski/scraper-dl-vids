@@ -162,11 +162,9 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 # CREATE TABLE Rankings (
 #     RankingId INT NOT NULL AUTO_INCREMENT,
 #     ChannelNameId VARCHAR(255),
-#     Date DATE, 
-#     Time TIME,
-#     Datetime DATETIME,
-
 #     Ranking SMALLINT,
+#     TodoDate DATETIME,
+
 #     PRIMARY KEY (RankingID),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
 # );
@@ -179,79 +177,56 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 #     Logo VARCHAR(255),
 #     CurrentRank VARCHAR(255),
 #     TwitchUrl VARCHAR(255),
-
 #     NumberOfVods INT,
 
 #     PRIMARY KEY (NameId)
 # );
 
+##     Title VARCHAR(255), CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+
 # CREATE TABLE Vods (
 #     Id VARCHAR(255),
 #     ChannelNameId VARCHAR(255),
-#     Model VARCHAR(255);
-#     Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+#     Title VARCHAR(255),
 #     Duration VARCHAR(255),
 #     DurationString VARCHAR(255),
-#     ViewCount VARCHAR(255),
-#     WebpageUrl VARCHAR(255),
-#     Thumbnail VARCHAR(255)
-#     UploadDate DATETIME,
 #     TranscriptStatus VARCHAR(255),
-#     TodoDate DATETIME
-#     S3Link VARCHAR(255)
-#     StreamDate DATETIME;
-#     TranscribeDate DATETIME
-#
+#     StreamDate DATETIME,
+#     TodoDate DATETIME,
+#     DownloadDate DATETIME,
+#     TranscribeDate DATETIME,
+#     S3Audio VARCHAR(255),
+#     S3CaptionFiles JSON,
+#     WebpageUrl VARCHAR(255),
+#     Model VARCHAR(255),
+#     Priority SMALLINT,
+#     Thumbnail VARCHAR(255),
+#     ViewCount VARCHAR(255),
+    
 #     PRIMARY KEY (Id),
 #     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
-# ); 
+# );
+# # This is the default below 
+# # ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
-# ALTER TABLE Vods CHANGE UploadDate UploadDate DATETIME;
-# ALTER TABLE Vods DROP COLUMN Timestamp;
-# ALTER TABLE Vods ADD Model VARCHAR(255);
-
-# ALTER TABLE Vods ADD COLUMN Thumbnail VARCHAR(255);
-# ALTER TABLE Vods ADD COLUMN DownloadDate VARCHAR(255);
+# ALTER TABLE Vods MODIFY DownloadDate DATETIME;
+# ALTER TABLE Vods ADD COLUMN DownloadDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN StreamDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
 # ALTER TABLE Vods ADD COLUMN TranscribeDate DATETIME;
 # ALTER TABLE Rankings ADD COLUMN TodoDate DATETIME;
-# ALTER TABLE Rankings DROP COLUMN Date;
-# ALTER TABLE Rankings DROP COLUMN Time;
-# ALTER TABLE Rankings DROP COLUMN Datetime;
-
-# ALTER TABLE Vods CHANGE S3Link S3Audio VARCHAR(255);
-
-
-
-
-
-
 
 # CREATE TABLE Channels (
-#     ID INT NOT NULL AUTO_INCREMENT,
 #     DisplayName VARCHAR(255),
 #     Language VARCHAR(255),
-#     Links VARCHAR(255),
 #     Logo VARCHAR(255),
 #     CurrentRank VARCHAR(255),
 #     TwitchUrl VARCHAR(255),
 #     NameId VARCHAR(255),
 #     NumberOfVods INT,
-#     S3CaptionFiles JSON
 
-#     PRIMARY KEY (ID)
-# );
-
-# CREATE TABLE Vods (
-#     ID INT NOT NULL AUTO_INCREMENT,
-#     TwitchUrl VARCHAR(255),
-#     TranscriptUrl VARCHAR(255),
-
-#     ChannelID INT,
-#     PRIMARY KEY (ID),
-#     FOREIGN KEY (ChannelID) REFERENCES Channels(ID)
+#     PRIMARY KEY (NameId)
 # );
 
 
@@ -268,18 +243,5 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 # ADD DurationString VARCHAR(255);
 # ADD ViewerCount VARCHAR(255);
 # ADD WebpageUrl VARCHAR(255);
-# ADD UploadDate DATETIME;
 # ADD Timestamp VARCHAR(255);
 # ADD S3CaptionFiles JSON;
-
-
-# CREATE TABLE Todo (
-#     ID INT NOT NULL AUTO_INCREMENT,
-#     Status ENUM('todo', 'in progress', 'completed'),
-
-#     VodID INT,
-#     ChannelID INT,
-#     PRIMARY KEY (ID),
-#     FOREIGN KEY (VodID) REFERENCES Vods(ID),
-#     FOREIGN KEY (ChannelID) REFERENCES Channels(ID)
-# );

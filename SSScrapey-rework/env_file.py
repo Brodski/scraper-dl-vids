@@ -15,11 +15,9 @@ if os.getenv("ENV") == "local":
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
     env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
-    env_vars['IS_DEBUG'] = False
 elif os.getenv("ENV") == "prod":
     env_vars = dotenv_values('.env_public_prod')
     env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
-    env_vars['IS_DEBUG'] = False
     try:
         load_dotenv(dotenv_prod_path, override=True)
     except Exception as e:
@@ -70,6 +68,5 @@ DWN_IS_SHORT_DEV_DL = os.getenv("DWN_IS_SHORT_DEV_DL") if os.getenv("DWN_IS_SHOR
 
 BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
 BUCKET_NAME = env_vars['BUCKET_NAME']
-IS_DEBUG = env_vars['IS_DEBUG']
 SSL_FILE = env_vars['SSL_FILE']
 S3_CAPTIONS_KEYBASE = env_vars['S3_CAPTIONS_KEYBASE']

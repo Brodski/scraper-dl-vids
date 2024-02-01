@@ -56,7 +56,7 @@ class Cloudwatch:
             print(args)
         print(msg)
 
-        if env_varz.WHSP_IS_CLOUDWATCH:
+        if env_varz.WHSP_IS_CLOUDWATCH == "True":
             try:
                 log_res = cls.cw_client.put_log_events(
                     logGroupName=cls.LOG_GROUP_NAME,

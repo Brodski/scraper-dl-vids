@@ -276,16 +276,14 @@ def downloadTwtvVidFAST(vod: Vod):
                   ]
     # if env_varz.ENV != "local":
     #     yt_dlp_cmd.append('--no-progress')
-    print("env_varz.DWN_IS_SHORT_DEV_DL", env_varz.DWN_IS_SHORT_DEV_DL)
-    if env_varz.DWN_IS_SHORT_DEV_DL:
-        print("YES DWN_IS_SHORT_DEV_DL == True") 
+    if env_varz.DWN_IS_SHORT_DEV_DL == "True":
         # download only first 669 seconds
         yt_dlp_cmd.append('--downloader-args')
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
 
     try:
         print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)      
-        print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
+        # print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:

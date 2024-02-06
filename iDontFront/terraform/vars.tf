@@ -12,7 +12,7 @@ variable "lambda_name" {
 variable "r53_lambda_full_domain" {
   description = "r53_lambda_full_domain"
   type        = string
-  default     = "captions.bski.one"
+  default     = "example-captions.bski.one"
 }
 variable "r53_s3_asset_full_domain" {
   description = "r53_s3_asset_full_domain"

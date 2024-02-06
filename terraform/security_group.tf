@@ -1,5 +1,5 @@
 resource "aws_security_group" "my_sg" {
-  name        = "my_sg"
+  name        = "${var.sensitive_info.ENV}_sg"
   description = "ECS Security Group with no inbound traffic"
   vpc_id      = "vpc-0ee690d031cd7a0e6"
 

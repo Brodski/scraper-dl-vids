@@ -28,7 +28,7 @@
         <div> <b> <%= epochTo_MM_DD_YYYY(vod.streamDate) %> </b></div>
         <div> <b>Duration: <%= secondsToHHMM(Number(vod.duration)) %> </b></div>
         <div> 🔥<a href="/channel/<%= channel.nameId %>/<%= vod.id %>/analysis"> Transcript stats </a>🔥 </div>
-        <div> 💧 <a href="/channel/<%= channel.nameId %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧</div> <!-- 🙁   -->
+        <div> 💧 <a href="/channel/<%= channel.nameId %>/<%= vod.id %>/wordtree"> Word Tree </a> 💧</div> <!-- 🙁 -->
         <br/>
         <div class="vod__json_vtt_txt_link">
             Raw transcripts: 
@@ -58,12 +58,6 @@
 
         <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
         <script type="text/javascript">
-            if (isMobile()) {
-                console.log("YES MOBILE!")
-            } 
-            else {
-                console.log("NAAAAH")
-            }
             
             var options = {
                 width: (isMobile() ? '100%' : 640),

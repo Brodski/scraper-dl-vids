@@ -25,7 +25,6 @@ resource "aws_api_gateway_method" "path_root" {
   authorization = "NONE"
 }
 resource "aws_api_gateway_integration" "root_lambda" {
-  depends_on = [aws_lambda_function.idontfront_lambda]
   rest_api_id = aws_api_gateway_rest_api.api_gw_rest.id
   resource_id = aws_api_gateway_rest_api.api_gw_rest.root_resource_id
   http_method = "GET" # "GET", "POST", etc. or "ANY"

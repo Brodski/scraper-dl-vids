@@ -10,3 +10,12 @@ variable "sensitive_info" {
     VAST_API_KEY            = string
   })
 }
+variable "preper_schedule_cron" {
+  type = string
+}
+variable "downloader_schedule_cron" {
+  type = string
+}
+variable "transcriber_schedule_cron" {
+  type = string
+}

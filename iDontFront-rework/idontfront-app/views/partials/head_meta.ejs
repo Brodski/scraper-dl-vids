@@ -2,3 +2,6 @@
 <link rel="stylesheet" type="text/css" href="/styles-mobile.css">
 <link rel="stylesheet" type="text/css" href="/styles-desktop.css">
 <script defer src="/scripts.js"></script>
+<% if (process.env.ENV != "prodXXX") { %>
+    <meta name="robots" content="noindex">    
+<% } %>

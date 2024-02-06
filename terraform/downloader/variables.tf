@@ -10,6 +10,9 @@ variable "sg_name_id" {
 variable "docker_image" {
   type = string
 }
+variable "downloader_schedule_cron" {
+  type = string
+}
 variable "sensitive_info" {
   type = object({
     MY_AWS_SECRET_ACCESS_KEY   = string

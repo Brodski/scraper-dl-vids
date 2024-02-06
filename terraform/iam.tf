@@ -1,6 +1,6 @@
 # Downloader & Preper
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "ecs_execution_role"
+  name = "${var.sensitive_info.ENV}_ecs_execution_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -13,7 +13,7 @@ resource "aws_iam_role" "ecs_execution_role" {
   })
 }
 resource "aws_iam_role" "ecs_events_role" {
-  name = "ecs_events_role"
+  name = "${var.sensitive_info.ENV}_ecs_events_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -29,7 +29,7 @@ resource "aws_iam_role" "ecs_events_role" {
 }
 # Grant CloudWatch Events permission to run tasks in ECS
 resource "aws_iam_policy" "cloudwatch_events_ecs" {
-  name = "cloudwatch_events_ecs_policy"
+  name = "${var.sensitive_info.ENV}_cloudwatch_events_ecs_policy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [      {
@@ -40,7 +40,7 @@ resource "aws_iam_policy" "cloudwatch_events_ecs" {
   })
 }
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole_terra"
+  name = "${var.sensitive_info.ENV}_ecsTaskExecutionRole_terra"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -54,7 +54,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 }
 resource "aws_iam_policy" "ecs_logs_policy" {
 # resource "aws_iam_role_policy" "ecs_logs_policy" {
-  name        = "ecs_logs_policy"
+  name        = "${var.sensitive_info.ENV}_ecs_logs_policy"
   # role        = aws_iam_role.ecs_execution_role.id
   # role          = aws_iam_role.ecs_task_execution_role.id 
   policy = jsonencode({
@@ -91,25 +91,3 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_logs_full_access" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
-
-
-
-# Transcriber 
-# resource "aws_iam_role" "lambda_execution_role" {
-#   name = "lambda_execution_role"
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [ {
-#         Action = "sts:AssumeRole",
-#         Effect = "Allow",
-#         Principal = {
-#           Service = "lambda.amazonaws.com"
-#         }
-#       }]
-#   })
-# }
-# # Attach the AWSLambdaBasicExecutionRole policy to the role
-# resource "aws_iam_role_policy_attachment" "lambda_exec_role_attach" {
-#   role       = aws_iam_role.lambda_execution_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-# }

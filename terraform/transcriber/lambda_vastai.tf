@@ -6,7 +6,7 @@ data "archive_file" "lambda_zip" {
 
 locals {
   lambda_name = "${var.sensitive_info.ENV}_auto-vast-runner"
-  log_name = "/scraper/${local.lambda_name}"
+  log_name = "/scraper/auto-vast-runner_${var.sensitive_info.ENV}"
 }
 resource "aws_lambda_function" "vast_lambda" {
   function_name = "${local.lambda_name}"

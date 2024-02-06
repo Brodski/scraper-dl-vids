@@ -1,11 +1,10 @@
 locals {
   lambda_env_name = "${var.ENV}_${var.lambda_name}"
-  log_name        = "/scraper/idontfront/${local.lambda_env_name}"
-  image_uri       = "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:${docker_tag_name}"
+  log_name        = "/website/idontfront/${var.ENV}"
+  image_uri       = "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:${var.docker_tag_name}"
 }
 resource "aws_lambda_function" "idontfront_lambda" {
   function_name = local.lambda_env_name
-  # handler       = "iDontFront-app.lambdaHandler" 
   role          = aws_iam_role.idont_writer_role.arn
   memory_size   = 512
   timeout       = 600 # 10 min 
@@ -25,11 +24,11 @@ resource "aws_lambda_function" "idontfront_lambda" {
       FLASK_ENV = var.ENV
       IS_LAMBDA = "true"
       ENV = var.ENV
-      DATABASE_HOST= var.sensitive_info.DATABASE_HOST 
-      DATABASE_USERNAME= var.sensitive_info.DATABASE_USERNAME 
-      DATABASE_PASSWORD= var.sensitive_info.DATABASE_PASSWORD 
-      DATABASE= var.sensitive_info.DATABASE 
-
+      DATABASE_HOST = var.sensitive_info.DATABASE_HOST 
+      DATABASE_USERNAME = var.sensitive_info.DATABASE_USERNAME 
+      DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD 
+      DATABASE = var.sensitive_info.DATABASE 
+      BUCKET_DOMAIN = var.sensitive_info.BUCKET_DOMAIN
       # BUCKET_DOMAIN=https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com
 
       # LD_PRELOAD = "/var/task/node_modules/canvas/build/Release/libz.so.1"
@@ -43,7 +42,7 @@ resource "aws_lambda_permission" "lambda_api" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.idontfront_lambda.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.api_gw_rest.execution_arn}/*/*" 
+  source_arn    = "${aws_api_gateway_rest_api.api_gw_rest.execution_arn}/*/*" 
   # source_arn = "${aws_api_gateway_deployment.api_gw_deployment.execution_arn}/*/*" 
 }
 

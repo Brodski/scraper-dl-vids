@@ -8,6 +8,9 @@ variable "IS_VASTAI_CREATE_INSTANCE" {
   type = string
   default = "true"
 }
+variable "transcriber_schedule_cron" {
+  type = string
+}
 variable "sensitive_info" {
   type = object({
     MY_AWS_SECRET_ACCESS_KEY   = string # transcriber/vastai uses MY_AWS...

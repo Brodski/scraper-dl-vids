@@ -1,5 +1,5 @@
 resource "aws_iam_role" "idont_writer_role" {
-  name = "idont_writer_role"
+  name = "idont_writer_role_${var.ENV}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [ {

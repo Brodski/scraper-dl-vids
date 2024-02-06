@@ -53,13 +53,14 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
   }
 }
 
-resource "aws_route53_record" "lambda_record" {
-  zone_id = var.sensitive_info.r53_route_id
-  name    = local.website_name
-  type    = "A"
-  alias {
-    name                   = aws_cloudfront_distribution.lambda_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.lambda_distribution.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
+# resource "aws_route53_record" "lambda_record" {
+#   depends_on = [ aws_cloudfront_distribution.lambda_distribution ]
+#   zone_id = var.sensitive_info.r53_route_id
+#   name    = local.website_name
+#   type    = "A"
+#   alias {
+#     name                   = aws_cloudfront_distribution.lambda_distribution.domain_name
+#     zone_id                = aws_cloudfront_distribution.lambda_distribution.hosted_zone_id
+#     evaluate_target_health = false
+#   }
+# }

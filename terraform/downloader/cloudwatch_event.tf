@@ -1,9 +1,7 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "download_schedule"
   description         = "Trigger ECS task daily"
-  # schedule_expression = "rate(1 day)"
-  # schedule_expression = "cron(*/10 * * * ? *)" # every 10 min, on the 10
-  schedule_expression = "cron(58 4 * * ? *)" # 8_05
+  schedule_expression = var.downloader_schedule_cron
 }
 resource "aws_cloudwatch_event_target" "ecs" {
   rule        = aws_cloudwatch_event_rule.schedule.name
@@ -26,7 +24,6 @@ resource "aws_cloudwatch_event_target" "ecs" {
         "subnet-0468a4b6cab55c7af"
       ]
       security_groups = [var.sg_name_id]
-      # assign_public_ip = true
       assign_public_ip = true # required to pull from docker
     }
   }

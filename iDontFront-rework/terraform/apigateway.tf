@@ -11,6 +11,7 @@ resource "aws_api_gateway_rest_api" "api_gw_rest" {
 
 ##### 0 #####
 resource "aws_api_gateway_deployment" "api_gw_deployment" {
+  depends_on = [aws_api_gateway_integration.root_lambda]
   rest_api_id = aws_api_gateway_rest_api.api_gw_rest.id
   stage_name  = "v1"
   triggers = {

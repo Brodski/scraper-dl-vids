@@ -33,5 +33,6 @@ module "transcriber" {
     source                      = "./transcriber"
     sensitive_info              = var.sensitive_info
     transcriber_schedule_cron   = var.transcriber_schedule_cron
+    num_trans_instances         = var.num_trans_instances # Note, we also have a muliplier in `/SScrapey-rework/.env_public_prod`
     docker_image                = "cbrodski/transcriber:official_v2"
 }

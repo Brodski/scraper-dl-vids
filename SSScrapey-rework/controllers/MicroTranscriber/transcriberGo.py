@@ -22,6 +22,7 @@ logger = Cloudwatch.log
 
 def goTranscribeBatch(isDebug=False):
     logger("Hello sucker! " + str(time.time()))
+    start_time = time.time()
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
@@ -31,7 +32,10 @@ def goTranscribeBatch(isDebug=False):
         x = transcribe(isDebug)
         logger(f"Finished Index {i}")
         logger(f"download_batch_size: {i+1}")
-    logger("FINISHED! " + str(time.time()))
+    elapsed_time = time.time() - start_time
+    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     return x
 
 

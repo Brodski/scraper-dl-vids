@@ -13,7 +13,7 @@ except:
 
 #########################################################################
 #                                                                       #
-# Note: handler_kickit() is the "main()" Defined in lambda_vastai.tf    #
+# Note: find_create_confirm_instance() is the "main()" Defined in lambda_vastai.tf    #
 # Vars: vars_prod.tf locally on -> terraform -> lambda -> python        #  
 #                                                                       #
 #########################################################################
@@ -24,6 +24,7 @@ print("DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')", os.environ.get(
 
 
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
+NUM_TRANS_INSTANCES = os.environ.get('NUM_TRANS_INSTANCES')
 AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
@@ -155,7 +156,15 @@ def printAsTable(goodOffers):
 
         
 def handler_kickit(event, context):
-    print("handler_kickit() beign")
+    num_instances = 1 if NUM_TRANS_INSTANCES is None else int(NUM_TRANS_INSTANCES)
+    print("NUM_TRANS_INSTANCES", NUM_TRANS_INSTANCES)
+    for i in range(num_instances):
+        print("handler_kickit() beign loop:", i)
+        find_create_confirm_instance()
+        time.sleep(60) # wait 1 minute
+        
+def find_create_confirm_instance(event, context):
+    print("find_create_confirm_instance() beign")
     print("event:")
     print(event)
     create_auto = False
@@ -209,7 +218,6 @@ def handler_kickit(event, context):
         goodOffers.append(offer)
         good_offers_counter = good_offers_counter + 1
     
-
     print("offers COUNT: " + str(len(offers)))
     print("good_offers_counter: " + str(good_offers_counter))
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
@@ -274,10 +282,10 @@ def try_again(id):
     print("   ! (try_again) Try again")
     print("   ! (try_again) Try again")
     print("   ! (try_again) Try again")
-    handler_kickit(None, None)
+    find_create_confirm_instance(None, None)
 
 if __name__ == '__main__':
-    handler_kickit(None, None)
+    find_create_confirm_instance(None, None)
     
     
     

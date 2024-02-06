@@ -4,12 +4,15 @@
 variable "docker_image" {
   type = string
 }
-variable "IS_VASTAI_CREATE_INSTANCE" {
+variable "num_trans_instances" {
   type = string
-  default = "true"
 }
 variable "transcriber_schedule_cron" {
   type = string
+}
+variable "IS_VASTAI_CREATE_INSTANCE" {
+  type = string
+  default = "true"
 }
 variable "sensitive_info" {
   type = object({

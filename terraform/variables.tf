@@ -19,3 +19,6 @@ variable "downloader_schedule_cron" {
 variable "transcriber_schedule_cron" {
   type = string
 }
+variable "num_trans_instances" {
+  type = string
+}

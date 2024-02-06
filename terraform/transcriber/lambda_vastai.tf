@@ -36,6 +36,7 @@ resource "aws_lambda_function" "vast_lambda" {
       DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD
       DATABASE = var.sensitive_info.DATABASE  
       DOCKER = var.docker_image
+      NUM_TRANS_INSTANCES = var.num_trans_instances
     }
   }
 }

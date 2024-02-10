@@ -10,26 +10,26 @@ const Channel = require("../models/Channel");
 // path = /channel/lolgeranimo
 exports.channel = async (req, res) => {    
     // Get all channels
-    const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json";   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
-    const response = await fetch(endpoint); // mocks/completed_captions_list.py
-    let scrapped_data_s3 = {}
-    if (!response.ok) {
-        //  throw new Error('HTTP error ' + response.status);
-    } 
-    else {
-        scrapped_data_s3 = await response.json()
-    }
+    // const endpoint = configs.S3_BUCKET + configs.S3_EACH_CHANNEL_JSON + req.params.name + ".json";   //  https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/each-channel/lolgeranimo.json
+    // const response = await fetch(endpoint); // mocks/completed_captions_list.py
+    // let scrapped_data_s3 = {}
+    // if (!response.ok) {
+    //     //  throw new Error('HTTP error ' + response.status);
+    // } 
+    // else {
+    //     scrapped_data_s3 = await response.json()
+    // }
     
 
-    const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json";  //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json    
-    const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
-    let custom_metadata = {}
-    if (!res2.ok) {
-        //  throw new Error('HTTP error ' + res2.status);
-    } 
-    else {
-        custom_metadata = await res2.json();
-    }
+    // const endpoint2 = configs.S3_BUCKET + configs.S3_CUSTOM_METADATA_KEYBASE + req.params.name + "/custom-metadata.json";  //     /channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json    
+    // const res2 = await fetch(endpoint2); // mocks/completed_captions_list.py
+    // let custom_metadata = {}
+    // if (!res2.ok) {
+    //     //  throw new Error('HTTP error ' + res2.status);
+    // } 
+    // else {
+    //     custom_metadata = await res2.json();
+    // }
     
 
     let transcript_s3_vtt;
@@ -74,8 +74,8 @@ exports.channel = async (req, res) => {
     //  CHANNEL
     //  ***************************************
     if (req.params.id == null) {
+        console.log("GETTING CHANNEL: ", req.params.name)
         // let completedVods = await channelHelper.getVodsCompleted(req.params.name)
-        let completedVods = await channelHelper.getVodsCompleted(req.params.name)
         let db = new DatabaseSingleton
         let [resultsVods, fields1] = await db.getVods(req.params.name)
         let [resultsChan, fields2] = await db.getChannel(req.params.name)
@@ -93,10 +93,10 @@ exports.channel = async (req, res) => {
         res.render("../views/channel", { // ---> /channel/lolgeranimo
             "title" : req.params.name,
             "path" : req.path,
-            "scrapped_data_s3": scrapped_data_s3,
-            "custom_metadata": custom_metadata,
-            "completedVods": completedVods,
-            "profilePic": profilePic,
+            // "scrapped_data_s3": scrapped_data_s3,
+            // "custom_metadata": custom_metadata,
+            // "completedVods": completedVods,
+            // "profilePic": profilePic,
             "vods": vods,
             "channel": channels[0],
         })

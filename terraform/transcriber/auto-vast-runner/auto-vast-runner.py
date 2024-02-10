@@ -160,7 +160,7 @@ def handler_kickit(event, context):
     print("NUM_TRANS_INSTANCES", NUM_TRANS_INSTANCES)
     for i in range(num_instances):
         print("handler_kickit() beign loop:", i)
-        find_create_confirm_instance()
+        find_create_confirm_instance(event, context)
         time.sleep(60) # wait 1 minute
         
 def find_create_confirm_instance(event, context):

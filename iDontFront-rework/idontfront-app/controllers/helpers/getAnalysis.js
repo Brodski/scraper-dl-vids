@@ -24,24 +24,20 @@ async function getAnalysis(transcript_s3_txt) {
     console.log(word_counter)
     
     let freqWordPlot = await plot(word_counter, "Frequency of Words")
-    console.log("freqWordPlot")
-    console.log(freqWordPlot)
+    // console.log("freqWordPlot")
+    // console.log(freqWordPlot)
 
     let badWordPlot = await plot(bad_words_counter, "Frequency of Swear Words")
-    console.log("badWordPlot")
-    console.log(badWordPlot)
+    // console.log("badWordPlot")
+    // console.log(badWordPlot)
     
     let wordcloudSvg = await wordcloud(word_counter)
-    console.log("wordcloudSvg")
-    console.log(wordcloudSvg)
+    // console.log("wordcloudSvg")
+    // console.log(wordcloudSvg)
 
 
-    console.log(regex)
-    console.log(regex)
-    console.log(regex)
-    console.log(regex)
-    console.log("bad_words_counter")
-    console.log(bad_words_counter)
+    console.log("regex", regex)
+    console.log("bad_words_counter",bad_words_counter)
     return {freqWordPlot, badWordPlot, wordcloudSvg, bad_words_counter, word_counter}
 }
 

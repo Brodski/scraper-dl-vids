@@ -9,6 +9,9 @@ console.log("process.env.LAMBDA_ENV: ", process.env.LAMBDA_ENV)
 if (process.env.NODE_ENV == "local") {
     require('dotenv').config(); // reads .env by default
 } 
+if (process.env.NODE_ENV == "prod") {
+    require('dotenv').config({ path: './.env_prod' });
+}
 
 
 const app = express();
@@ -24,37 +27,23 @@ app.use(mainRoutes)
 app.locals.configs = configs
 
 
+console.log("DATABASE_HOST=", process.env.DATABASE_HOST)
+console.log("DATABASE_USERNAME=", process.env.DATABASE_USERNAME)
+console.log("DATABASE=", process.env.DATABASE)
+console.log("BUCKET_DOMAIN=", process.env.BUCKET_DOMAIN)
+
+
 // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
 if (process.env.IS_LAMBDA == "true") {
     module.exports.lambdaHandler = async (event, context) => {
-
-        const directoryPath = path.join(__dirname);
-        fs.readdir(directoryPath, function (err, files) {
-            if (err) {
-                console.log('Unable to scan directory: ' + err);
-            } 
-            files.forEach(function (file) {
-                console.log(file); 
-            });
-        });
-
-
-
-
-
-        console.log("YES IS LAMBDA !!!" + process.env.IS_LAMBDA)        
         console.log("event.path=" + event.path);
-        if (process.env.IS_SAM == "true" && event.path.slice(0,4) == "/v1/") {
-            event.path = event.path.slice(3)
-        }
-        console.log("event.path2=" + event.path);
         event.path = event.path === '' ? '/' : event.path
 
         context.callbackWaitsForEmptyEventLoop = false;
         const serverlessHandler = serverless(app)
         const result = await serverlessHandler(event, context)
-        console.log("result")
-        console.log(result)
+        // console.log("result")
+        // console.log(result)
         return result
     }
 }

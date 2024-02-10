@@ -22,16 +22,16 @@
                 <th>Title</th>
             </tr>   
             <% 
-                let custom_metadata_array = []
-                Object.keys(custom_metadata).forEach(key => {
-                    custom_metadata_array.push(custom_metadata[key])
-                });
-                // newest at start
-                custom_metadata_array.sort((a, b) => {
-                    if (a.epoch == null) { return 1 }
-                    if (b.epoch == null) { return -1 }
-                    return a.epoch > b.epoch ? -1 : 1
-                });
+                // let custom_metadata_array = []
+                // Object.keys(custom_metadata).forEach(key => {
+                //     custom_metadata_array.push(custom_metadata[key])
+                // });
+                // // newest at start
+                // custom_metadata_array.sort((a, b) => {
+                //     if (a.epoch == null) { return 1 }
+                //     if (b.epoch == null) { return -1 }
+                //     return a.epoch > b.epoch ? -1 : 1
+                // });
                 for (let vod of vods) {
                     let duration        = vod.duration // 38541
                     let vod_title       = vod.title

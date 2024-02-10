@@ -1,5 +1,6 @@
 
-
+# $ ./deploy.ps1 -env "dev"
+# $ ./deploy.ps1 -env "dev" -tag "offical_v2_123123123"
 param (
     [Parameter(Mandatory=$true)]
     [string]$env,
@@ -16,11 +17,27 @@ $TF_ENVIRONMENT=$env
 # Init
 terraform init -reconfigure -backend-config="key=${TF_ENVIRONMENT}/idontfront/terraform.tfstate"
 
-if ($tag -ne $null) {
-# if ($tag -eq $null) {
+if ($env -ne "prod" -and $env -ne "dev") {
+    Write-Host "The environment must be 'prod' or 'dev'."
+    exit
+}
+Write-Host "The environment is $tag_name"
+Write-Host "The environment is $tag_name"
+Write-Host "The environment is $tag_name"
+Write-Host "The tag is $tag"
+Write-Host "The tag is $tag"
+Write-Host "The tag is $tag"
+Write-Host "The tag is $tag"
+Write-Host "The tag is $tag"
+# if ($tag -ne $null) {
+if ($PSBoundParameters.ContainsKey('tag')) {
+    Write-Host "The TAG is NULL"
     $tag_name = $tag
-
 } else {
+    Write-Host "The TAG is NOT NULL"
+    Write-Host "The TAG is NOT NULL"
+    Write-Host "The TAG is NOT NULL"
+    Write-Host "The TAG is NOT NULL"
     # Docker build
     cd "../idontfront-app"
     docker build --no-cache -t "idontfront:$tag_name" -f Dockerfile_idontfront .

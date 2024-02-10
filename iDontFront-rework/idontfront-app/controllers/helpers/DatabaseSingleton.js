@@ -25,7 +25,6 @@ class DatabaseSingleton {
             DatabaseSingleton.instance = this;
         }
         console.log("db singleton, BAM!")
-        console.log("TEST IMAGE GOGOGOG")
         return DatabaseSingleton.instance;
     }
 

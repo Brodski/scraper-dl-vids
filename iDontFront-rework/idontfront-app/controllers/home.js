@@ -8,10 +8,6 @@ exports.homepage = async (req, res) => {
     db.printHi()
     channelsList = await db.getChannelsForHomepage(); // type = models/Channel.js
     console.log("channelsList")
-    console.log("channelsList")
-    console.log("channelsList")
-    console.log("channelsList")
-    console.log("channelsList")
     console.log(channelsList)
 
 

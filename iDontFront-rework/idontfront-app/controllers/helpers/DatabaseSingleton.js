@@ -3,9 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const Vod = require(path.resolve(__dirname, "../../models/Vod"))
 const Channel = require(path.resolve(__dirname, "../../models/Channel"))
-// `../../` does not work on the lambda docker 🤷🏿 `const Channel = require("../../models/Channel")`
-// const Channel = require("../../models/Channel")
-// const Vod = require("../../models/Vod")
+// `../../` does not work on the lambda docker 🤷🏿, eg `const Channel = require("../../models/Channel")`
 
 class DatabaseSingleton {
     constructor() {
@@ -45,7 +43,6 @@ class DatabaseSingleton {
             return promiseVod;
         } catch (error) {
             console.error('Error retrieving the vod: ', error);
-            // throw error;
         } 
     }
     async getChannel(nameId) {
@@ -58,7 +55,6 @@ class DatabaseSingleton {
             return promiseChan;
         } catch (error) {
             console.error('Error retrieving the channel: ', error);
-            // throw error;
         } 
     }
 
@@ -73,7 +69,6 @@ class DatabaseSingleton {
             return promiseVods;
         } catch (error) {
             console.error('Error retrieving vods: ', error);
-            // throw error;
         } 
     }
 
@@ -81,10 +76,20 @@ class DatabaseSingleton {
         try {
             const sqlQuery = `
                 SELECT *
-                FROM Channels
-                ORDER BY CurrentRank ASC;`;
+                FROM Channels c
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM Vods v
+                    WHERE v.ChannelNameId = c.NameId
+                    AND v.TranscriptStatus = 'completed'
+                ) ORDER BY CurrentRank ASC;`;
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan))
+            const index = resultChannelObj.find(item => item.nameId === 'lolgeranimo');
+            if (index !== -1) {
+                const [itemToRemove] = resultChannelObj.splice(index, 1);
+                resultChannelObj.push(itemToRemove);
+              }
             return resultChannelObj;
         } catch (error) {
             console.error('Error retrieving channels: ', error);

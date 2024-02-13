@@ -9,16 +9,12 @@
     <body class="homepage">
         <h1>Welcome to <%= title %>™ </h1>
         <h2> Captions available for these channels 🍆💦 : </h2>
-        <div> <%= // JSON.stringify(overviewLight) %></div>
         <div>
             <% 
             for (let chann of channelsList) {
                 let nameId = chann.nameId;
                 let logo = chann.logo
                 let lang = chann.language
-                // let path = chann.path
-                // let twitchUrl = chann.twitchUrl
-                // let currentRank = chann.currentRank
                 let displayName = chann.displayName
                 %>  
                 <div class="channel_row img">
@@ -26,7 +22,6 @@
                         <img class="" src="<%= chann.logo %>" />
                         <h2> <%= displayName %>  </h2>
                     </a>
-                    <!-- <span>Num vods: <%= chann.size %></span> -->
                 </div>
             <% } %> 
         </div>

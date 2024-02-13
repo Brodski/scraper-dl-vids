@@ -158,7 +158,7 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         # 'https://www.twitch.tv/videos/1792255936' # sub only
         # 'https://www.twitch.tv/videos/1792342007' # live
         # 'www.twitch.tv/videos/28138895'
-        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
         highest_priority_vod.print()

@@ -1,5 +1,5 @@
 class Channel {
-    constructor({DisplayName = '', NameId = '', Language = '', Logo = '', TwitchUrl = '', CurrentRank = ''}) {
+    constructor({DisplayName = '', NameId = '', Language = '', Logo = '', TwitchUrl = '', CurrentRank = 999}) {
         this.currentRank = CurrentRank;
         this.displayName = DisplayName;
         this.nameId = NameId;

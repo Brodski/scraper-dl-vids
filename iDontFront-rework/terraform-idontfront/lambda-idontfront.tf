@@ -48,6 +48,5 @@ resource "aws_lambda_permission" "lambda_api" {
 
 resource "aws_cloudwatch_log_group" "logs" {
   name              = local.log_name
-  # name              = "/scraper/idontfront/${var.ENV}_${var.lambda_name}"
-  retention_in_days = 14
+  retention_in_days = 30
 }

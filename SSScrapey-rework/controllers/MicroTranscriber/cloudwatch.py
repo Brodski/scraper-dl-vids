@@ -8,10 +8,12 @@ from botocore.exceptions import ClientError
 # https://stackoverflow.com/questions/30897897/python-boto-writing-to-aws-cloudwatch-logs-without-sequence-token
 # boto3 docs: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/logs.html
 class Cloudwatch:
+
     cw_client = boto3.client('logs', region_name='us-east-1')
+
+    RETENTION_IN_DAYZ = 30
     LOG_GROUP_NAME = '/vastai/transcriber/' + env_varz.ENV
-    stream_name = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}' if env_varz.ENV != "local" else "local"
-    LOG_STREAM_NAME =  stream_name
+    LOG_STREAM_NAME = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}' if env_varz.ENV != "local" else "local"
 
     # Create Log Group
     try:
@@ -35,7 +37,7 @@ class Cloudwatch:
     try:
         res3 = cw_client.put_retention_policy(
             logGroupName=LOG_GROUP_NAME,
-            retentionInDays=1 # 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365 ...  more
+            retentionInDays=RETENTION_IN_DAYZ
         ) 
         time.sleep(1)
     except Exception as e:

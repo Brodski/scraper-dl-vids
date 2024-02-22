@@ -1,12 +1,12 @@
 locals {
-  lambda_name = "${var.sensitive_info.ENV}_auto-vast-runner"
-  log_name = "/scraper/auto-vast-runner_${var.sensitive_info.ENV}"
+  lambda_name = "${var.sensitive_info.ENV}_vastai_master"
+  log_name = "/scraper/vastai_master/${var.sensitive_info.ENV}"
 }
 
 data "archive_file" "lambda_zip" {
     type = "zip"
-    output_path = "${path.module}/output_code.zip"
-    source_dir = "${path.module}/auto-vast-runner"
+    output_path = "${path.module}/../../output_code.zip"
+    source_dir = "${path.module}/../../vastai_master"
 }
 
 resource "aws_lambda_function" "vast_lambda" {
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "vast_lambda" {
 
   filename = data.archive_file.lambda_zip.output_path # "output_code.zip"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
-  handler = "auto-vast-runner.handler_kickit" 
+  handler = "vastai_master.handler_kickit" 
   runtime = "python3.10"
   timeout = 600 # 10 minutes
 

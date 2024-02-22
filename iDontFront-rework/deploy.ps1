@@ -9,7 +9,7 @@ param (
 
 
 $ErrorActionPreference = 'Stop'
-cd "./terraform"
+cd "./terraform-idontfront"
 $dateString = Get-Date -Format "yyyy.MM.dd_ss's'"
 $tag_name = "official_v2_$dateString"
 $TF_ENVIRONMENT=$env
@@ -21,18 +21,18 @@ if ($env -ne "prod" -and $env -ne "dev") {
     Write-Host "The environment must be 'prod' or 'dev'."
     exit
 }
-Write-Host "The environment is $tag_name"
-Write-Host "The environment is $tag_name"
-Write-Host "The environment is $tag_name"
-Write-Host "The tag is $tag"
-Write-Host "The tag is $tag"
-Write-Host "The tag is $tag"
-Write-Host "The tag is $tag"
-Write-Host "The tag is $tag"
+Write-Host "The tag_name is $tag_name"
+Write-Host "The tag_name is $tag_name"
+Write-Host "The tag_name is $tag_name"
+Write-Host "The tag arg is $tag"
+Write-Host "The tag arg is $tag"
+Write-Host "The tag arg is $tag"
+Write-Host "The tag arg is $tag"
+Write-Host "The tag arg is $tag"
 # if ($tag -ne $null) {
 if ($PSBoundParameters.ContainsKey('tag')) {
-    Write-Host "The TAG is NULL"
     $tag_name = $tag
+    Write-Host "The TAG is NULL. tag is now $tag"
 } else {
     Write-Host "The TAG is NOT NULL"
     Write-Host "The TAG is NOT NULL"
@@ -49,7 +49,7 @@ docker tag "idontfront:$tag_name" "144262561154.dkr.ecr.us-east-1.amazonaws.com/
 docker push "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 
 # Terraform apply
-cd "../terraform"
+cd "../terraform-idontfront"
 echo "docker_tag_name=$tag_name"
 terraform apply --var-file="vars_${TF_ENVIRONMENT}.tfvars"  -var "docker_tag_name=$tag_name" --auto-approve
 echo "docker_tag_name=$tag_name"

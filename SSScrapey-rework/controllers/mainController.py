@@ -57,7 +57,7 @@ def kickDownloader(isDebug=False):
 
 #####################################################
 #
-#       Microservice 3
+#       Microservice 3 VAST AI
 #
 #####################################################
 

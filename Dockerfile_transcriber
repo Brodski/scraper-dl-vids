@@ -7,8 +7,8 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 ############################################################
 # 
 # 1. Build this image.
-# 2. auto-vast-runner.py uses the VastAI api to run onec a day and pull this image
-# 3. terraform > lambda > auto-vast-runner.zip > .env
+# 2. vastai_master.py uses the VastAI api to run onec a day and pull this image
+# 3. terraform > lambda > vastai_master.zip > .env
 
 ############################################################
 #                                                          #

@@ -9,16 +9,17 @@ class DatabaseSingleton {
     constructor() {
         if (!DatabaseSingleton.instance) {
             console.log("DB SINGLETON HAS BEEN INIT!")
-            const certPath = path.resolve(__dirname, '../../cacert-2023-08-22.pem');
+            // const certPath = path.resolve(__dirname, '../../cacert-2023-08-22.pem');
             this.pool = mysql.createPool({
                 connectionLimit: 10, 
+                database: process.env.DATABASE,
                 host: process.env.DATABASE_HOST,
                 user: process.env.DATABASE_USERNAME,
                 password: process.env.DATABASE_PASSWORD,
-                database: process.env.DATABASE,
-                ssl: {
-                    ca: fs.readFileSync(certPath),
-                }
+                port: process.env.DATABASE_PORT,
+                // ssl: {
+                //     ca: fs.readFileSync(certPath),
+                // }
             }).promise();
             DatabaseSingleton.instance = this;
         }

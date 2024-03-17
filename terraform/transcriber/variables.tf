@@ -22,6 +22,7 @@ variable "sensitive_info" {
     DATABASE_HOST           = string
     DATABASE_USERNAME       = string
     DATABASE_PASSWORD       = string
+    DATABASE_PORT           = string
     DATABASE                = string
     VAST_API_KEY            = string
   })

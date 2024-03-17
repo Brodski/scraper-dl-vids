@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "$ENV" = "dev" ||  "$ENV" = "local" ]]; then
+if [ "$ENV" = "dev" ] || [ "$ENV" = "local" ]; then
     git reset --hard origin/dev ; 
     git pull origin dev --force ;
     git checkout dev ;

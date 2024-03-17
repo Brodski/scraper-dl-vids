@@ -31,6 +31,7 @@ ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+DATABASE_PORT = os.environ.get('DATABASE_PORT')
 DATABASE = os.environ.get('DATABASE')
 DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 
@@ -73,6 +74,7 @@ def create_instance(instance_id):
                 'DATABASE_HOST': DATABASE_HOST,
                 'DATABASE_USERNAME': DATABASE_USERNAME,
                 'DATABASE_PASSWORD': DATABASE_PASSWORD,
+                'DATABASE_PORT': DATABASE_PORT,
                 'DATABASE': DATABASE,
                 'VAST_API_KEY': VAST_API_KEY
             },

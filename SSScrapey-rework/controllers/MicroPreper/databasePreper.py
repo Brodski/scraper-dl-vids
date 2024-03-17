@@ -11,13 +11,14 @@ import os
 def getConnection():
     print('got connection')
     connection = MySQLdb.connect(
+        db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
+        port    = env_varz.DATABASE_PORT,
         autocommit  = False,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        # ssl_mode    = "VERIFY_IDENTITY",
+        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 

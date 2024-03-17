@@ -57,11 +57,11 @@ RUN pip install -r requirements_downloader.txt \
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-COPY env_pull.sh /app/scraper-dl-vids/env_pull.sh
-RUN chmod -x env_pull.sh
+COPY git_pull.sh git_pull.sh
+COPY git_pull.sh git_pull.sh
+RUN chmod +x git_pull.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    ls ; \
-    sh env_pull.sh ; \
+    sh git_pull.sh ; \
     python --version ; \
     python kickDownloader.py && \
     echo "DONE!!!!!!!!!!!!" ; 

@@ -35,6 +35,7 @@ resource "aws_lambda_function" "vast_lambda" {
       DATABASE_HOST = var.sensitive_info.DATABASE_HOST
       DATABASE_USERNAME = var.sensitive_info.DATABASE_USERNAME
       DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD
+      DATABASE_PORT = var.sensitive_info.DATABASE_PORT
       DATABASE = var.sensitive_info.DATABASE  
       DOCKER = var.docker_image
       NUM_TRANS_INSTANCES = var.num_trans_instances

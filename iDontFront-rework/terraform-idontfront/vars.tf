@@ -17,6 +17,7 @@ variable "sensitive_info" {
     DATABASE_HOST             = string
     DATABASE_USERNAME         = string
     DATABASE_PASSWORD         = string
+    DATABASE_PORT             = string
     DATABASE                  = string
     r53_acm_certificate_arn   = string
     r53_route_id              = string

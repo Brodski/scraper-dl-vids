@@ -6,6 +6,7 @@
 # DEBUG `RUN`
 # docker run --env-file .\.env -e ENV=dev cbrodski/downloader:official_v2
 # docker run --env-file .\.env -e ENV=dev -it cbrodski/downloader:official_v2 /bin/bash
+# docker run -e ENV=dev -it cbrodski/downloader:official_v2 /bin/bash
 
 # PUSH
 # docker push cbrodski/downloader:official_v2
@@ -57,11 +58,10 @@ RUN pip install -r requirements_downloader.txt \
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-COPY git_pull.sh git_pull.sh
-COPY git_pull.sh git_pull.sh
-RUN chmod +x git_pull.sh
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    sh git_pull.sh ; \
+    sh dock_setup.sh ; \
     python --version ; \
     python kickDownloader.py && \
     echo "DONE!!!!!!!!!!!!" ; 

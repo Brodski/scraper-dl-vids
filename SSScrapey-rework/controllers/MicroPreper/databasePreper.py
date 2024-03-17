@@ -15,7 +15,7 @@ def getConnection():
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
-        port    = env_varz.DATABASE_PORT,
+        port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
         # ssl_mode    = "VERIFY_IDENTITY",
         # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.

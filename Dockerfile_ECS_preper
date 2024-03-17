@@ -1,11 +1,11 @@
 ####################################################################
 # BUILD
-# docker build --no-cache -t cbrodski/preper:v2023.1.11.1 -f Dockerfile_ECS_preper  .
 # docker build --no-cache -t cbrodski/preper:official_v2 -f Dockerfile_ECS_preper  .
+# docker build --no-cache -t cbrodski/preper:official_v2_dev -f Dockerfile_ECS_preper  .
 
 # DEBUG `RUN`
-# docker run --env-file .\.env -e ENV=dev cbrodski/preper:v2023.1.11.1
 # docker run --env-file .\.env -it -e ENV=dev cbrodski/preper:official_v2 /bin/bash
+# docker run --env-file .\.env -it -e ENV=dev cbrodski/preper:official_v2_dev /bin/bash
 
 # PUSH
 # docker push cbrodski/preper:official_v2
@@ -58,8 +58,9 @@ RUN apt-get install -y firefox-esr
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    git reset --hard origin/master ; \
-    git pull origin master --force && \ 
+    sh dock_setup.sh ; \
     python kickPreper.py ; \
     echo "DONE!!!!!!!!!!!!" ; 

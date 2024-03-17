@@ -31,7 +31,6 @@ class DatabaseSingleton {
         console.log("hello from the singelton babyyyyyyyyyyy")
         console.log("process.env.DATABASE_HOST", process.env.DATABASE_HOST)
         console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME)
-        console.log("process.env.DATABASE_PASSWORD", process.env.DATABASE_PASSWORD)
         console.log("process.env.DATABASE", process.env.DATABASE)
     }
     async getVodById(vodId) {

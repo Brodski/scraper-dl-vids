@@ -1,9 +1,10 @@
 #!/bin/bash
 
 if [ "$ENV" = "dev" ] || [ "$ENV" = "local" ]; then
+    git fetch origin dev ;
+    git checkout dev ;
     git reset --hard origin/dev ; 
     git pull origin dev --force ;
-    git checkout dev ;
     echo "Running in development mode"
 else
     git reset --hard origin/master ;

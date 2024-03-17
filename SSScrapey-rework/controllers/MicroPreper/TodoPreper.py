@@ -45,6 +45,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     if num_channels > 300 or (num_channels % 10) != 0:
         raise Exception("Error, num_channels is too big or not in 10s: " + str(num_channels))
     pageSize = 100
+    days = int(env_varz.PREP_SULLY_DAYS) #14
     loopMax = max(1, int((num_channels / pageSize)))
     type = 3 # note '3' = most watched
     headers = {
@@ -56,7 +57,8 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
     for i in range(loopMax):
         startAt = (i * pageSize) 
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
-        url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
+        url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
+        print("url", url)
         response = requests.get(url, headers=headers)
         print ("    (getTopChannels) ----------------------")
         print ("    " + url)
@@ -71,6 +73,7 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
                 accumilator.extend(data)
                 for obj in data:
                     print("    (getTopChannels) " + str(i) + " @ "+ str(cnt) + " --- " + str(obj.get('url')))
+                    cnt= cnt + 1
                     # print('    ' + str(obj))
                     # print('    (getTopChannels) url=' + str(obj.get('url')))
                     # print('    (getTopChannels) displayname=' + str(obj.get('displayname')))
@@ -78,7 +81,23 @@ def getTopChannels(*, isDebug=False): # Returns big json: { "data": [ { "avgview
                     # print('    (getTopChannels) viewminutes=' + str(obj.get('viewminutes')))
                     # print('    (getTopChannels) logo=' + str(obj.get('logo')))
                     # print('    (getTopChannels) current_rank=' + str(obj.get('current_rank')))
-                    cnt= cnt + 1
+                    # print('     (getTopChannels) viewminutes        ', obj.get('viewminutes'))
+                    # print('     (getTopChannels) streamedminutes    ', obj.get('streamedminutes'))
+                    # print('     (getTopChannels) maxviewers         ', obj.get('maxviewers'))
+                    # print('     (getTopChannels) avgviewers         ', obj.get('avgviewers'))
+                    # print('     (getTopChannels) rownum             ', obj.get('rownum'))
+                    # print('     (getTopChannels) followers          ', obj.get('followers'))
+                    # print('     (getTopChannels) followersgained    ', obj.get('followersgained'))
+                    # print('     (getTopChannels) partner            ', obj.get('partner'))
+                    # print('     (getTopChannels) affiliate          ', obj.get('affiliate'))
+                    # print('     (getTopChannels) mature             ', obj.get('mature'))
+                    # print('     (getTopChannels) language           ', obj.get('language'))
+                    # print('     (getTopChannels) previousviewminutes     ', obj.get('previousviewminutes'))
+                    # print('     (getTopChannels) previousstreamedminutes ', obj.get('previousstreamedminutes'))
+                    # print('     (getTopChannels) previousmaxviewers      ', obj.get('previousmaxviewers'))
+                    # print('     (getTopChannels) previousavgviewers      ', obj.get('previousavgviewers'))
+                    # print('     (getTopChannels) previousfollowergain    ', obj.get('previousfollowergain'))
+                    # print('     (getTopChannels) days    ', days)
         else:
             print(f'Error: {response.status_code}')
     print ("    (getTopChannels) DONE!")
@@ -91,17 +110,31 @@ def instantiateJsonToClassObj(json_object):
     for channel in json_object['data']: 
         # print(channel)
         scrapped_channel = ScrappedChannel(
-            displayname=channel.get('displayname'), 
-            language=channel.get('language'), 
-            logo=channel.get('logo'), 
-            current_rank=channel.get('rownum'), 
-            twitchurl=channel.get('twitchurl'), 
-            name_id=channel.get('url')
+            displayname = channel.get('displayname'), 
+            language = channel.get('language'), 
+            logo = channel.get('logo'), 
+            current_rank = channel.get('rownum'), 
+            twitchurl = channel.get('twitchurl'), 
+            name_id = channel.get('url'),
+            viewminutes = channel.get('viewminutes'),
+            streamedminutes = channel.get('streamedminutes'),
+            maxviewers = channel.get('maxviewers'),
+            avgviewers = channel.get('avgviewers'),
+            followers = channel.get('followers'),
+            followersgained = channel.get('followersgained'),
+            partner = channel.get('partner'),
+            affiliate = channel.get('affiliate'),
+            mature = channel.get('mature'),
+            previousviewminutes = channel.get('previousviewminutes'),
+            previousstreamedminutes = channel.get('previousstreamedminutes'),
+            previousmaxviewers = channel.get('previousmaxviewers'),
+            previousavgviewers = channel.get('previousavgviewers'),
+            previousfollowergain = channel.get('previousfollowergain')
         )
         relevant_list.append(scrapped_channel)
     return relevant_list
 
-def addVipList(channels: List[ScrappedChannel], isDebug=False):
+def addVipList(json_object, isDebug=False):
     VIP_LIST = [
         {
             "displayname": "LoLGeranimo",
@@ -109,7 +142,22 @@ def addVipList(channels: List[ScrappedChannel], isDebug=False):
             "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
             "twitchurl": "https://www.twitch.tv/lolgeranimo",
             "url": "lolgeranimo",
-            "rownum": -2
+            "rownum": -2,
+            # "viewminutes": 0,
+            # "streamedminutes": 4320,
+            # "maxviewers": 215,
+            # "avgviewers": 142,
+            # "followers": 189444,
+            # "followersgained": -128,
+            # "partner": True,
+            # "affiliate": False,
+            # "mature": True,
+            # "previousviewminutes": 0,
+            # "previousstreamedminutes":  3520,
+            # "previousmaxviewers": 201,
+            # "previousavgviewers":  145,
+            # "previousfollowergain": -110
+
         }
     ]
     if os.getenv("ENV") == "local" and isDebug:
@@ -130,13 +178,31 @@ def addVipList(channels: List[ScrappedChannel], isDebug=False):
             "rownum": -3
         })
     for vip in VIP_LIST:
-        scrapped_channel = ScrappedChannel(displayname=vip.get("displayname"),
-                                           language=vip.get("language"),
-                                           logo=vip.get("logo"),
-                                           twitchurl=vip.get("twitchurl"),
-                                           name_id=vip.get("url"),
-                                           current_rank=vip.get("rownum"))
-        channels.insert(0,scrapped_channel)
-    return channels
+        json_object['data'].insert(0, vip)
+    return json_object
+    #     scrapped_channel = ScrappedChannel(
+    #         displayname=vip.get("displayname"),
+    #         language=vip.get("language"),
+    #         logo=vip.get("logo"),
+    #         twitchurl=vip.get("twitchurl"),
+    #         name_id=vip.get("url"),
+    #         current_rank=vip.get("rownum"),
+    #         viewminutes=vip.get("viewminutes"),
+    #         streamedminutes=vip.get("streamedminutes"),
+    #         maxviewers=vip.get("maxviewers"),
+    #         avgviewers=vip.get("avgviewers"),
+    #         followers=vip.get("followers"),
+    #         followersgained=vip.get("followersgained"),
+    #         partner=vip.get("partner"),
+    #         affiliate=vip.get("affiliate"),
+    #         mature=vip.get("mature"),
+    #         previousviewminutes=vip.get("previousviewminutes"),
+    #         previousstreamedminutes=vip.get("previousstreamedminutes"),
+    #         previousmaxviewers=vip.get("previousmaxviewers"),
+    #         previousavgviewers=vip.get("previousavgviewers"),
+    #         previousfollowergain=vip.get("previousfollowergain")
+    #     )
+    #     channels.insert(0,scrapped_channel)
+    # return channels
 
 

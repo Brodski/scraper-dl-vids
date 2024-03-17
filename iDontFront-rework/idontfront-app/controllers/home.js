@@ -7,7 +7,7 @@ exports.homepage = async (req, res) => {
     db = new databaseSingleton();
     db.printHi()
     channelsList = await db.getChannelsForHomepage(); // type = models/Channel.js
-    console.log("homepage's channelsList:", channelsList)
+    // console.log("homepage's channelsList:", channelsList)
     
     res.render("../views/homepage", {
         "channelsList": channelsList

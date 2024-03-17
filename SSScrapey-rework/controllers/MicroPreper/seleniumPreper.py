@@ -36,7 +36,7 @@ if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
     os.environ["MOZ_HEADLESS"] = "1"
 
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
-options.add_argument('–-autoplay-policy=user-required') 
+options.add_argument('--autoplay-policy=user-required') 
 options.add_argument('--window-size=1550,1250') # width, height
 options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
 # chrome_prefs = {
@@ -64,10 +64,6 @@ scriptPauseVidsJs = """
 """
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    if isDebug:
-        scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-        return scrapped_channels
     channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
     vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
     SLEEP_SCROLL = 2
@@ -75,7 +71,16 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     everyChannel:List[ScrappedChannel] = []
     cnt = 0
     browser = None
+    if isDebug:
+        # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+        # return scrapped_channels
 
+        # new debug
+        # return jd_onlymusic, nmplol, lolgeranimo
+        return channels[:channelMax]
+
+    print('1 running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     firefox_profile = webdriver.FirefoxProfile()
     firefox_profile.set_preference("media.block-play-until-visible", False)
@@ -85,10 +90,11 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
 
     try:
+        print('2 running. scrap4vid.........')
         browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
         print(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:
-            if cnt > channelMax:
+            if cnt >= channelMax:
                 break
             cnt = cnt + 1
             url = f'https://www.twitch.tv/{channel.name_id}/videos?filter=archives&sort=time'

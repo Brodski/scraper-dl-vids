@@ -1,6 +1,7 @@
 ####################################################################
 # BUILD
 # docker build --no-cache -t cbrodski/downloader:official_v2 -f Dockerfile_ECS_downloader  .
+# docker build --no-cache -t cbrodski/downloader:official_v2_dev -f Dockerfile_ECS_downloader  .
 
 # DEBUG `RUN`
 # docker run --env-file .\.env -e ENV=dev cbrodski/downloader:official_v2
@@ -56,10 +57,10 @@ RUN pip install -r requirements_downloader.txt \
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+COPY env_pull.sh /app/scraper-dl-vids/env_pull.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    git reset --hard origin/master ; \
     ls ; \
-    git pull origin master --force && \ 
+    sh env_pull.sh ; \
     python --version ; \
     python kickDownloader.py && \
     echo "DONE!!!!!!!!!!!!" ; 

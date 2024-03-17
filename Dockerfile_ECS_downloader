@@ -58,6 +58,7 @@ RUN pip install -r requirements_downloader.txt \
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 COPY env_pull.sh /app/scraper-dl-vids/env_pull.sh
+RUN chmod -x env_pull.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     ls ; \
     sh env_pull.sh ; \

@@ -27,8 +27,8 @@ def getConnection():
         passwd  = env_varz.DATABASE_PASSWORD,
         db      = env_varz.DATABASE,
         autocommit  = False,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        # ssl_mode    = "VERIFY_IDENTITY",
+        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 

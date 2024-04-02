@@ -131,12 +131,9 @@ def doWhisperStuff(vod: Vod, relative_path: str):
 
     start_time = time.time()
 
-    logger("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    logger("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     logger("    Channel=" + vod.channels_name_id)
-    logger("    s3_audio=" + vod.s3_audio)
-    logger("    relative_path=" + relative_path)
     logger("    file_abspath=" + file_abspath)
-    logger("    file_name: " + file_name)
     logger("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
     logger("    model_size: " + model_size)
 
@@ -207,7 +204,6 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
         logger("    (uploadCaptionsToS3) filename: " + filename) 
-        logger("    (uploadCaptionsToS3) s3CapFileKey: " + s3CapFileKey)
         content_type = ''
         if file_abs[-4:] == '.txt':
             content_type = 'text/plain; charset=utf-8'

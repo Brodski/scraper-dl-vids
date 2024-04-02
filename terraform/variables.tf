@@ -11,6 +11,21 @@ variable "sensitive_info" {
     VAST_API_KEY            = string
   })
 }
+##########
+# Docker #
+##########
+variable "preper_docker_image" {
+  type = string
+}
+variable "downloader_docker_image" {
+  type = string
+}
+variable "transcriber_docker_image" {
+  type = string
+}
+#############
+# Scheduler #
+#############
 variable "preper_schedule_cron" {
   type = string
 }
@@ -20,6 +35,9 @@ variable "downloader_schedule_cron" {
 variable "transcriber_schedule_cron" {
   type = string
 }
-variable "num_trans_instances" {
+#############################
+# Transcriber num instances #
+#############################
+variable "transcriber_num_instances" {
   type = string
 }

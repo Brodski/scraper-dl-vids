@@ -23,7 +23,6 @@ class DatabaseSingleton {
             }).promise();
             DatabaseSingleton.instance = this;
         }
-        console.log("db singleton, BAM!")
         return DatabaseSingleton.instance;
     }
 

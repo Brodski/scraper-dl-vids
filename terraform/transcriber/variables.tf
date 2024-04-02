@@ -4,7 +4,7 @@
 variable "docker_image" {
   type = string
 }
-variable "num_trans_instances" {
+variable "transcriber_num_instances" {
   type = string
 }
 variable "transcriber_schedule_cron" {

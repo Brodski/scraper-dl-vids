@@ -24,11 +24,6 @@ elif os.getenv("ENV") == "prod":
         print("failed to load dotenv")
         print(str(e))
     # variables passed from terraform > lambda
-    print("PROD")
-    print("PROD")
-    print("PROD")
-    print("PROD")
-    print('ENV: ' + os.getenv("ENV"))
     print('ENV: ' + os.getenv("ENV"))
     print('DATABASE_HOST: ' + os.getenv("DATABASE_HOST"))
     print('DATABASE: ' + os.getenv("DATABASE"))

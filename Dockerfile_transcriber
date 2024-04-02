@@ -17,18 +17,22 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 ############################################################
 # Docker build
 #    docker build --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber  .
+#    docker build --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber  .
 
 # Docker push
 #    docker push cbrodski/transcriber:official_v2
+#    docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)
 #    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2_dev 
 
 # Docker run debug
 #    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
 
 # Docker run debug 2
 #    docker run --env-file .env -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2_dev /bin/bash
 
 ############################################################
 #                                                          #
@@ -156,13 +160,12 @@ RUN pip install vastai==0.1.8
 COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-# ENTRYPOINT ls && \
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     vastai set api-key $VAST_API_KEY ; \
-    git reset --hard origin/master ; \
-    git pull origin master --force; \ 
+    sh dock_setup.sh ; \
     python kickWhisperer.py ; \
-    echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \

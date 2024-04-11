@@ -9,20 +9,20 @@ class DatabaseSingleton {
     constructor() {
         if (!DatabaseSingleton.instance) {
             console.log("DB SINGLETON HAS BEEN INIT!")
-            const certPath = path.resolve(__dirname, '../../cacert-2023-08-22.pem');
+            // const certPath = path.resolve(__dirname, '../../cacert-2023-08-22.pem');
             this.pool = mysql.createPool({
                 connectionLimit: 10, 
+                database: process.env.DATABASE,
                 host: process.env.DATABASE_HOST,
                 user: process.env.DATABASE_USERNAME,
                 password: process.env.DATABASE_PASSWORD,
-                database: process.env.DATABASE,
-                ssl: {
-                    ca: fs.readFileSync(certPath),
-                }
+                port: process.env.DATABASE_PORT,
+                // ssl: {
+                //     ca: fs.readFileSync(certPath),
+                // }
             }).promise();
             DatabaseSingleton.instance = this;
         }
-        console.log("db singleton, BAM!")
         return DatabaseSingleton.instance;
     }
 
@@ -30,7 +30,6 @@ class DatabaseSingleton {
         console.log("hello from the singelton babyyyyyyyyyyy")
         console.log("process.env.DATABASE_HOST", process.env.DATABASE_HOST)
         console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME)
-        console.log("process.env.DATABASE_PASSWORD", process.env.DATABASE_PASSWORD)
         console.log("process.env.DATABASE", process.env.DATABASE)
     }
     async getVodById(vodId) {
@@ -73,6 +72,21 @@ class DatabaseSingleton {
     }
 
     async getChannelsForHomepage() {
+        const pushChannelToBottom = (resultChannelObj) => {
+            // let channels = ['lolgeranimo', 'nmplol']
+            let channels = ['lolgeranimo']
+            for (let chan of channels) {
+                console.log("FOUND????")
+                const index = resultChannelObj.find(item => item.nameId === chan);
+                if (index !== -1) {
+                    console.log("FOUND!!!!!", chan)
+                    console.log("FOUND!!!!!", index)
+                    const [itemToRemove] = resultChannelObj.splice(index, 1);
+                    resultChannelObj.push(itemToRemove);
+                  }
+            }
+            return resultChannelObj;
+        }
         try {
             const sqlQuery = `
                 SELECT *
@@ -84,13 +98,20 @@ class DatabaseSingleton {
                     AND v.TranscriptStatus = 'completed'
                 ) ORDER BY CurrentRank ASC;`;
             const [results, fields] = await this.pool.query(sqlQuery);
-            let resultChannelObj = results.map( chan => new Channel(chan))
-            const index = resultChannelObj.find(item => item.nameId === 'lolgeranimo');
-            if (index !== -1) {
-                const [itemToRemove] = resultChannelObj.splice(index, 1);
-                resultChannelObj.push(itemToRemove);
-              }
+            let resultChannelObj = results.map( chan => new Channel(chan));
+            resultChannelObj.sort( (a,b) => b.viewMinutes - a.viewMinutes )
+            // resultChannelObj = pushChannelToBottom(resultChannelObj);
+            // console.log("RETNRING THIS!!!!!!")
+            // console.log("RETNRING THIS!!!!!!")
+            // console.log("RETNRING THIS!!!!!!")
+            // console.log(resultChannelObj)
             return resultChannelObj;
+            // const index = resultChannelObj.find(item => item.nameId === 'lolgeranimo');
+            // if (index !== -1) {
+            //     const [itemToRemove] = resultChannelObj.splice(index, 1);
+            //     resultChannelObj.push(itemToRemove);
+            //   }
+            // return resultChannelObj;
         } catch (error) {
             console.error('Error retrieving channels: ', error);
             // throw error;

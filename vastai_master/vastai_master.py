@@ -24,13 +24,14 @@ print("DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')", os.environ.get(
 
 
 VAST_API_KEY = os.environ.get('VAST_API_KEY')
-NUM_TRANS_INSTANCES = os.environ.get('NUM_TRANS_INSTANCES')
+TRANSCRIBER_NUM_INSTANCES = os.environ.get('TRANSCRIBER_NUM_INSTANCES')
 AWS_SECRET_ACCESS_KEY = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
 AWS_ACCESS_KEY_ID = os.environ.get('MY_AWS_ACCESS_KEY_ID')
 ENV = os.environ.get('ENV')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+DATABASE_PORT = os.environ.get('DATABASE_PORT')
 DATABASE = os.environ.get('DATABASE')
 DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 
@@ -73,6 +74,7 @@ def create_instance(instance_id):
                 'DATABASE_HOST': DATABASE_HOST,
                 'DATABASE_USERNAME': DATABASE_USERNAME,
                 'DATABASE_PASSWORD': DATABASE_PASSWORD,
+                'DATABASE_PORT': DATABASE_PORT,
                 'DATABASE': DATABASE,
                 'VAST_API_KEY': VAST_API_KEY
             },
@@ -156,8 +158,8 @@ def printAsTable(goodOffers):
 
         
 def handler_kickit(event, context):
-    num_instances = 1 if NUM_TRANS_INSTANCES is None else int(NUM_TRANS_INSTANCES)
-    print("NUM_TRANS_INSTANCES", NUM_TRANS_INSTANCES)
+    num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
+    print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
     for i in range(num_instances):
         print("handler_kickit() beign loop:", i)
         find_create_confirm_instance(event, context)

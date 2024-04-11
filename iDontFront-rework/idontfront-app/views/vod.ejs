@@ -75,7 +75,7 @@
             let i = 0;
             for (let segment of transcript_json) { 
             if (i==0) {
-                console.log(segment)
+                console.log("vod's first segment: ", segment)
             }
             i++
             let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
@@ -102,34 +102,3 @@
 
     </body>
 </html>
-
-<% /*
- scrapped_data_s3 = 
-scrapped_data_s3 = 
-[
-    {
-      channel: 'lolgeranimo',
-      id: '1861789415',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1861789415/2v2v2v2_Pushing_Gladiator-v1861789415.mp3',
-      title: '2v2v2v2_Pushing_Gladiator-v1861789415.mp3'
-    },
-    {
-      channel: 'lolgeranimo',
-      id: '1862390912',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1862390912/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3',
-      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3'
-    },
-    {
-      channel: 'lolgeranimo',
-      id: '1863373278',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863373278/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3',
-      title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3'
-    },
-    {
-      channel: 'lolgeranimo',
-      id: '1863728745',
-      link_s3: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863728745/Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3',
-      title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
-    }
-  ]
-*/ %>

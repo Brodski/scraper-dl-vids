@@ -1,12 +1,12 @@
-av==10.0.0
+av==11.0.0
 boto3==1.28.40
 botocore==1.31.40
 certifi==2023.7.22
 charset-normalizer==3.2.0
 cmake==3.27.2
 coloredlogs==15.0.1
-ctranslate2==3.23.0
-faster-whisper==0.10.0
+ctranslate2==4.1.0
+faster-whisper==1.0.1
 ffmpeg-python==0.2.0
 filelock==3.12.3
 flatbuffers==23.5.26

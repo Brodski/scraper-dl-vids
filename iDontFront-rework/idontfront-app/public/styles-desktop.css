@@ -18,7 +18,7 @@ body {
         margin-bottom: auto;
     }
     .channel_row {
-        display: flex;
+        /* display: flex; */
     }
     .channel_row h2 {
         padding-left: 8px;

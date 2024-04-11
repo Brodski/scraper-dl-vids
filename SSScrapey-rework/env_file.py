@@ -24,11 +24,6 @@ elif os.getenv("ENV") == "prod":
         print("failed to load dotenv")
         print(str(e))
     # variables passed from terraform > lambda
-    print("PROD")
-    print("PROD")
-    print("PROD")
-    print("PROD")
-    print('ENV: ' + os.getenv("ENV"))
     print('ENV: ' + os.getenv("ENV"))
     print('DATABASE_HOST: ' + os.getenv("DATABASE_HOST"))
     print('DATABASE: ' + os.getenv("DATABASE"))
@@ -50,6 +45,7 @@ PREP_SELENIUM_IS_HEADLESS = env_vars['PREP_SELENIUM_IS_HEADLESS']
 PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
 PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
 PREP_SULLY_NUM_CHANNELS = env_vars['PREP_SULLY_NUM_CHANNELS']
+PREP_SULLY_DAYS = env_vars['PREP_SULLY_DAYS']
 
 WHSP_A2T_ASSETS_AUDIO = env_vars['WHSP_A2T_ASSETS_AUDIO']
 WHSP_A2T_ASSETS_CAPTIONS = env_vars['WHSP_A2T_ASSETS_CAPTIONS']
@@ -60,10 +56,11 @@ WHSP_MODEL_SIZE = env_vars['WHSP_MODEL_SIZE']
 WHSP_IS_CLOUDWATCH = env_vars['WHSP_IS_CLOUDWATCH']
 
 ENV = os.getenv("ENV")
+DATABASE = os.getenv("DATABASE")
 DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-DATABASE = os.getenv("DATABASE")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
 DWN_IS_SHORT_DEV_DL = os.getenv("DWN_IS_SHORT_DEV_DL") if os.getenv("DWN_IS_SHORT_DEV_DL") else DWN_IS_SHORT_DEV_DL
 
 BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']

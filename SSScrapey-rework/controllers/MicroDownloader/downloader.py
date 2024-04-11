@@ -22,13 +22,14 @@ import env_file as env_varz
 
 def getConnection():
     connection = MySQLdb.connect(
+        db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
+        port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        # ssl_mode    = "VERIFY_IDENTITY",
+        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
@@ -133,16 +134,16 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         return []
     finally:
         connection.close()
-    print("    (getTodoFromDatabase) Vod candidates:")
+    # print("    (getTodoFromDatabase) Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
         # Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,        ChanCurrentRank, rownum = vod_
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,        ChanCurrentRank, rownum = vod_
         vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
-        vod.print()
+        # vod.print()
         resultsArr.append(vod)
 
-    highest_priority_vod = None
+    highest_priority_vod: Vod = None
     #Recall, results arr is sorted by priority via smart sql query
     for vod in resultsArr:
         vod.print()
@@ -151,7 +152,9 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
             break
     print("    (getTodoFromDatabase) highest_priority_vod:")
     if highest_priority_vod:
-        highest_priority_vod.printDebug()
+        print(f"    name: ${highest_priority_vod.channels_name_id}")
+        print(f"    id: ${highest_priority_vod.id}")
+        # highest_priority_vod.printDebug()
     if isDebug:
         # 'https://www.twitch.tv/videos/1783465374' # pro leauge
         # 'https://www.twitch.tv/videos/1791750006' # lolgera
@@ -423,7 +426,7 @@ def convertVideoToSmallAudio(meta):
 
 def _execSubprocCmd(ffmpeg_command):
     try:
-        print("    (exec) Starting subprocess!")
+        # print("    (exec) Starting subprocess!")
         # print("    (exec) ffmpeg_command=" + " ".join(ffmpeg_command))
         stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         # print(stdoutput)

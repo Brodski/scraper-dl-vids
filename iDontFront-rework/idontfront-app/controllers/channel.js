@@ -22,8 +22,8 @@ exports.channel = async (req, res) => {
         let [resultsChan, fields2] = await db.getChannel(req.params.name)
         let vods = resultsVods.map( x => new Vod(x))
         let channels = resultsChan.map( x => new Channel(x))
-        console.log("vods:", vods)
-        console.log("channels:", channels)
+        console.log("vods.length:", vods.length)
+        console.log("channels.length:", channels.length)
         if (channels.length < 1) {
             console.error("BAD QUERY FOR CHANNELS! OR VODS (a)")
             console.log(channels)
@@ -52,13 +52,6 @@ exports.channel = async (req, res) => {
         let [resultsVods, fields1] = await db.getVodById(req.params.id)
         let vods = resultsVods.map( x => new Vod(x))
         let channels = resultsChan.map( x => new Channel(x))
-        console.log("TRANSCRIPT - VOD") 
-        console.log("resultsVods") 
-        console.log(resultsVods) 
-        console.log(channels) 
-        console.log(vods) 
-        console.log(channels.length) 
-        console.log(vods.length) 
         if (channels.length != 1 || vods.length != 1) {
             console.error("BAD QUERY FOR CHANNELS! OR VODS (b)")
             console.log(channels)
@@ -74,15 +67,12 @@ exports.channel = async (req, res) => {
         vttKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3VttKey();
         jsonKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TranscriptKey();
         txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
+        console.log("TRANSCRIPT - VOD: ", vods[0]?.id, vods[0]?.title) 
         res.render("../views/vod", { // ---> /channel/lolgeranimo
-            // "channel": vod.channel,
             "transcript_json": transcript_json.segments,
-            // "vod": vod,
-            // "vod2": custom_metadata[req.params.id],
             "transcript_s3_vtt":  vttKey,
             "transcript_s3_json": jsonKey,
             "transcript_s3_txt":  txtKey,
-            // "profilePic": profilePic,
             "vod": vods[0],
             "channel": channels[0]
         })

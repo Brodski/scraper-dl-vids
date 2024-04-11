@@ -1,5 +1,7 @@
 from datetime import datetime
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+import requests
 from models.ScrappedChannel import ScrappedChannel
 from typing import List
 import env_file as env_varz
@@ -9,13 +11,14 @@ import os
 def getConnection():
     print('got connection')
     connection = MySQLdb.connect(
+        db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
+        port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        # ssl_mode    = "VERIFY_IDENTITY",
+        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
@@ -36,8 +39,92 @@ def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
             connection.rollback()
     connection.close()
 
+def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
+    connection = getConnection()
+    with connection.cursor() as cursor:
+        scrapped_name_ids = [chn.name_id for chn in scrapped_channels]
+        formatted_ids = ', '.join([f"'{str(name)}'" for name in scrapped_name_ids])
+        query = f"SELECT * FROM Channels;"
+
+        cursor.execute(query)
+
+        # Get results
+        channels_all_in_db_aux = cursor.fetchall()
+        channels_all_in_db: List[ScrappedChannel] = []
+        for tup in channels_all_in_db_aux:
+            channel = ScrappedChannel(
+                name_id = tup[0],
+                displayname = tup[1],
+                language = tup[2],
+                # links = tup[]
+                logo = tup[3],
+                current_rank = tup[4],
+                twitchurl = tup[5],
+                viewminutes = tup[6],
+                streamedminutes = tup[7],
+                maxviewers = tup[8],
+                avgviewers = tup[9],
+                followers = tup[10],
+                followersgained = tup[11],
+                partner = tup[12],
+                affiliate = tup[13],
+                mature = tup[14],
+                previousviewminutes = tup[15],
+                previousstreamedminutes = tup[16],
+                previousmaxviewers = tup[17],
+                previousavgviewers = tup[18],
+                previousfollowergain = tup[19],
+                # daysMeasured = tup[20]
+            )
+            channels_all_in_db.append(channel)
+        matching_channels = [ch1 for ch1 in channels_all_in_db if any(ch1.name_id == ch2.name_id for ch2 in scrapped_channels)]
+
+        scrapped_id = {ch.name_id for ch in scrapped_channels}
+        all_channels_minus_scrapped = [ch1 for ch1 in channels_all_in_db if ch1.name_id not in scrapped_id]
+
+        print("matching_channels")
+        print([ch.name_id for ch in matching_channels])
+        print("")
+        print("all_channels_minus_scrapped")
+        print([ch.name_id for ch in all_channels_minus_scrapped])
+        
+        vip_list = [channel for channel in scrapped_channels if channel.name_id in ("lolgeranimo", "nmplol")]
+        return all_channels_minus_scrapped + vip_list
+
+
+def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[ScrappedChannel]):
+    all_channels_minus_scrapped
+    cnt = -1
+    for chan in all_channels_minus_scrapped:
+        cnt = cnt + 1
+        url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
+        print(f"-------  {cnt}  --------")
+        print(url)
+        response = requests.get(url)
+        if response.status_code == 200:
+            text_data = response.content.decode('utf-8') 
+        
+            soup = BeautifulSoup(text_data, 'html.parser')
+            data1 = soup.select("#pageHeaderMiddle .MiddleSubHeaderContainer .MiddleSubHeaderItemValue")
+            data2 = soup.select(".InfoStatPanelContainerTop .InfoStatPanelWrapper .InfoStatPanelTL")
+            
+            chan.followers  = data1[0].get_text().replace(",", "")
+            chan.partner    = True if data1[2].get_text().lower() == "partnered" else False
+            chan.mature     = True if data1[3].get_text().lower() == "yes" else False
+
+            chan.avgviewers         = data2[0].get_text().replace(",", "")
+            chan.viewminutes        = int(data2[1].get_text().replace(",", "")) * 60 # HOURS
+            chan.followersgained    = data2[2].get_text().replace(",", "")
+            chan.maxviewers         = data2[3].get_text().replace(",", "")
+            chan.streamedminutes    = int(data2[4].get_text().replace(",", "")) * 60 #HOURS
+            chan.print()
+
+        else:
+            print('An error has occurred.')
+
 def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
+    days_measured = int(env_varz.PREP_SULLY_DAYS)
     with connection.cursor() as cursor:
         # Make SQL Query
         name_ids = [chn.name_id for chn in scrapped_channels]
@@ -56,8 +143,8 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
 
         # Add new channels to database
         if new_channels:
-            sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId) VALUES (%s, %s, %s, %s, %s, %s)"
-            values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id) for chan in new_channels]
+            sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId, ViewMinutes, StreamedMinutes, MaxViewers, AvgViewers, Followers, FollowersGained, Partner, Affiliate, Mature, PreviousViewMinutes, PreviousStreamedMinutes, PreviousMaxViewers, PreviousAvgViewers, PreviousFollowerGain, DaysMeasured) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id, chan.viewminutes, chan.streamedminutes, chan.maxviewers, chan.avgviewers, chan.followers, chan.followersgained, chan.partner, chan.affiliate, chan.mature, chan.previousviewminutes, chan.previousstreamedminutes, chan.previousmaxviewers, chan.previousavgviewers, chan.previousfollowergain, days_measured) for chan in new_channels]
             try:
                 cursor.executemany(sql, values)
                 connection.commit()
@@ -65,8 +152,10 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
             except Exception as e:
                 print(f"Error occurred (addNewChannelToDb): {e}")
                 connection.rollback()
+            finally:
+                connection.close()
         # for chan in scrapped_channels:
-        #     if chan.name_id in non_existing_name_ids:
+        #     if chan.name_id in old_name_ids:
         #         print("Adding new channel:", chan.name_id)
         #         sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId) VALUES (%s, %s, %s, %s, %s, %s)"
         #         values = (chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id)
@@ -77,14 +166,13 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
         #             print(f"Error occurred: {e}")
         #             connection.rollback()
         # finally:
-    connection.close()
-                
+
 def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
         # A. Depriorities all old ones by pushing it down in Ranking
-        # values = [(len(scrapped_channels), chan.name_id) for chan in scrapped_channels]
         sql = "UPDATE Channels SET CurrentRank = CurrentRank + %s"
+        print("len(scrapped_channels)",len(scrapped_channels))
         try:
             values = (len(scrapped_channels),) # Ensure that the value is passed as a tuple
             affected_count = cursor.execute(sql, values)
@@ -97,13 +185,14 @@ def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
         # B. Set priroity for current & new round
         values = [(chan.current_rank, chan.name_id) for chan in scrapped_channels]
         sql = "UPDATE Channels SET CurrentRank = %s WHERE NameId = %s"
+        print("UPDATING THESE!")
+        print(values)
         try:
             cursor.executemany(sql, values)
             connection.commit()
         except Exception as e:
             print(f"Error occurred (updateChannelRankingLazily B): {e}")
             connection.rollback()
-
     connection.close()
 
 def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
@@ -114,7 +203,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
-            chan.print()
+            print("----------------------")
+            # chan.print()
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
             if len(vod_ids) == 0:
@@ -157,6 +247,43 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                     connection.rollback()
     connection.close()
     print("    (updateVodsDb) Completed update!")
+
+def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
+    connection = getConnection()
+    days_measured = int(env_varz.PREP_SULLY_DAYS)
+    sql = """
+        UPDATE Channels
+        SET 
+            ViewMinutes = %s,
+            StreamedMinutes = %s,
+            MaxViewers = %s,
+            AvgViewers = %s,
+            Followers = %s,
+            FollowersGained = %s,
+            Partner = %s,
+            Affiliate = %s,
+            Mature = %s,
+            PreviousViewMinutes = %s,
+            PreviousStreamedMinutes = %s,
+            PreviousMaxViewers = %s,
+            PreviousAvgViewers = %s,
+            PreviousFollowerGain = %s,
+            DaysMeasured = %s
+        WHERE NameId  = %s
+    """
+    values = [(chan.viewminutes, chan.streamedminutes, chan.maxviewers, chan.avgviewers, chan.followers, chan.followersgained, chan.partner, chan.affiliate, chan.mature, chan.previousviewminutes, chan.previousstreamedminutes, chan.previousmaxviewers, chan.previousavgviewers, chan.previousfollowergain, days_measured, chan.name_id) for chan in scrapped_channels]
+    print('updateChannelWatchStats() - updating this many: ', len(values))
+    print(values)
+    try:
+        with connection.cursor() as cursor:
+            cursor.executemany(sql, values)
+        connection.commit()  # Commit the transaction
+    except Exception as e:
+        print(f"Error occurred (updateChannelWatchStats): {e}")
+        connection.rollback()
+    finally:
+        connection.close()
+    print("    (updateChannelWatchStats) Completed update!")
 
 # YYYY-MM-DD
 # CREATE TABLE Rankings (
@@ -216,6 +343,29 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
 # ALTER TABLE Vods ADD COLUMN TranscribeDate DATETIME;
 # ALTER TABLE Rankings ADD COLUMN TodoDate DATETIME;
+
+# ALTER TABLE Channels
+# ADD COLUMN ViewMinutes INT,
+# ADD COLUMN StreamedMinutes INT,
+# ADD COLUMN MaxViewers INT,
+# ADD COLUMN AvgViewers INT,
+# ADD COLUMN Followers INT,
+# ADD COLUMN FollowersGained INT,
+# ADD COLUMN Partner BOOLEAN,
+# ADD COLUMN Affiliate BOOLEAN,
+# ADD COLUMN Mature BOOLEAN,
+# ADD COLUMN PreviousViewMinutes INT,
+# ADD COLUMN PreviousStreamedMinutes INT,
+# ADD COLUMN PreviousMaxViewers INT,
+# ADD COLUMN PreviousAvgViewers INT,
+# ADD COLUMN PreviousFollowerGain INT;
+# ADD COLUMN DaysMeasured INT;
+
+# !!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!
+# ALTER TABLE Channels
+# DROP COLUMN NumberOfVods;
+
+
 
 # CREATE TABLE Channels (
 #     DisplayName VARCHAR(255),

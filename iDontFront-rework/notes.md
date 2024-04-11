@@ -1,5 +1,4 @@
-cd C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\iDontFront-rework\idontfront-app
-cd idontfront-app
+
 <!-- docker build -t idontfront . -->
 docker build --no-cache -t idontfront:official_v2 -f Dockerfile_idontfront  .
 

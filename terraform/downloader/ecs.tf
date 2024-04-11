@@ -38,6 +38,9 @@ resource "aws_ecs_task_definition" "download_task" {
         { name = "DATABASE_PASSWORD"
           value =var.sensitive_info.DATABASE_PASSWORD 
         },
+        { name = "DATABASE_PORT"
+          value =var.sensitive_info.DATABASE_PORT 
+        },
         { name = "DATABASE"
           value =var.sensitive_info.DATABASE 
         },

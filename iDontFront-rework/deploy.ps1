@@ -4,7 +4,7 @@
 #                                                  #
 ####################################################
 # $ ./deploy.ps1 -env "dev"
-# $ ./deploy.ps1 -env "dev" -tag "offical_v2_123123123"
+# $ ./deploy.ps1 -env "dev" -tag "official_v2_dev_2024.04.10_33s"
 
 
 ####################################################
@@ -23,9 +23,12 @@ param (
 )
 $ErrorActionPreference = 'Stop'
 $dateString = Get-Date -Format "yyyy.MM.dd_ss's'"
-$tag_name = "official_v2_$dateString"
+$tag_name = "official_v2_${env}_${dateString}"
 $TF_ENVIRONMENT=$env
-
+echo $tag_name
+echo $tag_name
+echo $tag_name
+echo $tag_name
 if ($env -ne "prod" -and $env -ne "dev") {
     Write-Host "The environment must be 'prod' or 'dev'."
     exit

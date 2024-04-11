@@ -1,7 +1,7 @@
 ####################################################################
 # BUILD
-# docker build --no-cache -t cbrodski/downloader:official_v2 -f Dockerfile_ECS_downloader  .
-# docker build --no-cache -t cbrodski/downloader:official_v2_dev -f Dockerfile_ECS_downloader  .
+# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/downloader:official_v2 -f Dockerfile_ECS_downloader  .
+# docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/downloader:official_v2_dev -f Dockerfile_ECS_downloader  .
 
 # DEBUG `RUN`
 # docker run --env-file .\.env -e ENV=dev cbrodski/downloader:official_v2
@@ -10,6 +10,7 @@
 
 # PUSH
 # docker push cbrodski/downloader:official_v2
+# docker push cbrodski/downloader:official_v2_dev
 ####################################################################
 FROM python:3.10.13-bullseye
 
@@ -22,6 +23,10 @@ LABEL vendor="Bski Inc."
 LABEL license="Bski"
 
 
+# Arguments
+ARG ENV_TYPE=dev
+ENV ENV=${ENV_TYPE}
+
 ###########
 # Project #
 ###########
@@ -32,6 +37,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt install git -y 
 RUN git clone https://github.com/Brodski/scraper-dl-vids.git 
 COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
+RUN sh dock_setup.sh
 
 #######
 # Pip #
@@ -58,10 +67,8 @@ RUN pip install -r requirements_downloader.txt \
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-COPY dock_setup.sh dock_setup.sh
-RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    sh dock_setup.sh ; \
+    # sh dock_setup.sh ; \
     python --version ; \
     python kickDownloader.py && \
     echo "DONE!!!!!!!!!!!!" ; 

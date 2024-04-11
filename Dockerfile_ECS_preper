@@ -1,7 +1,7 @@
 ####################################################################
 # BUILD
-# docker build --no-cache -t cbrodski/preper:official_v2 -f Dockerfile_ECS_preper  .
-# docker build --no-cache -t cbrodski/preper:official_v2_dev -f Dockerfile_ECS_preper  .
+# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/preper:official_v2 -f Dockerfile_ECS_preper  .
+# docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/preper:official_v2_dev -f Dockerfile_ECS_preper  .
 
 # DEBUG `RUN`
 # docker run --env-file .\.env -it -e ENV=dev cbrodski/preper:official_v2 /bin/bash
@@ -9,6 +9,7 @@
 
 # PUSH
 # docker push cbrodski/preper:official_v2
+# docker push cbrodski/preper:official_v2_dev
 ####################################################################
 FROM python:3.10.13-bullseye
 
@@ -20,6 +21,10 @@ LABEL build_date="2024-01-01"
 LABEL vendor="Bski Inc."
 LABEL license="Bski"
 
+
+# Arguments
+ARG ENV_TYPE=dev
+ENV ENV=${ENV_TYPE}
 
 ###########
 # Project #
@@ -46,12 +51,18 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 # Dependencies #
 ################
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN if [ "${ENV}" = "dev" ]; then \
+        git fetch origin dev && \
+        git checkout dev && \
+        git reset --hard origin/dev && \
+        git pull origin dev --force; \
+    else \
+        git reset --hard origin/master ; \
+        git pull origin master --force ; \
+        echo "Running in production mode" ; \
+    fi
 RUN pip install -r requirements_preper.txt
 RUN apt-get install -y firefox-esr
-# pip install beautifulsoup4==4.12.2
-# pip install selenium==4.16.0
-# pip install webdriver-manager==4.0.1
-# pip install mysqlclient==2.2.0 
 
 
 ######

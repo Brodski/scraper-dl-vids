@@ -1,5 +1,6 @@
 {
     "env" : {
-        "NODE_ENV": "local"
+        "NODE_ENV": "local",
+        "NODE_ENVx": "prod"
     }
 }

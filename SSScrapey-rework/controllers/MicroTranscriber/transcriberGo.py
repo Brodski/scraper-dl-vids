@@ -13,9 +13,6 @@ import env_file as env_varz
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 
 
-# def logger():
-#     pass
-# logger = Cloudwatch.log
 def logger():
     pass
 logger = Cloudwatch.log

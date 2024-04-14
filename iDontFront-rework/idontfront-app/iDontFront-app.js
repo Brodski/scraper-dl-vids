@@ -42,8 +42,6 @@ if (process.env.IS_LAMBDA == "true") {
         context.callbackWaitsForEmptyEventLoop = false;
         const serverlessHandler = serverless(app)
         const result = await serverlessHandler(event, context)
-        // console.log("result")
-        // console.log(result)
         return result
     }
 }

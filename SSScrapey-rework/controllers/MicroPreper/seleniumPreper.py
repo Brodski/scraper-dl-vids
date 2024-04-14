@@ -127,7 +127,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                     pass
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
-            print(f"Got {len(everyChannel)} vids for {browser.title}")
+            print(f"Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
         print("An error occurred :(")
         print(f"{e}")

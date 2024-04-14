@@ -12,26 +12,19 @@ print('os.getenv("ENV"):', os.getenv("ENV"))
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_local')
+    # env_vars = dotenv_values('.env_public_prod')
+    # load_dotenv(dotenv_prod_path, override=True)
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
     env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
 elif os.getenv("ENV") == "prod":
+    # some prod variables passed from terraform ---> lambda
     env_vars = dotenv_values('.env_public_prod')
     env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
-    try:
-        load_dotenv(dotenv_prod_path, override=True)
-    except Exception as e:
-        print("failed to load dotenv")
-        print(str(e))
-    # variables passed from terraform > lambda
-    print('ENV: ' + os.getenv("ENV"))
-    print('DATABASE_HOST: ' + os.getenv("DATABASE_HOST"))
-    print('DATABASE: ' + os.getenv("DATABASE"))
-
+    load_dotenv(dotenv_prod_path, override=True)
 else:
     print("ENV is None! NEED ENV")
-    sys.exit(1)  # Exit the script with an error code
-
+    sys.exit(1) 
 
 
 

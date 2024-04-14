@@ -362,8 +362,7 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
 # ADD COLUMN DaysMeasured INT;
 
 # !!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!
-# ALTER TABLE Channels
-# DROP COLUMN NumberOfVods;
+# ALTER TABLE Channels DROP COLUMN NumberOfVods;
 
 
 

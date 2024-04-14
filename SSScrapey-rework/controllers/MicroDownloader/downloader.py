@@ -21,6 +21,13 @@ from controllers.MicroDownloader.errorEnum import Errorz
 import env_file as env_varz
 
 def getConnection():
+
+    print("db      =" , env_varz.DATABASE)
+    print("host    =" , env_varz.DATABASE_HOST)
+    print("user    =" , env_varz.DATABASE_USERNAME)
+    print("passwd  =" , env_varz.DATABASE_PASSWORD)
+    print("port    =" , int(env_varz.DATABASE_PORT))
+
     connection = MySQLdb.connect(
         db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,

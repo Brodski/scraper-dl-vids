@@ -5,6 +5,7 @@
 ####################################################
 # $ ./deploy.ps1 -env "dev"
 # $ ./deploy.ps1 -env "dev" -tag "official_v2_dev_2024.04.10_33s"
+# $ ./deploy.ps1 -env "prod" -tag "official_v2_prod_2024.04.12_30s"
 
 
 ####################################################
@@ -12,7 +13,6 @@
 #                    SCRIPT                        #
 #                                                  #
 ####################################################
-
 ########################
 # powershell variables #
 ########################
@@ -33,7 +33,11 @@ if ($env -ne "prod" -and $env -ne "dev") {
     Write-Host "The environment must be 'prod' or 'dev'."
     exit
 }
-
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com
+if (-not $?) {
+    Write-Error "Aws login command failed"
+    exit 1
+}
 ##################
 # Terraform Init #
 ##################

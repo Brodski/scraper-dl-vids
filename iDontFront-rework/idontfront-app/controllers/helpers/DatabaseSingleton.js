@@ -72,6 +72,7 @@ class DatabaseSingleton {
     }
 
     async getChannelsForHomepage() {
+        console.log("getting channels 4 homepage")
         const pushChannelToBottom = (resultChannelObj) => {
             // let channels = ['lolgeranimo', 'nmplol']
             let channels = ['lolgeranimo']
@@ -100,7 +101,7 @@ class DatabaseSingleton {
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan));
             resultChannelObj.sort( (a,b) => b.viewMinutes - a.viewMinutes )
-            // resultChannelObj = pushChannelToBottom(resultChannelObj);
+            resultChannelObj = pushChannelToBottom(resultChannelObj);
             // console.log("RETNRING THIS!!!!!!")
             // console.log("RETNRING THIS!!!!!!")
             // console.log("RETNRING THIS!!!!!!")

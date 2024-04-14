@@ -1,3 +1,4 @@
+import traceback
 from models.ScrappedChannel import ScrappedChannel
 from models.Vod import Vod
 from typing import List
@@ -30,5 +31,6 @@ def prepare(isDebug=False):
         databasePreper.updateVodsDb(scrapped_channels)
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+        print(traceback.format_exc())
     print("Finished step 1 Preper-Service")
     return "Finished step 1 Preper-Service"

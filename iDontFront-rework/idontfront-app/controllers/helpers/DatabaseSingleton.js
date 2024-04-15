@@ -72,22 +72,7 @@ class DatabaseSingleton {
     }
 
     async getChannelsForHomepage() {
-        console.log("getting channels 4 homepage")
-        const pushChannelToBottom = (resultChannelObj) => {
-            // let channels = ['lolgeranimo', 'nmplol']
-            let channels = ['lolgeranimo']
-            for (let chan of channels) {
-                console.log("FOUND????")
-                const index = resultChannelObj.find(item => item.nameId === chan);
-                if (index !== -1) {
-                    console.log("FOUND!!!!!", chan)
-                    console.log("FOUND!!!!!", index)
-                    const [itemToRemove] = resultChannelObj.splice(index, 1);
-                    resultChannelObj.push(itemToRemove);
-                  }
-            }
-            return resultChannelObj;
-        }
+        console.log("getting channels for homepage...")
         try {
             const sqlQuery = `
                 SELECT *
@@ -100,19 +85,11 @@ class DatabaseSingleton {
                 ) ORDER BY CurrentRank ASC;`;
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan));
-            resultChannelObj.sort( (a,b) => b.viewMinutes - a.viewMinutes )
-            resultChannelObj = pushChannelToBottom(resultChannelObj);
-            // console.log("RETNRING THIS!!!!!!")
-            // console.log("RETNRING THIS!!!!!!")
-            // console.log("RETNRING THIS!!!!!!")
-            // console.log(resultChannelObj)
+            resultChannelObj.sort( (a,b) => {
+                // first sort by viewMinutes, then by peviouwViewMinutes, then by followers
+                return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
+            })
             return resultChannelObj;
-            // const index = resultChannelObj.find(item => item.nameId === 'lolgeranimo');
-            // if (index !== -1) {
-            //     const [itemToRemove] = resultChannelObj.splice(index, 1);
-            //     resultChannelObj.push(itemToRemove);
-            //   }
-            // return resultChannelObj;
         } catch (error) {
             console.error('Error retrieving channels: ', error);
             // throw error;

@@ -59,3 +59,7 @@ sensitive-vars.tfvars
 **/vars_dev.tfvars
 **/vars_prod.tfvars
 **/.terraform.tfstate.lock.info
+
+insanely-fast/*
+!insanely-fast/test_helperz/
+!insanely-fast/test_helperz/*

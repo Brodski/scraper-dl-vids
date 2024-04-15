@@ -1,0 +1,139 @@
+############################################################
+#                                                          #
+#                        PROD DEPLOY                       #
+#                                                          #
+############################################################
+# 
+# 1  docker build --no-cache -t cbrodski/transcriber:insaneo -f Dockerfile_insaneo .
+# 2  docker push cbrodski/transcriber:insaneo
+
+# Docker run (local)
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2_dev 
+
+# Docker run debug
+#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
+
+# Docker run debug 2
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2_dev /bin/bash
+
+    
+############################################################
+#                                                          #
+#                     VAST AI COMMANDS                     #
+#                                                          #
+############################################################
+# Vast AI Search:
+#     python .\vast search offers --order=inet_down_cost --on-demand 'dph < 0.12  cuda_vers >= 12  cpu_ram > 16 inet_down_cost < 0.2 disk_space > 22'
+
+# Vasi AI Create:
+#    vastai create instance 6479528 --image cbrodski/audio2text:latest --disk 23
+
+# Vast AI SSH
+#    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 40136 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+
+
+# Deploy
+# 1. Go to Vast AI Console:
+# 2. Docker Run: use docker ENTRYPOINT. 
+# 3. -e AWS_SECRET_ACCESS_KEY='xxxxxxxxxxx' -e AWS_ACCESS_KEY_ID='xxxxxxxxxx' -e DATABASE_HOST='xxxxxxxxxxx' -e DATABASE_USERNAME='xxxxxxxxxxxxx' -e DATABASE_PASSWORD='xxxxxxxxxxx' -e DATABASE='idontfront-dev'
+
+
+############################################################
+FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
+
+# Arguments
+ARG ENV_TYPE=dev
+ENV ENV=${ENV_TYPE}
+
+##########
+# Python #
+##########
+WORKDIR /app
+RUN apt update \
+    && apt-get update \
+    && apt install curl  -y \
+    && apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev -y \
+    && curl https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz -o Python-3.10.10.tgz \
+    && tar -xzf Python-3.10.10.tgz \
+    && cd Python-3.10.10/ \
+    && ./configure --enable-optimizations --with-ensurepip=install \
+    && make -j $(nproc) \
+    && make altinstall \
+    && ln -s /usr/local/bin/python3.10 /usr/local/bin/python \
+    && cd .. \
+    && rm Python-3.10.10.tgz 
+
+
+#######
+# Pip #
+#######    
+WORKDIR /app
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py pip==23.0.1 \
+    && pip --version \
+    && rm get-pip.py 
+
+
+###########
+# Project #
+###########
+WORKDIR /app
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
+RUN apt install git -y \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+   
+#########
+# MYSQL #
+#########
+WORKDIR /app
+RUN apt-get install -y pkg-config \ 
+    && apt-get install -y gcc libmysqlclient-dev
+
+####################
+# Pip Dependencies #
+####################
+WORKDIR /app/scraper-dl-vids/insanely-fast
+RUN git fetch origin dev && \
+    git checkout dev && \
+    git reset --hard origin/dev && \
+    git pull origin dev --force;
+RUN pip install -r requirements_insaneo.txt 
+
+
+#########
+# cuDNN #
+#########
+WORKDIR /app
+COPY cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb . 
+RUN dpkg -i cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb  
+RUN apt install ./cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+RUN cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
+RUN apt-get update
+RUN apt-get install libcudnn8=8.9.1.23-1+cuda12.1 -y
+RUN apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 -y 
+RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+
+
+# https://github.com/NVIDIA/nvidia-docker/issues/1644
+RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+
+
+######################
+# VASTI AI ENDING IT #
+######################
+RUN pip install vastai==0.1.8 
+
+WORKDIR /app/scraper-dl-vids/insanely-fast
+CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    python whispererInsanelyFast.py ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; 

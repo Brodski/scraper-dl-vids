@@ -44,11 +44,12 @@
 
 
 ############################################################
-FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
+# FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
+# FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu20.04 
+# FROM nvidia/cuda:12.4.1-devel-ubuntu20.04
+FROM nvidia/cuda:12.0.0-devel-ubuntu20.04
 
-# Arguments
-ARG ENV_TYPE=dev
-ENV ENV=${ENV_TYPE}
+
 
 ##########
 # Python #
@@ -88,16 +89,17 @@ RUN apt install git -y \
     && git clone https://github.com/Brodski/scraper-dl-vids.git 
    
 #########
-# MYSQL #
+# MYSQL & FFMPEG #
 #########
 WORKDIR /app
 RUN apt-get install -y pkg-config \ 
-    && apt-get install -y gcc libmysqlclient-dev
+    && apt-get install -y gcc libmysqlclient-dev \
+    && apt-get install ffmpeg -y
 
 ####################
 # Pip Dependencies #
 ####################
-WORKDIR /app/scraper-dl-vids/insanely-fast
+WORKDIR /app/scraper-dl-vids/insanely-fast/test_helperz
 RUN git fetch origin dev && \
     git checkout dev && \
     git reset --hard origin/dev && \

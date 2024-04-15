@@ -57,6 +57,7 @@ def goInsaneoMode():
         # "condition_on_previous_text": True,
         "task": "transcribe"
     }
+    start_time = time.time()
     outputs = pipe(
         filename,
         chunk_length_s=30,
@@ -64,7 +65,7 @@ def goInsaneoMode():
         return_timestamps=True,
         generate_kwargs = generate_kwargs
     )
-    return outputs
+    return outputs, start_time
 
 def doWhisperStuff( relative_path: str):
     print("Starting WhisperStuff!")
@@ -73,12 +74,10 @@ def doWhisperStuff( relative_path: str):
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 
 
-    start_timeX = time.time()
-
     print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     print("    file_abspath=" + file_abspath)
     print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    outputs = goInsaneoMode()
+    outputs, start_timeX = goInsaneoMode()
     print("outputs")
     print(outputs)
     audio_file_name = os.path.splitext(os.path.basename(filename))[0]

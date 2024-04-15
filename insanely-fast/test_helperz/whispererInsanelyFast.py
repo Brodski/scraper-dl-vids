@@ -14,7 +14,7 @@ import os
 import time
 import faster_whisper
 import faster_whisper.utils
-from faster_whisper.utils import get_writer
+from whisper.utils import get_writer
 
 # https://github.com/Vaibhavs10/insanely-fast-whisper/issues/158 vad = bad?
 
@@ -139,6 +139,8 @@ def seconds_to_srt_time_format(prev, seconds):
 # $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
 
 def mp3FastTranscribe(filename):
+    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
     model = faster_whisper.WhisperModel(model_size_fast, compute_type="int8",  cpu_threads=16) # 4 default
     # audio_path = "{}/{}/{}".format(main_dir, asset_dir, filename)
 

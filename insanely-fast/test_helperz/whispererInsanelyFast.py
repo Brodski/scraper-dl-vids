@@ -22,9 +22,12 @@ from whisper.utils import get_writer
 # filename = "Calculated-v5057810.opus"
 # audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
 
-# filename = "Adc academy __ How to climb on Adc - Grandmaster Climb --v1802413591.mp3"
-filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
-audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+# filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+
+filename = "Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/2028592547/Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
+
 model_size_insane = "openai/whisper-medium"
 model_size_insane = "openai/whisper-large-v3"
 model_size_fast = "medium"
@@ -65,8 +68,8 @@ def goInsaneoMode():
         filename,
         chunk_length_s=30,
         batch_size=24,
-        return_timestamps="word",
-#        return_timestamps=True,
+        # return_timestamps="word",
+       return_timestamps=True,
         generate_kwargs = generate_kwargs
     )
     return outputs, start_time

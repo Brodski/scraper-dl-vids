@@ -11,8 +11,8 @@ from transformers.utils import is_flash_attn_2_available
 
 import os
 import time
-import faster_whisper
-import faster_whisper.utils
+# import faster_whisper
+# import faster_whisper.utils
 from whisper.utils import get_writer
 
 # nvcc and cuda setup v2 https://www.freecodecamp.org/news/how-to-install-nvidia-cuda-toolkit-on-ubuntu/
@@ -25,6 +25,17 @@ from whisper.utils import get_writer
 # filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
 # audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
 
+# Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547 ----> 250sec = 4.2 min
+# Adc_Academy_-_How_to_Climb_on_Adc_in_Season_14_Birthday_Stream_im_so_old-v2036392694.opus ---->  456sec = 7.6 min
+########################################################
+# 
+# apt-get install vim -y
+# git pull
+# pip install faster-whisper
+# pip install flash-attn --no-build-isolation 
+# pip install openai-whisper
+#
+########################################################
 filename = "Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/2028592547/Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
 
@@ -54,22 +65,28 @@ def goInsaneoMode():
         device=my_device,
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
     )
+    
+    if not is_flash_attn_2_available():
+        pipe.model = pipe.model.to_bettertransformer()
+    # if better_transformer:
+    #     pipe.model = pipe.model.to_bettertransformer()
+
     # https://github.com/Vaibhavs10/insanely-fast-whisper/issues/6
     generate_kwargs = {
         # "beam_size": 5,
         "language": 'en',
-        "temperature": 0.2,
-        "repetition_penalty": 3.0,
+        # "temperature": 0.2,
+        "repetition_penalty": 1.25, # 1 = default = no penatlty
       #  "condition_on_previous_text": True,
         "task": "transcribe",
     }
     start_time = time.time()
     outputs = pipe(
         filename,
-        chunk_length_s=30,
+        chunk_length_s=16, # 16 works pretty good # stide = chunk / 6
         batch_size=24,
         # return_timestamps="word",
-       return_timestamps=True,
+        return_timestamps=True,
         generate_kwargs = generate_kwargs
     )
     return outputs, start_time
@@ -150,38 +167,38 @@ def seconds_to_srt_time_format(prev, seconds):
 #
 # $ ffmpeg -i .\BarbaraWaltersFAST.mp3 -filter:a "atempo=1.5" "BarbaWaltersFASTER.mp3"
 
-def mp3FastTranscribe(filename):
-    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    model = faster_whisper.WhisperModel(model_size_fast, compute_type="int8",  cpu_threads=16) # 4 default
-    # audio_path = "{}/{}/{}".format(main_dir, asset_dir, filename)
+# def mp3FastTranscribe(filename):
+#     print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+#     print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+#     model = faster_whisper.WhisperModel(model_size_fast, compute_type="int8",  cpu_threads=16) # 4 default
+#     # audio_path = "{}/{}/{}".format(main_dir, asset_dir, filename)
 
-    start_time = time.time()
-    segments, info = model.transcribe(filename, language="en")
+#     start_time = time.time()
+#     segments, info = model.transcribe(filename, language="en")
 
-    result = {
-        "segments": []
-    }
+#     result = {
+#         "segments": []
+#     }
 
-    for segment in segments:
-        print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
-        result["segments"].append({
-            "start" : segment.start,
-            "end" :   segment.end,
-            "text" :  segment.text,
-        })
+#     for segment in segments:
+#         print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+#         result["segments"].append({
+#             "start" : segment.start,
+#             "end" :   segment.end,
+#             "text" :  segment.text,
+#         })
 
-    end_time = time.time() - start_time
-    srt_writer = get_writer("srt", './')
-    srt_writer(result, filename + ".srt")
+#     end_time = time.time() - start_time
+#     srt_writer = get_writer("srt", './')
+#     srt_writer(result, filename + ".srt")
 
-    end_time = time.time() - start_time
+#     end_time = time.time() - start_time
 
-    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-    print()
-    print("run time =" + str(end_time))
-    print()
-    print("Completed: " + filename)
+#     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+#     print()
+#     print("run time =" + str(end_time))
+#     print()
+#     print("Completed: " + filename)
 
 
 

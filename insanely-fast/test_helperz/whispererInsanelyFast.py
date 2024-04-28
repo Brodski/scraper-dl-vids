@@ -143,7 +143,7 @@ def doWhisperStuff( relative_path: str):
     # print("model_size: " + model_size)
     # print()
     print("========================================")
-
+    time.sleep(300)
     return True
 
 

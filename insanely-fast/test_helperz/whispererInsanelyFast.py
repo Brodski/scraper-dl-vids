@@ -13,7 +13,7 @@ import os
 import time
 # import faster_whisper
 # import faster_whisper.utils
-from whisper.utils import get_writer
+# from whisper.utils import get_writer
 
 # nvcc and cuda setup v2 https://www.freecodecamp.org/news/how-to-install-nvidia-cuda-toolkit-on-ubuntu/
 
@@ -45,7 +45,8 @@ model_size_fast = "medium"
 model_size_fast = "large-v3"
 my_device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-
+# "You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`."
+# ^ Ignore https://github.com/Vaibhavs10/insanely-fast-whisper/issues/141
 def downloadAudio():
     print(audio_url)
     response = requests.get(audio_url)

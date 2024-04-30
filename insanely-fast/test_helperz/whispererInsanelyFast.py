@@ -207,7 +207,8 @@ def seconds_to_srt_time_format(prev, seconds):
 
 if __name__ == "__main__":
     relative_path = downloadAudio()
-    print("GG!")
+    saved_caption_files = doWhisperStuff(filename)
     time.sleep(120)
-    # saved_caption_files = doWhisperStuff(filename)
+    print("GG!")
+    print("GG!")
 #    mp3FastTranscribe(filename)

@@ -49,7 +49,8 @@ my_device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 def logger():
     pass
-logger = Cloudwatch.log
+# logger = Cloudwatch.log
+logger = print
 
 
 # "You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`."
@@ -130,7 +131,8 @@ def doWhisperStuff( relative_path: str):
             # logger(f"{start_time} --> {end_time}")
             # logger(f"{chunk['text'].strip()}\n")
             logger(f"{start_time} --> {end_time}: ")
-            logger(f"{chunk['text'].strip()}\n")
+            logger(f"{chunk['text'].strip()}")
+            # logger(f"{chunk['text'].strip()}\n")
         
         end_time = time.time() - start_timeX
         srt_file.write(f"Run time: {end_time}\n")

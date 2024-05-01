@@ -130,8 +130,8 @@ def doWhisperStuff( relative_path: str):
             # logger(f"{index + 1}")
             # logger(f"{start_time} --> {end_time}")
             # logger(f"{chunk['text'].strip()}\n")
-            logger(f"{start_time} --> {end_time}: ")
-            logger(f"{chunk['text'].strip()}")
+
+            # logger(f"{start_time} --> {end_time}: ")
             # logger(f"{chunk['text'].strip()}\n")
         
         end_time = time.time() - start_timeX
@@ -220,4 +220,5 @@ if __name__ == "__main__":
     time.sleep(120)
     logger("GG!")
     logger("GG!")
+    time.sleep(120)
 #    mp3FastTranscribe(filename)

@@ -112,8 +112,8 @@ def doWhisperStuff( relative_path: str):
     logger("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
     logger("    is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
     outputs, start_timeX = goInsaneoMode()
-    logger("outputs")
-    logger(outputs)
+    # logger("outputs")
+    # logger(outputs)
     audio_file_name = os.path.splitext(os.path.basename(filename))[0]
     srt_filename = f"{audio_file_name}.srt"
     with open(srt_filename, 'w') as srt_file:
@@ -221,4 +221,5 @@ if __name__ == "__main__":
     logger("GG!")
     logger("GG!")
     time.sleep(120)
+    exit(0)
 #    mp3FastTranscribe(filename)

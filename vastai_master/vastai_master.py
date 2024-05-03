@@ -45,6 +45,7 @@ image = DOCKER
 storage_cost = "0.3"
 blacklist_gpus = ["GTX 1070"]
 blacklist_ids = []
+inet_down_cost = "0.05"
 
 # copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
@@ -208,6 +209,9 @@ def find_create_confirm_instance(event, context):
             continue
         if offer.get("storage_cost") > float(storage_cost):
             # print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
+            continue
+        if offer.get("inet_down_cost") > float(inet_down_cost):
+            # print(id + " skipping inet_down_cost: " + str(offer.get("inet_down_cost")))
             continue
         if offer.get("gpu_name") in blacklist_gpus:
             # print(id + " skipping blacklist_gpus: " + str(offer.get("gpu_name")))

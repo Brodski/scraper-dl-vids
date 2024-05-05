@@ -5,9 +5,11 @@ import env_file as env_varz
 
 class Writer:
     extension: str
+    debug_print: bool
 
     def __init__(self, extension):
         self.extension = extension
+        self.debug_print = True
 
     def write(self, outputs, filename):
         print(self.extension)
@@ -28,13 +30,16 @@ class Writer:
             for index, chunk in enumerate(outputs['chunks']):
                 prev, start_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][0])
                 prev, end_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][1])
+                if self.debug_print:
+                    print(f"{start_time} --> {end_time}\n")
+                    print(f"{chunk['text'].strip()}\n\n")
                 if self.extension == "srt":
-                    self.write_print(subbed_file, f"{index + 1}\n")
-                    self.write_print(subbed_file, f"{start_time} --> {end_time}\n")
-                    self.write_print(subbed_file, f"{chunk['text'].strip()}\n\n")
+                    subbed_file.write(f"{index + 1}\n")
+                    subbed_file.write(f"{start_time} --> {end_time}\n")
+                    subbed_file.write(f"{chunk['text'].strip()}\n\n")
                 if self.extension == "vtt":
-                    self.write_print(subbed_file, f"{start_time} --> {end_time}\n")
-                    self.write_print(subbed_file, f"{chunk['text'].strip()}\n\n")
+                    subbed_file.write(f"{start_time} --> {end_time}\n")
+                    subbed_file.write(f"{chunk['text'].strip()}\n\n")
                 if self.extension == "json":
                     json_transcript["segments"].append( {
                             "start": float(start_time),
@@ -46,7 +51,6 @@ class Writer:
             
             if self.extension == "json":
                 print("WE DOING THE JSON")
-                print(json.dumps(json_transcript))
                 json.dump(json_transcript, subbed_file)
                 print("DUMPED!")
 

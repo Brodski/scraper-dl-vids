@@ -25,8 +25,6 @@ def getConnection():
     print("db      =" , env_varz.DATABASE)
     print("host    =" , env_varz.DATABASE_HOST)
     print("user    =" , env_varz.DATABASE_USERNAME)
-    print("passwd  =" , env_varz.DATABASE_PASSWORD)
-    print("port    =" , int(env_varz.DATABASE_PORT))
 
     connection = MySQLdb.connect(
         db      = env_varz.DATABASE,
@@ -292,8 +290,9 @@ def downloadTwtvVidFAST(vod: Vod):
         yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
 
     try:
-        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)      
-        # print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
+        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)
+        print("\n    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)
+        print()
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:

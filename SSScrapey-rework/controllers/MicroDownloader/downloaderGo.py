@@ -8,8 +8,6 @@ def goDownloadBatch(isDebug=False):
     print("db      =" , env_varz.DATABASE)
     print("host    =" , env_varz.DATABASE_HOST)
     print("user    =" , env_varz.DATABASE_USERNAME)
-    print("passwd  =" , env_varz.DATABASE_PASSWORD)
-    print("port    =" , int(env_varz.DATABASE_PORT))
     
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
@@ -40,8 +38,9 @@ def download(isDebug=False):
     if not isSuccess:
         print("No VODS todo!")
         return "No VODS todo!"
-    # downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
+    
     downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
+
     if downloaded_metadata == Errorz.UNAUTHORIZED_403:
         downloader.updateErrorVod(vod,"unauthorized")
         print("nope gg. 403 sub only")

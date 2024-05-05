@@ -144,9 +144,9 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
         except:
             return None
     lang_code = get_language_code(vod.language)
-    model_size = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
-    model_size_insane = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
-    model_size_insane = "openai/whisper-tiny"
+    # model_size = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
+    # model_size_insane = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
+    model_size_insane = env_varz.WHSP_MODEL_SIZE # "openai/whisper-tiny"
     compute_type = env_varz.WHSP_COMPUTE_TYPE
     cpu_threads = int(env_varz.WHSP_CPU_THREADS)
 

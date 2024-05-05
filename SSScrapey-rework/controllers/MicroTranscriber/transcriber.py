@@ -182,7 +182,7 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
 
     # https://github.com/Vaibhavs10/insanely-fast-whisper/issues/6
     generate_kwargs = {
-        "language": 'en',
+        "language": lang_code,
         # "temperature": 0.2,
         "repetition_penalty": 1.25, # 1 = default = no penatlty
         "task": "transcribe",

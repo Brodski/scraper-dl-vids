@@ -113,9 +113,6 @@ RUN apt-get install -y pkg-config \
 ######################
 # VASTI AI ENDING IT #
 ######################
-RUN pip install vastai==0.1.8 
-RUN pip install torch
-RUN pip install transformers
 # ! Below commands doesnt working anymore. Env var at CMD now
 #     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
 #     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
@@ -124,19 +121,25 @@ RUN pip install transformers
 ####################
 # Pip Dependencies #
 ####################
-WORKDIR /app/scraper-dl-vids/insanely-fast/test_helperz
-RUN git fetch origin dev && \
-    git checkout dev && \
-    git reset --hard origin/dev && \
-    git pull origin dev --force;
-# RUN pip install -r requirements_insaneo.txt 
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN if [ "${ENV}" = "dev" ]; then \
+        git fetch origin dev && \
+        git checkout dev && \
+        git reset --hard origin/dev && \
+        git pull origin dev --force; \
+    else \
+        git reset --hard origin/master ; \
+        git pull origin master --force ; \
+        echo "Running in production mode" ; \
+    fi
+RUN pip install -r requirements_transcriber.txt
+# RUN pip install vastai==0.1.8 
 
 
 WORKDIR /app/scraper-dl-vids/insanely-fast/test_helperz
 COPY dock_setup.sh dock_setup.sh
 RUN chmod +x dock_setup.sh
 
-RUN pip install boto3
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     sh ./dock_setup.sh ; \
     # vastai set api-key $VAST_API_KEY ; \

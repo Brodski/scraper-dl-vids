@@ -1,4 +1,5 @@
 import datetime
+import traceback
 from models.Vod import Vod
 from typing import List
 import controllers.MicroTranscriber.transcriber as transcriber
@@ -64,7 +65,9 @@ def transcribe(isDebug=False):
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
         transcriber.deleteAudioS3(vod)
     except Exception as e:
-        logger(f"ERROR Transcribing vod: {e}")
+        error_message = f"ERROR Transcribing vod: {e}"
+        stack_trace = traceback.format_exc()
+        logger(error_message + "\n" + stack_trace)
         vod.print()
         transcriber.unsetProcessingDb(vod)
 

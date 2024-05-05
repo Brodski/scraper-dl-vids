@@ -30,9 +30,11 @@ class Writer:
             for index, chunk in enumerate(outputs['chunks']):
                 prev, start_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][0])
                 prev, end_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][1])
+
                 if self.debug_print:
-                    print(f"{start_time} --> {end_time}\n")
-                    print(f"{chunk['text'].strip()}\n\n")
+                    print(f"{start_time} --> {end_time}\n", end="")
+                    print(f"{chunk['text'].strip()}\n\n", end="")
+
                 if self.extension == "srt":
                     subbed_file.write(f"{index + 1}\n")
                     subbed_file.write(f"{start_time} --> {end_time}\n")

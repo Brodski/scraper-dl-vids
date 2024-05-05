@@ -220,7 +220,7 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
     logger("model_size: " + model_size_insane)
     logger()
     logger("========================================")
-    return outputs, start_time
+    return saved_caption_files
 
 def write_file_3(outputs, filename):
     FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt", "srt"]

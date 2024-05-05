@@ -3,12 +3,13 @@
 #                        PROD DEPLOY                       #
 #                                                          #
 ############################################################
-# 
-# 1  docker build --no-cache -t cbrodski/transcriber:insaneo -f Dockerfile_insaneo .
+# (Local test) 
+# 1  docker build --no-cache -t cbrodski/transcriber:insaneo -f Dockerfile_transcriber_insaneo .
 # 2  docker push cbrodski/transcriber:insaneo
 
-# 1  docker build --no-cache -t cbrodski/transcriber:insaneo_nocuda -f Dockerfile_insaneo_nocuda .
-# 2  docker push cbrodski/transcriber:insaneo_nocuda
+# From `deploy_ssscrapy_prod.ps1`:
+#  docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber  .
+#  docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)
 #    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 

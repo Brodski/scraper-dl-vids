@@ -211,7 +211,7 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
 
     logger("========================================")
     logger("Complete!")
-   # logger(f"Detected language {info.language} with probability {str(info.language_probability)}")
+    logger(f"Detected language {lang_code}!")
     logger()
     logger("run time =" + str(end_time))
     logger()

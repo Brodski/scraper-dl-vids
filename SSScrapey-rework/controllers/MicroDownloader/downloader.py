@@ -22,10 +22,6 @@ import env_file as env_varz
 
 def getConnection():
 
-    print("db      =" , env_varz.DATABASE)
-    print("host    =" , env_varz.DATABASE_HOST)
-    print("user    =" , env_varz.DATABASE_USERNAME)
-
     connection = MySQLdb.connect(
         db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
@@ -129,6 +125,7 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
             #             ORDER BY Vods.TodoDate ASC, Channels.CurrentRank ASC, Vods.Priority ASC
             #             LIMIT 100
             #             """
+            print("    (getTodoFromDatabase) sql:", sql)
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
@@ -142,7 +139,6 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
     # print("    (getTodoFromDatabase) Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
-        # Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,        ChanCurrentRank, rownum = vod_
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,        ChanCurrentRank, rownum = vod_
         vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         # vod.print()
@@ -151,7 +147,7 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
     highest_priority_vod: Vod = None
     #Recall, results arr is sorted by priority via smart sql query
     for vod in resultsArr:
-        vod.print()
+        # vod.print()
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
@@ -172,26 +168,26 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         highest_priority_vod.print()
     return highest_priority_vod
 
-def getNeededVod_OLD(vods_list: List[Vod]):    
-    maxVodz = 2
-    print("[][][][][][][][][][][][][][][][][][][][]")
-    vods_dict_temp = {}
-    vods_dict = {}
-    for vod in vods_list:
-        vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
-    for key in vods_dict_temp:
-        print(f"{key}: {vods_dict_temp[key]}")
-        for x in vods_dict_temp[key]:
-            x.print()
-        filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
-        if filtered_objects:
-            vods_dict[key] = filtered_objects
+# def getNeededVod_OLD(vods_list: List[Vod]):    
+#     maxVodz = 2
+#     print("[][][][][][][][][][][][][][][][][][][][]")
+#     vods_dict_temp = {}
+#     vods_dict = {}
+#     for vod in vods_list:
+#         vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
+#     for key in vods_dict_temp:
+#         print(f"{key}: {vods_dict_temp[key]}")
+#         for x in vods_dict_temp[key]:
+#             x.print()
+#         filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
+#         if filtered_objects:
+#             vods_dict[key] = filtered_objects
 
-    keyHighestPrioChan = list(vods_dict.keys())[0]
-    vod: Vod = vods_dict[keyHighestPrioChan][0]
-    print("NEXT VOD IN THEORY")
-    vod.print()
-    return vod
+#     keyHighestPrioChan = list(vods_dict.keys())[0]
+#     vod: Vod = vods_dict[keyHighestPrioChan][0]
+#     print("NEXT VOD IN THEORY")
+#     vod.print()
+#     return vod
 
 def lockVodDb(vod: Vod, isDebug=False):
     print("    (lockVodDb) LOCKING VOD DB: " + str(vod.id))

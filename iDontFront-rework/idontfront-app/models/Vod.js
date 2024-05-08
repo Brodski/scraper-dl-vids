@@ -35,6 +35,8 @@ class Vod {
     }
     _getS3Key(ext) {
         const key = this.s3CaptionFiles?.find(file => file.endsWith(ext));
+        console.log("this.s3CaptionFiles")
+        console.log(this.s3CaptionFiles)
         if (!key) {
             console.log(`File ext ${ext} not found :(`)
         }

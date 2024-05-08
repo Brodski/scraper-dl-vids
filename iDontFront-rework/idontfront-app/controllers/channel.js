@@ -1,7 +1,7 @@
 const configs = require("../configs");
 const channelHelper = require("./channelHelper");
 const DatabaseSingleton = require("./helpers/DatabaseSingleton");
-const databaseSingleton = require("./helpers/DatabaseSingleton");
+// const databaseSingleton = require("./helpers/DatabaseSingleton");
 const Vod = require("../models/Vod");
 const Channel = require("../models/Channel");
 // https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
@@ -39,9 +39,6 @@ exports.channel = async (req, res) => {
         })
         return
     }
-    
-
-
 
     //  ***************************************
     //  CHANNEL - VOD 
@@ -58,10 +55,16 @@ exports.channel = async (req, res) => {
         }
 
         let transcript_s3_key = vods[0].getS3TranscriptKey() 
+        console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
+        console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
+        console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
         let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
         let response = await fetch(url);
         if (!response.ok) {
-             throw new Error('HTTP error ' + response.status);
+// https://my-prod-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%2540tarik_MastersCostream-v2098078110.json
+ // https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%252540tarik_MastersCostream-v2098078110.json
+            console.error("Failed HTTT-Get: ", url);
+            throw new Error('HTTP error ' + response.status);
         }
         let transcript_json = await response.json()
         vttKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3VttKey();

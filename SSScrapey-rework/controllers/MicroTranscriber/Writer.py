@@ -10,6 +10,7 @@ class Writer:
     def __init__(self, extension):
         self.extension = extension
         self.debug_print = True
+        self.debug_count = 0
 
     def write(self, outputs, filename):
         print(self.extension)
@@ -21,7 +22,7 @@ class Writer:
         json_transcript = { "segments" : [] }
         with open(env_varz.WHSP_A2T_ASSETS_CAPTIONS + subtitle_filename, 'w') as subbed_file:
             if self.extension == "txt":
-                self.write_print(subbed_file, outputs["text"].strip())
+                subbed_file.write(outputs["text"].strip())
                 return
             if self.extension == "vtt":
                 self.write_print(subbed_file, "WEBVTT\n\n")
@@ -31,9 +32,12 @@ class Writer:
                 prev, start_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][0])
                 prev, end_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][1])
 
-                if self.debug_print:
+                if self.debug_print and self.debug_count < 20:
                     print(f"{start_time} --> {end_time}\n", end="")
                     print(f"{chunk['text'].strip()}\n\n", end="")
+                    self.debug_count += 1
+                    if self.debug_count == 20:
+                        print("Transcripts no longer printing, view s3 for more ...")
 
                 if self.extension == "srt":
                     subbed_file.write(f"{index + 1}\n")
@@ -44,10 +48,10 @@ class Writer:
                     subbed_file.write(f"{chunk['text'].strip()}\n\n")
                 if self.extension == "json":
                     json_transcript["segments"].append( {
-                            "start": float(start_time),
-                            "end": float(end_time),
-                            "text": chunk['text'].strip()
-                        })
+                        "start": float(start_time),
+                        "end": float(end_time),
+                        "text": chunk['text'].strip()
+                    })
                 # if self.extension == "tsv":
                 #     pass
             

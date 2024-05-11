@@ -61,8 +61,12 @@ exports.channel = async (req, res) => {
         let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
         let response = await fetch(url);
         if (!response.ok) {
-// https://my-prod-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%2540tarik_MastersCostream-v2098078110.json
- // https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%252540tarik_MastersCostream-v2098078110.json
+            // local try
+            // https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%2540tarik_MastersCostream-v2098078110.json
+ 
+                                                                                              //     channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%2540tarik_MastersCostream-v2098078110.json'
+
+            // https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/tarik/2098078110/SEN_vs._GEN_-_Masters_Madrid_-_Twitter_%252540tarik_MastersCostream-v2098078110.json
             console.error("Failed HTTT-Get: ", url);
             throw new Error('HTTP error ' + response.status);
         }

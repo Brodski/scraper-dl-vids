@@ -158,7 +158,9 @@ def downloadAudio(vod: Vod):
     return relative_path
 
 def doInsaneWhisperStuff(vod: Vod, relative_path: str):
-    logger("Starting InsaneWhisperStuff!")
+    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print("    xxxxxxx     doInsaneWhisperStuff()      xxxxxxx")
+    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     
     def get_language_code(full_language_name):
         try:
@@ -179,13 +181,13 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 
     start_time = time.time()
-    logger("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    logger("    Channel=" + vod.channels_name_id)
-    logger("    file_abspath=" + file_abspath)
-    logger("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    logger("    is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
-    logger("    model_size_insane: " + model_size_insane)
-    logger("    Running it ...")
+    logger("    (doInsaneWhisperStuff) relative_path:",  relative_path)
+    logger("    (doInsaneWhisperStuff) Channel=" + vod.channels_name_id)
+    logger("    (doInsaneWhisperStuff) file_abspath=" + file_abspath)
+    logger("    (doInsaneWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+    logger("    (doInsaneWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
+    logger("    (doInsaneWhisperStuff) model_size_insane: " + model_size_insane)
+    logger("    (doInsaneWhisperStuff) Running it ...")
     start_time = time.time()
 
     pipe = pipeline( # https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline
@@ -224,7 +226,7 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
     logger()
 
     # saved_caption_files = writeCaptionsLocally(result, file_name)
-    saved_caption_files = write_file_3(outputs, file_name)
+    saved_caption_files = write_files(outputs, file_name)
 
     end_time = time.time() - start_time
 
@@ -236,14 +238,13 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
     logger()
     logger("Saved files: " + str(saved_caption_files))
     logger()
-    logger("model_size: " + model_size_insane)
+    logger("model_size_insane: " + model_size_insane)
     logger()
     logger("========================================")
     return saved_caption_files
 
-def write_file_3(outputs, filename):
+def write_files(outputs, filename):
     FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt", "srt"]
-    # FILE_EXTENSIONS_TO_SAVE = ["srt"]
     saved_caption_files = []
     filename_without_ext , file_extension = os.path.splitext(filename) # [Calculated-v5057810, .mp3]
 
@@ -256,24 +257,24 @@ def write_file_3(outputs, filename):
 
 
 
-def writeCaptionsLocally(result, audio_basename):
-    FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt", "srt"]
-    saved_caption_files = []
-    abs_path = os.path.abspath(audio_basename) 
-    logger("------   WRITE FILE   ------")
-    logger("abs_path: " + abs_path)
-    logger("audio_basename: " + audio_basename)
-    filename_without_ext , file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
+# def writeCaptionsLocally(result, audio_basename):
+#     FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt", "srt"]
+#     saved_caption_files = []
+#     abs_path = os.path.abspath(audio_basename) 
+#     logger("------   WRITE FILE   ------")
+#     logger("abs_path: " + abs_path)
+#     logger("audio_basename: " + audio_basename)
+#     filename_without_ext , file_extension = os.path.splitext(audio_basename) # [Calculated-v5057810, .mp3]
 
-    for ext in FILE_EXTENSIONS_TO_SAVE:
-        srt_writer = get_writer(ext, env_varz.WHSP_A2T_ASSETS_CAPTIONS)
-        srt_writer(result, audio_basename + ext)
+#     for ext in FILE_EXTENSIONS_TO_SAVE:
+#         srt_writer = get_writer(ext, env_varz.WHSP_A2T_ASSETS_CAPTIONS)
+#         srt_writer(result, audio_basename + ext)
 
-        caption_file = filename_without_ext  + '.' + ext
-        saved_caption_files.append(caption_file)
-        logger("Wrote - " + ext + " - " + caption_file)
+#         caption_file = filename_without_ext  + '.' + ext
+#         saved_caption_files.append(caption_file)
+#         logger("Wrote - " + ext + " - " + caption_file)
 
-    return saved_caption_files
+#     return saved_caption_files
 
 
 

@@ -153,8 +153,8 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
             break
     print("    (getTodoFromDatabase) highest_priority_vod:")
     if highest_priority_vod:
-        print(f"    name: ${highest_priority_vod.channels_name_id}")
-        print(f"    id: ${highest_priority_vod.id}")
+        print(f"    name: {highest_priority_vod.channels_name_id}")
+        print(f"    id: {highest_priority_vod.id}")
         # highest_priority_vod.printDebug()
     if isDebug:
         # 'https://www.twitch.tv/videos/1783465374' # pro leauge

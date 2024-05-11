@@ -93,16 +93,17 @@ def goInsaneoMode():
     return outputs, start_time
 
 def doWhisperStuff( relative_path: str):
-    print("Starting WhisperStuff!")
-    print(relative_path)
+    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print("    xxxxxxx     doWhisperStuff()      xxxxxxx")
+    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print("    (doWhisperStuff) relative_path:",  relative_path)
     file_abspath = os.path.abspath(relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
     end_time = None
 
-    print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("    file_abspath=" + file_abspath)
-    print("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    print("    is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
+    print("    (doWhisperStuff) file_abspath=" + file_abspath)
+    print("    (doWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+    print("    (doWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
     outputs, start_timeX = goInsaneoMode()
     # print("outputs")
     # print(outputs)
@@ -127,19 +128,17 @@ def doWhisperStuff( relative_path: str):
             # print(f"{chunk['text'].strip()}\n")
         
         end_time = time.time() - start_timeX
-        srt_file.write(f"Run time: {end_time}\n")
-        srt_file.write(f"model_size_insane: {model_size_insane}\n")
 
     print("========================================")
     print("Complete!")
     # print(f"Detected language {info.language} with probability {str(info.language_probability)}")
     # print()
     print("run time =" + str(end_time))
-    # print()
-    # print("Saved files: " + str(saved_caption_files))
-    # print()
-    # print("model_size: " + model_size)
-    # print()
+    print()
+    print("Saved files: " + str(file_name))
+    print()
+    print("model_size_insane: " + model_size_insane)
+    print()
     print("========================================")
     time.sleep(300)
     return True

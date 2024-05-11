@@ -8,7 +8,7 @@
 # 2  docker push cbrodski/transcriber:insaneo
 
 # From `deploy_ssscrapy_prod.ps1`:
-#  docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber  .
+#  docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_insaneo  .
 #  docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)

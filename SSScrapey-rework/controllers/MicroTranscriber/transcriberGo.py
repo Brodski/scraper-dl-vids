@@ -1,3 +1,13 @@
+
+from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+import time
+
+def logger():
+    pass
+logger = Cloudwatch.log
+logger("WE SLEEPING JUST B/C 1")
+time.sleep(130)
+
 import datetime
 import traceback
 from models.Vod import Vod
@@ -5,24 +15,21 @@ from typing import List
 import controllers.MicroTranscriber.transcriber as transcriber
 import json
 import os
-import time
 import boto3
 import urllib.parse
 import urllib.request
 import env_file as env_varz
 # import controllers.MicroTranscriber.cloudwatch as cloudwatch
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 
 
-def logger():
-    pass
-logger = Cloudwatch.log
 
 def goTranscribeBatch(isDebug=False):
     start_time = time.time()
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
     logger("Transcriber start! ")
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
+    logger("SLEEPING B?C OF RANDOM BULLSHIT ")
+    time.sleep(130)
     for i in range(0, download_batch_size):
         logger("===========================================")
         logger(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")

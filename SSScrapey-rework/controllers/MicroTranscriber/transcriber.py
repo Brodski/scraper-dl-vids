@@ -76,7 +76,7 @@ def getTodoFromDb():
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
-            print ("    (getTodoFromDb) vod_ column_names")
+            logger("    (getTodoFromDb) vod_ column_names")
             logger(column_names)
     except Exception as e:
         logger(f"Error occurred (getTodoFromDb): {e}")

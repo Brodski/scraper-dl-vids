@@ -21,7 +21,7 @@ logger = Cloudwatch.log
 def goTranscribeBatch(isDebug=False):
     start_time = time.time()
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
-    logger("Transcriber start! " + str(time.time()))
+    logger("Transcriber start! ")
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")
@@ -41,7 +41,7 @@ def goTranscribeBatch(isDebug=False):
 def transcribe(isDebug=False):
     # Setup. Get Vod
     vods_list = transcriber.getTodoFromDb()
-    vod = vods_list[0] if len(vods_list) > 0 else None
+    vod: Vod = vods_list[0] if len(vods_list) > 0 else None
     relative_path = None
     logger('IN THEORY, AUDIO TO TEXT THIS:')
     if not vod and not isDebug:
@@ -49,7 +49,7 @@ def transcribe(isDebug=False):
         return "NOTHING TO DO NO VODS READY"
     if isDebug:
         vod = getDebugVod(vod)
-    vod.print()
+    logger(vod.print())
 
     # Set TranscrptStatus = "transcribing"
     transcriber.setSemaphoreDb(vod)

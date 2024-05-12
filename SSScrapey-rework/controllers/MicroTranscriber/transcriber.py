@@ -414,9 +414,7 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)
-    logger("--------transcripts_keys:")
-    logger("--------transcripts_keys:")
-    logger("--------transcripts_keys:")
+    logger("   (setCompletedStatusDb) transcripts_keys:")
     logger(transcripts_keys)
     try:
         with connection.cursor() as cursor:

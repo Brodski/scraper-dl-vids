@@ -100,7 +100,7 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
     for chan in all_channels_minus_scrapped:
         cnt = cnt + 1
         url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
-        print(f"-------  {cnt}  --------")
+        print(f"-------  {cnt} (sully data) --------")
         print(url)
         response = requests.get(url)
         if response.status_code == 200:

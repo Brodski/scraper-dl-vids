@@ -70,7 +70,7 @@ def getTodoFromDb():
                     FROM Vods
                     JOIN Channels ON Vods.ChannelNameId = Channels.NameId
                     WHERE Vods.TranscriptStatus = 'audio2text_need'
-                    ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate ASC
+                    ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate DESC
                     LIMIT 100
                 """
             cursor.execute(sql)
@@ -153,7 +153,6 @@ def downloadAudio(vod: Vod):
         return None
     logger("    (downloadAudio) bucket_domain=" + env_varz.BUCKET_DOMAIN)
     logger("    (downloadAudio) audio_name=" + str(vod.s3_audio)) 
-    logger("    (downloadAudio) relative_path: " + relative_path)
 
     return relative_path
 
@@ -467,7 +466,6 @@ def deleteAudioS3(vod: Vod):
     # channels/vod-audio/gamesdonequick/2039503329/Awesome_Games_Done_Quick_2024_-_Bonus_Showrunner_Showcase_-_ft._%40Asuka424_%40ChurchnSarge_-_hotfix-v2039503329.opus
 
 def cleanUpFiles(relative_path: str):
-    logger("     (cleanUpFiles) relative_path: ", relative_path)
     try:
         file_abs = os.path.abspath(relative_path)
         logger("     (cleanUpFiles) file_abs= " + file_abs)

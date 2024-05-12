@@ -1,26 +1,21 @@
-
+# import controllers.MicroTranscriber.cloudwatch as cloudwatch
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+from models.Vod import Vod
+from typing import List
+import boto3
+import controllers.MicroTranscriber.transcriber as transcriber
+import datetime
+import env_file as env_varz
+import json
+import os
 import time
+import traceback
+import urllib.parse
+import urllib.request
 
 def logger():
     pass
 logger = Cloudwatch.log
-logger("WE SLEEPING JUST B/C 1")
-time.sleep(130)
-
-import datetime
-import traceback
-from models.Vod import Vod
-from typing import List
-import controllers.MicroTranscriber.transcriber as transcriber
-import json
-import os
-import boto3
-import urllib.parse
-import urllib.request
-import env_file as env_varz
-# import controllers.MicroTranscriber.cloudwatch as cloudwatch
-
 
 
 def goTranscribeBatch(isDebug=False):
@@ -28,8 +23,6 @@ def goTranscribeBatch(isDebug=False):
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
     logger("Transcriber start! ")
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
-    logger("SLEEPING B?C OF RANDOM BULLSHIT ")
-    time.sleep(130)
     for i in range(0, download_batch_size):
         logger("===========================================")
         logger(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
@@ -37,10 +30,13 @@ def goTranscribeBatch(isDebug=False):
         x = transcribe(isDebug)
         logger(f"Finished Index {i}")
         logger(f"download_batch_size: {i+1}")
+        logger(f"Time to download vid: {time.time() - start_time}")
     elapsed_time = time.time() - start_time
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger("SLEEPING BC END & debug")
+    time.sleep(100) 
     return x
 
 
@@ -66,7 +62,6 @@ def transcribe(isDebug=False):
         logger('downloading vod ...')
         vod.printDebug()
         relative_path = transcriber.downloadAudio(vod)
-        # saved_caption_files = transcriber.doWhisperStuff(vod, relative_path)
         saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path)
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)

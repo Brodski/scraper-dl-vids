@@ -145,6 +145,8 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         resultsArr.append(vod)
 
     highest_priority_vod: Vod = None
+    for vod in resultsArr:
+        print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id}")
     #Recall, results arr is sorted by priority via smart sql query
     for vod in resultsArr:
         # vod.print()

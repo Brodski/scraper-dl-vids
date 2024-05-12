@@ -34,6 +34,7 @@ def download(isDebug=False):
         print("There are zero transcript_status='todo' from the query :O")
         return "nothing to do"
     # Download vod from twitch
+    vod.printDebug()
     isSuccess = downloader.lockVodDb(vod, isDebug)
     if not isSuccess:
         print("No VODS todo!")

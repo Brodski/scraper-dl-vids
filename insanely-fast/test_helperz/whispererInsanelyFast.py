@@ -138,7 +138,6 @@ def doWhisperStuff( relative_path: str):
     print("model_size_insane: " + model_size_insane)
     print()
     print("========================================")
-    time.sleep(300)
     return True
 
 
@@ -170,9 +169,7 @@ def seconds_to_srt_time_format(prev, seconds):
 if __name__ == "__main__":
     relative_path = downloadAudio()
     saved_caption_files = doWhisperStuff(filename)
-    time.sleep(120)
     print("GG!")
     print("GG!")
-    time.sleep(120)
     exit(0)
 #    mp3FastTranscribe(filename)

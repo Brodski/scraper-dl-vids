@@ -42,7 +42,7 @@ DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 # Instance much be greater/less than these:
 #
 # ############################################
-dph = "0.30" # 0.30 dollars / hour
+dph = "0.40" # 0.30 dollars / hour
 # dph = "0.12"
 cuda_vers = "12"
 cpu_ram = "16000.0"
@@ -50,10 +50,11 @@ disk_space = "32"
 disk = 32.0 # Gb
 image = DOCKER 
 storage_cost = "0.3"
-blacklist_gpus = ["GTX 1070"]
+blacklist_gpus = ["GTX 1070", "RTX 2080 Ti", "GTX 1080 Ti", "RTX 2070S" ]
 blacklist_ids = []
 inet_down_cost = "0.05"
 inet_up_cost = "0.05"
+gpu_ram = "23000"
 
 # copied from vast ai github https://github.com/vast-ai/vast-python/blob/d379d81c420f0f450b5759e3517d68ad89e1c39d/vast.py#L195
 def requestOffersHttp(query_args):
@@ -157,8 +158,11 @@ def destroy_instance(id):
 
 
 def printAsTable(goodOffers):
-    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "reliability2", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
+    print(goodOffers[0])
+    headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "gpu_ram", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
     def printColAux(column):
+        if column is None:
+            column = "None!"
         p = f"{column:<11}"
         # p = f"{column:<8}"
         print(str(p)[:11] + "  ", end="")
@@ -168,7 +172,7 @@ def printAsTable(goodOffers):
     print()
     for offer in goodOffers:
         for head in headers:
-            printColAux(offer.get(head, head))
+            printColAux(offer.get(head, "failed?"))
         print()
 
         
@@ -222,6 +226,9 @@ def find_create_confirm_instance(event, context, rerun_count):
         if offer.get("disk_space") < float(disk_space):
             print(id + " skipping disk_space: " + str(offer.get("disk_space")))
             continue
+        if offer.get("gpu_ram") < float(gpu_ram):
+            print(id + " skipping gpu_ram: " + str(offer.get("gpu_ram")))
+            continue
         if offer.get("storage_cost") > float(storage_cost):
             print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
             continue
@@ -248,10 +255,18 @@ def find_create_confirm_instance(event, context, rerun_count):
     printAsTable(goodOffers)
     if len(goodOffers) == 0:
         print("THERE ARE NO GOOD OFFERS!\n" * 9)
+        print("Gonna try again in 5 min")
+        time.sleep(150)
+        print('2.5 min passed ...')
+        time.sleep(150)
+        print('5 min passed ...')
+        find_create_confirm_instance(event, None, rerun_count + 1)
+
     instance_first = goodOffers[0]
     print("  (find_create_confirm_instance) instance_first: ", instance_first.get("id"))
     print(f'  (find_create_confirm_instance) "IS_VASTAI_CREATE_INSTANCE": {os.environ.get("IS_VASTAI_CREATE_INSTANCE")}')
     # if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
+    # exit(0)
     if True:
         try:
             id_create = instance_first.get("id")

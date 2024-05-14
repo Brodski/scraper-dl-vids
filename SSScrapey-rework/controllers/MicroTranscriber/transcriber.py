@@ -137,7 +137,6 @@ def downloadAudio(vod: Vod):
     logger("######################################")
     logger("             downloadAudio            ")
     logger("######################################")
-    logger("    (downloadAudio)  vod.s3_audio:", vod.s3_audio)
     audio_url = f"{env_varz.BUCKET_DOMAIN}/{vod.s3_audio}"
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     relative_filename = env_varz.WHSP_A2T_ASSETS_AUDIO +  audio_name
@@ -151,7 +150,7 @@ def downloadAudio(vod: Vod):
         logger("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
         logger(stack_trace)
         return None
-    logger("    (downloadAudio) bucket_domain=" + env_varz.BUCKET_DOMAIN)
+    logger("    (downloadAudio) vod.s3_audio:", vod.s3_audio)
     logger("    (downloadAudio) audio_name=" + str(vod.s3_audio)) 
 
     return relative_path
@@ -180,12 +179,10 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str):
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 
     start_time = time.time()
-    logger("    (doInsaneWhisperStuff) relative_path:",  relative_path)
     logger("    (doInsaneWhisperStuff) Channel=" + vod.channels_name_id)
-    logger("    (doInsaneWhisperStuff) file_abspath=" + file_abspath)
+    logger("    (doInsaneWhisperStuff) model_size_insane: " + model_size_insane)
     logger("    (doInsaneWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
     logger("    (doInsaneWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
-    logger("    (doInsaneWhisperStuff) model_size_insane: " + model_size_insane)
     logger("    (doInsaneWhisperStuff) Running it ...")
     start_time = time.time()
 

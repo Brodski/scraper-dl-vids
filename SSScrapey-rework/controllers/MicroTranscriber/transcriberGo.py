@@ -12,6 +12,7 @@ import time
 import traceback
 import urllib.parse
 import urllib.request
+from typing import List
 
 def logger():
     pass
@@ -21,23 +22,29 @@ logger = Cloudwatch.log
 def goTranscribeBatch(isDebug=False):
     start_time = time.time()
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
+    completed_vods_list: List[Vod] = []
     logger("Transcriber start! ")
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")
         logger(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         logger("===========================================")
-        x = transcribe(isDebug)
-        logger(f"Finished Index {i}")
-        logger(f"download_batch_size: {i+1}")
-        logger(f"Time to download vid: {time.time() - start_time}")
+        vod: Vod = transcribe(isDebug)
+        logger(f"   (goTranscribeBatch) Finished Index {i}")
+        logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
+        logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
+        completed_vods_list.append(vod)
     elapsed_time = time.time() - start_time
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger("Completed: ")
+    for v in completed_vods_list:
+        logger(f"{v.channels_name_id} - {v.id}")
     logger("SLEEPING BC END & debug")
     time.sleep(100) 
-    return x
+    logger("gg ending")
+    return "gg ending"
 
 
 
@@ -75,7 +82,7 @@ def transcribe(isDebug=False):
 
     transcriber.cleanUpFiles(relative_path)
     logger("Finished step 3 Transcriber-Service")
-    return "Finished step 3 Transcriber-Service"
+    return vod
 
 def getDebugVod(vod: Vod):
     vod.print() if vod else logger("Null nod")

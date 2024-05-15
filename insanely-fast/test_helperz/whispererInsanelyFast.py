@@ -8,23 +8,15 @@ import requests
 import torch
 from transformers import pipeline
 from transformers.utils import is_flash_attn_2_available
+from Writer import Writer
 
-# import faster_whisper
-# import faster_whisper.utils
-# from whisper.utils import get_writer
+# insanely-fast-whisper --model openai/whisper-base --device cuda:0 --dtype float32 --batch-size 8 --better-transformer --chunk-length 30 your_audio_file.wav
+# insanely-fast-whisper --model openai/whisper-base --device cuda:0 --dtype float32 --batch-size 8 --better-transformer --chunk-length 30 --file-name  ..\SSScrapey-rework\assets\audio\Climbing_to_GrandMaster_on_Main_Adc_Academy_later-v2040455208.opus
+# insanely-fast-whisper --model openai/whisper-base --file-name  ..\SSScrapey-rework\assets\audio\Climbing_to_GrandMaster_on_Main_Adc_Academy_later-v2040455208.opus
+# 
+# cd Desktop\desktop\Code\scraper-dl-vids\insanely-fast\zluda
+# .\zluda.exe -- C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\insanely-fast\venv\Scripts\insanely-fast-whisper.exe --model openai/whisper-base --file-name  ..\..\SSScrapey-rework\assets\audio\Climbing_to_GrandMaster_on_Main_Adc_Academy_later-v2040455208.opus
 
-# nvcc and cuda setup v2 https://www.freecodecamp.org/news/how-to-install-nvidia-cuda-toolkit-on-ubuntu/
-
-# https://github.com/Vaibhavs10/insanely-fast-whisper/issues/158 vad = bad?
-
-# filename = "Calculated-v5057810.opus"
-# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
-
-# filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
-# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
-
-# Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547 ----> 250sec = 4.2 min
-# Adc_Academy_-_How_to_Climb_on_Adc_in_Season_14_Birthday_Stream_im_so_old-v2036392694.opus ---->  456sec = 7.6 min
 ########################################################
 # 
 # apt-get install vim -y
@@ -33,11 +25,35 @@ from transformers.utils import is_flash_attn_2_available
 # pip install flash-attn --no-build-isolation 
 # pip install openai-whisper
 #
+
+# import faster_whisper
+# import faster_whisper.utils
+# from whisper.utils import get_writer
+
+# nvcc and cuda setup v2 https://www.freecodecamp.org/news/how-to-install-nvidia-cuda-toolkit-on-ubuntu/
+
+# https://github.com/Vaibhavs10/insanely-fast-whisper/issues/158 vad = bad?
+#
+#
 ########################################################
+
+filename = "Calculated-v5057810.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
+
 filename = "Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/2028592547/Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
 
-model_size_insane = "openai/whisper-medium"
+filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+
+# filename = "Calculated-v5057810.opus"
+# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
+
+filename = "GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/auronplay/2060795159/GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"
+
+# model_size_insane = "openai/whisper-medium"
+# model_size_insane = "openai/whisper-tiny"
 model_size_insane = "openai/whisper-large-v3"
 model_size_fast = "medium"
 model_size_fast = "large-v3"
@@ -61,24 +77,15 @@ def goInsaneoMode():
     pipe = pipeline( # https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline
         "automatic-speech-recognition",
         model=model_size_insane, # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
-#        model="openai/whisper-medium",
-        torch_dtype=torch.float16,
+        torch_dtype=torch.float16, # LOCAL REQUIRES `torch.float32`
         device=my_device,
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
     )
     
-    if not is_flash_attn_2_available():
-        pipe.model = pipe.model.to_bettertransformer()
-    # if better_transformer:
-    #     pipe.model = pipe.model.to_bettertransformer()
-
     # https://github.com/Vaibhavs10/insanely-fast-whisper/issues/6
     generate_kwargs = {
-        # "beam_size": 5,
         "language": 'en',
-        # "temperature": 0.2,
         "repetition_penalty": 1.25, # 1 = default = no penatlty
-      #  "condition_on_previous_text": True,
         "task": "transcribe",
     }
     start_time = time.time()
@@ -105,27 +112,12 @@ def doWhisperStuff( relative_path: str):
     print("    (doWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
     print("    (doWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
     outputs, start_timeX = goInsaneoMode()
-    audio_file_name = os.path.splitext(os.path.basename(filename))[0]
-    srt_filename = f"{audio_file_name}.srt"
-    with open(srt_filename, 'w') as srt_file:
-        prev = 0
-        for index, chunk in enumerate(outputs['chunks']):
-            # print('---')
-            # print(chunk['timestamp'][0])
-            # print(chunk['text'].strip())
-            prev, start_time = seconds_to_srt_time_format(prev, chunk['timestamp'][0])
-            prev, end_time = seconds_to_srt_time_format(prev, chunk['timestamp'][1])
-#            //srt_file.write(f"{index + 1}\n")
-            srt_file.write(f"{start_time} --> {end_time}: ")
-            srt_file.write(f"{chunk['text'].strip()}\n")
-            # print(f"{index + 1}")
-            # print(f"{start_time} --> {end_time}")
-            # print(f"{chunk['text'].strip()}\n")
 
-            # print(f"{start_time} --> {end_time}: ")
-            # print(f"{chunk['text'].strip()}\n")
-        
-        end_time = time.time() - start_timeX
+    
+    # saved_caption_files = writeCaptionsLocally(result, file_name)
+    saved_caption_files = write_files(outputs, file_name)
+
+    end_time = time.time() - start_timeX
 
     print("========================================")
     print("Complete!")
@@ -141,20 +133,33 @@ def doWhisperStuff( relative_path: str):
     return True
 
 
-def seconds_to_srt_time_format(prev, seconds):
-    if not (isinstance(seconds, int) or isinstance(seconds, float)):
-        seconds = prev
-    else:
-        prev = seconds
-    hours = seconds // 3600
-    seconds %= 3600
-    minutes = seconds // 60
-    seconds %= 60
-    milliseconds = int((seconds - int(seconds)) * 1000)
-    hours = int(hours)
-    minutes = int(minutes)
-    seconds = int(seconds)
-    return (prev, f"{hours:02d}:{minutes:02d}:{int(seconds):02d},{milliseconds:03d}")
+def write_files(outputs, filename):
+    FILE_EXTENSIONS_TO_SAVE = ["json", "vtt", "txt", "srt"]
+    saved_caption_files = []
+    filename_without_ext , file_extension = os.path.splitext(filename) # [Calculated-v5057810, .mp3]
+
+    for ext in FILE_EXTENSIONS_TO_SAVE:
+        writer: Writer = Writer(ext)
+        writer.write(outputs, filename, "./")
+        saved_caption_files.append(f"{filename_without_ext}.{ext}")
+
+    return saved_caption_files
+
+
+# def seconds_to_srt_time_format(prev, seconds):
+#     if not (isinstance(seconds, int) or isinstance(seconds, float)):
+#         seconds = prev
+#     else:
+#         prev = seconds
+#     hours = seconds // 3600
+#     seconds %= 3600
+#     minutes = seconds // 60
+#     seconds %= 60
+#     milliseconds = int((seconds - int(seconds)) * 1000)
+#     hours = int(hours)
+#     minutes = int(minutes)
+#     seconds = int(seconds)
+#     return (prev, f"{hours:02d}:{minutes:02d}:{int(seconds):02d},{milliseconds:03d}")
 
 
 # http://muzso.hu/2015/04/25/how-to-speed-up-slow-down-an-audio-stream-with-ffmpeg

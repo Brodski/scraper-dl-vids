@@ -32,7 +32,7 @@ class Writer:
                 prev, end_time = self.seconds_to_thee_time_format(prev, chunk['timestamp'][1])
 
                 if self.debug_print and self.debug_count < 20:
-                    print(f"{start_time} --> {end_time}\n", end="")
+                    # print(f"{start_time} --> {end_time}\n", end="")
                     print(f"{chunk['text'].strip()}\n\n", end="")
                     self.debug_count += 1
                     if self.debug_count == 20:
@@ -46,6 +46,8 @@ class Writer:
                     subbed_file.write(f"{start_time} --> {end_time}\n")
                     subbed_file.write(f"{chunk['text'].strip()}\n\n")
                 if self.extension == "json":
+                    # print("start_time", start_time, "-", float(start_time))
+                    # print("end_time", end_time, "-", float(end_time))
                     json_transcript["segments"].append( {
                         "start": float(start_time),
                         "end": float(end_time),
@@ -69,6 +71,7 @@ class Writer:
         else:
             prev = seconds
         sec_OG = seconds
+
         hours = seconds // 3600
         seconds %= 3600
         minutes = seconds // 60

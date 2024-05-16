@@ -19,6 +19,7 @@ class Vod:
     stream_date = str
     s3_caption_files = str
     transcribe_date = datetime
+    title = str
 
     def __init__(self,  **kwargs):
         self.id = kwargs.get('id')
@@ -35,6 +36,7 @@ class Vod:
         self.stream_date = kwargs.get('stream_date')
         self.s3_caption_files = kwargs.get('s3_caption_files')
         self.transcribe_date = kwargs.get('transcribe_date')
+        self.title = kwargs.get('title')
 
     # def __repr__(self):
     # def __str__(self):

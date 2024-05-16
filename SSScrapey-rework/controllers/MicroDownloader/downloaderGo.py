@@ -40,7 +40,7 @@ def download(isDebug=False):
         print("No VODS todo!")
         return "No VODS todo!"
     
-    downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
+    downloaded_metadata = downloader.downloadTwtvVidFAST(vod, isDebug)
 
     if downloaded_metadata == Errorz.UNAUTHORIZED_403:
         downloader.updateErrorVod(vod,"unauthorized")

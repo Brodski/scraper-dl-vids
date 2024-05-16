@@ -140,13 +140,13 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
     for vod_ in results:
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,        ChanCurrentRank, rownum = vod_
-        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
+        vod = Vod(id=Id, channels_name_id=ChannelNameId, title=Title, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         # vod.print()
         resultsArr.append(vod)
 
     highest_priority_vod: Vod = None
     for vod in resultsArr:
-        print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id}")
+        print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
     #Recall, results arr is sorted by priority via smart sql query
     for vod in resultsArr:
         # vod.print()
@@ -156,7 +156,7 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
     print("    (getTodoFromDatabase) highest_priority_vod:")
     if highest_priority_vod:
         print(f"    name: {highest_priority_vod.channels_name_id}")
-        print(f"    id: {highest_priority_vod.id}")
+        print(f"    id: {highest_priority_vod.id}. Title: {highest_priority_vod.title}")
         # highest_priority_vod.printDebug()
     if isDebug:
         # 'https://www.twitch.tv/videos/1783465374' # pro leauge

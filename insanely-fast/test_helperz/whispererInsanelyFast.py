@@ -52,11 +52,17 @@ audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucke
 filename = "GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/auronplay/2060795159/GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"
 
+filename = "100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus"
+
 # model_size_insane = "openai/whisper-medium"
 # model_size_insane = "openai/whisper-tiny"
 model_size_insane = "openai/whisper-large-v3"
+model_size_insane = "openai/whisper-large-v2"
+model_size_insane = "openai/whisper-medium"
 model_size_fast = "medium"
 model_size_fast = "large-v3"
+model_size_fast = "large-v2"
 my_device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 
@@ -72,12 +78,14 @@ def downloadAudio():
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
         
-# pipline tutorial https://huggingface.co/docs/transformers/v4.39.3/en/pipeline_tutorial
+# pipline tutorial  https://huggingface.co/docs/transformers/v4.39.3/en/pipeline_tutorial
+#                   https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline
 def goInsaneoMode():
-    pipe = pipeline( # https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline
+    pipe = pipeline( 
         "automatic-speech-recognition",
         model=model_size_insane, # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
-        torch_dtype=torch.float16, # LOCAL REQUIRES `torch.float32`
+        # torch_dtype=torch.float32, # LOCAL REQUIRES `torch.float32`
+        torch_dtype=torch.float16, 
         device=my_device,
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
     )

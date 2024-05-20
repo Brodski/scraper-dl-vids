@@ -64,3 +64,6 @@ sensitive-vars.tfvars
 insanely-fast/*
 !insanely-fast/test_helperz/
 !insanely-fast/test_helperz/*
+__pycache__/
+
+**/imgs/*

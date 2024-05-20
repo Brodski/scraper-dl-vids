@@ -17,6 +17,12 @@ from Writer import Writer
 # cd Desktop\desktop\Code\scraper-dl-vids\insanely-fast\zluda
 # .\zluda.exe -- C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\insanely-fast\venv\Scripts\insanely-fast-whisper.exe --model openai/whisper-base --file-name  ..\..\SSScrapey-rework\assets\audio\Climbing_to_GrandMaster_on_Main_Adc_Academy_later-v2040455208.opus
 
+
+# 
+# ssh -p 40071 root@195.122.198.67 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+# ssh -p 40071 root@195.122.198.67 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+# ssh -p 40071 root@195.122.198.67 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#
 ########################################################
 # 
 # apt-get install vim -y

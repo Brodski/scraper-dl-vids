@@ -58,73 +58,6 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank
                         """
-# SELECT ass.* FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.StreamDate,
-#         C.CurrentRank,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.StreamDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         Rankings R ON V.ChannelNameId = R.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     CurrentRank, ChannelNameId, StreamDate DESC;
-            
-
-
-
-# SELECT 
-#     ass.* 
-# FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.TodoDate,
-#         C.CurrentRank,
-#         RR.Ranking,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.TodoDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         (
-#             SELECT 
-#                 ChannelNameId,
-#                 Ranking,
-#                 TodoDate
-#             FROM (
-#                 SELECT 
-#                     R.ChannelNameId,
-#                     R.Ranking,
-#                     R.TodoDate,
-#                     ROW_NUMBER() OVER (PARTITION BY R.ChannelNameId ORDER BY R.TodoDate DESC) AS RowNum
-#                 FROM 
-#                     Rankings R
-#             ) AS RankedRankings
-#             WHERE 
-#                 RowNum = 1
-#         ) AS RR ON V.ChannelNameId = RR.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     ass.Ranking, ass.ChannelNameId, ass.TodoDate DESC;
-
-
-            # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
-            #             FROM Vods
-            #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-            #             WHERE Vods.TranscriptStatus = 'todo'
-            #             # ORDER BY Channels.CurrentRank ASC, Vods.TodoDate ASC, Vods.Priority ASC
-            #             ORDER BY Vods.TodoDate ASC, Channels.CurrentRank ASC, Vods.Priority ASC
-            #             LIMIT 100
-            #             """
             print("    (getTodoFromDatabase) sql:", sql)
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -164,7 +97,8 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         # 'https://www.twitch.tv/videos/1792255936' # sub only
         # 'https://www.twitch.tv/videos/1792342007' # live
         # 'www.twitch.tv/videos/28138895'
-        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        # highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
         highest_priority_vod.print()
@@ -241,7 +175,7 @@ def isVodTooBig(vod: Vod):
         print ("Failed to get vid's metadata!: " + vidUrl + " : " + str(e))
     return False
 
-def downloadTwtvVidFAST(vod: Vod): 
+def downloadTwtvVidFAST(vod: Vod, isDebug=False): 
     print ("000000000000                     00000000000000000")
     print ("000000000000 downloadTwtvVidFAST 00000000000000000")
     print ("000000000000                     00000000000000000")
@@ -280,12 +214,9 @@ def downloadTwtvVidFAST(vod: Vod):
                     '--audio-quality', '0',
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
-    # if env_varz.ENV != "local":
-    #     yt_dlp_cmd.append('--no-progress')
-    if env_varz.DWN_IS_SHORT_DEV_DL == "True":
-        # download only first 669 seconds
-        yt_dlp_cmd.append('--downloader-args')
-        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
+    # if env_varz.DWN_IS_SHORT_DEV_DL == "True" and isDebug == True:
+    #     yt_dlp_cmd.append('--downloader-args')
+    #     yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669') # download only first 669 seconds
 
     try:
         print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)

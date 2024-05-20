@@ -64,8 +64,8 @@ def download(isDebug=False):
     downloaded_metadata, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
     # Upload DB
     s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
-    if (s3fileKey):
-        downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
+    # if (s3fileKey):
+    #     downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
     downloader.cleanUpDownloads(downloaded_metadata)
 
     return downloaded_metadata

@@ -18,7 +18,7 @@
         <h2> <a href="/channel/<%= channel.nameId %>/<%= vod.id %>"><%= vod.title %> </a> </h2>
         <h2><a href="/channel/<%= channel.nameId %>"> <%= channel.displayName %> </a></h2>
         <div> <b> <%= epochTo_MM_DD_YYYY(vod.streamDate) %> </b></div>
-        <div> <b>Duration: <%= secondsToHHMM(Number(vod.duration)) %> </b></div>
+        <div> <b>Duration: <%= secondsToHHmm(Number(vod.duration)) %> </b></div>
         <br/>
 
         <!-- BIG ASS WORDCLOUD SVG  -->

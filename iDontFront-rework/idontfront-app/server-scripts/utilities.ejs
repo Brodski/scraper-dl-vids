@@ -1,5 +1,10 @@
-<%     
-    secondsToHHMMSS = (totalSeconds) => {
+<%  
+
+    localizeNumber = (number, locale='en-US') => {
+        return number.toLocaleString(locale)
+    }
+
+    secondsToHHmmSS = (totalSeconds) => {
         let hours = Math.floor(totalSeconds / 3600);
         let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
         let seconds = totalSeconds - (hours * 3600) - (minutes * 60);
@@ -11,7 +16,7 @@
         return `${hours}:${minutes}:${seconds}`;
     }
 
-    secondsToHHMM = (totalSeconds) => {
+    secondsToHHmm = (totalSeconds) => {
         let hours = Math.floor(totalSeconds / 3600);
         let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
 

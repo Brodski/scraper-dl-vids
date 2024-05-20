@@ -27,7 +27,6 @@ class DatabaseSingleton {
     }
 
     printHi() {
-        console.log("hello from the singelton babyyyyyyyyyyy")
         console.log("process.env.DATABASE_HOST", process.env.DATABASE_HOST)
         console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME)
         console.log("process.env.DATABASE", process.env.DATABASE)
@@ -63,7 +62,7 @@ class DatabaseSingleton {
                 SELECT *
                 FROM Vods
                 WHERE ChannelNameId = ? AND TranscriptStatus = 'completed'
-                ORDER BY StreamDate ASC;`;
+                ORDER BY StreamDate DESC;`;
             const promiseVods = this.pool.query(sqlQuery, [nameId])
             return promiseVods;
         } catch (error) {
@@ -104,11 +103,10 @@ class DatabaseSingleton {
             return results;
         } catch (err) {
             console.error('Error in query: ', err);
-            throw err; // Rethrow the error for the caller to handle
+            throw err; 
         }
     }
 
-    // Optionally: Method to close the connection pool
     async close() {
         await this.pool.end();
     }
@@ -116,62 +114,6 @@ class DatabaseSingleton {
 
 
 
-    // async getVodsX(nameId) {
-    //     try {
-    //         // const sqlQuery = `
-    //         //     SELECT V.*, C.DisplayName, C.Language, C.Logo, C.CurrentRank, C.TwitchUrl
-    //         //     FROM Vods V
-    //         //     INNER JOIN Channels C ON V.ChannelNameId = C.NameId
-    //         //     WHERE V.ChannelNameId = ? AND V.TranscriptStatus = 'completed'
-    //         //     ORDER BY V.StreamDate ASC;`
-    //         const sqlQueryVods = `
-    //             SELECT *
-    //             FROM Vods
-    //             WHERE ChannelNameId = ? AND TranscriptStatus = 'completed'
-    //             ORDER BY StreamDate ASC;`;
-    //         const sqlQueryChan = `
-    //             SELECT *
-    //             FROM Channels
-    //             WHERE NameId = ?;`;
-    //         // const [resultsVods, fields] = await this.pool.query(sqlQueryVods, [nameId])
-    //         // const [resultsChan, fields2] = await this.pool.query(sqlQueryChan, [nameId])
-    //         // let resultChannelObj = results.map( chan => new Vod(chan))
-    //         // console.log(resultChannelObj)
-            
-    //         const promiseVods = this.pool.query(sqlQueryVods, [nameId])
-    //         const promiseChan = this.pool.query(sqlQueryChan, [nameId])
-    //         // const [resultsVods_w_fields, resultsChan_w_fields] = await Promise.all([promiseVods, promiseChan]);
-    //         const [[resultsVods,fields1], [resultsChan,fields2]] = await Promise.all([promiseVods, promiseChan]);
-    //         // [resultsVods, fields]
-    //         console.log('Vods results:', resultsVods);
-    //         console.log('Channels results:', resultsChan);
-    //         console.log("results vods1chan")
-    //         console.log("results vods1chan")
-    //         console.log("results vods1chan")
-    //         console.log("results vods1chan")
-    //         // console.log(results)
-    //         return results;
-    //         // return resultChannelObj;
-    //     } catch (error) {
-    //         console.error('Error retrieving channels: ', error);
-    //         // throw error;
-    //     } 
-    // }
-
-
-
-
-
-
-
 }
 
 module.exports = DatabaseSingleton;
-
-// Example usage:
-// const db = new DatabaseSingleton();
-// db.query('SELECT * FROM your_table').then(results => {
-//     console.log(results);
-// }).catch(err => {
-//     console.error(err);
-// });

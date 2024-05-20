@@ -20,3 +20,8 @@ th {
 .channel__duration {
     text-align: right;
 }
+
+.channel__thumbnail {
+    width: 300px;
+    height: auto;
+}

@@ -1,4 +1,5 @@
 from datetime import datetime
+import traceback
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import requests
@@ -28,14 +29,16 @@ def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
     with connection.cursor() as cursor:
         values = [(chan.name_id, int(chan.current_rank)) for chan in scrapped_channels]
         sql = "INSERT INTO Rankings (TodoDate, ChannelNameId, Ranking) VALUES (NOW(), %s, %s)"
-        print("Adding new Ranks:", str(values))
-        print("Adding new sql:", str(sql))
+        print("  (addRankingsForTodayDb) Adding new Ranks:", str(values))
+        print("  (addRankingsForTodayDb) Adding new sql:", str(sql))
         try:
             with connection.cursor() as cursor:
                 cursor.executemany(sql, values)  # Batch insert
             connection.commit()
         except Exception as e:
-            print(f"Error occurred (addRankingsForTodayDb): {e}")
+            print(f" (addRankingsForTodayDb) Error occurred: {e}")
+            stack_trace = traceback.format_exc()
+            print(stack_trace)
             connection.rollback()
     connection.close()
 
@@ -82,10 +85,9 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         scrapped_id = {ch.name_id for ch in scrapped_channels}
         all_channels_minus_scrapped = [ch1 for ch1 in channels_all_in_db if ch1.name_id not in scrapped_id]
 
-        print("matching_channels")
+        print(" (getNewOldChannelsFromDB) matching_channels")
         print([ch.name_id for ch in matching_channels])
-        print("")
-        print("all_channels_minus_scrapped")
+        print(" (getNewOldChannelsFromDB) all_channels_minus_scrapped")
         print([ch.name_id for ch in all_channels_minus_scrapped])
         
         vip_list = [channel for channel in scrapped_channels if channel.name_id in ("lolgeranimo", "nmplol")]
@@ -98,7 +100,7 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
     for chan in all_channels_minus_scrapped:
         cnt = cnt + 1
         url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
-        print(f"-------  {cnt}  --------")
+        print(f"-------  {cnt} (sully data) --------")
         print(url)
         response = requests.get(url)
         if response.status_code == 200:
@@ -284,6 +286,36 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     finally:
         connection.close()
     print("    (updateChannelWatchStats) Completed update!")
+
+def deleteOldTodos():
+    print("    (deleteOldTodos) running...")
+    connection = getConnection()
+    sql = """
+        DELETE FROM Vods
+        WHERE Id IN (
+            SELECT Id
+            FROM (
+                SELECT Id
+                FROM Vods
+                WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown')
+                AND TodoDate <= CURDATE() - INTERVAL 30 DAY
+            ) AS subquery
+        );
+
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            affected_rows = cursor.rowcount 
+            print("    (deleteOldTodos) deleted affected_rows:", affected_rows)
+        connection.commit()  # Commit the transaction
+    except Exception as e:
+        print(f"Error occurred (deleteOldTodos): {e}")
+        connection.rollback()
+    finally:
+        connection.close()
+
+
 
 # YYYY-MM-DD
 # CREATE TABLE Rankings (

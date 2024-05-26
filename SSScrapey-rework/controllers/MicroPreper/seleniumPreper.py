@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import traceback
 from bs4 import BeautifulSoup
 from models.ScrappedChannel import ScrappedChannel
 from selenium import webdriver
@@ -63,6 +64,29 @@ scriptPauseVidsJs = """
     }
 """
 
+def isPersonOnline(soup: BeautifulSoup):
+    isOnline = False
+    online_ele_1 = soup.select(".home-live-player-overlay--contents")
+    online_ele_2 = soup.select(".home-live-player-overlay")
+    online_ele_3_profile = soup.select(".user-avatar-card__live ")
+    offline_ele = soup.select(".channel-root__player--offline")
+    player_ele = soup.select(".channel-root__player ")
+
+    print("  (isPersonOnline) online_ele_1 length: ", len(online_ele_1))
+    print("  (isPersonOnline) online_ele_2 length: ", len(online_ele_2))
+    print("  (isPersonOnline) online_ele_3_profile length: ", len(online_ele_3_profile))
+    print("  (isPersonOnline) offline_ele length: ", len(offline_ele))
+    print("  (isPersonOnline) player_ele length: ", len(player_ele))
+
+    player_ele = soup.select(".channel-root__player ")
+    if player_ele[0] and player_ele[0].get_text(strip=True).lower().startswith("live"):
+        print("  (isPersonOnline) YES!!!!!!")
+        isOnline = True
+    if len(online_ele_1) + len(online_ele_2) + len(online_ele_3_profile) > 0:
+        print("  (isPersonOnline) YES!!!!!!2")
+        isOnline = True
+    return isOnline
+
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
     channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
     vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
@@ -71,14 +95,14 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     everyChannel:List[ScrappedChannel] = []
     cnt = 0
     browser = None
-    if isDebug:
-        # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-        # return scrapped_channels
+    # if isDebug:
+    #     # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+    #     # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+    #     # return scrapped_channels
 
-        # new debug
-        # return jd_onlymusic, nmplol, lolgeranimo
-        return channels[:channelMax]
+    #     # new debug
+    #     # return jd_onlymusic, nmplol, lolgeranimo
+    #     return channels[:channelMax]
 
     print('1 running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
@@ -103,7 +127,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             print ("--------------------")
             print (str(cnt) + ": " + browser.title)
             print(url[:idx_print])
-            time.sleep(2)
+            time.sleep(4)
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
                 browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
@@ -112,47 +136,39 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             
             # Scrape <a href> via BeautifulSoup
             soup = BeautifulSoup(browser.page_source, 'html.parser')
+            isOnline = isPersonOnline(soup)
             vids = soup.select("a[href^='/videos/']:has(img)")
             allHrefs = []
-            for tag in vids:
-                inner_text = tag.get_text(separator="|").lower()
-                # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
-                # TODO bugs may occure for marathon vids (_isVidFinished)
-                if ( not (("hours" in inner_text) or ("minutes" in inner_text) or ("today" in inner_text))):
-                    match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
-                    if match and tag['href'] not in allHrefs:
-                        allHrefs.append(match.group(1)) # /videos/1983739230
-                else:
-                    # print("skipping a['href'] @ text=" + tag['href'])
-                    pass
+            for idx, tag in enumerate(vids):
+                if idx == 0 and isOnline:
+                    continue # if guy is streaming, skip the current vod
+                match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
+                if match and tag['href'] not in allHrefs:
+                    allHrefs.append(match.group(1)) # /videos/1983739230
+                    # print("ADDING NEW ELE!", allHrefs[-1])
+
+                ## OLD BELOW ##
+                #
+                # # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
+                # # TODO bugs may occur for marathon vids (_isVidFinished)
+                # inner_text = tag.get_text(separator="|").lower()
+                # if ( not (("hours" in inner_text) or ("minutes" in inner_text) or ("today" in inner_text))):
+                #     match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
+                #     if match and tag['href'] not in allHrefs:
+                #         allHrefs.append(match.group(1)) # /videos/1983739230
+                # else:
+                #     # print("skipping a['href'] @ text=" + tag['href'])
+                #     pass
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
             print(f"Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
         print("An error occurred :(")
         print(f"{e}")
+        stack_trace = traceback.format_exc()
+        print(stack_trace)
     finally:
         # Ensure the browser is closed even if an error occurs
         if browser:
             browser.quit()
     return everyChannel
-
-
-# When multi-day marathon
-# def _isVidFinished(inner_text):
-#     # inner_text = tag.get_text(separator="|")
-#     print("SOUP - get_text() =" + inner_text )
-#     dayz = None
-#     broadcast_time = None
-#     for i, item in enumerate(inner_text.split("|")):
-#         print(item)
-#         print(len(item))
-#         if "days" in item:
-#             dayz = item
-#         if len(item) >=8 and item.count(":") == 2:
-#             broadcast_time = item.split(":")[0]
-#     if broadcast_time and dayz:
-#             days_num = int( dayz.split("days")[0].strip() )
-#             broadcast_hours = broadcast_time.split(":")[0]
-#             if (days_num*24) < broadcast_hours:
-#                 print("NOT KOSHER!!!!!!" )

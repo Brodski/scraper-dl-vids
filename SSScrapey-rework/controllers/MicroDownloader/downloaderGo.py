@@ -8,12 +8,9 @@ def goDownloadBatch(isDebug=False):
     print("db      =" , env_varz.DATABASE)
     print("host    =" , env_varz.DATABASE_HOST)
     print("user    =" , env_varz.DATABASE_USERNAME)
-    print("passwd  =" , env_varz.DATABASE_PASSWORD)
-    print("port    =" , int(env_varz.DATABASE_PORT))
     
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
-    # for i in range(0, download_batch_size):
     i = 0
     gaurdrail = 25
     while i < download_batch_size and i < gaurdrail:
@@ -36,12 +33,14 @@ def download(isDebug=False):
         print("There are zero transcript_status='todo' from the query :O")
         return "nothing to do"
     # Download vod from twitch
+    vod.printDebug()
     isSuccess = downloader.lockVodDb(vod, isDebug)
     if not isSuccess:
         print("No VODS todo!")
         return "No VODS todo!"
-    # downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
-    downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
+    
+    downloaded_metadata = downloader.downloadTwtvVidFAST(vod, isDebug)
+
     if downloaded_metadata == Errorz.UNAUTHORIZED_403:
         downloader.updateErrorVod(vod,"unauthorized")
         print("nope gg. 403 sub only")

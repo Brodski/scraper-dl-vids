@@ -20,8 +20,6 @@ async function getAnalysis(transcript_s3_txt) {
     let bad_words_counter = word_counter.filter(([word]) => regex.test(word));
 
     // const word_counter = [...word_counter.entries()].sort((a, b) => b[1] - a[1]);
-    console.log("word_counter")
-    console.log(word_counter)
     
     let freqWordPlot = await plot(word_counter, "Frequency of Words")
     // console.log("freqWordPlot")
@@ -37,7 +35,6 @@ async function getAnalysis(transcript_s3_txt) {
 
 
     console.log("regex", regex)
-    console.log("bad_words_counter",bad_words_counter)
     return {freqWordPlot, badWordPlot, wordcloudSvg, bad_words_counter, word_counter}
 }
 

@@ -6,6 +6,7 @@ th {
     text-align: center;
     padding-left: 24px;
     padding-right: 24px;
+    font-size: 18px;
 }
 th:first-child {
     text-align: left;
@@ -17,4 +18,8 @@ tr {
 td {
     text-align: center;
     min-width: 80px;
+}
+
+table td:not(.table_channel_name) {
+    font-size: 18px;
 }

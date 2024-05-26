@@ -43,7 +43,8 @@
                     %>
                 <tr>
                     <td><%= epochTo_MM_DD_YYYY(streamDate) %></td>
-                    <td class="channel__duration"><%= secondsToHHMM(Number(duration)) %></td>
+                    <td class="channel__duration"><%= secondsToHHmm(Number(duration)) %></td>
+                    <td> <img class="channel__thumbnail" src="<%= thumbnail %>"/> </td>
                     <td><a href="<%= href %>"> <%= vod_title %> </a></td>
                 </tr>
                 <% } %>

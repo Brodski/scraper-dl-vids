@@ -22,12 +22,6 @@ import env_file as env_varz
 
 def getConnection():
 
-    print("db      =" , env_varz.DATABASE)
-    print("host    =" , env_varz.DATABASE_HOST)
-    print("user    =" , env_varz.DATABASE_USERNAME)
-    print("passwd  =" , env_varz.DATABASE_PASSWORD)
-    print("port    =" , int(env_varz.DATABASE_PORT))
-
     connection = MySQLdb.connect(
         db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
@@ -64,73 +58,7 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank
                         """
-# SELECT ass.* FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.StreamDate,
-#         C.CurrentRank,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.StreamDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         Rankings R ON V.ChannelNameId = R.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     CurrentRank, ChannelNameId, StreamDate DESC;
-            
-
-
-
-# SELECT 
-#     ass.* 
-# FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.TodoDate,
-#         C.CurrentRank,
-#         RR.Ranking,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.TodoDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         (
-#             SELECT 
-#                 ChannelNameId,
-#                 Ranking,
-#                 TodoDate
-#             FROM (
-#                 SELECT 
-#                     R.ChannelNameId,
-#                     R.Ranking,
-#                     R.TodoDate,
-#                     ROW_NUMBER() OVER (PARTITION BY R.ChannelNameId ORDER BY R.TodoDate DESC) AS RowNum
-#                 FROM 
-#                     Rankings R
-#             ) AS RankedRankings
-#             WHERE 
-#                 RowNum = 1
-#         ) AS RR ON V.ChannelNameId = RR.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     ass.Ranking, ass.ChannelNameId, ass.TodoDate DESC;
-
-
-            # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
-            #             FROM Vods
-            #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-            #             WHERE Vods.TranscriptStatus = 'todo'
-            #             # ORDER BY Channels.CurrentRank ASC, Vods.TodoDate ASC, Vods.Priority ASC
-            #             ORDER BY Vods.TodoDate ASC, Channels.CurrentRank ASC, Vods.Priority ASC
-            #             LIMIT 100
-            #             """
+            print("    (getTodoFromDatabase) sql:", sql)
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
@@ -144,23 +72,24 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
     # print("    (getTodoFromDatabase) Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
-        # Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,        ChanCurrentRank, rownum = vod_
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,        ChanCurrentRank, rownum = vod_
-        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
+        vod = Vod(id=Id, channels_name_id=ChannelNameId, title=Title, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         # vod.print()
         resultsArr.append(vod)
 
     highest_priority_vod: Vod = None
+    for vod in resultsArr:
+        print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
     #Recall, results arr is sorted by priority via smart sql query
     for vod in resultsArr:
-        vod.print()
+        # vod.print()
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
     print("    (getTodoFromDatabase) highest_priority_vod:")
     if highest_priority_vod:
-        print(f"    name: ${highest_priority_vod.channels_name_id}")
-        print(f"    id: ${highest_priority_vod.id}")
+        print(f"    name: {highest_priority_vod.channels_name_id}")
+        print(f"    id: {highest_priority_vod.id}. Title: {highest_priority_vod.title}")
         # highest_priority_vod.printDebug()
     if isDebug:
         # 'https://www.twitch.tv/videos/1783465374' # pro leauge
@@ -168,32 +97,33 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         # 'https://www.twitch.tv/videos/1792255936' # sub only
         # 'https://www.twitch.tv/videos/1792342007' # live
         # 'www.twitch.tv/videos/28138895'
-        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        # highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
         highest_priority_vod.print()
     return highest_priority_vod
 
-def getNeededVod_OLD(vods_list: List[Vod]):    
-    maxVodz = 2
-    print("[][][][][][][][][][][][][][][][][][][][]")
-    vods_dict_temp = {}
-    vods_dict = {}
-    for vod in vods_list:
-        vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
-    for key in vods_dict_temp:
-        print(f"{key}: {vods_dict_temp[key]}")
-        for x in vods_dict_temp[key]:
-            x.print()
-        filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
-        if filtered_objects:
-            vods_dict[key] = filtered_objects
+# def getNeededVod_OLD(vods_list: List[Vod]):    
+#     maxVodz = 2
+#     print("[][][][][][][][][][][][][][][][][][][][]")
+#     vods_dict_temp = {}
+#     vods_dict = {}
+#     for vod in vods_list:
+#         vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
+#     for key in vods_dict_temp:
+#         print(f"{key}: {vods_dict_temp[key]}")
+#         for x in vods_dict_temp[key]:
+#             x.print()
+#         filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
+#         if filtered_objects:
+#             vods_dict[key] = filtered_objects
 
-    keyHighestPrioChan = list(vods_dict.keys())[0]
-    vod: Vod = vods_dict[keyHighestPrioChan][0]
-    print("NEXT VOD IN THEORY")
-    vod.print()
-    return vod
+#     keyHighestPrioChan = list(vods_dict.keys())[0]
+#     vod: Vod = vods_dict[keyHighestPrioChan][0]
+#     print("NEXT VOD IN THEORY")
+#     vod.print()
+#     return vod
 
 def lockVodDb(vod: Vod, isDebug=False):
     print("    (lockVodDb) LOCKING VOD DB: " + str(vod.id))
@@ -245,7 +175,7 @@ def isVodTooBig(vod: Vod):
         print ("Failed to get vid's metadata!: " + vidUrl + " : " + str(e))
     return False
 
-def downloadTwtvVidFAST(vod: Vod): 
+def downloadTwtvVidFAST(vod: Vod, isDebug=False): 
     print ("000000000000                     00000000000000000")
     print ("000000000000 downloadTwtvVidFAST 00000000000000000")
     print ("000000000000                     00000000000000000")
@@ -284,16 +214,14 @@ def downloadTwtvVidFAST(vod: Vod):
                     '--audio-quality', '0',
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
-    # if env_varz.ENV != "local":
-    #     yt_dlp_cmd.append('--no-progress')
-    if env_varz.DWN_IS_SHORT_DEV_DL == "True":
-        # download only first 669 seconds
+    if env_varz.DWN_IS_SHORT_DEV_DL == "True" and isDebug == True:
         yt_dlp_cmd.append('--downloader-args')
-        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
+        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669') # download only first 669 seconds
 
     try:
-        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)      
-        # print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
+        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)
+        print("\n    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)
+        print()
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:

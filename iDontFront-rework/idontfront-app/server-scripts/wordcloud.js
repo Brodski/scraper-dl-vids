@@ -2,12 +2,12 @@
 // 80% from --> d3 gallery Word cloud:  https://observablehq.com/@d3/word-cloud
 //
 //
-// stopwordz_counter = [  [ 'just', 370 ],    [ 'im', 229 ],    [ 'right', 224 ],   [ 'dont', 206 ], ]
+// everywordz_counter = [  [ 'just', 370 ],    [ 'im', 229 ],    [ 'right', 224 ],   [ 'dont', 206 ], ]
 const fs = require('fs');
 const { createCanvas } = require("canvas");
 const { JSDOM } = require("jsdom");
 
-async function loadModule(stopwordz_counter) {
+async function loadModule(everywordz_counter) {
     let d3Cloud = require("d3-cloud")
     const d3 = await import('d3');
     console.log('Current Working Directory:', process.cwd());
@@ -35,7 +35,7 @@ async function loadModule(stopwordz_counter) {
     } 
     
 
-    function WordCloud(stopwordz_counter, { 
+    function WordCloud(everywordz_counter, { 
         size = group => group.length + 0.1, // Given a grouping of words, returns the size factor for that word
         word = d => d,                // Given an item of the data array, returns the word
         // word = d => d[0],                // Given an item of the data array, returns the word
@@ -53,19 +53,13 @@ async function loadModule(stopwordz_counter) {
         rotate = 0,                   // a constant or function to rotate the words
         invalidation                  // when this promise resolves, stop the simulation
       } = {}) {
-        maxWords = (stopwordz_counter.length > 110 ? 110 : stopwordz_counter.length);
+        maxWords = (everywordz_counter.length > 110 ? 110 : everywordz_counter.length);
         // const words = typeof text === "string" ? text.split(/\W+/g) : Array.from(text);
-        console.log("stopwordz_counter")
-        console.log("stopwordz_counter")
-        console.log("stopwordz_counter")
-        console.log("stopwordz_counter")
-        console.log(stopwordz_counter)
-        const words = stopwordz_counter.map( d => d[0])
-        console.log("words")
-        console.log(words)
+        const words = everywordz_counter.map( d => d[0])
 
-        let minValue = stopwordz_counter[maxWords - 1][1] // [just, 110]
-        let maxValue = stopwordz_counter[0][1]
+
+        let minValue = everywordz_counter[maxWords - 1][1] // [just, 110]
+        let maxValue = everywordz_counter[0][1]
 
         let scaleFont = d3.scaleLinear()
             .domain([minValue, maxValue])
@@ -82,16 +76,7 @@ async function loadModule(stopwordz_counter) {
         // const colorScale = x =>  d3.interpolateHslLong("#1b42ba", "orange")   (colorScaleAux(x)) 
         const colorScale = x =>  d3.interpolateHslLong("darkblue", "#980000")   (colorScaleAux(x)) 
 
-
-        console.log("colorScale 370")
-        console.log(colorScale(370))
-        console.log(colorScale(0))
-
-        console.log(stopwordz_counter)
-        console.log("words v")
-        console.log(words)
-
-        const data = d3.rollups(stopwordz_counter, size, w => w)
+        const data = d3.rollups(everywordz_counter, size, w => w)
           .slice(0, maxWords)
           .map(([key, size]) => ({text: word(key[0]), size: scaleFont(key[1]), freq: key[1] }));
         // console.log(date) ===> [
@@ -129,17 +114,12 @@ async function loadModule(stopwordz_counter) {
                     .attr("fill", colorScale(freq))
                     .text(text);
                 });
-        console.log("cloud")
-        console.log(cloud)
-        console.log("cloud1")
         cloud.start();
-        console.log("cloud2")
         invalidation && invalidation.then(() => cloud.stop());
-        console.log("cloud3")
         return svg.node();
       }
 
-      let wcSvg = WordCloud(stopwordz_counter, {
+      let wcSvg = WordCloud(everywordz_counter, {
         // width: 1250,
         // height: 800,
         width: 800,

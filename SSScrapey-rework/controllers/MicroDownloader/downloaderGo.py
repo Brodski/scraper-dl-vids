@@ -11,7 +11,6 @@ def goDownloadBatch(isDebug=False):
     
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
-    # for i in range(0, download_batch_size):
     i = 0
     gaurdrail = 25
     while i < download_batch_size and i < gaurdrail:
@@ -64,8 +63,8 @@ def download(isDebug=False):
     downloaded_metadata, outfile = downloader.convertVideoToSmallAudio(downloaded_metadata)
     # Upload DB
     s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
-    # if (s3fileKey):
-    #     downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
+    if (s3fileKey):
+        downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
     downloader.cleanUpDownloads(downloaded_metadata)
 
     return downloaded_metadata

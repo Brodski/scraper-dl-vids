@@ -95,14 +95,14 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     everyChannel:List[ScrappedChannel] = []
     cnt = 0
     browser = None
-    if isDebug:
-        # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-        # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-        # return scrapped_channels
+    # if isDebug:
+    #     # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
+    #     # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+    #     # return scrapped_channels
 
-        # new debug
-        # return jd_onlymusic, nmplol, lolgeranimo
-        return channels[:channelMax]
+    #     # new debug
+    #     # return jd_onlymusic, nmplol, lolgeranimo
+    #     return channels[:channelMax]
 
     print('1 running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
@@ -172,23 +172,3 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
         if browser:
             browser.quit()
     return everyChannel
-
-
-# When multi-day marathon
-# def _isVidFinished(inner_text):
-#     # inner_text = tag.get_text(separator="|")
-#     print("SOUP - get_text() =" + inner_text )
-#     dayz = None
-#     broadcast_time = None
-#     for i, item in enumerate(inner_text.split("|")):
-#         print(item)
-#         print(len(item))
-#         if "days" in item:
-#             dayz = item
-#         if len(item) >=8 and item.count(":") == 2:
-#             broadcast_time = item.split(":")[0]
-#     if broadcast_time and dayz:
-#             days_num = int( dayz.split("days")[0].strip() )
-#             broadcast_hours = broadcast_time.split(":")[0]
-#             if (days_num*24) < broadcast_hours:
-#                 print("NOT KOSHER!!!!!!" )

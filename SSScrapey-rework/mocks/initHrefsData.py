@@ -55,15 +55,15 @@ hrefData = [
    # }
 ]
 
-# def getHrefsData():
-#     channels = []
-#     for data in hrefData:
-#         scrapped_channel = ScrappedChannel(displayname=data.get("displayname"),
-#                                            language=data.get("language"),
-#                                            logo=data.get("logo"),
-#                                            links=data.get("links"),
-#                                            twitchurl=data.get("twitchurl"),
-#                                            name_id=data.get("url"),
-#                                            current_rank=data.get("current_rank"))
-#         channels.insert(0,scrapped_channel)
-#     return channels
+def getHrefsData():
+    channels = []
+    for data in hrefData:
+        scrapped_channel = ScrappedChannel(displayname=data.get("displayname"),
+                                           language=data.get("language"),
+                                           logo=data.get("logo"),
+                                           links=data.get("links"),
+                                           twitchurl=data.get("twitchurl"),
+                                           name_id=data.get("url"),
+                                           current_rank=data.get("current_rank"))
+        channels.insert(0,scrapped_channel)
+    return channels

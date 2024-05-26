@@ -287,6 +287,36 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
         connection.close()
     print("    (updateChannelWatchStats) Completed update!")
 
+def deleteOldTodos():
+    print("    (deleteOldTodos) running...")
+    connection = getConnection()
+    sql = """
+        DELETE FROM Vods
+        WHERE Id IN (
+            SELECT Id
+            FROM (
+                SELECT Id
+                FROM Vods
+                WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown')
+                AND TodoDate <= CURDATE() - INTERVAL 30 DAY
+            ) AS subquery
+        );
+
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            affected_rows = cursor.rowcount 
+            print("    (deleteOldTodos) deleted affected_rows:", affected_rows)
+        connection.commit()  # Commit the transaction
+    except Exception as e:
+        print(f"Error occurred (deleteOldTodos): {e}")
+        connection.rollback()
+    finally:
+        connection.close()
+
+
+
 # YYYY-MM-DD
 # CREATE TABLE Rankings (
 #     RankingId INT NOT NULL AUTO_INCREMENT,

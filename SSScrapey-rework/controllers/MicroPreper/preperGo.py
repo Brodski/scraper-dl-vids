@@ -29,6 +29,7 @@ def prepare(isDebug=False):
         databasePreper.updateChannelRankingLazily(scrapped_channels)
         databasePreper.updateChannelWatchStats(scrapped_channels + all_channels_minus_scrapped_plus_vip)
         databasePreper.updateVodsDb(scrapped_channels)
+        databasePreper.deleteOldTodos()
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         print(traceback.format_exc())

@@ -18,6 +18,9 @@ tr {
 td {
     text-align: center;
     min-width: 80px;
+    max-width: 350px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 table td:not(.table_channel_name) {

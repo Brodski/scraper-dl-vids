@@ -30,19 +30,22 @@
 }
 
 #toggle-btn {
-    margin-top: 16px;
-    margin-bottom: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-.vod_newtab {
-    display: inline-flex;
-    align-items: center;
-}
-.vod_newtab .vod_svg_newtab {
-    width: 22px;
-    height: 22px;
+@media (min-width: 769px) {
+    #twitch-iframe {
+        width: 640px;
+        height: 360px;
+    }
 }
 
-.vod__json_vtt_txt_link span {
-    padding-right: 12px;
+@media (max-width: 768px) {
+    #twitch-iframe {
+        width: 100%;
+        min-height: 230px;
+    
+    }
 }
+

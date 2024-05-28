@@ -15,7 +15,6 @@ if (process.env.NODE_ENV == "prod") {
 
 
 const app = express();
-const configs = require("./configs");
 const mainRoutes = require('./routes/mainRoutes');
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -24,7 +23,6 @@ app.set('views', path.join(__dirname, '/views'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 app.use(mainRoutes)
-app.locals.configs = configs
 
 
 console.log("DATABASE_HOST=", process.env.DATABASE_HOST)
@@ -37,11 +35,23 @@ console.log("BUCKET_DOMAIN=", process.env.BUCKET_DOMAIN)
 if (process.env.IS_LAMBDA == "true") {
     module.exports.lambdaHandler = async (event, context) => {
         console.log("event.path=" + event.path);
-        event.path = event.path === '' ? '/' : event.path
+        
+        // if (event.path.startsWith('/favicon.ico') || event.path.startsWith('/imgs/beard2.png')) {
+        if (event.path.startsWith('/imgs/beard2.png')) {
+            let resp = route_img();
+            return resp;
+        }
 
+
+        event.path = event.path === '' ? '/' : event.path
         context.callbackWaitsForEmptyEventLoop = false;
         const serverlessHandler = serverless(app)
         const result = await serverlessHandler(event, context)
+        // let contentType = result.headers['content-type'] ?? result.headers['Content-Type'] ;
+        // let isString = typeof contentType === 'string';
+        // if (isString && contentType.startsWith('image')) {  // 'image/gif', 'image/x-icon', ect 
+        //     result.isBase64Encoded = true;
+        // }
         return result
     }
 }
@@ -50,6 +60,21 @@ else {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
+function route_favicon() {
+}
+function route_img() {
+    const imagePath = path.join(__dirname, 'public/imgs/beard2.png');
+    const imageBytes = fs.readFileSync(imagePath);
+    const base64Image = imageBytes.toString('base64');
+    return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'image/png',
+        },
+        body: base64Image,
+        isBase64Encoded: true,
+    };
+}
 
 function doDebug() {
     const directoryPath = process.cwd();

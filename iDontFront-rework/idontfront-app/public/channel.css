@@ -1,0 +1,48 @@
+:root {
+    --img-width: 300px;
+}
+
+table {
+    border-spacing: 0;
+}
+td {
+    padding: 0;
+}
+
+tr {
+    padding-bottom: 2px;
+    white-space: nowrap;
+}
+
+td:not(:last-child) {
+    padding-right: 14px;
+}
+th {
+    text-align: left;
+}
+
+.channel__duration {
+    text-align: right;
+}
+
+.channel__thumbnail {
+    width: 100px; /* --img-width */
+    height: auto;
+}
+
+.channel__thumbnail {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    width: 160px;
+}
+
+.channel__all_vods_container {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+}
+
+.channel__vod {
+    width: 32%;
+    width: 300px;
+}

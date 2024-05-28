@@ -1,7 +1,7 @@
 <%  
 
     localizeNumber = (number, locale='en-US') => {
-        return number.toLocaleString(locale)
+        return Math.round(number).toLocaleString(locale)
     }
 
     secondsToHHmmSS = (totalSeconds) => {

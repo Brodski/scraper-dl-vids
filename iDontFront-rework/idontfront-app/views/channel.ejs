@@ -5,13 +5,15 @@
     <head>
         <title> <%= channel.displayName %> </title>
         <%- include('partials/head_meta.ejs') %> 
-        <link rel="stylesheet" type="text/css" href="/channels.css">
+        <link rel="stylesheet" type="text/css" href="/channel.css">
     </head>    
     <body>
-        <div class="d-flex">
-            <img class="profile_main_pic" src="<%= channel.logo %>">
-            <h1 class="align-self-center"> <%= channel.displayName %> </h1>
-        </div>
+        <%- include('navbar/navbar.ejs') %> 
+        <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": false}) %>
+        <!-- BTEST -->
+        <!-- BTEST -->
+        <!-- BTEST -->
+        <!-- BTEST -->
         <h4> <a href="/"> view all channels </a> </h4>
         <hr/>
         <h3> Transcripts:</h3>
@@ -22,16 +24,6 @@
                 <th>Title</th>
             </tr>   
             <% 
-                // let custom_metadata_array = []
-                // Object.keys(custom_metadata).forEach(key => {
-                //     custom_metadata_array.push(custom_metadata[key])
-                // });
-                // // newest at start
-                // custom_metadata_array.sort((a, b) => {
-                //     if (a.epoch == null) { return 1 }
-                //     if (b.epoch == null) { return -1 }
-                //     return a.epoch > b.epoch ? -1 : 1
-                // });
                 for (let vod of vods) {
                     let duration        = vod.duration // 38541
                     let vod_title       = vod.title
@@ -40,46 +32,14 @@
                     let streamDate      = vod.streamDate
                     let s3Audio         = vod.s3Audio
                     let href            = path + "/" +  id 
-                    %>
+            %>
                 <tr>
                     <td><%= epochTo_MM_DD_YYYY(streamDate) %></td>
                     <td class="channel__duration"><%= secondsToHHmm(Number(duration)) %></td>
-                    <td> <img class="channel__thumbnail" src="<%= thumbnail %>"/> </td>
+                    <td> <a href="<%= href %>"> <img class="channel__thumbnail" src="<%=  thumbnail %>"/> </a> </td> %>
                     <td><a href="<%= href %>"> <%= vod_title %> </a></td>
                 </tr>
-                <% } %>
+             <% } %>
         </table>
     </body>
 </html>
-
-<%   
-/*scrapped_data_s3 = 
-scrapped_data_s3 = 
-[
-    {
-        channel: 'lolgeranimo',
-        id: '1861789415',
-        s3Audio: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1861789415/2v2v2v2_Pushing_Gladiator-v1861789415.mp3',
-        title: '2v2v2v2_Pushing_Gladiator-v1861789415.mp3'
-    },
-    {
-        channel: 'lolgeranimo',
-        id: '1862390912',
-        s3Audio: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1862390912/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3',
-        title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1862390912.mp3'
-    },
-    {
-        channel: 'lolgeranimo',
-        id: '1863373278',
-        s3Audio: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863373278/Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3',
-        title: 'Can_we_get_GrandMaster_before_the_end_of_the_Season-v1863373278.mp3'
-    },
-    {
-        channel: 'lolgeranimo',
-        id: '1863728745',
-        s3Audio: 'https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/1863728745/Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3',
-        title: 'Some_Grinding_to_GrandMaster_with_no_mic_atm_just_gaming-v1863728745.mp3'
-    }
-  ]
-*/
-%>

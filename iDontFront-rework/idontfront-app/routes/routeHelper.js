@@ -1,4 +1,3 @@
-const configs = require("../configs");
 const channelHelper = require("../controllers/channelHelper");
 const DatabaseSingleton = require("../controllers/helpers/DatabaseSingleton");
 const Vod = require("../models/Vod");
@@ -13,10 +12,17 @@ const { getAnalysisPage } = require("./analysis");
 // path = /channel/lolgeranimo
 exports.routeHelper = async (req, res) => { 
     console.log("-----------------------------------------------------")
+    console.log(req.path)
+    console.log(req.path.endsWith("/btest"))
+    console.log((req.params))
+    console.log((req.params.id == null))
     //  ***************************************
     //  CHANNEL
     //  ***************************************
-    if (req.params.id == null) {
+    if ((req.params.id == null) && req.path.endsWith("/btest")) {
+        getChannelPage(req, res)
+    }
+    else if (req.params.id == null) {
         getChannelPage(req, res)
     }
 

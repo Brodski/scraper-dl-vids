@@ -1,82 +1,43 @@
-<% let title = "Big Dick Captions 😏" %>
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title> <%= title %> </title>
+        <title> <%= channel.displayName %> </title>
         <%- include('partials/head_meta.ejs') %> 
-        <link rel="stylesheet" type="text/css" href="/homepage.css">
-    </head>
-    <body class="homepage">
-        <h1>Welcome to Big Dick Captions™ 😏🍆💦</h1>
+        <link rel="stylesheet" type="text/css" href="/channelAlt.css">
+    </head>    
+    <body>
+        <%- include('navbar/navbar.ejs') %> 
+        <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": false}) %>
+
+
+        <h4> <a href="/"> view all channels </a> </h4>
         <hr/>
-        <h2> Most watched channels (14 days) </h2>
+        <h3> Transcripts:</h3>
         <table>
-            <thead> 
-                <tr>
-                    <th> Channel </th>
-                    <th> Language </th>
-                    <th> Minutes Watched </th>
-                    <th> Minutes Streamed </th>
-                    <th> Max Viewers </th>
-                    <th> Average Viewers </th>
-                    <th> Followers </th>
-                </tr>
-            </thead>
-            <tbody>
-            <% 
-            for (let chann of channelsList) {
-                let nameId = chann.nameId;
-                let logo = chann.logo;
-                let lang = chann.language;
-                let displayName = chann.displayName;
-                let viewMinutes = chann.viewMinutes;     //: 376124160,
-                let streamedMinutes = chann.streamedMinutes;     //: 3660,
-                let maxViewers = chann.maxViewers;     //: 228099,
-                let avgViewers = chann.avgViewers;     //: 102766,
-                let followers = chann.followers;     //: 4859054,
-                let followersGained = chann.followersGained;     //: 408868,
-                let partner = chann.partner;     //: 1,
-                let affiliate = chann.affiliate;     //: 0,
-                let mature = chann.mature;     //: 0,
-                let previousViewMinutes = chann.previousViewMinutes;     //: 228744180,
-                let previousStreamedMinutes = chann.previousStreamedMinutes;     //: 2865,
-                let previousMaxViewers = chann.previousMaxViewers;     //: 144289,
-                let previousAvgViewers = chann.previousAvgViewers;     //: 79840,
-                let previousFollowerGain = chann.previousFollowerGain;     //: 228460,
-                let daysMeasured = chann.daysMeasured;     //: 14
-                %>  
-                <tr class="channel_row img">
-                    <td class="table_channel_name">
-                        <a class="d-flex" href="<%= "channel/" + nameId %>">
-                            <img class="" src="<%= chann.logo %>" />
-                            <h2> <%= displayName %>  </h2>
-                        </a>
-                    </td>
-
-                    <td> <%= localizeNumber(chann.language) %> </td>
-                    <td> <%= localizeNumber(chann.viewMinutes) %> </td>
-                    <td> <%= localizeNumber(chann.streamedMinutes) %> </td>
-                    <td> <%= localizeNumber(chann.maxViewers) %> </td>
-                    <td> <%= localizeNumber(chann.avgViewers) %> </td>
-                    <td> <%= localizeNumber(chann.followers) %> </td>
+            <div class="channel__all_vods_container">
+                <% 
+                    for (let vod of vods) {
+                        let duration        = vod.duration // 38541
+                        let vod_title       = vod.title
+                        let id              = vod.id
+                        let thumbnail       = vod.thumbnail
+                        let streamDate      = vod.streamDate
+                        let s3Audio         = vod.s3Audio
+                        let href            = path + "/" +  id 
+                %>
+                <div class="channel__vod">
+                    <div class="channel__abs_info d-flex j-space-between">
+                        <div class="channel__date"><%= epochTo_MM_DD_YYYY(streamDate) %></div>
+                        <div class="channel__duration"><%= secondsToHHmm(Number(duration)) %></div>
+                    </div>
+                    <a class="channel__thumbnail_parent" href="<%= href %>"> <img class="channel__thumbnail" src="<%= thumbnail %>"/> </a>
+                    <div class="channel__vod_title2"> <a class="channel__vod_title" href="<%= href %>"> <%= vod_title %> </a> </div>
                     
-                    <!-- <td> <%# chann.followersGained %> </td> -->
-                    <!-- <td> <%# chann.partner %> </td> -->
-                    <!-- <td> <%# chann.affiliate %> </td> -->
-                    <!-- <td> <%# chann.mature %> </td> -->
-                    <!-- <td> <%# chann.previousViewMinutes %> </td> -->
-                    <!-- <td> <%# chann.previousStreamedMinutes %> </td> -->
-                    <!-- <td> <%# chann.previousMaxViewers %> </td> -->
-                    <!-- <td> <%# chann.previousAvgViewers %> </td> -->
-                    <!-- <td> <%# chann.previousFollowerGain %> </td> -->
-                    <!-- <td> <%# chann.daysMeasured %> </td> -->
-                     
-
-                </tr>
-            <% } %> 
-            </tbody>
+                </div>
+             <% } %>
+            </div>
         </table>
     </body>
 </html>

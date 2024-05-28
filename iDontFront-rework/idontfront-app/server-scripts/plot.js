@@ -38,7 +38,6 @@ async function plot_(everywordz_counter, chartTitle) {
         document: dom.window.document,
         // grid: true,
         // title: "Frequency of Words",
-        // title: "For charts, an informative title",
         // subtitle: "Subtitle to follow with additional context",
         // caption: "Figure 1. A chart with a title, subtitle, and caption.",
         

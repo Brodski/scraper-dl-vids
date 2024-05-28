@@ -14,16 +14,15 @@ async function getVodPage(req, res) {
         console.log(channels)
     }
     
-    // let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());
-    let transcript_s3_key = vods[0].getS3TranscriptKey();
+    let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());
+    // let transcript_s3_key = vods[0].getS3TranscriptKey();
     let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
     let response = await fetch(url);
     console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
-    console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
-    console.log(" url:",  url)
+    console.log(" url:")
     console.log(" url:",  url)
     if (!response.ok) {
-        console.error("Failed HTTT-Get: ", url);
+        console.error("Failed HTTP-Get: ", url);
         throw new Error('HTTP error ' + response.status);
     }
     let transcript_json = await response.json()

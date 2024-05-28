@@ -9,16 +9,17 @@
         <link rel="stylesheet" type="text/css" href="/homepage.css">
     </head>
     <body class="homepage">
+        <%- include('navbar/navbar.ejs') %> 
         <h1>Welcome to Big Dick Captions™ 😏🍆💦</h1>
         <hr/>
-        <h2> Most watched channels (14 days) </h2>
+        <h2> Ordered by popularity (last 14 days) </h2>
         <table>
             <thead> 
                 <tr>
                     <th> Channel </th>
                     <th> Language </th>
-                    <th> Minutes Watched </th>
-                    <th> Minutes Streamed </th>
+                    <th> Hours Watched </th>
+                    <th> Hours Streamed </th>
                     <th> Max Viewers </th>
                     <th> Average Viewers </th>
                     <th> Followers </th>
@@ -54,13 +55,12 @@
                             <h2> <%= displayName %>  </h2>
                         </a>
                     </td>
-
-                    <td> <%= localizeNumber(chann.language) %> </td>
-                    <td> <%= localizeNumber(chann.viewMinutes) %> </td>
-                    <td> <%= localizeNumber(chann.streamedMinutes) %> </td>
-                    <td> <%= localizeNumber(chann.maxViewers) %> </td>
-                    <td> <%= localizeNumber(chann.avgViewers) %> </td>
-                    <td> <%= localizeNumber(chann.followers) %> </td>
+                    <td> <%= chann.language %> </td>
+                    <td> <%= localizeNumber((chann.viewMinutes ??  0) / 60) %> </td>
+                    <td> <%= localizeNumber((chann.streamedMinutes ?? 0) / 60) %> </td>
+                    <td> <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
+                    <td> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
+                    <td> <%= localizeNumber(chann.followers ?? 0) %> </td>
                     
                     <!-- <td> <%# chann.followersGained %> </td> -->
                     <!-- <td> <%# chann.partner %> </td> -->

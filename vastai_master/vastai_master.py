@@ -176,13 +176,6 @@ def printAsTable(goodOffers):
         print()
 
         
-def handler_kickit(event, context):
-    num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
-    print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
-    for i in range(num_instances):
-        print("handler_kickit() beign loop:", i)
-        find_create_confirm_instance(event, context, 0)
-        time.sleep(60) # wait 1 minute
         
 def find_create_confirm_instance(event, context, rerun_count):
     if (rerun_count >= 2):
@@ -271,7 +264,11 @@ def find_create_confirm_instance(event, context, rerun_count):
         try:
             id_create = instance_first.get("id")
             id_contract = create_instance(id_create)
-            pollCompletion(id_contract, time.time(), 0)
+            status = pollCompletion(id_contract, time.time(), 0)
+            if status == "success":
+                # WE PRINT A LOT OF INFO
+                printDebug(id_contract)
+                
         except Exception as e:
             traceback.print_exc()
             print(f"   (find_create_confirm_instance) Error creating instacne {e}")
@@ -282,6 +279,20 @@ def find_create_confirm_instance(event, context, rerun_count):
         'statusCode': 200,
         'body': json.dumps('Completed vastai init!! ')
     }
+def printDebug(id_contract):
+    rows = show_my_instances()
+    for row in rows:
+        row_id = str(row['id'])
+        print("    (printDebug) row_id", row_id)
+        print("    (printDebug) id_contract", id_contract)
+        if row_id == id_contract:
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print()
+            print(json.dumps(row, indent=4))
+            break
 
 def pollCompletion(id_contract, start_time, counter_try_again):
     # id_create = id_contract
@@ -317,7 +328,7 @@ def pollCompletion(id_contract, start_time, counter_try_again):
         return
     if actual_status and actual_status == "running":
         print("    (pollCompletion) Running, we're done :)")
-        return
+        return "success"
     print('    (pollCompletion) sleeping for 60 sec')
     time.sleep(60) 
     return pollCompletion(id_contract, start_time, counter_try_again+1)
@@ -331,6 +342,15 @@ def try_again(id):
     print("   ! (try_again) Try again")
     # create a new instance b/c the current one is too shit
     find_create_confirm_instance(None, None, 0)
+
+
+def handler_kickit(event, context):
+    num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
+    print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
+    for i in range(num_instances):
+        print("handler_kickit() beign loop:", i)
+        find_create_confirm_instance(event, context, 0)
+        time.sleep(60) # wait 1 minute
 
 if __name__ == '__main__':
     find_create_confirm_instance(None, None, 0)

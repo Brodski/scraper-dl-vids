@@ -43,13 +43,11 @@ def goTranscribeBatch(isDebug=False):
     logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger("Completed: ")
     for v in completed_vods_list:
-        logger(f"{v.channels_name_id} - {v.id}")
+        logger(f"{v.channels_name_id} - {v.title} - id: {v.id}")
     logger("SLEEPING BC END & debug")
     time.sleep(100) 
     logger("gg ending")
     return "gg ending"
-
-
 
 def transcribe(isDebug=False):
     # Setup. Get Vod

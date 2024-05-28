@@ -118,33 +118,27 @@ def setSemaphoreDb(vod: Vod):
 
 
 
-# FAIL
-# https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%2B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus
-#
-# CORRECT
-# https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus
 def downloadAudio(vod: Vod):
     logger("######################################")
     logger("             downloadAudio            ")
     logger("######################################")
-    audio_url = f"{env_varz.BUCKET_DOMAIN}/{vod.s3_audio}"
-    # audio_url = f"{env_varz.BUCKET_DOMAIN}/{urllib.parse.quote(vod.s3_audio)}"
+    audio_url = f"{env_varz.BUCKET_DOMAIN}/{urllib.parse.quote(vod.s3_audio)}"
+
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     relative_filename = env_varz.WHSP_A2T_ASSETS_AUDIO +  audio_name
-    logger("vod.s3_audio:", vod.s3_audio)
-    logger("audio_url", audio_url)
-    logger("audio_name", audio_name)    
-    logger("relative_filename", relative_filename)    
+    logger("    (downloadAudio) vod.s3_audio:", vod.s3_audio)
+    logger("    (downloadAudio) audio_url", audio_url)
+    logger("    (downloadAudio) audio_name", audio_name)    
+    logger("    (downloadAudio) relative_filename", relative_filename)    
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     except:
         stack_trace = traceback.format_exc()
         logger("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
         logger(stack_trace)
+        logger("    (downloadAudio) sleeping 1.5 min for some reason....")
         time.sleep(90) # 1.5 min
         return None
-    logger("    (downloadAudio) vod.s3_audio:", vod.s3_audio)
-    logger("    (downloadAudio) audio_name=" + str(vod.s3_audio)) 
 
     return relative_path
 
@@ -264,11 +258,10 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        logger("audio_url",audio_url)
-        logger("filename", filename)
+        logger("    (uploadCaptionsToS3) audio_url",audio_url)
+        logger("    (uploadCaptionsToS3) filename", filename)
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
-        logger("    (uploadCaptionsToS3) filename: " + filename) 
         content_type = ''
         if file_abs[-4:] == '.txt':
             content_type = 'text/plain; charset=utf-8'
@@ -286,8 +279,7 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     return transcripts_s3_key_arr 
 
 def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
-    logger("setCompletedStatusDb")
-    vod.print()
+    logger(vod.print())
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)

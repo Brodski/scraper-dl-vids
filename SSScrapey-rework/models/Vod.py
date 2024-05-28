@@ -42,7 +42,7 @@ class Vod:
     # def __str__(self):
 
     def print(self):
-        msg = f"VOD - {self.channels_name_id} {self.id}. Status: {self.transcript_status}"
+        msg = f"VOD - {self.channels_name_id} {self.id} - {self.title} - Status: {self.transcript_status}"
         return msg
 
     def printDebug(self):

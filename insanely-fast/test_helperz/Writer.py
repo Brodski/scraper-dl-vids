@@ -12,9 +12,6 @@ class Writer:
         self.debug_count = 0
 
     def write(self, outputs, filename, directory_save):
-        print(self.extension)
-        print(self.extension)
-        print(self.extension)
         audio_file_name = os.path.splitext(os.path.basename(filename))[0]
         subtitle_filename = f"{audio_file_name}.{self.extension}"
 

@@ -7,6 +7,7 @@ resource "aws_api_gateway_rest_api" "api_gw_rest" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+  binary_media_types = ["*/*"]
 }
 
 ##### 0 #####

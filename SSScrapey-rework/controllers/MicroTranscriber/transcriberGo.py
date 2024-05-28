@@ -24,6 +24,9 @@ def goTranscribeBatch(isDebug=False):
     download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
     completed_vods_list: List[Vod] = []
     logger("Transcriber start! ")
+    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
+    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
+    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")

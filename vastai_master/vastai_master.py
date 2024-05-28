@@ -271,7 +271,11 @@ def find_create_confirm_instance(event, context, rerun_count):
         try:
             id_create = instance_first.get("id")
             id_contract = create_instance(id_create)
-            pollCompletion(id_contract, time.time(), 0)
+            status = pollCompletion(id_contract, time.time(), 0)
+            if status == "success":
+                # WE PRINT A LOT OF INFO
+                printDebug(id_contract)
+                
         except Exception as e:
             traceback.print_exc()
             print(f"   (find_create_confirm_instance) Error creating instacne {e}")
@@ -282,6 +286,20 @@ def find_create_confirm_instance(event, context, rerun_count):
         'statusCode': 200,
         'body': json.dumps('Completed vastai init!! ')
     }
+def printDebug(id_contract):
+    rows = show_my_instances()
+    for row in rows:
+        row_id = str(row['id'])
+        print("    (printDebug) row_id", row_id)
+        print("    (printDebug) id_contract", id_contract)
+        if row_id == id_contract:
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print("WE ARE USING THIS INSTANCE!")
+            print()
+            print(json.dumps(row, indent=4))
+            break
 
 def pollCompletion(id_contract, start_time, counter_try_again):
     # id_create = id_contract
@@ -317,7 +335,7 @@ def pollCompletion(id_contract, start_time, counter_try_again):
         return
     if actual_status and actual_status == "running":
         print("    (pollCompletion) Running, we're done :)")
-        return
+        return "success"
     print('    (pollCompletion) sleeping for 60 sec')
     time.sleep(60) 
     return pollCompletion(id_contract, start_time, counter_try_again+1)

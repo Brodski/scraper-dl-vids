@@ -19,7 +19,17 @@ async function getChannelPage(req, res) {
     }
 
     res.setHeader('Cache-Control', 'private, max-age=3600');
-    res.render("../views/channel", { 
+    // res.render("../views/channel", { 
+    if (req.path.endsWith("/btest")) {
+        res.render("../views/channel", { 
+            "title" : req.params.name,
+            "path" : req.path.replace("/btest", ""),
+            "vods": vods,
+            "channel": channels[0],
+        })
+        return
+    }
+    res.render("../views/channelAlt", { 
         "title" : req.params.name,
         "path" : req.path,
         "vods": vods,

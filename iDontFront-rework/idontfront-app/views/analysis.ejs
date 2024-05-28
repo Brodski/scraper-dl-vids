@@ -1,24 +1,22 @@
 <%- include("../server-scripts/utilities") %>
-<% let twitchUrl = "https://twitch.tv/videos/" + vod.id %>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale = 1.0">
-        <title> <%= channel %> </title>
+        <title> <%= channel.displayName %> wordtree </title>
         <%- include('partials/head_meta.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/fonts.css">
         <link rel="stylesheet" type="text/css" href="/analysis.css">
     </head>    
     <body>
-        <div class="d-flex">
-            <img class="profile_main_pic" src="<%= channel.logo %>">
-            <h1 class="align-self-center">  Transcript Stats </h1>
-        </div>
-        <h2> <a href="/channel/<%= channel.nameId %>/<%= vod.id %>"><%= vod.title %> </a> </h2>
-        <h2><a href="/channel/<%= channel.nameId %>"> <%= channel.displayName %> </a></h2>
-        <div> <b> <%= epochTo_MM_DD_YYYY(vod.streamDate) %> </b></div>
-        <div> <b>Duration: <%= secondsToHHmm(Number(vod.duration)) %> </b></div>
+        <%- include('navbar/navbar.ejs') %> 
+        <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": true}) %>
+        <%- include('vodHeader.ejs', {"vod": vod, "isShowRaw": false}) %>            
+
+        <h1 class="align-self-center">  Transcript Stats </h1>
+
+        <h3> <a href="/channel/<%= channel.nameId %>/<%= vod.id %>"> return to full transcript </a> </h3>
+
         <br/>
 
         <!-- BIG ASS WORDCLOUD SVG  -->
@@ -30,21 +28,25 @@
 
 
         <h2> Frequency of Swear Words </h2>
-        <div class="analysis_vertical_word">
-            <div>
-                <%- include('partials/table', {"table_data": bad_words_counter, txt: "Swear" }) %>
+        <div class="d-flexx j-centerx">
+            <div class="analysis_vertical_word">
+                <div>
+                    <%- include('partials/table', {"table_data": bad_words_counter, txt: "Swear" }) %>
+                </div>
+                <div> <%- badWordPlot %></div>
             </div>
-            <div> <%- badWordPlot %></div>
         </div>
 
         <h2> Frequency of Words </h2>
-        <div class="analysis_vertical_word">
-            <div>
-                <%- include('partials/table', {"table_data": word_counter, txt: "Word" }) %>
+        <div class="d-flex j-center">
+            <div class="analysis_vertical_word">
+                <div> <%- freqWordPlot %></div>
             </div>
-            <div> <%- freqWordPlot %></div>
         </div>
 
+        <div>
+            <%- include('partials/tableGrid.ejs', {"table_data": word_counter, txt: "Word" }) %>
+        </div>
         <script>
             let figures = document.querySelectorAll("#word-count-graph")
             for (let i=0; i<figures.length; i++) {

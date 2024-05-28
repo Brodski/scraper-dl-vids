@@ -1,4 +1,3 @@
-const configs = require("../configs");
 const channelHelper = require("../controllers/channelHelper");
 const DatabaseSingleton = require("../controllers/helpers/DatabaseSingleton");
 const Vod = require("../models/Vod");
@@ -21,11 +20,6 @@ exports.routeHelper = async (req, res) => {
     //  CHANNEL
     //  ***************************************
     if ((req.params.id == null) && req.path.endsWith("/btest")) {
-        console.log("YEAH")
-        console.log("YEAH")
-        console.log("YEAH")
-        console.log("YEAH")
-        console.log("YEAH")
         getChannelPage(req, res)
     }
     else if (req.params.id == null) {

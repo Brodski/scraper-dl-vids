@@ -21,11 +21,6 @@ async function getVodPage(req, res) {
     console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
     console.log(" url:")
     console.log(" url:",  url)
-    // BAD https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/dota2_paragon_ru/2152331867/Natus_Vincere_0_1_Team_Falcons_DreamLeague_S23_-_Group_Stage_BO2_%2540Maelstorm_%2540Mr_Zais-v2152331867.json
-    //GOOD https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/dota2_paragon_ru/2152331867/Natus_Vincere_0_1_Team_Falcons_DreamLeague_S23_-_Group_Stage_BO2_%252540Maelstorm_%252540Mr_Zais-v2152331867.json
-
-    // BAD https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%2525252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.json
-    //GOOD https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%25252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.json
     if (!response.ok) {
         console.error("Failed HTTP-Get: ", url);
         throw new Error('HTTP error ' + response.status);

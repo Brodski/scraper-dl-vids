@@ -176,13 +176,6 @@ def printAsTable(goodOffers):
         print()
 
         
-def handler_kickit(event, context):
-    num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
-    print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
-    for i in range(num_instances):
-        print("handler_kickit() beign loop:", i)
-        find_create_confirm_instance(event, context, 0)
-        time.sleep(60) # wait 1 minute
         
 def find_create_confirm_instance(event, context, rerun_count):
     if (rerun_count >= 2):
@@ -349,6 +342,15 @@ def try_again(id):
     print("   ! (try_again) Try again")
     # create a new instance b/c the current one is too shit
     find_create_confirm_instance(None, None, 0)
+
+
+def handler_kickit(event, context):
+    num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
+    print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
+    for i in range(num_instances):
+        print("handler_kickit() beign loop:", i)
+        find_create_confirm_instance(event, context, 0)
+        time.sleep(60) # wait 1 minute
 
 if __name__ == '__main__':
     find_create_confirm_instance(None, None, 0)

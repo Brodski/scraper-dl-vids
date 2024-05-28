@@ -7,7 +7,8 @@ async function getAnalysis(transcript_s3_txt) {
 
     let bad_words = ["fuck", "shit", "bitch", "loser", "subhuman", "disgusting", "retard", "moron", "autistic", "cock", "dick", "cancer", "tumor"]
     
-    let regex = new RegExp(`\\b(${bad_words.join('\\w*\\b|')})`, 'gi'); 
+    // let regex = new RegExp(`\\b(${bad_words.join('\\w*\\b|')})`, 'gi'); 
+    let regex = new RegExp(`\\b(${bad_words.join('[\\w-]*\\b|')})`, 'gi'); 
 
     let response = await fetch(transcript_s3_txt);
     if (!response.ok) {

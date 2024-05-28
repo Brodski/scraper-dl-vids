@@ -7,14 +7,6 @@
         <title> <%= channel.displayName %> </title>
         <%- include('partials/head_meta.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/vod.css">
-        <script>
-          function seekIframe(time) {
-            console.log("time=" + time)
-            console.log("player=" + player)
-            player.seek(time)
-            // player.play()
-          }
-        </script>
     </head>    
     <body>
         <!-- PROFILE HEADER -->
@@ -47,6 +39,7 @@
         <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
         <script type="text/javascript">
             console.log('hi lol')
+            let player;
             window.addEventListener("load", e => {
                 console.log('loaded shit"')
                 console.log(isMobile() )
@@ -57,10 +50,19 @@
                     autoplay: false,
                     parent: ["localhost", "othersite.example.com"]
                 };
-                var player = new Twitch.Player("twitch-iframe", options);
-                player.setVolume(0.0);
+                player = new Twitch.Player("twitch-iframe", options);
+                console.log(player.getVolume())
+                player.setVolume(0);
+                setTimeout(() => {player.setVolume(0) }, 1000)
+                
             })
             
+          function seekIframe(time) {
+            // console.log("time=" + time)
+            // console.log("player=" + player)
+            player.seek(time)
+            // player.play()
+          }
         </script>
 
         <hr/>

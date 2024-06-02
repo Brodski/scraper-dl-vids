@@ -76,18 +76,24 @@ def getTodoFromDb():
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
-            logger("    (getTodoFromDb) vod_ column_names")
-            logger(column_names)
+            # logger("    (getTodoFromDb) vod_ column_names")
+            # logger(column_names)
     except Exception as e:
         logger(f"Error occurred (getTodoFromDb): {e}")
         connection.rollback()
     finally:
         connection.close()
-    for vod_ in results:
+    logger("     (getTodoFromDb) ---- HIGHEST PRIORITY VODS ----")
+    for counterz, vod_ in enumerate(results):
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,       ChanCurrentRank, Language  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
         resultsArr.append(vod)
+        logger(f"     (getTodoFromDb) ---- {counterz} ----")
+        logger("     (getTodoFromDb) vod.channels_name_id", vod.channels_name_id)
+        logger("     (getTodoFromDb) vod.title", vod.title)
+        logger("     (getTodoFromDb) vod.channel_current_rank", vod.channel_current_rank)
+        logger("     (getTodoFromDb) vod.id", vod.id)
     # logger("resultsArr")
     # logger(resultsArr)
     return resultsArr
@@ -241,13 +247,8 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     # 100%2B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus
     logger("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
     logger("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
-    logger("    (uploadCaptionsToS3) vod_id: " + vod.id) 
-    logger("    (uploadCaptionsToS3) vod: ", vod) 
-    
-    vod.printDebug()
-    logger() 
-    logger() 
-    logger() 
+    logger("    (uploadCaptionsToS3) vod.id: " + vod.id) 
+    logger("    (uploadCaptionsToS3) vod.title: " + vod.title) 
 
     s3 = boto3.client('s3')
     transcripts_s3_key_arr = []
@@ -255,11 +256,6 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         file_abs = os.path.abspath(env_varz.WHSP_A2T_ASSETS_CAPTIONS + filename)
             #   channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus
         audio_url = f"{env_varz.S3_CAPTIONS_KEYBASE}/{urllib.parse.quote(vod.s3_audio)}"
-        logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        logger("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        logger("    (uploadCaptionsToS3) audio_url",audio_url)
-        logger("    (uploadCaptionsToS3) filename", filename)
         s3CapFileKey = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id + "/" + filename
 
         content_type = ''
@@ -283,8 +279,7 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)
-    logger("   (setCompletedStatusDb) transcripts_keys:")
-    logger(transcripts_keys)
+    logger("   (setCompletedStatusDb) transcripts_keys:", transcripts_keys)
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -298,8 +293,6 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
             values = (t_status, env_varz.WHSP_MODEL_SIZE, transcripts_keys, vod.id)
             affected_count = cursor.execute(sql, values)
             connection.commit()
-            logger("values: " + str(values))
-            logger("affected_count: " + str(affected_count))
     except Exception as e:
         logger(f"Error occurred (setCompletedStatusDb): {e}")
         connection.rollback()
@@ -335,10 +328,9 @@ def deleteAudioS3(vod: Vod):
 def cleanUpFiles(relative_path: str):
     try:
         file_abs = os.path.abspath(relative_path)
-        logger("     (cleanUpFiles) file_abs= " + file_abs)
         if os.getenv("ENV") != "local":
-            logger("     (cleanUpFiles) DELETING IT!!!!!!!")
             os.remove(file_abs)
+            logger("     (cleanUpFiles) FILE DELETED")
     except Exception as e:
         logger('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
         logger(str(e))

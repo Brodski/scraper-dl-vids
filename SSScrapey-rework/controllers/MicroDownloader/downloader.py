@@ -14,6 +14,7 @@ import time
 import urllib
 import yt_dlp
 import subprocess
+import requests
 from controllers.MicroDownloader.errorEnum import Errorz
 
 
@@ -58,12 +59,12 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank
                         """
-            print("    (getTodoFromDatabase) sql:", sql)
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
-            print ("    (getTodoFromDatabase) vod_ column_names")
-            print(column_names)
+            # Nice to uncomment when updating vod properties
+            # print ("    (getTodoFromDatabase) vod_ column_names")
+            # print(column_names)
     except Exception as e:
         print(f"    (getTodoFromDatabase) An error occurred: {e}")
         return []
@@ -77,53 +78,24 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         # vod.print()
         resultsArr.append(vod)
 
-    highest_priority_vod: Vod = None
+    # Nice print :)
     for vod in resultsArr:
         print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
+
     #Recall, results arr is sorted by priority via smart sql query
+    highest_priority_vod: Vod = None
     for vod in resultsArr:
         # vod.print()
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
-    print("    (getTodoFromDatabase) highest_priority_vod:")
-    if highest_priority_vod:
-        print(f"    name: {highest_priority_vod.channels_name_id}")
-        print(f"    id: {highest_priority_vod.id}. Title: {highest_priority_vod.title}")
-        # highest_priority_vod.printDebug()
     if isDebug:
-        # 'https://www.twitch.tv/videos/1783465374' # pro leauge
-        # 'https://www.twitch.tv/videos/1791750006' # lolgera
-        # 'https://www.twitch.tv/videos/1792255936' # sub only
-        # 'https://www.twitch.tv/videos/1792342007' # live
-        # 'www.twitch.tv/videos/28138895'
         highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
         highest_priority_vod.print()
     return highest_priority_vod
-
-# def getNeededVod_OLD(vods_list: List[Vod]):    
-#     maxVodz = 2
-#     print("[][][][][][][][][][][][][][][][][][][][]")
-#     vods_dict_temp = {}
-#     vods_dict = {}
-#     for vod in vods_list:
-#         vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
-#     for key in vods_dict_temp:
-#         print(f"{key}: {vods_dict_temp[key]}")
-#         for x in vods_dict_temp[key]:
-#             x.print()
-#         filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
-#         if filtered_objects:
-#             vods_dict[key] = filtered_objects
-
-#     keyHighestPrioChan = list(vods_dict.keys())[0]
-#     vod: Vod = vods_dict[keyHighestPrioChan][0]
-#     print("NEXT VOD IN THEORY")
-#     vod.print()
-#     return vod
 
 def lockVodDb(vod: Vod, isDebug=False):
     print("    (lockVodDb) LOCKING VOD DB: " + str(vod.id))
@@ -431,7 +403,7 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
         return None
     
 
-def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
+def updateVods_Db(downloaded_metadata, vod_id, s3fileKey):
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
@@ -471,14 +443,32 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
                 """
             values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, vod_id)
             affected_count = cursor.execute(sql, values)
-            print("    (updateVods_Round2Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
+            print("    (updateVods_Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
             connection.commit()
     except Exception as e:
-        print(f"    (updateVods_Round2Db) Error occurred: {e}")
+        print(f"    (updateVods_Db) Error occurred: {e}")
         connection.rollback()
     finally:
         connection.close()
 
+def updateImgs_Db(downloaded_metadata, vod_id):
+    thumbnail = downloaded_metadata.get('thumbnail')
+    WIDTH = 350
+    url = 'http://localhost:6969/api/compress'
+    
+    data = {
+        'imageUrl': thumbnail,
+        'width': WIDTH,
+    }
+    try:
+        response = requests.post(url, data=data)
+        json_response = response.json()
+
+        print(response.status_code)
+        print(json_response)
+
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
 def updateErrorVod(vod: Vod, error_msg: str):
     print(f"Something failed with downloadTwtvVid2. Channel-Vod: {vod.channels_name_id}-{vod.id}. Error type: {error_msg}")

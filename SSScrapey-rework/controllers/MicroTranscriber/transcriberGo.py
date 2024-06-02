@@ -28,10 +28,10 @@ def goTranscribeBatch(isDebug=False):
     logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
+    logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")
-        logger(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
+        logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         logger("===========================================")
         # vod: Vod = transcribe(isDebug)
         result: Dict[Vod, bool] = transcribe(isDebug)
@@ -76,7 +76,6 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
 
     # Do the transcribing
     try:
-        logger('downloading vod ...')
         vod.printDebug()
         relative_path = transcriber.downloadAudio(vod)
         saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)

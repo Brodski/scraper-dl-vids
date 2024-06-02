@@ -7,9 +7,8 @@ const sharp = require('sharp');
 
 
 class Transform {
-
     
-    static async _reduceImgAux({image, filename, value}) {
+    static async reduceImg({image, filename, value}) {
         console.log("Got reduce value of: ", value);
         const imageSharp = sharp(image);
         const meta = await imageSharp.metadata();
@@ -31,18 +30,16 @@ class Transform {
         else {
             img = await imgNew.toBuffer();
         }
-        console.log("new meta:", metaNew);
-        console.log("tofile img", img);
         return {img, format};
     }
     
-    static async reduceByPercent({image, filename, percent}) {
-        return this._reduceImgAux({image, filename, "value": percent});
-    }
+    // static async reduceByPercent({image, filename, percent}) {
+    //     return this._reduceImgAux({image, filename, "value": percent});
+    // }
     
-    static async reduceToPixels({image, filename, width}) {
-        return this._reduceImgAux({image, filename, "value": width});
-    }
+    // static async reduceToPixels({image, filename, width}) {
+    //     return this._reduceImgAux({image, filename, "value": width});
+    // }
     
     static async halfItWithmeta({image, filename, width, height, percent}) {
         const imageSharp = sharp(image);

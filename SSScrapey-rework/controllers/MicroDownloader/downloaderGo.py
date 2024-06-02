@@ -38,7 +38,10 @@ def download(isDebug=False):
     if not isSuccess:
         print("No VODS todo!")
         return "No VODS todo!"
-    
+
+    print(f"    (download) highest priority vod. name: {vod.channels_name_id}")
+    print(f"    (download) highest priority vod. id: {vod.id}")
+    print(f"    (download) highest priority vod. title: {vod.title}")
     downloaded_metadata = downloader.downloadTwtvVidFAST(vod, isDebug)
 
     if downloaded_metadata == Errorz.UNAUTHORIZED_403:
@@ -64,7 +67,8 @@ def download(isDebug=False):
     # Upload DB
     s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
     if (s3fileKey):
-        downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
+        downloader.updateVods_Db(downloaded_metadata, vod.id, s3fileKey)
+        # downloader.updateImgs_Db(downloaded_metadata, vod.id)
     downloader.cleanUpDownloads(downloaded_metadata)
 
     return downloaded_metadata

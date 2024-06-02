@@ -10,7 +10,6 @@ import MySQLdb
 import os
 
 def getConnection():
-    print('got connection')
     connection = MySQLdb.connect(
         db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
@@ -232,7 +231,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 try:
                     cursor.executemany(sql, values)
-                    connection.commit()  # Commit the transaction
+                    connection.commit()
                 except Exception as e:
                     print(f"Error occurred (updateVodsDb) a: {e}")
                     connection.rollback()
@@ -243,11 +242,12 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
                 try:
                     cursor.executemany(sql, values)
-                    connection.commit()  # Commit the transaction
+                    connection.commit()
                 except Exception as e:
                     print(f"Error occurred (updateVodsDb): {e}")
                     connection.rollback()
-    connection.close()
+    if connection.open:
+        connection.close()
     print("    (updateVodsDb) Completed update!")
 
 def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
@@ -275,7 +275,7 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     """
     values = [(chan.viewminutes, chan.streamedminutes, chan.maxviewers, chan.avgviewers, chan.followers, chan.followersgained, chan.partner, chan.affiliate, chan.mature, chan.previousviewminutes, chan.previousstreamedminutes, chan.previousmaxviewers, chan.previousavgviewers, chan.previousfollowergain, days_measured, chan.name_id) for chan in scrapped_channels]
     print('updateChannelWatchStats() - updating this many: ', len(values))
-    print(values)
+    # print(values)
     try:
         with connection.cursor() as cursor:
             cursor.executemany(sql, values)

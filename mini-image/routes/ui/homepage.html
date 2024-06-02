@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Title and Input</title>
+    <style> 
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body, html {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    .container {
+        text-align: center;
+        padding: 20px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        background-color: #1e1e1e;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #e0e0e0;
+    }
+
+    .input-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 16px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #e0e0e0;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        min-width: 150px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        font-size: 16px;
+        background-color: #333;
+        color: #e0e0e0;
+    }
+
+    input[type="text"]::placeholder {
+        color: #aaa;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #3965b2; /* Blue color */
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+        background-color: #294784; /* Darker blue */
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        background-color: #294784; /* Even darker blue */
+        transform: translateY(0);
+    }
+    .img-holder {
+        padding-top: 12px;
+    }
+
+    @media (max-width: 600px) {
+        input[type="text"] {
+            width: 100%;
+        }
+    }
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Minify Image</h1>
+        <div class="input-group">
+            <label for="imageUrl-input">Image imageUrl</label>
+            <input class="w-100" type="text" id="imageUrl" placeholder="image imageUrl">
+        </div>
+        <div class="input-container">
+            <div class="input-group">
+                <label for="first-input">New width (px)</label>
+                <input type="text" id="width" placeholder="240">
+            </div>
+            <div class="input-group">
+                <label for="second-input">New height (optional)</label>
+                <input type="text" id="height" placeholder="">
+            </div>
+        </div>
+        <button id="submit-btn">Submit</button>
+        <div id="img-response" class="img-holder">
+
+        </div>
+    </div>
+    <script>
+        document.getElementById('submit-btn').addEventListener('click', function() {
+        const imageUrl = document.getElementById('imageUrl').value;
+        const width = document.getElementById('width').value;
+        const height = document.getElementById('height').value;
+        document.getElementById('imageUrl').style.border = ""
+        document.getElementById('width').style.border = ""
+
+        console.log('Image URL:', imageUrl);
+        console.log('Width:', width);
+        console.log('Height:', height);
+        const data = {
+            imageUrl: imageUrl,
+            width: width,
+            height: height
+        };
+        if ( !data.imageUrl ) {
+            document.getElementById('imageUrl').style.border = "solid 2px red";
+            return
+        }
+        if (!isValidURL(data.imageUrl)) {
+            document.getElementById('imageUrl').style.border = "solid 2px red";
+            return 
+        }
+        if ( !data.width || typeof Number(data.width) !== "number" ) {
+            document.getElementById('width').style.border = "solid 2px red";
+            return 
+        }
+        const apiUrl = '/api/compress'; 
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(async response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            console.log('Fetching image...');
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            displayImage(imageUrl);
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+
+    function isValidURL(string) {
+        try {
+            console.log(string)
+            new URL(string);
+            return true;
+        } catch (e) {
+            console.log(e)
+            return false;
+        }
+    }
+    function displayImage(imageUrl) {
+        const imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        imgElement.alt = 'Compressed Image';
+        document.querySelector("#img-response").appendChild(imgElement);
+    }
+    </script>
+</body>
+</html>

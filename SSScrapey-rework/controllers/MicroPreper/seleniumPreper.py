@@ -76,7 +76,7 @@ def isPersonOnline(soup: BeautifulSoup):
     print("  (isPersonOnline) online_ele_2 length: ", len(online_ele_2))
     print("  (isPersonOnline) online_ele_3_profile length: ", len(online_ele_3_profile))
     print("  (isPersonOnline) offline_ele length: ", len(offline_ele))
-    print("  (isPersonOnline) player_ele length: ", len(player_ele))
+    print("  (isPersonOnline) player_ele length (should be 1): ", len(player_ele))
 
     player_ele = soup.select(".channel-root__player ")
     if player_ele[0] and player_ele[0].get_text(strip=True).lower().startswith("live"):
@@ -104,7 +104,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     #     # return jd_onlymusic, nmplol, lolgeranimo
     #     return channels[:channelMax]
 
-    print('1 running. scrap4vid.........')
+    print('A running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     firefox_profile = webdriver.FirefoxProfile()
     firefox_profile.set_preference("media.block-play-until-visible", False)
@@ -114,7 +114,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
 
     try:
-        print('2 running. scrap4vid.........')
+        print('B running. scrap4vid.........')
         browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
         print(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:

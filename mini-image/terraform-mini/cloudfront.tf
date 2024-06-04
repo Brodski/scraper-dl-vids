@@ -30,7 +30,8 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     }
   }
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    # allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.origin_id
     default_ttl = 43200       # Default TTL set to 12 hour

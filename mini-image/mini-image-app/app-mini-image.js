@@ -17,8 +17,7 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/api/compress', async (req, res) => {
-  console.log("COMPRESSSSS")
-  let {img, format, filename_new} = await compress(req, res)
+  let {img, format, filename_new} = await compress(req.body, res)
   if (img == null) {
     return res.status(400).json({ message: 'Compression failed: Image is null' });
   }
@@ -34,7 +33,30 @@ app.post('/api/compress', async (req, res) => {
 if (process.env.IS_LAMBDA == "true") {
   console.log("YES!!!!! process.env.IS_LAMBDA", process.env.IS_LAMBDA)
   module.exports.lambdaHandler = async (event, context) => {
+      console.log("event=" + event);
+      console.log("event=" + JSON.stringify(event));
       console.log("event.path=" + event.path);
+      console.log('event.httpMethod', event.httpMethod)
+      console.log('event.body', event.body)
+      
+      let body = !event.isBase64Encoded ? JSON.parse(event.body) : JSON.parse(Buffer.from(event.body, 'base64').toString('utf-8'));
+      console.log('body', body)
+      if (event.path == "/api/compress" && event.httpMethod == "POST") {
+        let {img, format, filename_new} = await compress(body)
+        let res = {
+            statusCode: 200,
+            headers: {
+                'Content-Type': `image/${format}`,
+                'Content-Disposition': `attachment; filename="${filename_new}"`,
+                'X-Bski-Filename': `${filename_new}`,
+                'Content-Type': `image/${format}`,
+            },
+            body: img.toString('base64'),
+            isBase64Encoded: true,
+        };
+        console.log("res is:", res);
+        return res;
+      }
 
       event.path = event.path === '' ? '/' : event.path
       context.callbackWaitsForEmptyEventLoop = false;

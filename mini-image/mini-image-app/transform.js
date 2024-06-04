@@ -16,7 +16,7 @@ class Transform {
         const format = meta.format;
 
         // percent
-        if (value < 1 && value > 0) {
+        if (value > 0 && value < 1) {
             value = Math.round(meta.width * value);
         }
         const imgNewBuffer = await imageSharp.resize(value).toBuffer();
@@ -25,9 +25,7 @@ class Transform {
         const metaNew = await imgNew.metadata();
         const isSave = false;
         
-        filename = filename.replace(/[^a-zA-Z0-9]/g, '');
-        filename = filename == "" ? "imagefile" : filename;
-        let filename_new = `${filename}${metaNew.width}x${metaNew.height}.${format}`
+        let filename_new = `${filename}_${metaNew.width}x${metaNew.height}.${format}`
 
         let img = null;
         if (isSave) {

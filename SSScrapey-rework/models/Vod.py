@@ -20,6 +20,7 @@ class Vod:
     s3_caption_files = str
     transcribe_date = datetime
     title = str
+    s3_thumbnails = str
 
     def __init__(self,  **kwargs):
         self.id = kwargs.get('id')
@@ -37,6 +38,8 @@ class Vod:
         self.s3_caption_files = kwargs.get('s3_caption_files')
         self.transcribe_date = kwargs.get('transcribe_date')
         self.title = kwargs.get('title')
+        self.s3_thumbnails = kwargs.get('s3_thumbnails')
+
 
     # def __repr__(self):
     # def __str__(self):

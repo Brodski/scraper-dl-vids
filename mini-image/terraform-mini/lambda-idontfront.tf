@@ -16,7 +16,7 @@ resource "aws_lambda_function" "mini_image_lambda" {
   role          = aws_iam_role.mini_image_role.arn
   memory_size   = 512
   timeout       = 300 # 5 min 
-  architectures = ["x86_64"] # ["arm64"]
+  architectures = ["arm64"] # ["x86_64"] # 
 
 
   filename = data.archive_file.lambda_zip.output_path # "output_code.zip"

@@ -43,8 +43,8 @@
                 console.log('loaded twitch iframe"')
                 console.log(isMobile() )
                 var options = {
-                    width: (isMobile() ? '100%' : 640),
-                    height: (isMobile() ? 230 : 360),
+                    width: ( window.innerWidth <= 640 ? '100%' : 640),
+                    height: ( window.innerWidth <= 640 ? 230 : 360),
                     video: <%= vod.id %>,
                     autoplay: false,
                     parent: ["localhost", "othersite.example.com"]

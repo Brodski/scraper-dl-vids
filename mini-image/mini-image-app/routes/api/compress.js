@@ -5,17 +5,11 @@ const Transform = require('../../transform');
 
 const MAX_SIZE = 1024 * 1024 * 5; // 5 MB size limit
 
-async function compress(req, res) {
-    const query = req.query;
-    const body = req.body;
-    // let { width, percent, imageUrl } = { "width": query.width, "percent": query.percent, "url": query.imageUrl };
-    // const { imageUrl, width, percent } = req.body;
+async function compress(body) {
+    // const { imageUrl, width, percent } = body;
     console.log("body")
     console.log(body)
-    const { imageUrl, width, percent, rename } = { "imageUrl": body?.imageUrl, "width": body?.width, "percent": body?.percent, "rename": body?.rename};
-    console.log("imageUrl", imageUrl) 
-    console.log("width", width) 
-    console.log("percent", percent)
+    const { imageUrl, width, percent } = { "imageUrl": body?.imageUrl, "width": body?.width, "percent": body?.percent };
     let buffImage = null;
 
     // let buffImage = './imgs/thumb.jpg'
@@ -27,10 +21,10 @@ async function compress(req, res) {
         return {"img": null, "format": null, "filename_new": null}
     }
     
-    let filename = query.rename ? query.rename : extractNameFromUrl(imageUrl);
+    let filename = extractNameFromUrl(imageUrl);
     let val = width ? width : percent
 
-    let {img, format, filename_new} = await Transform.reduceImg({"image": buffImage, filename, "value": Number(val)});
+    let {img, format, filename_new} = await Transform.reduceImg({"image": buffImage, "filename": filename, "value": Number(val)});
     console.log(img)
     console.log(format)
     
@@ -40,6 +34,7 @@ async function compress(req, res) {
 // www.bigboy.com/image/of/bigboy =>  bigboy.jpg
 function extractNameFromUrl(url) {
     try {
+        console.log("    (Extract) url: ", url)
         let filenameDefault = null;
         let lastIdxDot = url.lastIndexOf(".");
         let lastIdxSlash = url.lastIndexOf("/");
@@ -48,17 +43,15 @@ function extractNameFromUrl(url) {
         if (lastIdxDot > lastIdxSlash) {
             let lastIdxJunkBefore = url.slice(0, lastIdxDot).lastIndexOf("/");
             filenameDefault = url.slice(lastIdxJunkBefore + 1, lastIdxDot);
-            console.log("filenameDefault", filenameDefault);
         }
-
-        // else www.bigboy.com/image/of/bigboy
-        else if (lastIdxDot > lastIdxSlash) {
+        else if (lastIdxDot > lastIdxSlash) { // else www.bigboy.com/image/of/bigboy
             filenameDefault = url.slice(lastIdxSlash + 1);
         }
 
         filenameDefault = filenameDefault.replace(/[^a-zA-Z0-9]/g, '');
-        filenameDefault = filenameDefault == "" ? "imagefile" : filenameDefault;
         filenameDefault = filenameDefault.replace(/(0x0|00x0)$/, '');
+        filenameDefault = filenameDefault == "" ? "imagefile" : filenameDefault;
+        filenameDefault = filenameDefault.substring(0, 20);
         return filenameDefault;
     } catch (e) {
         console.log("oops");

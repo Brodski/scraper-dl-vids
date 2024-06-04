@@ -67,8 +67,8 @@ def download(isDebug=False):
     # Upload DB
     s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
     if (s3fileKey):
-        downloader.updateVods_Db(downloaded_metadata, vod.id, s3fileKey)
-        # downloader.updateImgs_Db(downloaded_metadata, vod.id)
+        json_s3_img_keys = downloader.updateImgs_Db(downloaded_metadata, vod)
+        downloader.updateVods_Db(downloaded_metadata, vod.id, s3fileKey, json_s3_img_keys)
     downloader.cleanUpDownloads(downloaded_metadata)
 
     return downloaded_metadata

@@ -155,18 +155,6 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
                 connection.rollback()
             finally:
                 connection.close()
-        # for chan in scrapped_channels:
-        #     if chan.name_id in old_name_ids:
-        #         print("Adding new channel:", chan.name_id)
-        #         sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId) VALUES (%s, %s, %s, %s, %s, %s)"
-        #         values = (chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id)
-        #         try:
-        #             cursor.execute(sql, values)
-        #             connection.commit()
-        #         except Exception as e:
-        #             print(f"Error occurred: {e}")
-        #             connection.rollback()
-        # finally:
 
 def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
@@ -426,3 +414,6 @@ def deleteOldTodos():
 # ADD WebpageUrl VARCHAR(255);
 # ADD Timestamp VARCHAR(255);
 # ADD S3CaptionFiles JSON;
+
+
+# ALTER TABLE Vods ADD COLUMN S3Thumbnails JSON;

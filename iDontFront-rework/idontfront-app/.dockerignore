@@ -1,0 +1,5 @@
+.env
+.env_prod
+
+# we build node_modules via 'yarn install' at dockerfile
+node_modules/

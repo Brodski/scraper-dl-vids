@@ -16,50 +16,55 @@ async function compress(req, res) {
     console.log("imageUrl", imageUrl) 
     console.log("width", width) 
     console.log("percent", percent)
-    let optionz = null;
     let buffImage = null;
 
-    let image = './imgs/thumb.jpg'
+    // let buffImage = './imgs/thumb.jpg'
     try {
         buffImage = await downloadImage(imageUrl);
     } catch (error) {
         console.error("error")
         console.error(error)
-        return {"img": null, "format": null}
+        return {"img": null, "format": null, "filename_new": null}
     }
     
     let filename = query.rename ? query.rename : extractNameFromUrl(imageUrl);
     let val = width ? width : percent
 
-    let {img, format} = await Transform.reduceImg({image, filename, "value": Number(val)});
+    let {img, format, filename_new} = await Transform.reduceImg({"image": buffImage, filename, "value": Number(val)});
     console.log(img)
     console.log(format)
     
-    return {img, format}
+    return {img, format, filename_new}
 }
 
 // www.bigboy.com/image/of/bigboy =>  bigboy.jpg
 function extractNameFromUrl(url) {
-    let filenameDefault = null;
-    let lastIdxDot = url.lastIndexOf(".");
-    let lastIdxSlash = url.lastIndexOf("/");
+    try {
+        let filenameDefault = null;
+        let lastIdxDot = url.lastIndexOf(".");
+        let lastIdxSlash = url.lastIndexOf("/");
 
-    // Ends in a file type eg www.bigboy.com/image/of/bigboy.jpg
-    if (lastIdxDot > lastIdxSlash) {
-      let lastIdxJunkBefore = url.slice(0, lastIdxDot).lastIndexOf("/");
-      filenameDefault = url.slice(lastIdxJunkBefore + 1, lastIdxDot);
-      console.log("filenameDefault", filenameDefault);
+        // Ends in a file type eg www.bigboy.com/image/of/bigboy.jpg
+        if (lastIdxDot > lastIdxSlash) {
+            let lastIdxJunkBefore = url.slice(0, lastIdxDot).lastIndexOf("/");
+            filenameDefault = url.slice(lastIdxJunkBefore + 1, lastIdxDot);
+            console.log("filenameDefault", filenameDefault);
+        }
+
+        // else www.bigboy.com/image/of/bigboy
+        else if (lastIdxDot > lastIdxSlash) {
+            filenameDefault = url.slice(lastIdxSlash + 1);
+        }
+
+        filenameDefault = filenameDefault.replace(/[^a-zA-Z0-9]/g, '');
+        filenameDefault = filenameDefault == "" ? "imagefile" : filenameDefault;
+        filenameDefault = filenameDefault.replace(/(0x0|00x0)$/, '');
+        return filenameDefault;
+    } catch (e) {
+        console.log("oops");
+        console.error(e);
+        return "imagefile";
     }
-
-    // else www.bigboy.com/image/of/bigboy
-    else if (lastIdxDot > lastIdxSlash) {
-      filenameDefault = url.slice(lastIdxSlash + 1);
-    }
-
-    filenameDefault = filenameDefault.replace(/[^a-zA-Z0-9]/g, '');
-    filenameDefault = filenameDefault == "" ? "imagefile" : filenameDefault;
-    return filenameDefault;
-
 }
 
 function downloadImage(url) {

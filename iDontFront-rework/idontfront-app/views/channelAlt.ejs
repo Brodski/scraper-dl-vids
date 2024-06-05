@@ -22,10 +22,14 @@
                         let duration        = vod.duration // 38541
                         let vod_title       = vod.title
                         let id              = vod.id
-                        let thumbnail       = vod.thumbnail
                         let streamDate      = vod.streamDate
                         let s3Audio         = vod.s3Audio
                         let href            = path + "/" +  id 
+                        let s3Thumbnails    = vod.s3Thumbnails
+                        let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
+                        console.log("vod_title: ", vod_title, " --- s3Thumbnails: ", s3Thumbnails)
+                        console.log(thumbnail)
+                        console.log()
                 %>
                 <div class="channel__vod">
                     <div class="channel__abs_info d-flex j-space-between">

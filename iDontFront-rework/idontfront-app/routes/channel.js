@@ -9,10 +9,13 @@ async function getChannelPage(req, res) {
     let db = new DatabaseSingleton
     let [resultsVods, fields1] = await db.getVods(req.params.name)
     let [resultsChan, fields2] = await db.getChannel(req.params.name)
+    console.log("resultsVods")
+    console.log(resultsVods)
     let vods = resultsVods.map( x => new Vod(x))
     let channels = resultsChan.map( x => new Channel(x))
     console.log("vods.length:", vods.length)
     console.log("channels.length:", channels.length)
+    console.log("channels[0]:", channels[0])
     if (channels.length < 1) {
         console.error("BAD QUERY FOR CHANNELS! OR VODS (a)")
         console.log(channels)

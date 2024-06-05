@@ -72,6 +72,7 @@ RUN pip install -r requirements_downloader.txt \
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    cat dock_setup ; \
     sh dock_setup.sh ; \
     python --version ; \
     python kickDownloader.py && \

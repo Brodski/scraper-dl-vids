@@ -1,5 +1,5 @@
 class Vod {
-    constructor({Id = '', ChannelNameId = '', Title = '', Duration = '', DurationString = '', ViewCount = '', WebpageUrl = '', TranscriptStatus = '', Priority = '', Thumbnail = '', TodoDate = '', S3Audio = '', Model = '', DownloadDate = '', StreamDate = '', DisplayName = '', Language = '', Logo = '', CurrentRank = '', TwitchUrl = '', S3CaptionFiles = null}) {
+    constructor({Id = '', ChannelNameId = '', Title = '', Duration = '', DurationString = '', ViewCount = '', WebpageUrl = '', TranscriptStatus = '', Priority = '', Thumbnail = '', TodoDate = '', S3Audio = '', Model = '', DownloadDate = '', StreamDate = '', DisplayName = '', Language = '', Logo = '', CurrentRank = '', TwitchUrl = '', S3CaptionFiles = null, S3Thumbnails = null}) {
         this.id = Id;
         this.channelNameId = ChannelNameId;
         this.title = Title;
@@ -23,6 +23,7 @@ class Vod {
         this.channelCurrentRank = CurrentRank
         this.channelTwitchUrl = TwitchUrl
         this.s3CaptionFiles = S3CaptionFiles
+        this.s3Thumbnails = S3Thumbnails
     }
     getS3TranscriptKey() {        
         return this._getS3Key(".json")

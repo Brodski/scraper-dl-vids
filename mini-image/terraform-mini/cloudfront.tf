@@ -3,7 +3,7 @@ locals {
   arn_parts = split(":", aws_api_gateway_rest_api.api_gw_rest.execution_arn)
   region    = local.arn_parts[3]
   api_id    = local.arn_parts[5]
-  origin_id = "${var.ENV}-bski-origin-id"
+  origin_id = "${var.ENV}-mini-image-id"
   # origin_id = "bski-captions-id"
 }
 ### CLOUDFRONT LAMBDA
@@ -13,7 +13,7 @@ locals {
 resource "aws_cloudfront_distribution" "lambda_distribution" {
   enabled = true
   aliases = [local.website_name]
-  comment = "${var.ENV}-captions.bski.one"
+  comment = "${var.ENV} mini image dist"
   viewer_certificate {
     acm_certificate_arn = var.sensitive_info.r53_acm_certificate_arn
     ssl_support_method  = "sni-only"
@@ -30,7 +30,8 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     }
   }
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    # allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.origin_id
     default_ttl = 43200       # Default TTL set to 12 hour

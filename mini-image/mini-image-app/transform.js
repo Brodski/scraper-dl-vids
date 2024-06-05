@@ -10,12 +10,13 @@ class Transform {
     
     static async reduceImg({image, filename, value}) {
         console.log("Got reduce value of: ", value);
+        console.log("got image:", image)
         const imageSharp = sharp(image);
         const meta = await imageSharp.metadata();
         const format = meta.format;
 
         // percent
-        if (value < 1 && value > 0) {
+        if (value > 0 && value < 1) {
             value = Math.round(meta.width * value);
         }
         const imgNewBuffer = await imageSharp.resize(value).toBuffer();
@@ -23,14 +24,17 @@ class Transform {
         const imgNew = sharp(imgNewBuffer);
         const metaNew = await imgNew.metadata();
         const isSave = false;
+        
+        let filename_new = `${filename}_${metaNew.width}x${metaNew.height}.${format}`
+
         let img = null;
         if (isSave) {
-            img = await imgNew.toFile(`./imgs/${filename}${metaNew.width}x${metaNew.height}.${format}`);
+            img = await imgNew.toFile(`./imgs/${filename_new}`);
         } 
         else {
             img = await imgNew.toBuffer();
         }
-        return {img, format};
+        return {img, format, filename_new};
     }
     
     // static async reduceByPercent({image, filename, percent}) {

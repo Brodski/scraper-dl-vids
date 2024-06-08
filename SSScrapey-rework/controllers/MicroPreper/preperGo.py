@@ -13,7 +13,7 @@ import os
 def prepare(isDebug=False):
     print ("IT'S RUNNING! WOOOOOOOOOO")
     # Make http request to sullygnome. 3rd party website
-    topChannels = todoPreper.getTopChannels() 
+    topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py

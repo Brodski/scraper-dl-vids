@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import requests
 from models.ScrappedChannel import ScrappedChannel
+from utils.emailer import sendEmail
 from typing import List
 import env_file as env_varz
 import MySQLdb
@@ -86,6 +87,13 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
 
         print(" (getNewOldChannelsFromDB) matching_channels")
         print([ch.name_id for ch in matching_channels])
+        print(" (getNewOldChannelsFromDB) channels_all_in_db")
+        print([ch.name_id for ch in channels_all_in_db])
+        print("scrapped_channels")
+        print("scrapped_channels")
+        print("scrapped_channels")
+        print("scrapped_channels")
+        print([ch.name_id for ch in scrapped_channels])
         print(" (getNewOldChannelsFromDB) all_channels_minus_scrapped")
         print([ch.name_id for ch in all_channels_minus_scrapped])
         
@@ -104,6 +112,15 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
         response = requests.get(url)
         if response.status_code == 200:
             text_data = response.content.decode('utf-8') 
+            if response.url == "https://sullygnome.com/": # redirected
+                subject = f"Preper {os.getenv('ENV')} - Failed selenium scrap on a channel"
+                msg = f"Attempted but failed url={url} - cnt={cnt} \nThey redirected! response.url is now: " + response.url
+                print(msg)
+                print(msg)
+                print(msg)
+                sendEmail(subject, msg)
+                # docker builder prune
+                continue
         
             soup = BeautifulSoup(text_data, 'html.parser')
             data1 = soup.select("#pageHeaderMiddle .MiddleSubHeaderContainer .MiddleSubHeaderItemValue")

@@ -113,11 +113,12 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
         if response.status_code == 200:
             text_data = response.content.decode('utf-8') 
             if response.url == "https://sullygnome.com/": # redirected
-                msg = f"url={url} - cnt={cnt} \n They redirected! response.url is now: " + response.url
+                subject = f"Preper {os.getenv('ENV')} - Failed selenium scrap on a channel"
+                msg = f"Attempted but failed url={url} - cnt={cnt} \nThey redirected! response.url is now: " + response.url
                 print(msg)
                 print(msg)
                 print(msg)
-                sendEmail(msg)
+                sendEmail(subject, msg)
                 # docker builder prune
                 continue
         

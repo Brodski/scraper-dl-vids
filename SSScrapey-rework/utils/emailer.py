@@ -1,7 +1,7 @@
 import boto3
 
 
-def sendEmail(body):
+def sendEmail(subject, body):
     ses = boto3.client('ses', region_name='us-east-1')
 
     # Send the email
@@ -14,7 +14,7 @@ def sendEmail(body):
         },
         Message={
             'Subject': {
-                'Data': 'Test Email',
+                'Data': subject,
                 'Charset': 'UTF-8'
             },
             'Body': {

@@ -68,7 +68,11 @@ def goTranscribeBatch(isDebug=False):
         stack_trace = traceback.format_exc()
         print(stack_trace)
         print("long sleep jsut becasue")
-        time.sleep(500)
+        print("long sleep jsut becasue")
+        print("long sleep jsut becasue")
+        print("long sleep jsut becasue")
+        print("long sleep jsut becasue")
+        time.sleep(800)
 
 def transcribe(isDebug=False) -> Dict[Vod, bool]:
     # Setup. Get Vod

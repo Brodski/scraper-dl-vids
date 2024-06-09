@@ -20,43 +20,55 @@ logger = Cloudwatch.log
 
 
 def goTranscribeBatch(isDebug=False):
-    start_time = time.time()
-    download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
-    completed_vods_list: List[Vod] = []
-    failed_vods_list: List[Vod] = []
-    logger("Transcriber start! ")
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
-    for i in range(0, download_batch_size):
-        logger("===========================================")
-        logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
-        logger("===========================================")
-        # vod: Vod = transcribe(isDebug)
-        result: Dict[Vod, bool] = transcribe(isDebug)
-        vod = result["vod"]
-        isPass = result["isPass"]
-        logger(f"   (goTranscribeBatch) Finished Index {i}")
-        logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
-        logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
-        if result["isPass"]:
-            completed_vods_list.append(vod)
-        else:
-            failed_vods_list.append(vod)
-    elapsed_time = time.time() - start_time
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("Completed: ")
-    for v in failed_vods_list:
-        logger(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
-    for v in completed_vods_list:
-        logger(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
-    logger("SLEEPING BC END & debug")
-    time.sleep(100) 
-    logger("gg ending")
-    return "gg ending"
+    try:
+        start_time = time.time()
+        download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
+        completed_vods_list: List[Vod] = []
+        failed_vods_list: List[Vod] = []
+        logger("Transcriber start! ")
+        logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
+        logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
+        logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
+        logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
+        for i in range(0, download_batch_size):
+            logger("===========================================")
+            logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
+            logger("===========================================")
+            # vod: Vod = transcribe(isDebug)
+            result: Dict[Vod, bool] = transcribe(isDebug)
+            vod = result["vod"]
+            isPass = result["isPass"]
+            logger(f"   (goTranscribeBatch) Finished Index {i}")
+            logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
+            logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
+            if result["isPass"]:
+                completed_vods_list.append(vod)
+            else:
+                failed_vods_list.append(vod)
+        elapsed_time = time.time() - start_time
+        logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+        logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+        logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+        logger("Completed: ")
+        for v in failed_vods_list:
+            logger(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
+        for v in completed_vods_list:
+            logger(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
+        logger("SLEEPING BC END & debug")
+        time.sleep(100) 
+        logger("gg ending")
+        return "gg ending"
+    except Exception as e:
+        print("wtf")
+        print("wtf")
+        print("wtf")
+        print("wtf")
+        print("wtf")
+        print(e)
+        stack_trace = traceback.format_exc()
+        print(stack_trace)
+        print("long sleep jsut becasue")
+        time.sleep(500)
 
 def transcribe(isDebug=False) -> Dict[Vod, bool]:
     # Setup. Get Vod

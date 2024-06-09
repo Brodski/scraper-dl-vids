@@ -18,27 +18,28 @@ def goDownloadBatch(isDebug=False):
         print("===========================================")
         print(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
-        x = download(isDebug)
-        if x == Errorz.TOO_BIG or x == Errorz.DELETED_404 or x == Errorz.UNAUTHORIZED_403:
-            print("We skipped a download, trying next entry. Error:", x)
+        dl_meta = download(i, isDebug)
+        if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403:
+            print("We skipped a download, trying next entry. Error:", dl_meta)
             continue
         print(f"Finished Index {i}")
         print(f"download_batch_size: {i}")
         i += 1
     return x
 
-def download(isDebug=False):
-    vod = downloader.getTodoFromDatabase(isDebug=isDebug) # limit = 5
+def download(i, isDebug=False):
+    vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # limit = 5
     if vod == None:
         print("There are zero transcript_status='todo' from the query :O")
         return "nothing to do"
     # Download vod from twitch
-    vod.printDebug()
+    # vod.printDebug()
     isSuccess = downloader.lockVodDb(vod, isDebug)
     if not isSuccess:
         print("No VODS todo!")
         return "No VODS todo!"
 
+    print(f"    (download) Going to download: {vod.channels_name_id} - {vod.id} - {vod.title}")
     print(f"    (download) highest priority vod. name: {vod.channels_name_id}")
     print(f"    (download) highest priority vod. id: {vod.id}")
     print(f"    (download) highest priority vod. title: {vod.title}")

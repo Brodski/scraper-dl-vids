@@ -16,7 +16,7 @@ resource "aws_lambda_function" "vast_lambda" {
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   handler = "vastai_master.handler_kickit" 
   runtime = "python3.10"
-  timeout = 720 # 12 minutes
+  timeout = 780 # 13 minutes
 
   role = aws_iam_role.lambda_execution_role.arn
 

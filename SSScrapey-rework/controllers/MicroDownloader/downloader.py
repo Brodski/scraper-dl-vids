@@ -39,7 +39,7 @@ def getConnection():
 
 # Logic below determins which Todo/highest_priority_vod
 # Get last 5 recent vods from every channel. Take from the most popular channel
-def getTodoFromDatabase(isDebug=False) -> Vod:
+def getTodoFromDatabase(i, isDebug=False) -> Vod:
     highest_priority_vod = None #
     resultsArr = []
     connection = getConnection()
@@ -77,12 +77,11 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, rownum = vod_
         vod = Vod(id=Id, channels_name_id=ChannelNameId, title=Title, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
-        # vod.print()
         resultsArr.append(vod)
 
-    # Nice print :)
-    for vod in resultsArr:
-        print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
+    if i == 0:
+        for vod in resultsArr:
+            print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
 
     #Recall, results arr is sorted by priority via smart sql query
     highest_priority_vod: Vod = None

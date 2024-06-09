@@ -268,7 +268,13 @@ def find_create_confirm_instance(event, context, rerun_count):
             if status == "success":
                 # WE PRINT A LOT OF INFO
                 printDebug(id_contract)
-                
+            else:
+                print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
+                print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
+                print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
+                print("  (find_create_confirm_instance) POLL FAILED. id_create=" + id_create)
+                print("  (find_create_confirm_instance) POLL FAILED. id_contract=" + id_contract)
+                destroy_instance(id_contract)
         except Exception as e:
             traceback.print_exc()
             print(f"   (find_create_confirm_instance) Error creating instacne {e}")
@@ -296,7 +302,7 @@ def printDebug(id_contract):
 
 def pollCompletion(id_contract, start_time, counter_try_again):
     # id_create = id_contract
-    print(f'----- polling {str(id_contract)} for completion -----')
+    print(f'----- {counter_try_again}: polling {str(id_contract)} for completion -----')
     if counter_try_again > 11: # 11 min
         print(f"    (pollCompletion) counter_try_again > 11. Ending. counter_try_again={counter_try_again}")
         return
@@ -307,17 +313,20 @@ def pollCompletion(id_contract, start_time, counter_try_again):
     rows = show_my_instances()
     print("    (pollCompletion) exec_time_minutes: ", exec_time_minutes)
     for row in rows:
-        # print(row)
         row_id = str(row['id'])
-        print("    (pollCompletion) row_id", row_id)
-        print("    (pollCompletion) id_contract", id_contract)
-        print("    (pollCompletion) status_msg: ", row.get("status_msg"))
-        print("    (pollCompletion) actual_status: ", row.get("actual_status"))
         if row_id == id_contract:
+            print("    (pollCompletion) row_id", row_id)
+            print("    (pollCompletion) id_contract", id_contract)
+            print("    (pollCompletion) status_msg: ", row.get("status_msg"))
+            print("    (pollCompletion) actual_status: ", row.get("actual_status"))
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]
             break
     
+    if status_msg and status_msg.lower().startswith("unexpected fault address"):
+        print("    (pollCompletion) nope not ready, 'unexpected fault address' end it")
+        try_again(str(row['id']))
+        return
     if status_msg and "unable to find image" in status_msg.lower():
         print("    (pollCompletion) nope not ready, end it")
         try_again(str(row['id']))

@@ -158,6 +158,9 @@ def destroy_instance(id):
 
 
 def printAsTable(goodOffers):
+    if (len(goodOffers) == 0):
+        print("    (printAsTable) wtf goodOffers == 0, returning")
+        return
     print(goodOffers[0])
     headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "gpu_ram", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
     def printColAux(column):
@@ -203,7 +206,6 @@ def find_create_confirm_instance(event, context, rerun_count):
     # print(json.dumps(offers[0], indent=2))
     print("  (find_create_confirm_instance) == GO BABY GO ==")
     # print("== All offers below ==")
-    # printAsTable(offers)
     goodOffers = []
     for offer in offers:
         id = "id: " + str(offer.get("id"))

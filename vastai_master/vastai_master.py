@@ -244,8 +244,6 @@ def find_create_confirm_instance(event, context, rerun_count):
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
     print("  (find_create_confirm_instance)  offers COUNT: " + str(len(offers)))
     print("  (find_create_confirm_instance)  Number of goodOffers: ", len(goodOffers))
-    print("  (find_create_confirm_instance)  Good offers: ")
-    printAsTable(goodOffers)
     if len(goodOffers) == 0:
         print("THERE ARE NO GOOD OFFERS!\n" * 9)
         print("Gonna try again in 5 min")
@@ -254,6 +252,8 @@ def find_create_confirm_instance(event, context, rerun_count):
         time.sleep(150)
         print('5 min passed ...')
         find_create_confirm_instance(event, None, rerun_count + 1)
+    print("  (find_create_confirm_instance)  Good offers: ")
+    printAsTable(goodOffers)
 
     instance_first = goodOffers[0]
     print("  (find_create_confirm_instance) instance_first: ", instance_first.get("id"))

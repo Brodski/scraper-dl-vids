@@ -158,6 +158,9 @@ def destroy_instance(id):
 
 
 def printAsTable(goodOffers):
+    if (len(goodOffers) == 0):
+        print("    (printAsTable) wtf goodOffers == 0, returning")
+        return
     print(goodOffers[0])
     headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "gpu_ram", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
     def printColAux(column):
@@ -203,7 +206,6 @@ def find_create_confirm_instance(event, context, rerun_count):
     # print(json.dumps(offers[0], indent=2))
     print("  (find_create_confirm_instance) == GO BABY GO ==")
     # print("== All offers below ==")
-    # printAsTable(offers)
     goodOffers = []
     for offer in offers:
         id = "id: " + str(offer.get("id"))
@@ -244,8 +246,6 @@ def find_create_confirm_instance(event, context, rerun_count):
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
     print("  (find_create_confirm_instance)  offers COUNT: " + str(len(offers)))
     print("  (find_create_confirm_instance)  Number of goodOffers: ", len(goodOffers))
-    print("  (find_create_confirm_instance)  Good offers: ")
-    printAsTable(goodOffers)
     if len(goodOffers) == 0:
         print("THERE ARE NO GOOD OFFERS!\n" * 9)
         print("Gonna try again in 5 min")
@@ -254,6 +254,8 @@ def find_create_confirm_instance(event, context, rerun_count):
         time.sleep(150)
         print('5 min passed ...')
         find_create_confirm_instance(event, None, rerun_count + 1)
+    print("  (find_create_confirm_instance)  Good offers: ")
+    printAsTable(goodOffers)
 
     instance_first = goodOffers[0]
     print("  (find_create_confirm_instance) instance_first: ", instance_first.get("id"))
@@ -269,11 +271,12 @@ def find_create_confirm_instance(event, context, rerun_count):
                 # WE PRINT A LOT OF INFO
                 printDebug(id_contract)
             else:
+                status = "None" if status is None else status
                 print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
                 print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
                 print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
-                print("  (find_create_confirm_instance) POLL FAILED. id_create=" + id_create)
-                print("  (find_create_confirm_instance) POLL FAILED. id_contract=" + id_contract)
+                print("  (find_create_confirm_instance) POLL FAILED. id_create=", id_create)
+                print("  (find_create_confirm_instance) POLL FAILED. id_contract=", id_contract)
                 destroy_instance(id_contract)
         except Exception as e:
             traceback.print_exc()

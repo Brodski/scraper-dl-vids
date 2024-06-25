@@ -6,7 +6,7 @@ def sendEmail(subject, body):
 
     # Send the email
     response = ses.send_email(
-        Source='noreply@dev-captions.bski.one',  # Use an email address from your verified domain
+        Source='noreply@dev-captions.bski.one', # TODO update "dev"-catpions
         Destination={
             'ToAddresses': [
                 'loganwallace.smash@gmail.com',

@@ -155,8 +155,9 @@ def downloadTwtvVidFAST(vod: Vod, isDebug=False):
     if vod == None or vod.id == None:
         print("ERROR no vod")
         return
-    if isVodTooBig(vod):
-        return Errorz.TOO_BIG
+    # TODO Temporarily disabling to try it out
+    # if isVodTooBig(vod):
+    #     return Errorz.TOO_BIG
     start_time = time.time()
     # format paths and direct where to download file
     main_script_path = sys.argv[0]

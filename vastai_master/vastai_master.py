@@ -277,7 +277,7 @@ def find_create_confirm_instance(event, context, rerun_count):
                 print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
                 print("  (find_create_confirm_instance) POLL FAILED. id_create=", id_create)
                 print("  (find_create_confirm_instance) POLL FAILED. id_contract=", id_contract)
-                # destroy_instance(id_contract)
+                destroy_instance(id_contract)
         except Exception as e:
             traceback.print_exc()
             print(f"   (find_create_confirm_instance) Error creating instacne {e}")

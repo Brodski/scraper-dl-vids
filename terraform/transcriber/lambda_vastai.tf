@@ -5,7 +5,7 @@ locals {
 
 data "archive_file" "lambda_zip" {
     type = "zip"
-    output_path = "${path.module}/../../output_code.zip"
+    output_path = "${path.module}/../../output_vastai_lambda_code.zip"
     source_dir = "${path.module}/../../vastai_master"
 }
 

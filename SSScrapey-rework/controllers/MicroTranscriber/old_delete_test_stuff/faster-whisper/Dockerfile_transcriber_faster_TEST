@@ -101,7 +101,7 @@ RUN if [ "${ENV}" = "dev" ]; then \
         git pull origin master --force ; \
         echo "Running in production mode" ; \
     fi
-# RUN pip install -r requirements_transcriber.txt 
+RUN pip install -r requirements_transcriber_faster.txt 
 
 
 #########

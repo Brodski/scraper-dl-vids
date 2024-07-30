@@ -41,7 +41,14 @@ node_modules/
 .terraform.lock.hcl
 venv2/
 venvIns/
+venvFaster/
 **/.env_prod
+
+**/3090/
+**/4090/
+
+
+
 # See docker file.
 # https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.1/local_installers/12.x/cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb/ 
 cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb

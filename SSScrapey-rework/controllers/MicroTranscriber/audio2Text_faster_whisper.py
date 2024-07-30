@@ -1,6 +1,7 @@
 from models.Vod import Vod
 from typing import List
-from whisper.utils import get_writer
+# from whisper.utils import get_writer
+from controllers.MicroTranscriber.whisper_writer_copypaste import get_writer
 import env_file as env_varz
 import faster_whisper
 import json
@@ -8,7 +9,7 @@ import os
 import time
 import torch
 import langcodes
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
 def logger():
     pass
@@ -25,29 +26,25 @@ class Audio2Text:
             except Exception as e:
                 logger(f"Error finding language code: {str(e)}")
                 return None
+
         lang_code = get_language_code(vod.language)
-        model_size = (env_varz.WHSP_MODEL_SIZE + ".en") if lang_code == "en" else env_varz.WHSP_MODEL_SIZE
+        model_size = env_varz.WHSP_MODEL_SIZE
         compute_type = env_varz.WHSP_COMPUTE_TYPE
         cpu_threads = int(env_varz.WHSP_CPU_THREADS)
 
         file_abspath = os.path.abspath(relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
         file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 
-        # model = faster_whisper.WhisperModel(model_size, device="cuda", compute_type="int8", cpu_threads=8)
         model = faster_whisper.WhisperModel(model_size, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
 
         start_time = time.time()
-
         logger("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         logger("    Channel=" + vod.channels_name_id)
         logger("    file_abspath=" + file_abspath)
         logger("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
         logger("    model_size: " + model_size)
 
-        # segments, info = model.transcribe(audio_abs_path, language="en")
-        # segments, info = model.transcribe(audio_abs_path, language="en", condition_on_previous_text=False, vad_filter=True)
         segments, info = model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
-        
 
         logger(f"Detected language {info.language} with probability {str(info.language_probability)}")
 

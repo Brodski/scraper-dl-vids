@@ -1,5 +1,6 @@
 # import controllers.MicroTranscriber.cloudwatch as cloudwatch
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
 from typing import Dict, List
 import boto3
@@ -78,7 +79,9 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
     try:
         vod.printDebug()
         relative_path = transcriber.downloadAudio(vod)
-        saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
+        # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
+        saved_caption_files = Audio2Text.doWhisperStuff(vod, relative_path)
+
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
         transcriber.deleteAudioS3(vod)

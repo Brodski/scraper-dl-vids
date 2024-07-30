@@ -4,9 +4,9 @@
 #                                                          #
 ############################################################
 # Docker build
-#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber_insaneo  .
 #    docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_insaneo  .
-# docker build --build-arg ENV_TYPE=dev  -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_insaneo  .
+#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber_insaneo  .
+#    docker build --build-arg ENV_TYPE=dev  -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_insaneo  .
 
 # Docker push
 #    docker push cbrodski/transcriber:official_v2
@@ -147,10 +147,10 @@ RUN chmod +x dock_setup.sh
 
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     sh ./dock_setup.sh ; \
-    echo "VAST_API_KEY is $VAST_API_KEY " ; \
-    echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
     vastai set api-key $CONTAINER_API_KEY ; \
     pip install flash-attn --no-build-isolation ; \
+    echo "VAST_API_KEY is $VAST_API_KEY " ; \
+    echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
     echo "running......." ; \
     python kickWhisperer.py ; \
     echo "DONE!!!!!!!!!!!!x" ; \

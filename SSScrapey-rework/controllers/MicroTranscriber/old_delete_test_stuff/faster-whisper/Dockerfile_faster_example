@@ -1,0 +1,64 @@
+
+FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
+
+# Arguments
+ARG ENV_TYPE=dev
+ENV ENV=${ENV_TYPE}
+
+
+WORKDIR /root
+RUN apt-get update -y && apt-get install -y python3 python3-pip libcudnn8 libcudnn8-dev
+
+
+###########
+# Project #
+###########
+WORKDIR /app
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
+RUN apt install git -y \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+   
+
+#########
+# cuDNN #
+#########
+# WORKDIR /app
+# COPY cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb . 
+# # ^ copy in my cbrodski google drive
+# RUN dpkg -i cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb  
+# RUN apt install ./cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+# RUN cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
+# RUN apt-get update
+# RUN apt-get install libcudnn8=8.9.1.23-1+cuda12.1 -y
+# RUN apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 -y 
+# RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+
+
+# https://github.com/NVIDIA/nvidia-docker/issues/1644
+# RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+# ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+# ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+# RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+
+
+######################
+# VASTI AI ENDING IT #
+######################
+RUN pip install vastai==0.1.8 
+
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
+
+CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    vastai set api-key $VAST_API_KEY ; \
+    # sh dock_setup.sh ; \
+    echo "VAST_API_KEY is $VAST_API_KEY " ; \
+    echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
+    echo "running......." ; \
+    python kickWhisperer.py ; \
+    echo "DONE!!!!!!!!!!!!x" ; \
+    sleep 90 ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    vastai destroy instance $CONTAINER_ID

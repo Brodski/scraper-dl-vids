@@ -47,7 +47,7 @@
                     height: ( window.innerWidth <= 640 ? 230 : 360),
                     video: <%= vod.id %>,
                     autoplay: false,
-                    parent: ["localhost", "othersite.example.com"]
+                    parent: ["prod-captions.bski.one"]
                 };
                 player = new Twitch.Player("twitch-iframe", options);
                 console.log(player.getVolume())
@@ -70,26 +70,25 @@
         <!-- MAIN TRANCRIPT -->
         <!-- MAIN TRANCRIPT -->
         <% 
-            let i = 0;
-            for (let segment of transcript_json) { 
+        let i = 0;
+        for (let segment of transcript_json) {
             if (i==0) {
                 console.log("vod's first segment: ", segment)
             }
             i++
-            // console.log("segment.start:", segment.start)
             let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
             let min = Math.floor(parseInt(segment.start) / 60)
             let timestamp = min + "m" + sec + "s";
         %>
             <div class="vod_cue"> 
                 <% 
-                let start = Number(segment.start).toFixed(2)
-                let end   = Number(segment.end).toFixed(2)
-                let sec_floored = Math.floor(segment.start)
-                start = secondsToHHmmSS(sec_floored)
-                end = secondsToHHmmSS(sec_floored) 
+                let iframe_time = Math.floor(segment.start)
+                let start = Number(Math.round(segment.start)).toFixed(2)
+                let end   = Number(Math.round(segment.end)).toFixed(2)
+                start = secondsToHHmmSS(start)
+                end = secondsToHHmmSS(end) 
                 %>
-                <span class="vod_timestamp" onclick="(() => seekIframe(<%= sec_floored %>))()">[<%= start %> → <%= end %>]</span>
+                <span class="vod_timestamp" onclick="(() => seekIframe(<%= iframe_time %>))()">[<%= start %> → <%= end %>]</span>
                 <span>
                     <p>
                     <%= segment.text %>

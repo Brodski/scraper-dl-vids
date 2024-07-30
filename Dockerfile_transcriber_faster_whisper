@@ -66,7 +66,7 @@
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#    ssh -p 41287 root@109.164.101.232 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 41594 root@149.36.0.216 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy
@@ -180,16 +180,21 @@ RUN pip install vastai==0.1.8
 #     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
 #     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
 
-COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
+# COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
 COPY dock_setup.sh dock_setup.sh
 RUN chmod +x dock_setup.sh
+
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     vastai set api-key $VAST_API_KEY ; \
     sh dock_setup.sh ; \
+    echo "VAST_API_KEY is $VAST_API_KEY " ; \
+    echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
+    echo "running......." ; \
     python kickWhisperer.py ; \
-    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!x" ; \
+    sleep 90 ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     vastai destroy instance $CONTAINER_ID

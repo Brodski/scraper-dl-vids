@@ -66,9 +66,6 @@ audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucke
 model_size_insane = "openai/whisper-large-v3"
 model_size_insane = "openai/whisper-large-v2"
 model_size_insane = "openai/whisper-medium"
-model_size_fast = "medium"
-model_size_fast = "large-v3"
-model_size_fast = "large-v2"
 my_device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 
@@ -107,36 +104,32 @@ def goInsaneoMode():
         filename,
         chunk_length_s=16, # 16 works pretty good # stide = chunk / 6
         batch_size=24,
-        # return_timestamps="word",
         return_timestamps=True,
         generate_kwargs = generate_kwargs
     )
     return outputs, start_time
 
-def doWhisperStuff( relative_path: str):
+def doInsaneWhisperStuffTest( relative_path: str):
     print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("    xxxxxxx     doWhisperStuff()      xxxxxxx")
+    print("    xxxxxxx     doInsaneWhisperStuffTest()      xxxxxxx")
     print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("    (doWhisperStuff) relative_path:",  relative_path)
+    print("    (doInsaneWhisperStuffTest) relative_path:",  relative_path)
     file_abspath = os.path.abspath(relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
     end_time = None
 
-    print("    (doWhisperStuff) file_abspath=" + file_abspath)
-    print("    (doWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-    print("    (doWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
+    print("    (doInsaneWhisperStuffTest) file_abspath=" + file_abspath)
+    print("    (doInsaneWhisperStuffTest) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+    print("    (doInsaneWhisperStuffTest) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
     outputs, start_timeX = goInsaneoMode()
 
     
-    # saved_caption_files = writeCaptionsLocally(result, file_name)
     saved_caption_files = write_files(outputs, file_name)
 
     end_time = time.time() - start_timeX
 
     print("========================================")
     print("Complete!")
-    # print(f"Detected language {info.language} with probability {str(info.language_probability)}")
-    # print()
     print("run time =" + str(end_time))
     print()
     print("Saved files: " + str(file_name))
@@ -160,22 +153,6 @@ def write_files(outputs, filename):
     return saved_caption_files
 
 
-# def seconds_to_srt_time_format(prev, seconds):
-#     if not (isinstance(seconds, int) or isinstance(seconds, float)):
-#         seconds = prev
-#     else:
-#         prev = seconds
-#     hours = seconds // 3600
-#     seconds %= 3600
-#     minutes = seconds // 60
-#     seconds %= 60
-#     milliseconds = int((seconds - int(seconds)) * 1000)
-#     hours = int(hours)
-#     minutes = int(minutes)
-#     seconds = int(seconds)
-#     return (prev, f"{hours:02d}:{minutes:02d}:{int(seconds):02d},{milliseconds:03d}")
-
-
 # http://muzso.hu/2015/04/25/how-to-speed-up-slow-down-an-audio-stream-with-ffmpeg
 # https://gist.github.com/frankrausch/f871b573060b4d0cf34a7d86077e433f
 #
@@ -187,7 +164,7 @@ def write_files(outputs, filename):
 
 if __name__ == "__main__":
     relative_path = downloadAudio()
-    saved_caption_files = doWhisperStuff(filename)
+    saved_caption_files = doInsaneWhisperStuffTest(filename)
     print("GG!")
     print("GG!")
     exit(0)

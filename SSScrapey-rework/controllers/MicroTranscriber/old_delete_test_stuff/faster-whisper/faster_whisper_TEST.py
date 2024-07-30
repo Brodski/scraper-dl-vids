@@ -21,6 +21,8 @@ audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucke
 filename = "Calculated-v5057810.opus"
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
 
+filename = "hasan"
+audio_url = r"https://my-prod-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/hasanabi/2209858294/DREAMCON+CREATOR+LEAGUE+BASKETBALL+w%E2%A7%B8+%40NMPLOL+%5Bv2209858294%5D.mp4"
 
 model_size = "large-v3"
 model_size = "large-v2"
@@ -100,7 +102,8 @@ def writeCaptionsLocally(result, audio_basename):
 
     for ext in FILE_EXTENSIONS_TO_SAVE:
         srt_writer = get_writer(ext, "./")
-        srt_writer(result, audio_basename + ext)
+        # srt_writer(result, audio_basename + ext)
+        srt_writer(result, audio_basename)
 
         caption_file = filename_without_ext  + '.' + ext
         saved_caption_files.append(caption_file)

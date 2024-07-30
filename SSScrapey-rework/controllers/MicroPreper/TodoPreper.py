@@ -110,6 +110,14 @@ def addVipList(channels: List[ScrappedChannel], isDebug=False):
             "twitchurl": "https://www.twitch.tv/lolgeranimo",
             "url": "lolgeranimo",
             "rownum": -2
+        },
+        {
+            "displayname": "loltyler1",
+            "language": "English",
+            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/f3591dbe4ee3d94b-profile_image-70x70.png",
+            "twitchurl": "https://www.twitch.tv/loltyler1",
+            "url": "loltyler1",
+            "rownum": -1
         }
     ]
     if os.getenv("ENV") == "local" and isDebug:

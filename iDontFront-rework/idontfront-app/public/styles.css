@@ -1,11 +1,39 @@
+@import url("imgs/svgs.css");
+
 body {
     background-color: grey;
+    margin: 0;
 }
 
+h1 {
+    margin: 0;
+}
+
+.m-y-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.m-x-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
 .d-flex {
     display: flex;
 }
+.d-none {
+    display: none;
+}
 
+.j-center {
+    justify-content: center;
+}
+.j-space-between {
+    justify-content: space-between;
+}
+
+.f-direction-col {
+    flex-direction: column;
+}
 .row {
     
 }
@@ -58,4 +86,35 @@ body {
 
 .align-self-center {
     align-self: center;
+}
+
+.icon-16x16 {
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+}
+.icon-14x14 {
+    height: 14px;
+    width: 14px;
+    vertical-align: middle;
+    transform: translateY(-15%);
+}
+
+.btn-ghost {
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 4px;
+}
+.btn-ghost:hover {
+    background-color:#938ab4;
+}
+
+.btn-ghost,
+.btn-ghost:hover,
+.link-simple:active,
+.link-simple:hover,
+.link-simple:visited,
+.link-simple {
+    text-decoration: none;
+    color: inherit;
 }

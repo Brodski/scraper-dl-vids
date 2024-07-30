@@ -5,9 +5,12 @@ import env_file as env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
 
 def goDownloadBatch(isDebug=False):
+    print("db      =" , env_varz.DATABASE)
+    print("host    =" , env_varz.DATABASE_HOST)
+    print("user    =" , env_varz.DATABASE_USERNAME)
+    
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
-    # for i in range(0, download_batch_size):
     i = 0
     gaurdrail = 25
     while i < download_batch_size and i < gaurdrail:
@@ -15,27 +18,33 @@ def goDownloadBatch(isDebug=False):
         print("===========================================")
         print(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
-        x = download(isDebug)
-        if x == Errorz.TOO_BIG or x == Errorz.DELETED_404 or x == Errorz.UNAUTHORIZED_403:
-            print("We skipped a download, trying next entry. Error:", x)
+        dl_meta = download(i, isDebug)
+        if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403:
+            print("We skipped a download, trying next entry. Error:", dl_meta)
             continue
         print(f"Finished Index {i}")
         print(f"download_batch_size: {i}")
         i += 1
     return x
 
-def download(isDebug=False):
-    vod = downloader.getTodoFromDatabase(isDebug=isDebug) # limit = 5
+def download(i, isDebug=False):
+    vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # limit = 5
     if vod == None:
         print("There are zero transcript_status='todo' from the query :O")
         return "nothing to do"
     # Download vod from twitch
+    # vod.printDebug()
     isSuccess = downloader.lockVodDb(vod, isDebug)
     if not isSuccess:
         print("No VODS todo!")
         return "No VODS todo!"
-    # downloaded_metadata = downloader.downloadTwtvVid2(vod, True)
-    downloaded_metadata = downloader.downloadTwtvVidFAST(vod)
+
+    print(f"    (download) Going to download: {vod.channels_name_id} - {vod.id} - {vod.title}")
+    print(f"    (download) highest priority vod. name: {vod.channels_name_id}")
+    print(f"    (download) highest priority vod. id: {vod.id}")
+    print(f"    (download) highest priority vod. title: {vod.title}")
+    downloaded_metadata = downloader.downloadTwtvVidFAST(vod, isDebug)
+
     if downloaded_metadata == Errorz.UNAUTHORIZED_403:
         downloader.updateErrorVod(vod,"unauthorized")
         print("nope gg. 403 sub only")
@@ -59,7 +68,8 @@ def download(isDebug=False):
     # Upload DB
     s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
     if (s3fileKey):
-        downloader.updateVods_Round2Db(downloaded_metadata, vod.id, s3fileKey)
+        json_s3_img_keys = downloader.updateImgs_Db(downloaded_metadata, vod)
+        downloader.updateVods_Db(downloaded_metadata, vod.id, s3fileKey, json_s3_img_keys)
     downloader.cleanUpDownloads(downloaded_metadata)
 
     return downloaded_metadata

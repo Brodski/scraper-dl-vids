@@ -45,7 +45,7 @@ def home():
         <li><a href="/main/ranking/kickit">  mainController.kickit(True) </a></li>
         <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>False</b>) </a></li>
             <ul>
-                <li><a href="/ranking/getTopChannels"> Sullygnome -----> createToDoController.getTopChannels() </a></li>
+                <li><a href="/ranking/getTopChannelsSully"> Sullygnome -----> createToDoController.getTopChannelsSully() </a></li>
                 <li><a href="/hrefGet/scrape4VidHref/mock"> Selenium -----> seleniumController.scrape4VidHref() </a></li>
             </ul>
         </li>
@@ -90,6 +90,7 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("RUNNING ON PORT 5000")
+    app.run(debug=True, port=5000)
 
 

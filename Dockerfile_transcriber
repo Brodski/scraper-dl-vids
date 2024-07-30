@@ -1,5 +1,21 @@
-FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
-
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
+# OLD FILE ... USES FASTER_WHISPER
 ############################################################
 #                                                          #
 #                        PROD DEPLOY                       #
@@ -16,20 +32,25 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 #                                                          #
 ############################################################
 # Docker build
-#    docker build --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber  .
+#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber  .
+#    docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber  .
 
 # Docker push
 #    docker push cbrodski/transcriber:official_v2
+#    docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)
 #    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2_dev 
 
 # Docker run debug
 #    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
 
 # Docker run debug 2
 #    docker run --env-file .env -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2_dev /bin/bash
 
+    
 ############################################################
 #                                                          #
 #                     VAST AI COMMANDS                     #
@@ -45,7 +66,7 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#    ssh -p 40136 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 41287 root@109.164.101.232 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy
@@ -55,7 +76,11 @@ FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04
 
 
 ############################################################
+FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
 
+# Arguments
+ARG ENV_TYPE=dev
+ENV ENV=${ENV_TYPE}
 
 ##########
 # Python #
@@ -105,15 +130,17 @@ RUN apt-get install -y pkg-config \
 # Pip Dependencies #
 ####################
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+RUN if [ "${ENV}" = "dev" ]; then \
+        git fetch origin dev && \
+        git checkout dev && \
+        git reset --hard origin/dev && \
+        git pull origin dev --force; \
+    else \
+        git reset --hard origin/master ; \
+        git pull origin master --force ; \
+        echo "Running in production mode" ; \
+    fi
 RUN pip install -r requirements_transcriber.txt 
-    # && pip install faster-whisper===0.10.0 ; \ 
-    # && pip install mysqlclient==2.2.0 
-    # && pip install -U openai-whisper==20230314 \
-    # && pip install boto3==1.28.40 \
-    # && pip install python-dotenv==1.0.0 \
-    # && pip install langcodes==3.3.0 \
-    # && pip install language_data==1.1
-
 
 
 #########
@@ -156,13 +183,12 @@ RUN pip install vastai==0.1.8
 COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework
-# ENTRYPOINT ls && \
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     vastai set api-key $VAST_API_KEY ; \
-    git reset --hard origin/master ; \
-    git pull origin master --force; \ 
+    sh dock_setup.sh ; \
     python kickWhisperer.py ; \
-    echo "" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \

@@ -6,3 +6,5 @@ python .\vast create instance 6363227 --image cbrodski/audio2text:latest \
         --env "-e AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
                -e AWS_ACCESS_KEY_ID=11111111111111"  
             --disk 32
+
+python vastai_master.py

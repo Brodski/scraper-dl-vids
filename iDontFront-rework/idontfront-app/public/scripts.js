@@ -10,5 +10,6 @@ function isMobile() {
     let isUserMobile1 = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent)
     let isUserMobile2 = typeof window.orientation !== 'undefined';
     let isUserMobile3 = 'ontouchstart' in window;
-    return isUserMobile1 || isUserMobile2 || isUserMobile3
+    let wid = window.innerWidth <= 768
+    return isUserMobile1 || isUserMobile2 || isUserMobile3 || wid
 }

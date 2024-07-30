@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import BytesIO
 import sys
 from dotenv import load_dotenv
 from models.Vod import Vod
@@ -14,6 +15,8 @@ import time
 import urllib
 import yt_dlp
 import subprocess
+import requests
+import re
 from controllers.MicroDownloader.errorEnum import Errorz
 
 
@@ -21,20 +24,22 @@ from controllers.MicroDownloader.errorEnum import Errorz
 import env_file as env_varz
 
 def getConnection():
+
     connection = MySQLdb.connect(
+        db      = env_varz.DATABASE,
         host    = env_varz.DATABASE_HOST,
         user    = env_varz.DATABASE_USERNAME,
         passwd  = env_varz.DATABASE_PASSWORD,
-        db      = env_varz.DATABASE,
+        port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        ssl_mode    = "VERIFY_IDENTITY",
-        ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        # ssl_mode    = "VERIFY_IDENTITY",
+        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
 # Logic below determins which Todo/highest_priority_vod
 # Get last 5 recent vods from every channel. Take from the most popular channel
-def getTodoFromDatabase(isDebug=False) -> Vod:
+def getTodoFromDatabase(i, isDebug=False) -> Vod:
     highest_priority_vod = None #
     resultsArr = []
     connection = getConnection()
@@ -56,134 +61,42 @@ def getTodoFromDatabase(isDebug=False) -> Vod:
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank
                         """
-# SELECT ass.* FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.StreamDate,
-#         C.CurrentRank,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.StreamDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         Rankings R ON V.ChannelNameId = R.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     CurrentRank, ChannelNameId, StreamDate DESC;
-            
-
-
-
-# SELECT 
-#     ass.* 
-# FROM (
-#     SELECT 
-#         V.ChannelNameId, 
-#         V.TodoDate,
-#         C.CurrentRank,
-#         RR.Ranking,
-#         ROW_NUMBER() OVER (PARTITION BY V.ChannelNameId ORDER BY V.TodoDate DESC) as RowNum
-#     FROM 
-#         Vods V
-#     INNER JOIN 
-#         Channels C ON V.ChannelNameId = C.NameId
-#     LEFT JOIN 
-#         (
-#             SELECT 
-#                 ChannelNameId,
-#                 Ranking,
-#                 TodoDate
-#             FROM (
-#                 SELECT 
-#                     R.ChannelNameId,
-#                     R.Ranking,
-#                     R.TodoDate,
-#                     ROW_NUMBER() OVER (PARTITION BY R.ChannelNameId ORDER BY R.TodoDate DESC) AS RowNum
-#                 FROM 
-#                     Rankings R
-#             ) AS RankedRankings
-#             WHERE 
-#                 RowNum = 1
-#         ) AS RR ON V.ChannelNameId = RR.ChannelNameId
-# ) AS ass
-# WHERE 
-#     RowNum <= 2
-# ORDER BY 
-#     ass.Ranking, ass.ChannelNameId, ass.TodoDate DESC;
-
-
-            # sql = """   SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank
-            #             FROM Vods
-            #             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-            #             WHERE Vods.TranscriptStatus = 'todo'
-            #             # ORDER BY Channels.CurrentRank ASC, Vods.TodoDate ASC, Vods.Priority ASC
-            #             ORDER BY Vods.TodoDate ASC, Channels.CurrentRank ASC, Vods.Priority ASC
-            #             LIMIT 100
-            #             """
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
-            print ("    (getTodoFromDatabase) vod_ column_names")
-            print(column_names)
+            # Nice to uncomment when updating vod properties
+            # print ("    (getTodoFromDatabase) vod_ column_names")
+            # print(column_names)
     except Exception as e:
         print(f"    (getTodoFromDatabase) An error occurred: {e}")
         return []
     finally:
         connection.close()
-    print("    (getTodoFromDatabase) Vod candidates:")
+    # print("    (getTodoFromDatabase) Vod candidates:")
     for vod_ in results:
         # Tuple unpacking
-        # Id, ChannelNameId, Title, Duration, DurationString, ViewCount, WebpageUrl, TranscriptStatus, Priority, Thumbnail, TodoDate, S3Audio, Model, DownloadDate, StreamDate, S3CaptionFiles, TranscribeDate,        ChanCurrentRank, rownum = vod_
-        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount,        ChanCurrentRank, rownum = vod_
-        vod = Vod(id=Id, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate)
-        vod.print()
+        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, rownum = vod_
+        vod = Vod(id=Id, channels_name_id=ChannelNameId, title=Title, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
         resultsArr.append(vod)
 
-    highest_priority_vod = None
+    if i == 0:
+        for vod in resultsArr:
+            print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
+
     #Recall, results arr is sorted by priority via smart sql query
+    highest_priority_vod: Vod = None
     for vod in resultsArr:
-        vod.print()
+        # vod.print()
         if vod.transcript_status == "todo":
             highest_priority_vod = vod
             break
-    print("    (getTodoFromDatabase) highest_priority_vod:")
-    if highest_priority_vod:
-        highest_priority_vod.printDebug()
     if isDebug:
-        # 'https://www.twitch.tv/videos/1783465374' # pro leauge
-        # 'https://www.twitch.tv/videos/1791750006' # lolgera
-        # 'https://www.twitch.tv/videos/1792255936' # sub only
-        # 'https://www.twitch.tv/videos/1792342007' # live
-        # 'www.twitch.tv/videos/28138895'
-        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        # highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        print("    (getTodoFromDatabase) DEBUG highest_priority_vod is now:")
-        highest_priority_vod.print()
+        print("    (getTodoFromDatabase) DEBUG highest_priority_vod is :", vod.channels_name_id, vod.id)
+        # highest_priority_vod.print()
     return highest_priority_vod
-
-def getNeededVod_OLD(vods_list: List[Vod]):    
-    maxVodz = 2
-    print("[][][][][][][][][][][][][][][][][][][][]")
-    vods_dict_temp = {}
-    vods_dict = {}
-    for vod in vods_list:
-        vods_dict_temp.setdefault(vod.channels_name_id, []).append(vod)
-    for key in vods_dict_temp:
-        print(f"{key}: {vods_dict_temp[key]}")
-        for x in vods_dict_temp[key]:
-            x.print()
-        filtered_objects = [obj for obj in vods_dict_temp[key][:maxVodz] if obj.transcript_status == 'todo']
-        if filtered_objects:
-            vods_dict[key] = filtered_objects
-
-    keyHighestPrioChan = list(vods_dict.keys())[0]
-    vod: Vod = vods_dict[keyHighestPrioChan][0]
-    print("NEXT VOD IN THEORY")
-    vod.print()
-    return vod
 
 def lockVodDb(vod: Vod, isDebug=False):
     print("    (lockVodDb) LOCKING VOD DB: " + str(vod.id))
@@ -235,15 +148,16 @@ def isVodTooBig(vod: Vod):
         print ("Failed to get vid's metadata!: " + vidUrl + " : " + str(e))
     return False
 
-def downloadTwtvVidFAST(vod: Vod): 
+def downloadTwtvVidFAST(vod: Vod, isDebug=False): 
     print ("000000000000                     00000000000000000")
     print ("000000000000 downloadTwtvVidFAST 00000000000000000")
     print ("000000000000                     00000000000000000")
     if vod == None or vod.id == None:
         print("ERROR no vod")
         return
-    if isVodTooBig(vod):
-        return Errorz.TOO_BIG
+    # TODO Temporarily disabling to try it out
+    # if isVodTooBig(vod):
+    #     return Errorz.TOO_BIG
     start_time = time.time()
     # format paths and direct where to download file
     main_script_path = sys.argv[0]
@@ -274,16 +188,14 @@ def downloadTwtvVidFAST(vod: Vod):
                     '--audio-quality', '0',
                     '--no-progress' if env_varz.ENV != "local" else  ""   
                   ]
-    # if env_varz.ENV != "local":
-    #     yt_dlp_cmd.append('--no-progress')
-    if env_varz.DWN_IS_SHORT_DEV_DL == "True":
-        # download only first 669 seconds
+    if env_varz.DWN_IS_SHORT_DEV_DL == "True" and isDebug == True:
         yt_dlp_cmd.append('--downloader-args')
-        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669')
+        yt_dlp_cmd.append('ffmpeg_i: -ss 00 -to 669') # download only first 669 seconds
 
     try:
-        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)      
-        # print("    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)  
+        print("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)
+        print("\n    (dlTwtvVid) yt_dlp_cmd: ", yt_dlp_cmd)
+        print()
         meta = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
     except Exception as e:
@@ -423,7 +335,7 @@ def convertVideoToSmallAudio(meta):
 
 def _execSubprocCmd(ffmpeg_command):
     try:
-        print("    (exec) Starting subprocess!")
+        # print("    (exec) Starting subprocess!")
         # print("    (exec) ffmpeg_command=" + " ".join(ffmpeg_command))
         stdoutput, stderr, returncode = yt_dlp.utils.Popen.run(ffmpeg_command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         # print(stdoutput)
@@ -493,7 +405,9 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
         return None
     
 
-def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
+def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
+    print("    (updateVods_Db) json_s3_img_keys", json_s3_img_keys)
+    print("    (updateVods_Db) json.dumps(json_s3_img_keys)", json.dumps(json_s3_img_keys))
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
@@ -528,18 +442,101 @@ def updateVods_Round2Db(downloaded_metadata, vod_id, s3fileKey):
                     TranscriptStatus = %s,
                     StreamDate = FROM_UNIXTIME(%s),
                     DownloadDate = NOW(),
-                    S3Audio = %s
+                    S3Audio = %s,
+                    S3Thumbnails =%s
                 WHERE Id = %s;
                 """
-            values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, vod_id)
+            values = (title, duration, duration_string, view_count, webpage_url, thumbnail, transcript_status, stream_epoch, s3fileKey, json.dumps(json_s3_img_keys), vod_id)
             affected_count = cursor.execute(sql, values)
-            print("    (updateVods_Round2Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
+            print("    (updateVods_Db) Updated " + vod_id + ". affected_counf= " + str(affected_count))
             connection.commit()
     except Exception as e:
-        print(f"    (updateVods_Round2Db) Error occurred: {e}")
+        print(f"    (updateVods_Db) Error occurred: {e}")
         connection.rollback()
     finally:
         connection.close()
+
+# Uses my sick compressing server
+# return { "original": "https://...", "small": ... }
+def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
+    caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id # channels/vod-audio/gamesdonequick/2035111776/
+    s3 = boto3.client('s3')
+    thumbnail = downloaded_metadata.get('thumbnail')
+
+    json_s3_img_keys = {}
+
+    # Save default
+    try:
+        response = requests.get(thumbnail)
+        response.raise_for_status() 
+        if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+            content_type = response.headers['Content-Type']
+            ext = content_type.split('/')[-1]
+            fname_default = extract_name_from_url(thumbnail)
+            img_key = f"{caption_keybase}/images/{fname_default}.{ext}"
+            image_data = BytesIO(response.content)
+            s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
+            
+            json_s3_img_keys['original'] = img_key
+            
+            print("    (updateImgs_Db) thumbnail: ", thumbnail)
+            print("    (updateImgs_Db) img_key: ", img_key)
+            print("    (updateImgs_Db) Saved Default thumbnail ")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+
+    # Save compressed
+    response = None
+    # compresser_endpoint = 'http://localhost:6969/api/compress'
+    compresser_endpoint = env_varz.DWN_URL_MINI_IMAGE
+    data = { 'imageUrl': thumbnail, 'width': 350, }
+    headers = { 'Content-Type': 'application/json' }
+    try:
+        response = requests.post(compresser_endpoint, data=json.dumps(data), headers=headers)
+        response.raise_for_status() 
+        content_type = response.headers['Content-Type']
+        fname_mod = response.headers.get('X-Bski-Filename') or response.headers.get('x-bski-filename')
+        img_key = f"{caption_keybase}/images/{fname_mod}"
+        if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+            image_data = BytesIO(response.content)
+            s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
+            
+            json_s3_img_keys['small'] = img_key
+
+            print("    (updateImgs_Db) fname_mod:" , fname_mod)
+            print("    (updateImgs_Db) thumbnail: ", thumbnail)
+            print("    (updateImgs_Db) img_keymod: ", img_key)
+            print("    (updateImgs_Db) Saved Small thumbnail ")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+
+    print("    (updateImgs_Db) json_s3_img_keys", json_s3_img_keys)
+    return json_s3_img_keys
+
+def extract_name_from_url(url):
+    try:
+        filename_default = None
+        last_idx_dot = url.rfind(".")
+        last_idx_slash = url.rfind("/")
+
+        # Ends in a file type eg www.bigboy.com/image/of/bigboy.jpg
+        if last_idx_dot > last_idx_slash:
+            last_idx_junk_before = url.rfind("/", 0, last_idx_dot)
+            filename_default = url[last_idx_junk_before + 1:last_idx_dot]
+            print("filename_default", filename_default)
+
+        # else www.bigboy.com/image/of/bigboy
+        else:
+            filename_default = url[last_idx_slash + 1:]
+
+        filename_default = re.sub(r'[^a-zA-Z0-9]', '', filename_default)
+        filename_default = "imagefile" if filename_default == "" else filename_default
+        filename_default =  re.sub(r'(0x0|00x0)$', '', filename_default)
+        return filename_default
+    except Exception as e:
+        print("oops")
+        print(e)
+        return "imagefile"
 
 
 def updateErrorVod(vod: Vod, error_msg: str):
@@ -576,30 +573,3 @@ def cleanUpDownloads(downloaded_metadata):
             os.remove(file_abs)
             print('Deleted: ' + str(file_abs))
     return 
-
-# SELECT 
-#     subquery.*,
-#     Channels.CurrentRank
-# FROM (
-#     SELECT 
-#         Vods.*,
-#         ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
-#     FROM Vods 
-# ) AS subquery
-# JOIN Channels ON subquery.ChannelNameId = Channels.NameId 
-# WHERE subquery.rn <= 2;
-
-
-
-# SELECT 
-#     subquery.*
-# FROM (
-#     SELECT 
-#         Vods.*,
-#         Channels.CurrentRank,
-#         ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
-#     FROM Vods 
-# 	JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-# ) AS subquery 
-# WHERE subquery.rn <= 2
-# ORDER BY CurrentRank

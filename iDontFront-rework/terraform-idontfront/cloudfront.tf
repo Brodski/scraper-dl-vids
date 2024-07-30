@@ -13,7 +13,7 @@ locals {
 resource "aws_cloudfront_distribution" "lambda_distribution" {
   enabled = true
   aliases = [local.website_name]
-  comment = "${var.ENV} bski cc cloudfront"
+  comment = "${var.ENV}-captions.bski.one"
   viewer_certificate {
     acm_certificate_arn = var.sensitive_info.r53_acm_certificate_arn
     ssl_support_method  = "sni-only"

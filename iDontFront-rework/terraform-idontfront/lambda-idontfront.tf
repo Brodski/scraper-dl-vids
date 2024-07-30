@@ -27,6 +27,7 @@ resource "aws_lambda_function" "idontfront_lambda" {
       DATABASE_HOST = var.sensitive_info.DATABASE_HOST 
       DATABASE_USERNAME = var.sensitive_info.DATABASE_USERNAME 
       DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD 
+      DATABASE_PORT = var.sensitive_info.DATABASE_PORT 
       DATABASE = var.sensitive_info.DATABASE 
       BUCKET_DOMAIN = var.sensitive_info.BUCKET_DOMAIN
       # BUCKET_DOMAIN=https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com

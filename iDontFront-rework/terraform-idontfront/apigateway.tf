@@ -7,6 +7,7 @@ resource "aws_api_gateway_rest_api" "api_gw_rest" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+  binary_media_types = ["*/*"]
 }
 
 ##### 0 #####
@@ -31,6 +32,7 @@ resource "aws_api_gateway_integration" "root_lambda" {
   integration_http_method = "POST"     # uses "POST" always, even if the original client request was a GET, PUT, ect. b/c lambda is being "called" via a POST, (when Lambda integrations with API Gateway)
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.idontfront_lambda.invoke_arn
+  content_handling        = "CONVERT_TO_BINARY"
 }
 
 ##### 1 #####

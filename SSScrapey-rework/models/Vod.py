@@ -19,6 +19,8 @@ class Vod:
     stream_date = str
     s3_caption_files = str
     transcribe_date = datetime
+    title = str
+    s3_thumbnails = str
 
     def __init__(self,  **kwargs):
         self.id = kwargs.get('id')
@@ -35,12 +37,16 @@ class Vod:
         self.stream_date = kwargs.get('stream_date')
         self.s3_caption_files = kwargs.get('s3_caption_files')
         self.transcribe_date = kwargs.get('transcribe_date')
+        self.title = kwargs.get('title')
+        self.s3_thumbnails = kwargs.get('s3_thumbnails')
+
 
     # def __repr__(self):
     # def __str__(self):
 
     def print(self):
-        print(f"VOD - {self.channels_name_id} {self.id}. Status: {self.transcript_status}")
+        msg = f"VOD - {self.channels_name_id} {self.id} - {self.title} - Status: {self.transcript_status}"
+        return msg
 
     def printDebug(self):
         max_attr_length = max(len(attr) for attr in dir(self) if not attr.startswith('__') and not callable(getattr(self, attr)))

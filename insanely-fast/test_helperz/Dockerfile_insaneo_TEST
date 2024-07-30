@@ -1,0 +1,149 @@
+############################################################
+#                                                          #
+#                        PROD DEPLOY                       #
+#                                                          #
+############################################################
+# 
+# 1  docker build --no-cache -t cbrodski/transcriber:insaneo -f Dockerfile_insaneo .
+# 2  docker push cbrodski/transcriber:insaneo
+
+# 1  docker build --no-cache -t cbrodski/transcriber:insaneo_nocuda -f Dockerfile_insaneo_nocuda .
+# 2  docker push cbrodski/transcriber:insaneo_nocuda
+
+# Docker run (local)
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2_dev 
+
+# Docker run debug
+#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
+
+# Docker run debug 2
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env -it cbrodski/transcriber:official_v2_dev /bin/bash
+
+    
+############################################################
+#                                                          #
+#                     VAST AI COMMANDS                     #
+#                                                          #
+############################################################
+# Vast AI Search:
+#     python .\vast search offers --order=inet_down_cost --on-demand 'dph < 0.12  cuda_vers >= 12  cpu_ram > 16 inet_down_cost < 0.2 disk_space > 22'
+
+# Vasi AI Create:
+#    vastai create instance 6479528 --image cbrodski/audio2text:latest --disk 23
+
+# Vast AI SSH
+#    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 40136 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+
+
+# Deploy
+# 1. Go to Vast AI Console:
+# 2. Docker Run: use docker ENTRYPOINT. 
+# 3. -e AWS_SECRET_ACCESS_KEY='xxxxxxxxxxx' -e AWS_ACCESS_KEY_ID='xxxxxxxxxx' -e DATABASE_HOST='xxxxxxxxxxx' -e DATABASE_USERNAME='xxxxxxxxxxxxx' -e DATABASE_PASSWORD='xxxxxxxxxxx' -e DATABASE='idontfront-dev'
+
+
+
+
+##########################################################################################################
+# *************************
+# ** DEPRECATION NOTICE! **
+# *************************
+# THIS IMAGE IS DEPRECATED and is scheduled for DELETION.
+#     https://gitlab.com/nvidia/container-images/cuda/blob/master/doc/support-policy.md
+##########################################################################################################    
+############################################################
+# FROM nvidia/cuda:12.0.1-runtime-ubuntu20.04 
+# FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu20.04 
+# FROM nvidia/cuda:12.4.1-devel-ubuntu20.04
+FROM nvidia/cuda:12.0.0-devel-ubuntu20.04
+
+
+
+##########
+# Python #
+##########
+WORKDIR /app
+RUN apt update \
+    && apt-get update \
+    && apt install curl  -y \
+    && apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev -y \
+    && curl https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz -o Python-3.10.10.tgz \
+    && tar -xzf Python-3.10.10.tgz \
+    && cd Python-3.10.10/ \
+    && ./configure --enable-optimizations --with-ensurepip=install \
+    && make -j $(nproc) \
+    && make altinstall \
+    && ln -s /usr/local/bin/python3.10 /usr/local/bin/python \
+    && cd .. \
+    && rm Python-3.10.10.tgz 
+
+
+#######
+# Pip #
+#######    
+WORKDIR /app
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py pip==23.0.1 \
+    && pip --version \
+    && rm get-pip.py 
+
+
+###########
+# Project #
+###########
+WORKDIR /app
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata 
+RUN apt install git -y \
+    && git clone https://github.com/Brodski/scraper-dl-vids.git 
+
+#########
+# MYSQL & FFMPEG #
+#########
+WORKDIR /app
+RUN apt-get install -y pkg-config \ 
+    && apt-get install -y gcc libmysqlclient-dev \
+    && apt-get install ffmpeg -y
+
+
+######################
+# VASTI AI ENDING IT #
+######################
+RUN pip install vastai==0.1.8 
+RUN pip install torch
+RUN pip install transformers
+# ! Below commands doesnt working anymore. Env var at CMD now
+#     cat ~/.ssh/authorized_keys | md5sum | awk '{print $1}' > ssh_key_hv ; \
+#     echo -n $VAST_CONTAINERLABEL | md5sum | awk '{print $1}' > instance_id_hv ; \
+#     head -c -1 -q ssh_key_hv instance_id_hv > ~/.vast_api_key ;
+
+####################
+# Pip Dependencies #
+####################
+WORKDIR /app/scraper-dl-vids/insanely-fast/test_helperz
+RUN git fetch origin dev && \
+    git checkout dev && \
+    git reset --hard origin/dev && \
+    git pull origin dev --force;
+# RUN pip install -r requirements_insaneo.txt 
+
+
+WORKDIR /app/scraper-dl-vids/insanely-fast/test_helperz
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
+
+RUN pip install boto3
+CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    sh ./dock_setup.sh ; \
+    # vastai set api-key $VAST_API_KEY ; \
+    vastai set api-key $CONTAINER_API_KEY ; \
+    pip install flash-attn --no-build-isolation ; \
+    echo "running......." ; \
+    python whispererInsanelyFast.py ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    echo "DONE!!!!!!!!!!!!" ; \
+    vastai destroy instance $CONTAINER_ID

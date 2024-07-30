@@ -1,0 +1,35 @@
+<% 
+    function splitArrayIntoChunks(array) {
+        let chunkSize = 20;
+        let result = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+            result.push(array.slice(i, i + chunkSize));
+        }
+        return result;
+    }
+%>
+
+
+<% if (table_data != null && table_data.length > 0 ) { %>
+    <div class="analysis__table">
+    <%  let chunkWordsArrays = splitArrayIntoChunks(table_data.slice(0,100));
+        for (let words of chunkWordsArrays) { %>
+            <table class="table__mini_column">
+                <thead>
+                    <tr>
+                        <th> <%=txt %> </span>
+                        <th class="analysis__count"> Count </span>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let word of words) { %>
+                    <tr>
+                        <td> <%= word[0] %> </td>
+                        <td> <%= word[1] %> </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+    <% } %>
+    </div>
+<% } %>

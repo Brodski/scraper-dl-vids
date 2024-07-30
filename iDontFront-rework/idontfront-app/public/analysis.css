@@ -32,9 +32,6 @@ figure svg {
     .analysis_wordcloud_container {
         width: 70%;
         height: auto;
-
-        /* width: 640px;
-        height: 400px; */
         margin-right: auto;
         margin-left: auto;
     }
@@ -62,6 +59,22 @@ svg {
 }
 
 tbody tr:first-child {
-    font-size: 30px;
+    /* font-size: 30px; */
     border-bottom: 2pt solid pink;
+}
+
+.analysis__table {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    row-gap: 40px;
+    margin-bottom: 100px;
+}
+
+.analysis__count {
+
+}
+
+.table__mini_column {
+    width: 80%;
 }

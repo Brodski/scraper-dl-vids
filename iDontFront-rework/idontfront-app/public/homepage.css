@@ -1,0 +1,28 @@
+table {
+    margin-top: 32px;
+    border-collapse: collapse;
+}
+th {   
+    text-align: center;
+    padding-left: 24px;
+    padding-right: 24px;
+    font-size: 18px;
+}
+th:first-child {
+    text-align: left;
+}
+tr {
+    border-bottom: 1px solid black;
+}
+
+td {
+    text-align: center;
+    min-width: 80px;
+    max-width: 350px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+table td:not(.table_channel_name) {
+    font-size: 18px;
+}

@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "download_cluster" {
 }
 
 resource "aws_ecs_task_definition" "download_task" {
-  family                   = "download_task" 
+  family                   = "${var.sensitive_info.ENV}_download_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "1024"

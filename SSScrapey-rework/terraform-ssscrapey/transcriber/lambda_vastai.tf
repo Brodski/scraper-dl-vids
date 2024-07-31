@@ -5,14 +5,14 @@ locals {
 
 data "archive_file" "lambda_zip" {
     type = "zip"
-    output_path = "${path.module}/../../output_vastai_lambda_code.zip"
-    source_dir = "${path.module}/../../vastai_master"
+    output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
+    source_dir = "${path.module}/../../src_vastai_master"
 }
 
 resource "aws_lambda_function" "vast_lambda" {
   function_name = "${local.lambda_name}"
 
-  filename = data.archive_file.lambda_zip.output_path # "output_code.zip"
+  filename = data.archive_file.lambda_zip.output_path # "output_vastai_lambda_code.zip"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   handler = "vastai_master.handler_kickit" 
   runtime = "python3.10"

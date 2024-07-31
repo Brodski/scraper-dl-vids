@@ -47,7 +47,7 @@ venvFaster/
 **/3090/
 **/4090/
 
-
+**/.env_docker_local
 
 # See docker file.
 # https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.1/local_installers/12.x/cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb/ 

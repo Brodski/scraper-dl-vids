@@ -27,9 +27,7 @@
                         let href            = path + "/" +  id 
                         let s3Thumbnails    = vod.s3Thumbnails
                         let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
-                        console.log("vod_title: ", vod_title, " --- s3Thumbnails: ", s3Thumbnails)
-                        console.log(thumbnail)
-                        console.log()
+                        console.log("vod.s3Thumbnails-", vod.s3Thumbnails)
                 %>
                 <div class="channel__vod">
                     <div class="channel__abs_info d-flex j-space-between">

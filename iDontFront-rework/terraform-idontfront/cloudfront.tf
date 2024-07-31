@@ -29,13 +29,15 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
+  # Good condition table: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
+  # docs: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.origin_id
-    default_ttl = 43200       # Default TTL set to 12 hour
-    max_ttl     = 172800      # Max TTL set to 48 hours
-    min_ttl     = 0           # Min TTL set to 0 minute
+    default_ttl = 43200       # 12 hour - applies when origin does not add HTTP headers _
+    max_ttl     = 172800      # 48 hours- applies when origin adds headers: Cache-Control max-age, Cache-Control, ect
+    min_ttl     = 0           # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
 
     forwarded_values {
       query_string = false

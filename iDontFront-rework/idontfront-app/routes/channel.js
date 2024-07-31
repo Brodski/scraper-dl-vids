@@ -21,7 +21,7 @@ async function getChannelPage(req, res) {
         console.log(channels)
     }
 
-    res.setHeader('Cache-Control', 'private, max-age=3600');
+    // res.setHeader('Cache-Control', 'private, max-age=3600');
     // res.render("../views/channel", { 
     if (req.path.endsWith("/btest")) {
         res.render("../views/channel", { 

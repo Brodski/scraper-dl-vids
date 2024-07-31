@@ -14,8 +14,9 @@ async function getVodPage(req, res) {
         console.log(channels)
     }
     
+    console.log("vods[0].s3CaptionFiles")
+    console.log(vods[0].s3CaptionFiles)
     let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());
-    // let transcript_s3_key = vods[0].getS3TranscriptKey();
     let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
     let response = await fetch(url);
     console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)

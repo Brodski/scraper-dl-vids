@@ -129,7 +129,7 @@ RUN apt-get install -y pkg-config \
 ####################
 # Pip Dependencies #
 ####################
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
 RUN if [ "${ENV}" = "dev" ]; then \
         git fetch origin dev && \
         git checkout dev && \
@@ -140,7 +140,7 @@ RUN if [ "${ENV}" = "dev" ]; then \
         git pull origin master --force ; \
         echo "Running in production mode" ; \
     fi
-RUN pip install -r requirements_transcriber.txt 
+RUN pip install -r requirements_transcriber_faster.txt 
 
 
 #########
@@ -182,7 +182,7 @@ RUN pip install vastai==0.1.8
 
 # COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
 COPY dock_setup.sh dock_setup.sh
 RUN chmod +x dock_setup.sh
 

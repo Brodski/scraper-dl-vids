@@ -126,23 +126,6 @@ WORKDIR /app
 RUN apt-get install -y pkg-config \ 
     && apt-get install -y gcc libmysqlclient-dev
 
-####################
-# Pip Dependencies #
-####################
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
-RUN if [ "${ENV}" = "dev" ]; then \
-        git fetch origin dev && \
-        git checkout dev && \
-        git reset --hard origin/dev && \
-        git pull origin dev --force; \
-    else \
-        git reset --hard origin/master ; \
-        git pull origin master --force ; \
-        echo "Running in production mode" ; \
-    fi
-RUN pip install -r requirements_transcriber_faster.txt 
-
-
 #########
 # cuDNN #
 #########
@@ -182,10 +165,27 @@ RUN pip install vastai==0.1.8
 
 # COPY cacert-2023-08-22.pem /app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem
 
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
+####################
+# Pip Dependencies #
+####################
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
+RUN if [ "${ENV}" = "dev" ]; then \
+        git fetch origin dev && \
+        git checkout dev && \
+        git reset --hard origin/dev && \
+        git pull origin dev --force; \
+    else \
+        git reset --hard origin/master ; \
+        git pull origin master --force ; \
+        echo "Running in production mode" ; \
+    fi
+RUN pip install -r requirements_transcriber_faster.txt 
+
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
 COPY dock_setup.sh dock_setup.sh
 RUN chmod +x dock_setup.sh
 
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     vastai set api-key $VAST_API_KEY ; \
     sh dock_setup.sh ; \

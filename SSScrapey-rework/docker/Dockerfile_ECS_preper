@@ -65,12 +65,17 @@ RUN pip install -r requirements_preper.txt
 RUN apt-get install -y firefox-esr
 
 
+#################
+# Update Branch #
+#################
+WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
+COPY dock_setup.sh dock_setup.sh
+RUN chmod +x dock_setup.sh
+
 ######
 # GO #
 ######
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
-COPY dock_setup.sh dock_setup.sh
-RUN chmod +x dock_setup.sh
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     sh dock_setup.sh ; \
     python kickPreper.py ; \

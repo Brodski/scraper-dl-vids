@@ -131,7 +131,7 @@ def show_my_instances():
         exit()
     data = response.read()
     json_data = json.loads(data)
-    print(f"  (show_my_instances) json_data: {json_data}")
+    # print(f"  (show_my_instances) json_data: {json_data}")
     rows = json_data.get("instances")
     for row in rows:
         row['duration'] = time.time() - row['start_date'] 
@@ -161,7 +161,7 @@ def printAsTable(goodOffers):
     if (len(goodOffers) == 0):
         print("    (printAsTable) wtf goodOffers == 0, returning")
         return
-    print(goodOffers[0])
+    # print(goodOffers[0])
     headers = ["id", "gpu_name", "dph_total", "dlperf", "inet_down_cost", "inet_up_cost", "storage_cost", "dlperf_per_dphtotal", "gpu_ram", "cpu_ram", "cpu_cores", "disk_space", "inet_up", "inet_down", "score", "cuda_max_good", "machine_id", "geolocation", "reliability2" ]
     def printColAux(column):
         if column is None:
@@ -269,6 +269,7 @@ def find_create_confirm_instance(event, context, rerun_count):
             status = pollCompletion(id_contract, time.time(), 0)
             if status == "success":
                 # WE PRINT A LOT OF INFO
+                print("Status == 'success' Ya! :D")
                 printDebug(id_contract)
             else:
                 status = "None" if status is None else status
@@ -318,8 +319,6 @@ def pollCompletion(id_contract, start_time, counter_try_again):
     for row in rows:
         row_id = str(row['id'])
         if row_id == id_contract:
-            print("    (pollCompletion) row_id", row_id)
-            print("    (pollCompletion) id_contract", id_contract)
             print("    (pollCompletion) status_msg: ", row.get("status_msg"))
             print("    (pollCompletion) actual_status: ", row.get("actual_status"))
             status_msg = row["status_msg"]

@@ -25,7 +25,7 @@ def goDownloadBatch(isDebug=False):
         print(f"Finished Index {i}")
         print(f"download_batch_size: {i}")
         i += 1
-    return x
+    return dl_meta
 
 def download(i, isDebug=False):
     vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # limit = 5

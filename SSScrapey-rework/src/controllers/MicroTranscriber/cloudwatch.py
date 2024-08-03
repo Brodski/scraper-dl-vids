@@ -12,7 +12,7 @@ class Cloudwatch:
     cw_client = boto3.client('logs', region_name='us-east-1')
 
     RETENTION_IN_DAYZ = 30
-    LOG_GROUP_NAME = '/vastai/transcriber/' + env_varz.ENV
+    LOG_GROUP_NAME = '/scraper/transcriber/' + env_varz.ENV
     LOG_STREAM_NAME = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}' if env_varz.ENV != "local" else "local"
 
     # Create Log Group

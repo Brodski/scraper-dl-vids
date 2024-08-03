@@ -19,6 +19,7 @@ def logger():
     pass
 logger = Cloudwatch.log
 
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 def goTranscribeBatch(isDebug=False):
     start_time = time.time()
@@ -55,7 +56,7 @@ def goTranscribeBatch(isDebug=False):
     for v in completed_vods_list:
         logger(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
     logger("SLEEPING BC END & debug")
-    time.sleep(100) 
+    # time.sleep(100) 
     logger("gg ending")
     return "gg ending"
 

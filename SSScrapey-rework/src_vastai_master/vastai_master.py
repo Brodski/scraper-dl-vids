@@ -39,7 +39,7 @@ DOCKER = os.environ.get('DOCKER') or "cbrodski/transcriber:official_v2"
 # ############################################
 #
 #                  CONFIGS 
-# Instance much be greater/less than these:
+# Instance most be greater/less than these:
 #
 # ############################################
 dph = "0.40" # 0.30 dollars / hour

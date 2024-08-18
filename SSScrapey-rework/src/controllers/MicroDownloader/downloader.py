@@ -52,11 +52,9 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
                             SELECT 
                                 Vods.*,
                                 Channels.CurrentRank,
-                                # ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY TodoDate) as rn
                                 ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC) as rn
                             FROM Vods 
                             JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-                            # WHERE Vods.TranscriptStatus = 'todo'
                             ) AS subquery 
                         WHERE subquery.rn <= {maxVodz}
                         ORDER BY CurrentRank

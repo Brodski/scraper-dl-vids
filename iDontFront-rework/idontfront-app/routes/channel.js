@@ -9,8 +9,6 @@ async function getChannelPage(req, res) {
     let db = new DatabaseSingleton
     let [resultsVods, fields1] = await db.getVods(req.params.name)
     let [resultsChan, fields2] = await db.getChannel(req.params.name)
-    console.log("resultsVods")
-    console.log(resultsVods)
     let vods = resultsVods.map( x => new Vod(x))
     let channels = resultsChan.map( x => new Channel(x))
     console.log("vods.length:", vods.length)
@@ -22,17 +20,7 @@ async function getChannelPage(req, res) {
     }
 
     // res.setHeader('Cache-Control', 'private, max-age=3600');
-    // res.render("../views/channel", { 
-    if (req.path.endsWith("/btest")) {
-        res.render("../views/channel", { 
-            "title" : req.params.name,
-            "path" : req.path.replace("/btest", ""),
-            "vods": vods,
-            "channel": channels[0],
-        })
-        return
-    }
-    res.render("../views/channelAlt", { 
+    res.render("../views/channel", { 
         "title" : req.params.name,
         "path" : req.path,
         "vods": vods,

@@ -2,28 +2,29 @@
 <% // https://developers.google.com/chart/interactive/docs/gallery/wordtree %>
 <html>
   <head>
-    <%- include('partials/head_meta.ejs') %>     
+    <!-- METADATA -->
+    <%- include('partials/head_metaGPT.ejs') %> 
     <link rel="stylesheet" type="text/css" href="/fonts.css">
+    <link rel="stylesheet" type="text/css" href="/wordtree.css">
     <title> <%= channel.displayName %> analysis </title>
+
+    <!-- GOOGLE WORDTREE STUFF -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {packages:['wordtree']});
         function kickIt(sentence_arr, search_val) {
-            console.log("kicking it")
             google.charts.setOnLoadCallback(drawChart);
-            console.log("sentence_arr")
-            console.log(sentence_arr)
 
             function drawChart() {
-                console.log("drawing")
                 var data = google.visualization.arrayToDataTable(sentence_arr
                 // [ ['Phrases'], ['cats are better than dogs'], ['cats eat kibble'], ['cats are better than hamsters'], ['cats are awesome'], ['cats are people too'], ['cats eat mice'], ['cats meowing'], ['cats in the cradle'], ['cats eat mice'], ['cats in the cradle lyrics'], ['cats eat kibble'], ['cats for adoption'], ['cats are family'], ['cats eat mice'], ['cats are better than kittens'], ['cats are evil'], ['cats are weird'], ['cats eat mice'], ] 
                 );
-                console.log("data")
-                console.log(data)
                 var options = {
-                        // colors: ['red', 'black', 'green'],
-                        backgroundColor: 'grey',
+                        colors: ['#1E90FF'],
+                        // colors: ['#00796B', '#004D40', '#FF5722'], // Array of colors for different levels
+                        // backgroundColor: '#010101',
+                        backgroundColor: 'transparent',
+
                         width: 1500,
                         height: 800,
                         wordtree: {
@@ -41,6 +42,7 @@
                     let search_click_val = chart.getSelection().word
                     search_history.push(search_click_val)
                     document.querySelector('#search').value = search_click_val
+                    document.querySelector('#back').classList.remove("d-none");
                     console.log(search_click_val);
                     console.log(search_history)
                 }
@@ -48,57 +50,86 @@
             }
         }
     </script>
-  </head>
-  <body>
-    <form>
-        <%- include('navbar/navbar.ejs') %> 
-        <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": true}) %>
-        <%- include('vodHeader.ejs', {"vod": vod, "isShowRaw": false}) %>      
-        <h3> <a href="/channel/<%= channel.nameId %>/<%= vod.id %>"> return to full transcript </a> </h3>
-
-
-        <!-- WORD TREE -->
-        <!-- WORD TREE -->
-        <!-- WORD TREE -->
-        <!-- WORD TREE -->
-        <br/>
-        <div>
-            <!-- <label for="search"> Word Tree search </label> -->
-            <input id="search"  type="text" placeholder="loser" aria-label="Word Tree search "/>
-        </div>
-        <button id="the_button"> Search </button>
-        <button id="back" class="d-none"> 🡨 </button> <!-- ← 🡠  -->
-    </form>
     <script>
-        function renderBackBtn() {
-
-        }
         let search_history = []
         let google_wont_allow_server_side_render = <%- JSON.stringify(sentence_arr) %>;
-        document.querySelector('#the_button').onclick = function(e) {
-            // console.log(google_wont_allow_server_side_render)
-            e.preventDefault();
+
+        function search_handler(event) {
+            console.log(event)
+            if (event.type === 'keyup' && (event.key !== 'Enter')) {
+                event.preventDefault(); 
+                console.log('nope')
+                return
+            }
+            event.preventDefault();
             document.querySelector('#back').classList.remove("d-none");
             let search_val = document.querySelector('#search').value 
 
             kickIt(google_wont_allow_server_side_render, search_val);
 
             search_history.push(search_val)
-
             console.log(search_history)
-        };
-        document.querySelector('#back').onclick = function(e) {
+        }
+
+
+        function back_handler(e) {
+            console.log("BACK!")
             e.preventDefault();
             let search_prev_val = search_history.pop()
+            if (search_prev_val == document.querySelector('#search').value) {
+                search_prev_val = search_history.pop() // pop twice b/c we need to
+            }
+            console.log("search_prev_val", search_prev_val)
             if (search_prev_val == null) {
                 return
             }
             kickIt(google_wont_allow_server_side_render, search_prev_val)
             document.querySelector('#search').value = search_prev_val
             console.log(search_history)
-
         }
+
+
+        window.addEventListener('DOMContentLoaded', (e) => {
+            document.querySelector('#search').addEventListener("keyup", search_handler);
+            document.querySelector('#the_button').onclick = search_handler
+            document.querySelector('#the_button').touchend = search_handler
+
+            document.querySelector('#back').onclick = back_handler 
+            document.querySelector('#back').touchend = back_handler 
+            document.querySelector('#back').keydown = back_handler 
+        })
+
+        window.addEventListener('load', (e) => {
+
+            document.querySelector("#search").value = "<%= most_freq_word %>"
+            document.querySelector('#the_button').click()
+            document.querySelector('#back').classList.add("d-none");
+            search_history.push("<%= most_freq_word %>")
+        })
     </script>
-    <div id="wordtree_basic" style="width: 900px; height: 500px;"></div>
+  </head>
+
+
+  <body class="wordtree">
+    <div class="body-wrap ">
+        <%- include('navbar/navbarGPT.ejs') %> 
+
+        <!-- VOD HEADER -->
+        <%- include('vodHeaderGPT.ejs', {"vod": vod, "channel": channel, "isBtnBackVod": true, "customClass": "vodheader__style1"}) %>
+
+
+        <!-- WORD TREE -->
+        <section class="search-container">
+            <p class="search-label">Search a word...</p>
+            <div class="search-box">
+                <input id="search" type="text" placeholder="Search a word..." aria-label="Word Tree search" />
+                <button id="the_button">Search</button>
+                <button id="back" class="d-none">🡨</button> 
+                <!-- ← 🡠  -->
+            </div>
+        </section>
+    </div>
+    <!-- <div id="wordtree_basic" style="width: 900px; height: 500px;"></div> -->
+    <div id="wordtree_basic" style=""></div>
   </body>
 </html>

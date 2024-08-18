@@ -1,11 +1,17 @@
 @import url("imgs/svgs.css");
+@import url("buttons.css");
+
+
 
 body {
-    background-color: grey;
+    /* line-height: 1.6; */
     margin: 0;
+    padding: 0;
+    background-color: #1e1e1e;
+    color: #d3d3d3;
 }
 
-h1 {
+h1, h2, h3, h4, h5, p {
     margin: 0;
 }
 
@@ -20,8 +26,14 @@ h1 {
 .d-flex {
     display: flex;
 }
+.d-inflex {
+    display: inline-flex;
+}
 .d-none {
     display: none;
+}
+.flex-column {
+    flex-direction: column;
 }
 
 .j-center {

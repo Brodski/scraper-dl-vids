@@ -47,6 +47,8 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
     with connection.cursor() as cursor:
         scrapped_name_ids = [chn.name_id for chn in scrapped_channels]
         formatted_ids = ', '.join([f"'{str(name)}'" for name in scrapped_name_ids])
+        print("formatted_ids")
+        print(formatted_ids)
         query = f"SELECT * FROM Channels;"
 
         cursor.execute(query)
@@ -59,7 +61,6 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
                 name_id = tup[0],
                 displayname = tup[1],
                 language = tup[2],
-                # links = tup[]
                 logo = tup[3],
                 current_rank = tup[4],
                 twitchurl = tup[5],
@@ -80,24 +81,36 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
                 # daysMeasured = tup[20]
             )
             channels_all_in_db.append(channel)
+        
         matching_channels = [ch1 for ch1 in channels_all_in_db if any(ch1.name_id == ch2.name_id for ch2 in scrapped_channels)]
 
         scrapped_id = {ch.name_id for ch in scrapped_channels}
         all_channels_minus_scrapped = [ch1 for ch1 in channels_all_in_db if ch1.name_id not in scrapped_id]
 
+        print()
         print(" (getNewOldChannelsFromDB) matching_channels")
         print([ch.name_id for ch in matching_channels])
+        print()
         print(" (getNewOldChannelsFromDB) channels_all_in_db")
         print([ch.name_id for ch in channels_all_in_db])
-        print("scrapped_channels")
-        print("scrapped_channels")
-        print("scrapped_channels")
+        print()
         print("scrapped_channels")
         print([ch.name_id for ch in scrapped_channels])
+        print()
         print(" (getNewOldChannelsFromDB) all_channels_minus_scrapped")
         print([ch.name_id for ch in all_channels_minus_scrapped])
-        
-        vip_list = [channel for channel in scrapped_channels if channel.name_id in ("lolgeranimo", "nmplol")]
+        if os.getenv("ENV") == "local":
+            vip_tuple = ("lolgeranimo", "nmplol")
+        else:
+            vip_tuple = ()
+        vip_tuple = ()
+        vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
+        print()
+        print ("VIP_LIST")
+        print (vip_list)
+        for vip in vip_list:
+            vip.print()
+        print()
         return all_channels_minus_scrapped + vip_list
 
 
@@ -115,8 +128,6 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
             if response.url == "https://sullygnome.com/": # redirected
                 subject = f"Preper {os.getenv('ENV')} - Failed selenium scrap on a channel"
                 msg = f"Attempted but failed url={url} - cnt={cnt} \nThey redirected! response.url is now: " + response.url
-                print(msg)
-                print(msg)
                 print(msg)
                 sendEmail(subject, msg)
                 # docker builder prune
@@ -302,8 +313,8 @@ def deleteOldTodos():
             FROM (
                 SELECT Id
                 FROM Vods
-                WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown')
-                AND TodoDate <= CURDATE() - INTERVAL 30 DAY
+                WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown' OR TranscriptStatus = 'too_big' OR TranscriptStatus = 'transcribing')
+                AND TodoDate <= CURDATE() - INTERVAL 20 DAY
             ) AS subquery
         );
 

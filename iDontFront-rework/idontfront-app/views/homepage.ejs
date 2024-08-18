@@ -6,13 +6,25 @@
     <head>
         <title> <%= title %> </title>
         <%- include('partials/head_meta.ejs') %> 
-        <link rel="stylesheet" type="text/css" href="/homepage.css">
+        <link rel="stylesheet" type="text/css" href="/homepageGPT.css">
     </head>
     <body class="homepage">
-        <%- include('navbar/navbar.ejs') %> 
-        <h1>Welcome to Big Dick Captions™ 😏🍆💦</h1>
+        <%- include('navbar/navbarGPT.ejs') %> 
+        <!-- <h1>Welcome to Big Dick Captions™ 😏🍆💦</h1> -->
+
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1>Twitch.tv Transcripts</h1>
+                <!-- <p>Uncover deep insights and analytics on your favorite streamers. Track performance, viewer engagement, and more—all in one place.</p>
+                <p>VOD transcription of the most popular and top twitch streamers. Powered by AI.</p> -->
+                <p>Access AI-powered transcriptions of the top Twitch streamers' VODs</p>
+                <!-- <a href="#streamer-table" class="cta-button">Explore Streamers</a> -->
+            </div>
+        </section>
         <hr/>
-        <h2> Ordered by popularity (last 14 days) </h2>
+
+        
         <table>
             <thead> 
                 <tr>
@@ -23,55 +35,44 @@
                     <th> Max Viewers </th>
                     <th> Average Viewers </th>
                     <th> Followers </th>
+                    <th> Broadcasts </th>
+                    <th> Vods Transcribed</th>
+                </tr>
+                <tr>
+                    <th colspan="9" class="table-subheader">Metrics based on data from the <span class="bold-highlight">last two weeks.</span></th>
                 </tr>
             </thead>
             <tbody>
             <% 
-            for (let chann of channelsList) {
-                let nameId = chann.nameId;
-                let logo = chann.logo;
-                let lang = chann.language;
-                let displayName = chann.displayName;
-                let viewMinutes = chann.viewMinutes;     //: 376124160,
-                let streamedMinutes = chann.streamedMinutes;     //: 3660,
-                let maxViewers = chann.maxViewers;     //: 228099,
-                let avgViewers = chann.avgViewers;     //: 102766,
-                let followers = chann.followers;     //: 4859054,
-                let followersGained = chann.followersGained;     //: 408868,
-                let partner = chann.partner;     //: 1,
-                let affiliate = chann.affiliate;     //: 0,
-                let mature = chann.mature;     //: 0,
-                let previousViewMinutes = chann.previousViewMinutes;     //: 228744180,
-                let previousStreamedMinutes = chann.previousStreamedMinutes;     //: 2865,
-                let previousMaxViewers = chann.previousMaxViewers;     //: 144289,
-                let previousAvgViewers = chann.previousAvgViewers;     //: 79840,
-                let previousFollowerGain = chann.previousFollowerGain;     //: 228460,
-                let daysMeasured = chann.daysMeasured;     //: 14
-                %>  
+            for (let chann of channelsList) { %>  
                 <tr class="channel_row img">
-                    <td class="table_channel_name">
-                        <a class="d-flex" href="<%= "channel/" + nameId %>">
+                    <td data-labelX class="table_channel_name ">
+                        <a class="streamer-name-linkXXX d-inflex" href="<%= "channel/" + chann.nameId %>">
                             <img class="" src="<%= chann.logo %>" />
-                            <h2> <%= displayName %>  </h2>
+                            <h2> <%= chann.displayName %>  </h2>
+                            <% // <a href="#" class="view-streamer-btn">View Profile</a> %>
                         </a>
                     </td>
-                    <td> <%= chann.language %> </td>
-                    <td> <%= localizeNumber((chann.viewMinutes ??  0) / 60) %> </td>
-                    <td> <%= localizeNumber((chann.streamedMinutes ?? 0) / 60) %> </td>
-                    <td> <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
-                    <td> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
-                    <td> <%= localizeNumber(chann.followers ?? 0) %> </td>
-                    
-                    <!-- <td> <%# chann.followersGained %> </td> -->
-                    <!-- <td> <%# chann.partner %> </td> -->
-                    <!-- <td> <%# chann.affiliate %> </td> -->
-                    <!-- <td> <%# chann.mature %> </td> -->
-                    <!-- <td> <%# chann.previousViewMinutes %> </td> -->
-                    <!-- <td> <%# chann.previousStreamedMinutes %> </td> -->
-                    <!-- <td> <%# chann.previousMaxViewers %> </td> -->
-                    <!-- <td> <%# chann.previousAvgViewers %> </td> -->
-                    <!-- <td> <%# chann.previousFollowerGain %> </td> -->
-                    <!-- <td> <%# chann.daysMeasured %> </td> -->
+                    <td data-label="Language">        <%= chann.language %> </td>
+                    <td data-label="Hours Watched">   <%= localizeNumber((chann.viewMinutes ??  0) / 60) %> </td>
+                    <td data-label="Hours Streamed">  <%= localizeNumber((chann.streamedMinutes ?? 0) / 60) %> </td>
+                    <td data-label="Max Viewers">     <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
+                    <td data-label="Average Viewers"> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
+                    <td data-label="Followers">       <%= localizeNumber(chann.followers ?? 0) %> </td>
+                    <td data-label="Broadcasts">         <%= chann.entryCount ?? 0 %> </td>
+                    <td data-label="Vods Transcribed">   <%= chann.completedCount ?? 0 %> </td>
+                     <% /*
+                        chann.followersGained
+                        chann.partner
+                        chann.affiliate
+                        chann.mature
+                        chann.previousViewMinutes
+                        chann.previousStreamedMinutes
+                        chann.previousMaxViewers
+                        chann.previousAvgViewers
+                        chann.previousFollowerGain
+                        chann.daysMeasured
+                    */ %>
                      
 
                 </tr>

@@ -14,10 +14,12 @@ async function getWordtreePage(req, res) {
     console.log( process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey())
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
 
-    // let sentence_arr = await channelHelper.prepWordTree(transcript_s3_txt)
-    let sentence_arr = await channelHelper.prepWordTree(txtKey)
+    // Process important data
+    let [sentence_arr, most_freq_word] = await channelHelper.prepWordTree(txtKey)
+
     res.render("../views/wordtree", {
         "sentence_arr": sentence_arr,
+        "most_freq_word": most_freq_word,
         "vod": vods[0],
         "channel": channels[0]
     })

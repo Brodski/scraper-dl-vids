@@ -1,5 +1,5 @@
 class Channel {
-    constructor({DisplayName = '', NameId = '', Language = '', Logo = '', TwitchUrl = '', CurrentRank = 999, ViewMinutes = '', StreamedMinutes = '', MaxViewers = '', AvgViewers = '', Followers = '', FollowersGained = '', Partner = '', Affiliate = '', Mature = '', PreviousViewMinutes = '', PreviousStreamedMinutes = '', PreviousMaxViewers = '', PreviousAvgViewers = '', PreviousFollowerGain = '', DaysMeasured = ''}) {
+    constructor({DisplayName = '', NameId = '', Language = '', Logo = '', TwitchUrl = '', CurrentRank = 999, ViewMinutes = '', StreamedMinutes = '', MaxViewers = '', AvgViewers = '', Followers = '', FollowersGained = '', Partner = '', Affiliate = '', Mature = '', PreviousViewMinutes = '', PreviousStreamedMinutes = '', PreviousMaxViewers = '', PreviousAvgViewers = '', PreviousFollowerGain = '', DaysMeasured = '', CompletedCount = '', EntryCount = ''}) {
         this.currentRank = CurrentRank;
         this.displayName = DisplayName;
         this.nameId = NameId;
@@ -22,6 +22,8 @@ class Channel {
         this.previousAvgViewers = PreviousAvgViewers
         this.previousFollowerGain = PreviousFollowerGain
         this.daysMeasured = DaysMeasured
+        this.completedCount = CompletedCount
+        this.entryCount = EntryCount
     }
 }
 

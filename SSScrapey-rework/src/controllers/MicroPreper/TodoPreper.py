@@ -135,31 +135,32 @@ def instantiateJsonToClassObj(json_object):
     return relevant_list
 
 def addVipList(json_object, isDebug=False):
-    VIP_LIST = [
-        {
-            "displayname": "LoLGeranimo",
-            "language": "English",
-            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-            "twitchurl": "https://www.twitch.tv/lolgeranimo",
-            "url": "lolgeranimo",
-            "rownum": -21,
-            # "viewminutes": 0,
-            # "streamedminutes": 4320,
-            # "maxviewers": 215,
-            # "avgviewers": 142,
-            # "followers": 189444,
-            # "followersgained": -128,
-            # "partner": True,
-            # "affiliate": False,
-            # "mature": True,
-            # "previousviewminutes": 0,
-            # "previousstreamedminutes":  3520,
-            # "previousmaxviewers": 201,
-            # "previousavgviewers":  145,
-            # "previousfollowergain": -110
+    if os.getenv("ENV") != "prod":
+        VIP_LIST = [
+            {
+                "displayname": "LoLGeranimo",
+                "language": "English",
+                "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+                "twitchurl": "https://www.twitch.tv/lolgeranimo",
+                "url": "lolgeranimo",
+                "rownum": -21,
+                # "viewminutes": 0,
+                # "streamedminutes": 4320,
+                # "maxviewers": 215,
+                # "avgviewers": 142,
+                # "followers": 189444,
+                # "followersgained": -128,
+                # "partner": True,
+                # "affiliate": False,
+                # "mature": True,
+                # "previousviewminutes": 0,
+                # "previousstreamedminutes":  3520,
+                # "previousmaxviewers": 201,
+                # "previousavgviewers":  145,
+                # "previousfollowergain": -110
 
-        }
-    ]
+            }
+        ]
     if os.getenv("ENV") == "local" and isDebug:
         VIP_LIST.append({
             "displayname": "Nmplol",

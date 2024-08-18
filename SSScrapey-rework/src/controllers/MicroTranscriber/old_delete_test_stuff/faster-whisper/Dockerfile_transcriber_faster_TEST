@@ -28,6 +28,7 @@
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 50959 root@213.181.122.2 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 32863 root@172.81.127.5 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy
@@ -126,9 +127,10 @@ RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb
 
 
 # https://github.com/NVIDIA/nvidia-docker/issues/1644
-RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+# Apparently ^ fixes old version.
+# RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+# ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+# ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
 RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 
 

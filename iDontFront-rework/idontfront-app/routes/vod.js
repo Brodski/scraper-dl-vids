@@ -13,25 +13,27 @@ async function getVodPage(req, res) {
         console.error("BAD QUERY FOR CHANNELS! OR VODS (b)")
         console.log(channels)
     }
-    
-    console.log("vods[0].s3CaptionFiles")
-    console.log(vods[0].s3CaptionFiles)
+
     let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());
     let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
     let response = await fetch(url);
-    console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
-    console.log(" url:")
-    console.log(" url:",  url)
+
     if (!response.ok) {
         console.error("Failed HTTP-Get: ", url);
         throw new Error('HTTP error ' + response.status);
     }
+
     let transcript_json = await response.json()
     vttKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3VttKey();
     jsonKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TranscriptKey();
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
     console.log("TRANSCRIPT - VOD: ", vods[0]?.id, vods[0]?.title) 
-    res.render("../views/vod", { // ---> /channel/lolgeranimo
+
+    // BOOM 👇
+    // BOOM 👇
+    // BOOM 👇    
+    // res.render("../views/vod", { // ---> /channel/lolgeranimo
+    res.render("../views/vodGPT", { // ---> /channel/lolgeranimo
         "transcript_json": transcript_json.segments,
         "transcript_s3_vtt":  encodeURI(vttKey),
         "transcript_s3_json": encodeURI(jsonKey),

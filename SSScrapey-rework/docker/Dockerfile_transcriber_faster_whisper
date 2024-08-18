@@ -1,21 +1,3 @@
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
-# OLD FILE ... USES FASTER_WHISPER
 ############################################################
 #                                                          #
 #                        PROD DEPLOY                       #
@@ -32,23 +14,23 @@
 #                                                          #
 ############################################################
 # Docker build
-#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber  .
-#    docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber  .
+#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber_faster_whisper  .
+#    docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_faster_whisper  .
 
 # Docker push
 #    docker push cbrodski/transcriber:official_v2
 #    docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)
-#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2 
-#    docker run --env-file .env -e ENV=dev cbrodski/transcriber:official_v2_dev 
+#    docker run --env-file .env_docker_local -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env_docker_local -e ENV=dev cbrodski/transcriber:official_v2_dev 
 
 # Docker run debug
 #    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
 
 # Docker run debug 2
-#    docker run --env-file .env -it cbrodski/transcriber:official_v2 /bin/bash
-#    docker run --env-file .env -it cbrodski/transcriber:official_v2_dev /bin/bash
+#    docker run --env-file .env_docker_local -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env_docker_local -it cbrodski/transcriber:official_v2_dev /bin/bash
 
     
 ############################################################
@@ -66,7 +48,7 @@
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#    ssh -p 41594 root@149.36.0.216 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 56598 root@213.181.122.2 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy
@@ -138,19 +120,20 @@ COPY cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb .
 #     -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36' \
 #     --compressed \
 #     -L --output cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
-RUN dpkg -i cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb  
-RUN apt install ./cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
-RUN cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
-RUN apt-get update
-RUN apt-get install libcudnn8=8.9.1.23-1+cuda12.1 -y
-RUN apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 -y 
-RUN rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb 
+RUN dpkg -i cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb   && \
+    apt install ./cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb  && \
+    cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/ && \
+    apt-get update && \
+    apt-get install libcudnn8=8.9.1.23-1+cuda12.1 -y && \
+    apt-get install libcudnn8-dev=8.9.1.23-1+cuda12.1 -y  && \
+    rm cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb ;
 
 
 # https://github.com/NVIDIA/nvidia-docker/issues/1644
-RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
+# Apparently ^ is a fix for old junk. But works now
+#RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+#ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/"
+#ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.0/targets/x86_64-linux/lib/"
 RUN echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
 
 
@@ -182,11 +165,12 @@ RUN if [ "${ENV}" = "dev" ]; then \
 RUN pip install -r requirements_transcriber_faster.txt 
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
-COPY dock_setup.sh dock_setup.sh
+COPY dock_setup.sh /app/scraper-dl-vids/SSScrapey-rework/src/dock_setup.sh
 RUN chmod +x dock_setup.sh
 
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    echo "LD_LIBRARY_PATH is $LD_LIBRARY_PATH"; \
     vastai set api-key $VAST_API_KEY ; \
     sh dock_setup.sh ; \
     echo "VAST_API_KEY is $VAST_API_KEY " ; \

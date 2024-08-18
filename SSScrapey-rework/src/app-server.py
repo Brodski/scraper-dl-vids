@@ -42,8 +42,8 @@ def home():
     <h1>Links to all other routes in the app.</h1>
     <hr/>
     <h3> Micro Preper </h3>
-        <li><a href="/main/ranking/kickit">  mainController.kickit(True) </a></li>
-        <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>False</b>) </a></li>
+        <li><a href="/main/ranking/kickit">  mainController.kickit(<b>Debug=True</b>) </a></li>
+        <li><a href="/main/ranking/kickit_real">  mainController.kickit(<b>Debug=False</b>) </a></li>
             <ul>
                 <li><a href="/ranking/getTopChannelsSully"> Sullygnome -----> createToDoController.getTopChannelsSully() </a></li>
                 <li><a href="/hrefGet/scrape4VidHref/mock"> Selenium -----> seleniumController.scrape4VidHref() </a></li>

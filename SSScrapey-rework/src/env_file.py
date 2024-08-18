@@ -27,7 +27,6 @@ else:
     sys.exit(1) 
 
 
-
 DWN_BATCH_SIZE = env_vars['DWN_BATCH_SIZE']
 DWN_COMPRESS_AUDIO = env_vars['DWN_COMPRESS_AUDIO']
 DWN_QUERY_PER_RECENT = env_vars['DWN_QUERY_PER_RECENT']

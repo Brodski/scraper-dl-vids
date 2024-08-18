@@ -1,15 +1,21 @@
 
 <% if (table_data != null && table_data.length > 0 ) { %>
-    <table>
-    <tr>
-        <th> <%=txt %> </th>
-        <th> Count </th>
-    </tr>
-    <% for (let word of table_data.slice(0,100)) { %>
-        <tr>
-            <td> <%= word[0] %> </td>
-            <td> <%= word[1] %> </td>
-        </tr>
-    <% } %>
-    </table>
+    <div class="table-wrapper">
+        <table>
+        <thead>
+            <tr>
+                <th> <%=txt %> </th>
+                <th> Count </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (let word of table_data.slice(0,100)) { %>
+                <tr>
+                    <td> <%= word[0] %> </td>
+                    <td> <%= word[1] %> </td>
+                </tr>
+            <% } %>
+        </tbody>
+        </table>
+    </div>
 <% } %>

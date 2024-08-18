@@ -1,3 +1,10 @@
+####################################################
+#                                                  #
+#   !!!  PUSH TO GIT BEFORE BUILDING !!            #
+#   !!!  PUSH TO GIT BEFORE BUILDING !!            #
+#   !!!  PUSH TO GIT BEFORE BUILDING !!            #
+#                                                  #
+####################################################
 
 # Downloader
 docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/downloader:official_v2 -f Dockerfile_ECS_downloader  .

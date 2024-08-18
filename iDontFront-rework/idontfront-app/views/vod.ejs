@@ -34,8 +34,11 @@
             </button>
             <span id="on-off-sticky"> </span>
         </div>
+
+        <!-- IFRAME PLAYER -->
         <div id="twitch-iframe"></div>
 
+        <!-- IFRAME PLAYER JAVASCRIPT -->
         <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
         <script type="text/javascript">
             let player;
@@ -57,17 +60,11 @@
             })
             
           function seekIframe(time) {
-            // console.log("time=" + time)
-            // console.log("player=" + player)
             player.seek(time)
-            // player.play()
           }
         </script>
 
         <hr/>
-        
-        <!-- MAIN TRANCRIPT -->
-        <!-- MAIN TRANCRIPT -->
         <!-- MAIN TRANCRIPT -->
         <% 
         let i = 0;

@@ -53,6 +53,7 @@ td {
 .analysis_vertical_word {
     display: inline-flex;
 }
+
 svg {
     position: sticky;
     top: 20px;
@@ -76,5 +77,5 @@ tbody tr:first-child {
 }
 
 .table__mini_column {
-    width: 80%;
+    width: 85%;
 }

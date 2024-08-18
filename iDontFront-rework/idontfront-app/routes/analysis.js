@@ -12,7 +12,8 @@ async function getAnalysisPage(req, res) {
     let channels = resultsChan.map( x => new Channel(x))
     txtKey = process.env.BUCKET_DOMAIN + "/" + encodeURI(vods[0].getS3TxtKey());
     let analysisObj = await channelHelper.getAnalysis(txtKey)
-    res.render("../views/analysis", { // ---> /channel/lolgeranimo
+    // res.render("../views/analysis", { // ---> /channel/lolgeranimo
+    res.render("../views/analysisGPT", { // ---> /channel/lolgeranimo
         "channel": channels[0],
         "vod": vods[0],
         "wordcloud": analysisObj.wordcloudSvg?.outerHTML,
@@ -20,6 +21,7 @@ async function getAnalysisPage(req, res) {
         "badWordPlot": analysisObj.badWordPlot?.outerHTML,
         "word_counter": analysisObj.word_counter,
         "bad_words_counter": analysisObj.bad_words_counter,
+        "word_counter_txt_all": analysisObj.word_counter_txt_all,
     })
     return
 }

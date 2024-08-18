@@ -16,7 +16,7 @@ resource "aws_lambda_function" "mini_image_lambda" {
   role          = aws_iam_role.mini_image_role.arn
   memory_size   = 512
   timeout       = 300 # 5 min 
-  architectures = ["arm64"] # ["x86_64"] # 
+  architectures = ["x86_64"] # ["arm64"]
 
 
   filename = data.archive_file.lambda_zip.output_path # "output_code.zip"
@@ -32,7 +32,6 @@ resource "aws_lambda_function" "mini_image_lambda" {
 
   environment {
     variables = {
-      FLASK_ENV = var.ENV
       IS_LAMBDA = "true"
       ENV = var.ENV
     }

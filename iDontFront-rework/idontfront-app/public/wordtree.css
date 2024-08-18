@@ -1,0 +1,103 @@
+body.wordtree {
+    max-width: unset;
+    margin-left: unset;
+    margin-right: unset;
+}
+.body-wrap {
+    max-width: 1250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.search-label {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.search-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.search-box {
+    display: inline-flex;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+@media (max-width: 500px) {
+    input#search {
+        width: 100%;
+    }
+}
+
+#search {
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background-color: #333;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-right: 10px;
+    width: 300px;
+    transition: width 0.3s ease;
+}
+
+
+button {
+    font-size: 16px;
+    padding: 10px 15px;
+    background-color: #444;
+    color: #ffffff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #555;
+    /* transform: scale(1.05); */
+}
+
+#back {
+    font-size: 20px;
+    margin-left: 10px;
+    padding: 6px 10px;
+}
+
+#wordtree_basic {  
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+#wordtree_basic {
+    width: 100%;
+    padding: 26px 0;
+    background-color: #010101;
+    background-color: #000000;
+    /* background-color: #2a2a2a; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 24px;
+    border-radius: 8px;
+    border: 2px solid #1E90FF;
+    margin-bottom: 30px;
+    
+}
+
+#wordtree_basic svg > g > text[text-anchor="start"] {
+    fill: white;
+}
+#wordtree_basic text[text-anchor="start"] {
+    fill: #1E90FF;
+    fill: #63aff9;
+}

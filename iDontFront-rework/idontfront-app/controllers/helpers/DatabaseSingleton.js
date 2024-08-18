@@ -22,15 +22,13 @@ class DatabaseSingleton {
                 // }
             }).promise();
             DatabaseSingleton.instance = this;
+            console.log("process.env.DATABASE_HOST", process.env.DATABASE_HOST)
+            console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME)
+            console.log("process.env.DATABASE", process.env.DATABASE)
         }
         return DatabaseSingleton.instance;
     }
 
-    printHi() {
-        console.log("process.env.DATABASE_HOST", process.env.DATABASE_HOST)
-        console.log("process.env.DATABASE_USERNAME", process.env.DATABASE_USERNAME)
-        console.log("process.env.DATABASE", process.env.DATABASE)
-    }
     async getVodById(vodId) {
         try {
             const sqlQuery = `
@@ -70,24 +68,101 @@ class DatabaseSingleton {
         } 
     }
 
-    async getChannelsForHomepage() {
-        console.log("getting channels for homepage...")
+    async getChannelsMetadataHomepage() {
         try {
             const sqlQuery = `
-                SELECT *
-                FROM Channels c
-                WHERE EXISTS (
-                    SELECT 1
-                    FROM Vods v
-                    WHERE v.ChannelNameId = c.NameId
-                    AND v.TranscriptStatus = 'completed'
-                ) ORDER BY CurrentRank ASC;`;
+            SELECT 
+                ChannelNameId, 
+                COUNT(*) AS EntryCount,
+                SUM(CASE WHEN TranscriptStatus = 'completed ' THEN 1 ELSE 0 END) AS CompletedCount
+            FROM 
+                Vods
+            WHERE 
+                StreamDate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+            GROUP BY 
+                ChannelNameId;
+            `
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan));
             resultChannelObj.sort( (a,b) => {
                 // first sort by viewMinutes, then by peviouwViewMinutes, then by followers
                 return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
             })
+            return resultChannelObj;
+        } catch (error) {
+            console.error('Error retrieving channels: ', error);
+            // throw error;
+        } 
+
+    }
+
+    async getChannelsForHomepage() {
+        try {
+            // const sqlQuery = `
+            //     SELECT *
+            //     FROM Channels c
+            //     WHERE EXISTS (
+            //         SELECT 1
+            //         FROM Vods v
+            //         WHERE v.ChannelNameId = c.NameId
+            //         AND v.TranscriptStatus = 'completed'
+            //     ) ORDER BY CurrentRank ASC;`;
+
+            // 1 Query and aggregate "Completed" transcripts and aggregate broadcasts
+            // 2 Query from Channels where at least 1 vod has a complted Transcript
+            const sqlQuery = `
+                SELECT 
+                    c.*, 
+                    IFNULL(v.EntryCount, 0) AS EntryCount, 
+                    IFNULL(v.CompletedCount, 0) AS CompletedCount
+                FROM 
+                    Channels c
+                LEFT JOIN 
+                    (
+                        SELECT 
+                            ChannelNameId, 
+                            COUNT(*) AS EntryCount,
+                            SUM(CASE WHEN TranscriptStatus = 'completed' THEN 1 ELSE 0 END) AS CompletedCount
+                        FROM 
+                            Vods
+                        WHERE 
+                            StreamDate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+                        GROUP BY 
+                            ChannelNameId
+                    ) v 
+                ON 
+                    c.NameId = v.ChannelNameId
+                WHERE 
+                    EXISTS (
+                        SELECT 1
+                        FROM Vods v2
+                        WHERE v2.ChannelNameId = c.NameId
+                        AND v2.TranscriptStatus = 'completed'
+                    )
+                ORDER BY 
+                    c.CurrentRank ASC;
+            `
+
+            const [results, fields] = await this.pool.query(sqlQuery);
+            let resultChannelObj = results.map( chan => new Channel(chan));
+            resultChannelObj.sort( (a,b) => {
+                // first sort by viewMinutes, then by peviouwViewMinutes, then by followers
+                return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
+            })
+
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log("resultChannelObj")
+            console.log(resultChannelObj)
             return resultChannelObj;
         } catch (error) {
             console.error('Error retrieving channels: ', error);

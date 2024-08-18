@@ -1,0 +1,99 @@
+<%- include("../server-scripts/utilities") %>
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> <%= channel.displayName %> </title>
+        <%- include('partials/head_metaGPT.ejs') %> 
+        <link rel="stylesheet" type="text/css" href="/vodGPT.css">
+    </head>    
+    <body>
+        <!-- PROFILE HEADER -->
+        
+        <%- include('navbar/navbarGPT.ejs') %> 
+        <main>
+            <!-- VOD HEADER -->
+            <%- include('vodHeaderGPT.ejs', {"vod": vod, "channel": channel}) %>
+
+            <!-- IFRAME PLAYER -->
+            <section id="twitch-iframe"></section>
+
+            <!-- IFRAME PLAYER JAVASCRIPT -->
+            <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+            <script type="text/javascript">
+                let player;
+                window.addEventListener("load", e => {
+                    var options = {
+                        // width: ( window.innerWidth <= 640 ? '100%' : 640),
+                        // height: ( window.innerWidth <= 640 ? 230 : 360),
+                        width: ( window.innerWidth <= 800 ? '100%' : 800),
+                        height: ( window.innerWidth <= 800 ? 230 : 450),
+                        video: <%= vod.id %>,
+                        autoplay: false,
+                        parent: ["prod-captions.bski.one"] // TODO
+                    };
+                    player = new Twitch.Player("twitch-iframe", options);
+                    player.setVolume(0);
+                    setTimeout(() => {player.setVolume(0) }, 1000)
+                    
+                })
+                
+                function seekIframe(time) {
+                    player.seek(time)
+                }
+            </script>
+
+            <!-- TOGGLE STICKY PLAYER -->
+            <div>
+                <button 
+                    id="toggle-sticky"
+                    class="basic-btn"
+                    onclick="(() => {
+                        let iframe = document.querySelector('#twitch-iframe')
+                        iframe.classList.toggle('sticky-iframe')
+                        let msg = iframe.classList.contains('sticky-iframe') ? '☑' : '' // '✓'
+                        document.querySelector('#on-off-sticky').innerText = msg
+                    })()"
+                    > Toggle sticky
+                </button>
+                <span id="on-off-sticky"> </span>
+            </div>
+
+            <!-- MINI NAV -->
+            <%- include('vodMiniNavGPT.ejs', {"vod": vod, "channel": channel}) %>
+            
+            <div>
+                Powered by audio-to-text AI. Inaccuracies will occur.
+            </div>
+        
+            <!-- MAIN TRANCRIPT -->
+            <hr/>
+            <section id="transcript">
+            <% 
+            let i = 0;
+            for (let segment of transcript_json) {
+                if (i==0) {
+                    console.log("vod's first segment: ", segment)
+                }
+                i++
+                let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
+                let min = Math.floor(parseInt(segment.start) / 60)
+                let timestamp = min + "m" + sec + "s";
+                %>
+                <% 
+                    let iframe_time = Math.floor(segment.start)
+                    let start = Number(Math.round(segment.start)).toFixed(2)
+                    let end   = Number(Math.round(segment.end)).toFixed(2)
+                    start = secondsToHHmmSS(start)
+                    end = secondsToHHmmSS(end) 
+                %>
+                    <div class="transcript-line">
+                        <a class="timestamp" onclick="(() => seekIframe(<%= iframe_time %>))()">[<%= start %>]</a>
+                        <span class="cue"> <%= segment.text %> </span>
+                    </div>
+            <% } %>
+            </section>
+        </main>
+    </body>
+</html>

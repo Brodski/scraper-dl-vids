@@ -8,7 +8,8 @@
         <link rel="stylesheet" type="text/css" href="/channelAlt.css">
     </head>    
     <body>
-        <%- include('navbar/navbar.ejs') %> 
+        <%- // include('navbar/navbar.ejs') %> 
+        <%- include('navbar/navbarGPT.ejs') %> 
         <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": false}) %>
 
 
@@ -27,7 +28,6 @@
                         let href            = path + "/" +  id 
                         let s3Thumbnails    = vod.s3Thumbnails
                         let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
-                        console.log("vod.s3Thumbnails-", vod.s3Thumbnails)
                 %>
                 <div class="channel__vod">
                     <div class="channel__abs_info d-flex j-space-between">

@@ -12,6 +12,5 @@ router.get(["/channel/:name",
             "/channel/:name/:id/analysis", 
             "/channel/:name/:id/wordtree"], 
             routeHelper.routeHelper);
-// router.get("/channel/:name/:id", cVod.vod);
 
 module.exports = router

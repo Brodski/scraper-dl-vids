@@ -12,9 +12,15 @@ import os
 
 def printIntro():
     print("IT'S RUNNING! WOOOOOOOOOO")
+    print("Will mark this many vods as 'todo':")
     print("PREP_DB_UPDATE_VODS_NUM:", env_varz.PREP_DB_UPDATE_VODS_NUM)
+    print("Will look at these many top channels:")
+    print("PREP_SELENIUM_NUM_CHANNELS:", env_varz.PREP_SELENIUM_NUM_CHANNELS)
+    print("Will look at this many past broadcasts:")
+    print("PREP_SELENIUM_NUM_VODS_PER:", env_varz.PREP_SELENIUM_NUM_VODS_PER)
 
 def prepare(isDebug=False):
+    printIntro()
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera

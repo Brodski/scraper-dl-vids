@@ -72,11 +72,9 @@ def requestOffersHttp(query_args):
     json_data = json.loads(data)
     return json_data.get("offers")
 
-def create_instance(instance_id):
+def create_instance(instance_id, instance_num):
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + VAST_API_KEY
     print("    (create_instance)  url: ", url)
-    print("    (create_instance)  DOCKER IAMGE: ", image)
-    print("    (create_instance)  DOCKER IAMGE: ", image)
     print("    (create_instance)  DOCKER IAMGE: ", image)
     data_dict =  {  
         "client_id": "me",
@@ -89,7 +87,9 @@ def create_instance(instance_id):
                 'DATABASE_PASSWORD': DATABASE_PASSWORD,
                 'DATABASE_PORT': DATABASE_PORT,
                 'DATABASE': DATABASE,
-                'VAST_API_KEY': VAST_API_KEY
+                'VAST_API_KEY': VAST_API_KEY,
+                'TRANSCRIBER_NUM_INSTANCES': TRANSCRIBER_NUM_INSTANCES,
+                'TRANSCRIBER_INSTANCE_CNT': (instance_num + 1),
             },
         "price": None, 
         "disk": disk, 
@@ -180,7 +180,7 @@ def printAsTable(goodOffers):
 
         
         
-def find_create_confirm_instance(event, context, rerun_count):
+def find_create_confirm_instance(event, context, rerun_count, instance_num):
     if (rerun_count >= 2):
         print("  (find_create_confirm_instance) We have reran too many time,  ENDING!\n" * 3)
         return
@@ -201,7 +201,7 @@ def find_create_confirm_instance(event, context, rerun_count):
     dataz = json.loads(everything_request)
     x = json.dumps(dataz, indent=2)
     offers = requestOffersHttp(json.loads(everything_request))
-    offerz = json.dumps(offers, indent=2)
+    # offerz = json.dumps(offers, indent=2)
     # print("  (find_create_confirm_instance) offers[0]")
     # print(json.dumps(offers[0], indent=2))
     print("  (find_create_confirm_instance) == GO BABY GO ==")
@@ -253,7 +253,8 @@ def find_create_confirm_instance(event, context, rerun_count):
         print('2.5 min passed ...')
         time.sleep(150)
         print('5 min passed ...')
-        find_create_confirm_instance(event, None, rerun_count + 1)
+        find_create_confirm_instance(event, None, rerun_count + 1, instance_num)
+        return
     print("  (find_create_confirm_instance)  Good offers: ")
     printAsTable(goodOffers)
 
@@ -265,16 +266,14 @@ def find_create_confirm_instance(event, context, rerun_count):
     if True:
         try:
             id_create = instance_first.get("id")
-            id_contract = create_instance(id_create)
-            status = pollCompletion(id_contract, time.time(), 0)
+            id_contract = create_instance(id_create, instance_num)
+            status = pollCompletion(id_contract, time.time(), 0, instance_num)
             if status == "success":
                 # WE PRINT A LOT OF INFO
                 print("Status == 'success' Ya! :D")
                 printDebug(id_contract)
             else:
                 status = "None" if status is None else status
-                print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
-                print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
                 print("  (find_create_confirm_instance) POLL FAILED. STATUS=" + status)
                 print("  (find_create_confirm_instance) POLL FAILED. id_create=", id_create)
                 print("  (find_create_confirm_instance) POLL FAILED. id_contract=", id_contract)
@@ -283,12 +282,13 @@ def find_create_confirm_instance(event, context, rerun_count):
             traceback.print_exc()
             print(f"   (find_create_confirm_instance) Error creating instacne {e}")
             print(f"   (find_create_confirm_instance) Might try again..")
-            find_create_confirm_instance(event, None, rerun_count + 1)
+            find_create_confirm_instance(event, None, rerun_count + 1, instance_num)
             
     return {
         'statusCode': 200,
         'body': json.dumps('Completed vastai init!! ')
     }
+
 def printDebug(id_contract):
     rows = show_my_instances()
     for row in rows:
@@ -304,7 +304,7 @@ def printDebug(id_contract):
             print(json.dumps(row, indent=4))
             break
 
-def pollCompletion(id_contract, start_time, counter_try_again):
+def pollCompletion(id_contract, start_time, counter_try_again, instance_num):
     # id_create = id_contract
     print(f'----- {counter_try_again}: polling {str(id_contract)} for completion -----')
     if counter_try_again > 11: # 11 min
@@ -327,24 +327,24 @@ def pollCompletion(id_contract, start_time, counter_try_again):
     
     if status_msg and status_msg.lower().startswith("unexpected fault address"):
         print("    (pollCompletion) nope not ready, 'unexpected fault address' end it")
-        try_again(str(row['id']))
+        try_again(str(row['id']), instance_num)
         return
     if status_msg and "unable to find image" in status_msg.lower():
         print("    (pollCompletion) nope not ready, end it")
-        try_again(str(row['id']))
+        try_again(str(row['id']), instance_num)
         return
     if actual_status and actual_status == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
         print("    (pollCompletion) nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
-        try_again(str(row['id']))
+        try_again(str(row['id']), instance_num)
         return
     if actual_status and actual_status == "running":
         print("    (pollCompletion) Running, we're done :)")
         return "success"
     print('    (pollCompletion) sleeping for 60 sec')
     time.sleep(60) 
-    return pollCompletion(id_contract, start_time, counter_try_again+1)
+    return pollCompletion(id_contract, start_time, counter_try_again+1, instance_num)
 
-def try_again(id):
+def try_again(id, instance_num):
     print("   ! (try_again) end it")
     destroy_instance(id)
     blacklist_ids.append(id)
@@ -352,7 +352,7 @@ def try_again(id):
     print("   ! (try_again) Try again")
     print("   ! (try_again) Try again")
     # create a new instance b/c the current one is too shit
-    find_create_confirm_instance(None, None, 0)
+    find_create_confirm_instance(None, None, 0, instance_num)
 
 
 def handler_kickit(event, context):
@@ -360,7 +360,7 @@ def handler_kickit(event, context):
     print("TRANSCRIBER_NUM_INSTANCES", TRANSCRIBER_NUM_INSTANCES)
     for i in range(num_instances):
         print("handler_kickit() beign loop:", i)
-        find_create_confirm_instance(event, context, 0)
+        find_create_confirm_instance(event, context, 0, i)
         time.sleep(60) # wait 1 minute
 
 if __name__ == '__main__':

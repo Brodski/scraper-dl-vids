@@ -1,13 +1,47 @@
-
+<%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html>
-    <head>
-        <title> 404 </title>
-        <%- include('partials/head_meta.ejs') %> 
-    </head>    
-    <body>
-        <h1> 404 </h1>
-        <p> <%= msg %></p>
-    </body>
-</html> 
+<html lang="en">
+<head>
+    <!-- SITE -->
+    <%- include('partials/head_metaGPT.ejs') %> 
+
+    <% 
+        let meta_title = "404 - Page Not Found | Twitch Transcripts"
+        let meta_description = `404 - This page does not exist. Return to the homepage to explore VOD transcriptions.`
+    %>
+    <!-- STANDARD -->
+    <title> <%= meta_title %> </title>
+    <meta name="description" content="<%= meta_description %>">
+
+    <!-- OPEN GRAPH -->
+    <meta property="og:site_name" content="Twitch">
+    <meta property="og:title" content="<%= meta_title %>">
+    <meta property="og:description" content="<%= meta_description %>">
+    <meta property="og:image" content="<%= getOgImageUrl() %>">
+
+    <!-- TWITTER -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<%= meta_title %> ">
+    <meta name="twitter:description" content="<%= meta_description %>">
+    <meta name="twitter:image" content="<%= getOgImageUrl() %>">
+
+    <link rel="stylesheet" type="text/css" href="/404.css">
+</head>
+<body>
+    <%- include('navbar/navbarGPT') %>
+    <!-- 404 Page Content -->
+    <div class="error-wrapper">
+        <div class="error-page">
+            <div class="error-content">
+                <h1>404</h1>
+                <p>Oops! The page you’re looking for doesn’t exist.</p>
+                <a href="/" class="basic-btn btnXXX">Twitch Transcriptions</a>
+            </div>
+            <div>
+                <img class="error-image" src="<%= getRng404Url() %>" alt="404 Image" >
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,12 +1,50 @@
 <%- include("../server-scripts/utilities") %>
-<% // https://developers.google.com/chart/interactive/docs/gallery/wordtree %>
-<html>
+
+<% 
+//
+//  GOOGLE'S WORD TREE DOCS
+//
+// https://developers.google.com/chart/interactive/docs/gallery/wordtree 
+//
+%>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <!-- METADATA -->
     <%- include('partials/head_metaGPT.ejs') %> 
     <link rel="stylesheet" type="text/css" href="/fonts.css">
     <link rel="stylesheet" type="text/css" href="/wordtree.css">
-    <title> <%= channel.displayName %> analysis </title>
+
+    <% 
+        let meta_title = `${vod.title} - ${channel.displayName}'s wordtree`;
+        let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}/wordtree`);
+        let meta_description = `Explore the VOD transcript "${vod.title}" from ${channel.displayName} with an interactive Word Tree. Discover patterns, analyze word usage, and dive deep into the dialogue with this powerful visualization tool.`
+    %>
+    <!-- STANDARD -->
+    <title> <%= meta_title %> </title>
+    <link rel="canonical"   href="<%= meta_url_this_page %>">
+    <meta name="description" content="<%= meta_description %>">
+
+    <!-- OPEN GRAPH -->
+    <meta property="og:site_name"   content="Twitch">
+    <meta property="og:title"       content="<%= meta_title %>">
+    <meta property="og:description" content="<%= meta_description %>">
+    <meta property="og:image"       content="<%= getOgImageUrl() %>">
+    <meta property="og:url"         content="<%= meta_url_this_page %>">
+    <meta property="og:type"        content="article">
+
+    <!-- TWITTER -->
+    <% // <meta name="twitter:site" content="@twitch"> %>
+    <meta name="twitter:card"        content="summary">
+    <meta name="twitter:title"       content="<%= meta_title %> ">
+    <meta name="twitter:description" content="<%= meta_description %>">
+    <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
+    <meta name="twitter:url"         content="<%= meta_url_this_page %>">
+
+
+
+
+
 
     <!-- GOOGLE WORDTREE STUFF -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -43,8 +81,8 @@
                     search_history.push(search_click_val)
                     document.querySelector('#search').value = search_click_val
                     document.querySelector('#back').classList.remove("d-none");
-                    console.log(search_click_val);
-                    console.log(search_history)
+                    // console.log(search_click_val);
+                    // console.log(search_history)
                 }
                 chart.draw(data, options);
             }
@@ -55,10 +93,8 @@
         let google_wont_allow_server_side_render = <%- JSON.stringify(sentence_arr) %>;
 
         function search_handler(event) {
-            console.log(event)
             if (event.type === 'keyup' && (event.key !== 'Enter')) {
                 event.preventDefault(); 
-                console.log('nope')
                 return
             }
             event.preventDefault();
@@ -68,24 +104,20 @@
             kickIt(google_wont_allow_server_side_render, search_val);
 
             search_history.push(search_val)
-            console.log(search_history)
         }
 
 
         function back_handler(e) {
-            console.log("BACK!")
             e.preventDefault();
             let search_prev_val = search_history.pop()
             if (search_prev_val == document.querySelector('#search').value) {
                 search_prev_val = search_history.pop() // pop twice b/c we need to
             }
-            console.log("search_prev_val", search_prev_val)
             if (search_prev_val == null) {
                 return
             }
             kickIt(google_wont_allow_server_side_render, search_prev_val)
             document.querySelector('#search').value = search_prev_val
-            console.log(search_history)
         }
 
 

@@ -1,5 +1,5 @@
 class Vod {
-    constructor({Id = '', ChannelNameId = '', Title = '', Duration = '', DurationString = '', ViewCount = '', WebpageUrl = '', TranscriptStatus = '', Priority = '', Thumbnail = '', TodoDate = '', S3Audio = '', Model = '', DownloadDate = '', StreamDate = '', DisplayName = '', Language = '', Logo = '', CurrentRank = '', TwitchUrl = '', S3CaptionFiles = null, S3Thumbnails = null}) {
+    constructor({Id = '', ChannelNameId = '', Title = '', Duration = '', DurationString = '', ViewCount = '', WebpageUrl = '', TranscriptStatus = '', Priority = '', Thumbnail = '', TodoDate = '', S3Audio = '', Model = '', DownloadDate = '', StreamDate = '', TranscribeDate = '', DisplayName = '', Language = '', Logo = '', CurrentRank = '', TwitchUrl = '', S3CaptionFiles = null, S3Thumbnails = null, }) {
         this.id = Id;
         this.channelNameId = ChannelNameId;
         this.title = Title;
@@ -15,6 +15,7 @@ class Vod {
         this.model = Model;
         this.downloadDate = DownloadDate; // TODO MAKE THIS DATETIME OBJECT IN MYSQL
         this.streamDate = StreamDate;
+        this.transcribeDate = TranscribeDate;
         // joined channels table
 
         this.channelDisplayName = DisplayName

@@ -1,10 +1,4 @@
 
-main {
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
-}
-
 .sticky-iframe {
     position: -webkit-sticky !important;
     position: sticky !important;
@@ -12,6 +6,13 @@ main {
 }
 
 @media (min-width: 769px) {
+    main {
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+        margin-bottom: 100px;
+    }
+    
     #twitch-iframe {
         width: 800px;
         height: 450px;
@@ -24,8 +25,14 @@ main {
     #twitch-iframe {
         width: 100%;
         min-height: 230px;
-    
     }
+    main {
+        padding-top: 10px;
+        width: 100%;
+        margin: auto;
+        margin-bottom: 100px;
+    }
+    
 }
 
 #transcript {
@@ -34,8 +41,6 @@ main {
     border-radius: 8px;
     border: 1px solid #444;
     margin-top: 20px;
-    margin-bottom: 100px;
-}
 
 .transcript-line {
     margin: 6px 0;
@@ -77,4 +82,36 @@ footer {
 .timestamp:hover {
     color: #ff6347;
     text-decoration: underline;
+}
+
+
+
+.video-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin: 20px 0;
+    /* background-color: #ffdddd;
+    color: #d8000c;
+    border: 1px solid #d8000c; */
+
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+
+}
+
+.video-error p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }

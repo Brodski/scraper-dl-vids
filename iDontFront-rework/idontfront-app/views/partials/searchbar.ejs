@@ -1,0 +1,51 @@
+
+<link rel="stylesheet" type="text/css" href="/searchbar.css">
+<section class="search-section">
+    <div class="search-bar">
+        <input type="text" id="table_search" placeholder="Search channels..." aria-label="Search Table">
+        <button type="button" id="clear_button" class="d-none">✕</button>
+        <button type="button" id="search_button">Search</button>
+    </div>
+</section>
+<script type="module">
+    let searcher = document.querySelector("#table_search");
+    let homepage_table = document.querySelector("#homepage_table tbody");
+    let clearBtn = document.querySelector("#clear_button")
+    let allRows = homepage_table.querySelectorAll("tr")
+    document.addEventListener("DOMContentLoaded", (e) => {
+        let clearBtn = document.querySelector("#clear_button")
+        clearBtn.addEventListener("click", e => {
+            document.querySelector("#table_search").value = "";
+            doSearch()
+        })
+    })
+
+    document.addEventListener("DOMContentLoaded", (e) => {
+        searcher.addEventListener("input", (e) => {
+            doSearch()
+        });
+    });
+    function doSearch() {
+        let query = searcher.value.toLowerCase();
+        if (query.length < 1) {
+            clearBtn.classList.add("d-none")
+        }
+        if (query.length < 2) {
+            allRows.forEach( ele => {
+                ele.classList.remove("d-none");
+            })
+            return
+        }
+        let result = homepage_table.querySelectorAll(`[data-channel*='${query}']`);
+        let not_results = homepage_table.querySelectorAll(`tr:not([data-channel*='${query}'])`)
+        result.forEach( ele => {
+            ele.classList.remove("d-none");
+        })
+        not_results.forEach( ele => {
+            ele.classList.add("d-none");
+        })
+
+        clearBtn.classList.remove("d-none")
+
+    }
+</script>

@@ -1,66 +1,102 @@
-<% let title = "Big Dick Captions 😏" %>
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title> <%= title %> </title>
-        <%- include('partials/head_meta.ejs') %> 
+        <!-- SITE -->
+        <%- include('partials/head_metaGPT.ejs') %> 
+
+        <% 
+            // let title = "Twitch Transcripts - VOD timestamp, dialogue, & Streamer Insights"
+            // let title = "Twitch Transcripts - Timestamped VOD Transcriptions & Streamer Insights"
+            let meta_title = "Twitch Transcripts"
+            let meta_url_this_page = writeCanonicalBase("") 
+            let meta_description = `Transcriptions and analytics for top Twitch.tv channels. View VOD transcriptions or download in VTT, JSON, or TXT formats for closed captioning and more. Explore word frequency statistics and other analytics. Powered by audio to text AI.`
+        %>
+        
+        <link rel="preload" as="image" href="<%= process.env.URL_CANONICAL_BASE %>/heroimgs/a2t_img%20(2).webp">
+        <!-- STANDARD -->
+        <title> <%= meta_title %> </title>
+        <link rel="canonical"    href="<%= meta_url_this_page %>">
+        <meta name="description" content="<%= meta_description %>">
+
+        <!-- OPEN GRAPH -->
+        <meta property="og:site_name"   content="Twitch">
+        <meta property="og:title"       content="<%= meta_title %>">
+        <meta property="og:description" content="<%= meta_description %>">
+        <meta property="og:image"       content="<%= getOgImageUrl() %>">
+        <meta property="og:url"         content="<%= meta_url_this_page %>">
+        <meta property="og:type"        content="website">
+        <meta property="og:type"        content="article">
+
+        <!-- TWITTER -->
+        <% // <meta name="twitter:site" content="@twitch"> %>
+        <meta name="twitter:card"        content="summary">
+        <meta name="twitter:title"       content="<%= meta_title %> ">
+        <meta name="twitter:title"       content="VOD Transcription - [Stream Title] by [Streamer Name]">
+        <meta name="twitter:description" content="<%= meta_description %>">
+        <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
+        <meta name="twitter:url"         content="<%= meta_url_this_page %>">
+        
+
         <link rel="stylesheet" type="text/css" href="/homepageGPT.css">
     </head>
     <body class="homepage">
-        <%- include('navbar/navbarGPT.ejs') %> 
-        <!-- <h1>Welcome to Big Dick Captions™ 😏🍆💦</h1> -->
+        <%- include('navbar/navbarGPT.ejs') %>
 
-        <!-- Hero Banner -->
+        <!-- HERO BANNER -->
         <section class="hero-banner">
             <div class="hero-content">
-                <h1>Twitch.tv Transcripts</h1>
-                <!-- <p>Uncover deep insights and analytics on your favorite streamers. Track performance, viewer engagement, and more—all in one place.</p>
-                <p>VOD transcription of the most popular and top twitch streamers. Powered by AI.</p> -->
-                <p>Access AI-powered transcriptions of the top Twitch streamers' VODs</p>
-                <!-- <a href="#streamer-table" class="cta-button">Explore Streamers</a> -->
+                <h1 class="hero-extra-paddingX">Twitch Transcripts</h1>
+                <p>Timestamp and dialog of the top Twitch.tv channels' VODs. </p>
+                <!-- <p>Access AI-powered transcriptions of the top Twitch streamers' VODs</p> -->
             </div>
         </section>
+        <div class="homepage__subtext">Not affiliated with Twitch.tv</div>
         <hr/>
 
+        <!-- SEARCH BAR -->
+        <%- include('partials/searchbar') %>
         
-        <table>
+        <!-- BIG TABLE -->
+        <table id="homepage_table">
             <thead> 
                 <tr>
                     <th> Channel </th>
                     <th> Language </th>
+                    <!-- <th style="width: 60px;"> Broadcasts | Total</th> -->
                     <th> Hours Watched </th>
                     <th> Hours Streamed </th>
                     <th> Max Viewers </th>
                     <th> Average Viewers </th>
                     <th> Followers </th>
-                    <th> Broadcasts </th>
-                    <th> Vods Transcribed</th>
+                    <th style="text-wrap: nowrap;"> Broadcasts  |  Total</th>
+                    <!-- <th style="width: 60px;"> Broadcasts Transcribed</th> -->
                 </tr>
                 <tr>
-                    <th colspan="9" class="table-subheader">Metrics based on data from the <span class="bold-highlight">last two weeks.</span></th>
+                    <th colspan="9" class="table-subheader">Metrics from the <span class="bold_highlight">last two weeks.</span></th>
                 </tr>
             </thead>
             <tbody>
-            <% 
+            <%
             for (let chann of channelsList) { %>  
-                <tr class="channel_row img">
+                <% let dataChannel = chann.nameId.toLowerCase() == chann.displayName.toLowerCase() ? chann.nameId : `${chann.nameId}_${chann.displayName}` %>
+                <tr class="channel_row img" data-channel="<%= dataChannel %>">
                     <td data-labelX class="table_channel_name ">
                         <a class="streamer-name-linkXXX d-inflex" href="<%= "channel/" + chann.nameId %>">
-                            <img class="" src="<%= chann.logo %>" />
+                            <img class="" src="<%= chann.logo %>" alt="profile picture of <%= chann.displayName %>"/>
                             <h2> <%= chann.displayName %>  </h2>
                             <% // <a href="#" class="view-streamer-btn">View Profile</a> %>
                         </a>
                     </td>
-                    <td data-label="Language">        <%= chann.language %> </td>
+                    <td data-label="Language">                  <%= chann.language %> </td>
                     <td data-label="Hours Watched">   <%= localizeNumber((chann.viewMinutes ??  0) / 60) %> </td>
                     <td data-label="Hours Streamed">  <%= localizeNumber((chann.streamedMinutes ?? 0) / 60) %> </td>
                     <td data-label="Max Viewers">     <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
                     <td data-label="Average Viewers"> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
                     <td data-label="Followers">       <%= localizeNumber(chann.followers ?? 0) %> </td>
-                    <td data-label="Broadcasts">         <%= chann.entryCount ?? 0 %> </td>
-                    <td data-label="Vods Transcribed">   <%= chann.completedCount ?? 0 %> </td>
+                    <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> <%= chann.completedCount ?? 0 %> </span> <span class="homepage_col_pipe">-</span>  <span> <%= chann.totalCompletedCount %> </span> </div> </td>
+                    <% /* <td data-label="Broadcasts Transcribed">   [%=] // chann.completedCount ?? 0 []  </td> %>
                      <% /*
                         chann.followersGained
                         chann.partner

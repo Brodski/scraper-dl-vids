@@ -12,11 +12,20 @@ async function prepWordTree(transcript_s3_txt) {
 
     const word_counter_txt_all = txt_arr.length
     const word_counter = removeMoreStopWords(txt_arr)
-    console.log("word_counter")
-    console.log(word_counter[0]) // ['just', 57] ==> word_counter[0][0] = most frequent word
-    console.log(word_counter.slice(0,20))
+    // console.log("word_counter")
+    // console.log(word_counter[0]) // ['just', 57] ==> word_counter[0][0] = most frequent word
+    // console.log(word_counter.slice(0,20))
+    
+    // Get initial word for Wordtree on load.
+    let wordtree_init = word_counter[0][0];
+    for (let wrd of word_counter) {
+        console.log(wrd)
+        if (wrd[1] < 51) {
+            wordtree_init = wrd[0]
+            break
+        }
+    }
 
-    // let sentence_arrDirty = res_transcript_txt.split(/\n+/)
     let sentence_arrDirty = res_transcript_txt.split(/\. /)
 
     let sentence_arr = []
@@ -24,7 +33,7 @@ async function prepWordTree(transcript_s3_txt) {
         let x = sent.replaceAll(/[.,?;:!]/g, '').split(' ')
         sentence_arr.push([x.join(' ')])
     }
-    return [sentence_arr, word_counter[0][0]]
+    return [sentence_arr, wordtree_init]
 }
 
 module.exports = prepWordTree

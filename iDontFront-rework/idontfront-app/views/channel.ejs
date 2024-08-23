@@ -1,14 +1,48 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title> <%= channel.displayName %> </title>
-        <%- include('partials/head_meta.ejs') %> 
+        <%- include('partials/head_metaGPT.ejs') %> 
+
+        <%
+            let meta_title = channel.displayName
+            let meta_url_this_page = writeCanonicalBase(`/${channel.nameId}`) 
+            let meta_description = `Access full transcriptions and audio-to-text VODs from ${channel.displayName}'s Twitch stream. Review every spoken word with detailed timestamps, explore key moments, and easily navigate through past broadcasts.`
+        %>
+        <!-- {"small": "channels/vod-audio/aztecross/2171041388/images/thumb_350x197.jpeg", 
+        "original": "channels/vod-audio/aztecross/2171041388/images/thumb.jpeg"} -->
+        <!-- STANDARD -->
+        <title> <%= meta_title %> </title>
+        <link rel="canonical" href="<%= meta_url_this_page %>">
+        <meta name="description" content="<%= meta_description %>">
+
+        <!-- OPEN GRAPH -->
+        <meta property="og:site_name" content="Twitch">
+        <meta property="og:title" content="<%= meta_title %>">
+        <meta property="og:description" content="<%= meta_description %>">
+        <meta property="og:image" content="<%= getOgImageUrl() %>">
+        <meta property="og:url" content="<%= meta_url_this_page %>">
+        <meta property="og:type" content="website">
+
+        <!-- TWITTER -->
+        <% // <meta name="twitter:site" content="@twitch"> %>
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="<%= meta_title %> ">
+        <meta name="twitter:description" content="<%= meta_description %>">
+        <meta name="twitter:image" content="<%= getOgImageUrl() %>">
+        <meta name="twitter:url" content="<%= meta_url_this_page %>">
+
+
+
+
+
         <link rel="stylesheet" type="text/css" href="/channel.css">
+
+
+
     </head>    
     <body>
-        <%- // include('navbar/navbar.ejs') %> 
         <%- include('navbar/navbarGPT.ejs') %> 
         <%- include('channelHeaderGPT.ejs', {"channel": channel, "isShowBack": false}) %>
 
@@ -29,16 +63,18 @@
                         let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
                 %>
                 <div class="channel__vod">
-                    <div class="channel__card">
-                        <a class="channel__thumbnail_parent" href="<%= href %>"> 
+                    <a class="channel__card" href="<%= href %>" >
+                        <div class="channel__thumbnail_parent" href="<%= href %>"> 
                             <div class="channel__abs_info d-flex j-space-between">
                                 <div class="channel__date"><%= epochTo_MM_DD_YYYY(streamDate) %></div>
                                 <div class="channel__duration"><%= secondsToHHmm(Number(duration)) %></div>
                             </div>
-                            <img class="channel__thumbnail" src="<%= thumbnail %>"/> 
-                        </a>
-                        <div class="channel__vod_title2"> <a class="channel__vod_title" href="<%= href %>"> <%= vod_title %> </a> </div>
-                    </div>
+                            <img class="channel__thumbnail" src="<%= thumbnail %>" alt="thumbnail of <%= channel.displayName %>"/> 
+                        </div>
+                        <div class="channel__vod_title2"> 
+                            <div class="channel__vod_title" href="<%= href %>"> <%= vod_title %> </div> 
+                        </div>
+                    </a>
                 </div>
              <% } %>
             </div>

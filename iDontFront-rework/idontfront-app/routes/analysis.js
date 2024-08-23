@@ -10,9 +10,12 @@ async function getAnalysisPage(req, res) {
     let [resultsVods, fields1] = await db.getVodById(req.params.id)
     let vods = resultsVods.map( x => new Vod(x))
     let channels = resultsChan.map( x => new Channel(x))
+    if (vods.length == 0 || channels.length == 0) {
+        console.error("BAD QUERY FOR CHANNELS! OR VODS (analysis)")
+        return "failed_helper"
+    }
     txtKey = process.env.BUCKET_DOMAIN + "/" + encodeURI(vods[0].getS3TxtKey());
     let analysisObj = await channelHelper.getAnalysis(txtKey)
-    // res.render("../views/analysis", { // ---> /channel/lolgeranimo
     res.render("../views/analysisGPT", { // ---> /channel/lolgeranimo
         "channel": channels[0],
         "vod": vods[0],

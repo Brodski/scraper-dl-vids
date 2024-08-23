@@ -29,6 +29,20 @@ class DatabaseSingleton {
         return DatabaseSingleton.instance;
     }
 
+    async getAllTranscribedVods() {
+        try {
+            const sqlQuery = `
+                SELECT *
+                FROM Vods
+                WHERE TranscriptStatus = 'completed'
+                ORDER BY ChannelNameId ASC, TranscribeDate DESC;`;
+            const promiseVod = this.pool.query(sqlQuery)
+            return promiseVod;
+        } catch (error) {
+            console.error('Error retrieving the vod: ', error);
+        }
+    }
+
     async getVodById(vodId) {
         try {
             const sqlQuery = `
@@ -41,6 +55,7 @@ class DatabaseSingleton {
             console.error('Error retrieving the vod: ', error);
         } 
     }
+
     async getChannel(nameId) {
         try {
             const sqlQuery = `
@@ -73,7 +88,7 @@ class DatabaseSingleton {
             const sqlQuery = `
             SELECT 
                 ChannelNameId, 
-                COUNT(*) AS EntryCount,
+                COUNT(*) AS BroadcastCount,
                 SUM(CASE WHEN TranscriptStatus = 'completed ' THEN 1 ELSE 0 END) AS CompletedCount
             FROM 
                 Vods
@@ -111,36 +126,50 @@ class DatabaseSingleton {
             // 1 Query and aggregate "Completed" transcripts and aggregate broadcasts
             // 2 Query from Channels where at least 1 vod has a complted Transcript
             const sqlQuery = `
-                SELECT 
-                    c.*, 
-                    IFNULL(v.EntryCount, 0) AS EntryCount, 
-                    IFNULL(v.CompletedCount, 0) AS CompletedCount
-                FROM 
-                    Channels c
-                LEFT JOIN 
-                    (
-                        SELECT 
-                            ChannelNameId, 
-                            COUNT(*) AS EntryCount,
-                            SUM(CASE WHEN TranscriptStatus = 'completed' THEN 1 ELSE 0 END) AS CompletedCount
-                        FROM 
-                            Vods
-                        WHERE 
-                            StreamDate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
-                        GROUP BY 
-                            ChannelNameId
-                    ) v 
-                ON 
-                    c.NameId = v.ChannelNameId
-                WHERE 
-                    EXISTS (
-                        SELECT 1
-                        FROM Vods v2
-                        WHERE v2.ChannelNameId = c.NameId
-                        AND v2.TranscriptStatus = 'completed'
-                    )
-                ORDER BY 
-                    c.CurrentRank ASC;
+            SELECT 
+                c.*, 
+                IFNULL(v.BroadcastCount, 0) AS BroadcastCount, 
+                IFNULL(v.CompletedCount, 0) AS CompletedCount,
+                IFNULL(v2.TotalCompletedCount, 0) AS TotalCompletedCount
+            FROM 
+                Channels c
+            LEFT JOIN 
+                (
+                    SELECT 
+                        ChannelNameId, 
+                        COUNT(*) AS BroadcastCount,
+                        SUM(CASE WHEN TranscriptStatus = 'completed' THEN 1 ELSE 0 END) AS CompletedCount
+                    FROM 
+                        Vods
+                    WHERE 
+                        StreamDate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+                    GROUP BY 
+                        ChannelNameId
+                ) v 
+            ON 
+                c.NameId = v.ChannelNameId
+            LEFT JOIN 
+                (
+                    SELECT 
+                        ChannelNameId, 
+                        SUM(CASE WHEN TranscriptStatus = 'completed' THEN 1 ELSE 0 END) AS TotalCompletedCount
+                    FROM 
+                        Vods
+                    GROUP BY 
+                        ChannelNameId
+                ) v2 
+            ON 
+                c.NameId = v2.ChannelNameId
+            WHERE 
+                EXISTS (
+                    SELECT 1
+                    FROM Vods v3
+                    WHERE v3.ChannelNameId = c.NameId
+                    AND v3.TranscriptStatus = 'completed'
+                )
+            ORDER BY 
+                c.CurrentRank ASC;
+        
             `
 
             const [results, fields] = await this.pool.query(sqlQuery);
@@ -150,19 +179,6 @@ class DatabaseSingleton {
                 return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
             })
 
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log("resultChannelObj")
-            console.log(resultChannelObj)
             return resultChannelObj;
         } catch (error) {
             console.error('Error retrieving channels: ', error);

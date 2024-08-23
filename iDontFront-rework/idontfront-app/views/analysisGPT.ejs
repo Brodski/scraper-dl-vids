@@ -1,12 +1,39 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title> <%= channel.displayName %> wordtree </title>
         <%- include('partials/head_metaGPT.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/fonts.css">
         <link rel="stylesheet" type="text/css" href="/analysisGPT.css">
+
+        
+        <% 
+            let meta_title = `${vod.title} - ${channel.displayName}'s analysis`
+            let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}/wordtree`) 
+            let meta_description = `Dive into detailed statistics of "${vod.title}" by ${channel.displayName}. Explore graphs, word counts, words per minute, and more to gain insights into the VOD’s transcript and dialogue patterns.`
+        %>
+        <!-- STANDARD -->
+        <title> <%= meta_title %> </title>
+        <link rel="canonical"    href="<%= meta_url_this_page %>">
+        <meta name="description" content="<%= meta_description %>">
+
+        <!-- OPEN GRAPH -->
+        <meta property="og:site_name"   content="Twitch">
+        <meta property="og:title"       content="<%= meta_title %>">
+        <meta property="og:description" content="<%= meta_description %>">
+        <meta property="og:image"       content="<%= getOgImageUrl() %>">
+        <meta property="og:url"         content="<%= meta_url_this_page %>">
+        <meta property="og:type"        content="article">
+
+        <!-- TWITTER -->
+        <% // <meta name="twitter:site" content="@twitch"> %>
+        <meta name="twitter:card"        content="summary">
+        <meta name="twitter:title"       content="<%= meta_title %> ">
+        <meta name="twitter:description" content="<%= meta_description %>">
+        <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
+        <meta name="twitter:url"         content="<%= meta_url_this_page %>">
+
     </head>    
     <body>
         <%- include('navbar/navbarGPT.ejs') %> 

@@ -9,8 +9,16 @@
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 16px;
+    text-decoration: none;    display: block;
+    text-align: center;
 }
 
 .basic-btn:hover {
     background-color: #555;
+}
+
+@media (max-width: 500px) {
+    .basic-btn {
+        font-size: 12px;
+    }
 }

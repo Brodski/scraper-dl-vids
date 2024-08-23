@@ -10,8 +10,10 @@ async function getWordtreePage(req, res) {
     let [resultsVods, fields1] = await db.getVodById(req.params.id)
     let vods = resultsVods.map( x => new Vod(x))
     let channels = resultsChan.map( x => new Channel(x))
-    console.log(vods[0].getS3TxtKey())
-    console.log( process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey())
+    if (vods.length == 0 || channels.length == 0) {
+        console.error("BAD QUERY FOR CHANNELS! OR VODS (wordtree)")
+        return "failed_helper"
+    }
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
 
     // Process important data

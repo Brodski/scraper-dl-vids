@@ -12,6 +12,7 @@ async function getVodPage(req, res) {
     if (channels.length != 1 || vods.length != 1) {
         console.error("BAD QUERY FOR CHANNELS! OR VODS (b)")
         console.log(channels)
+        return "failed_helper"
     }
 
     let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());

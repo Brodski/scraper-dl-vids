@@ -5,39 +5,35 @@ const { getAnalysisPage } = require("./analysis");
 // https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
 
 
-// path = /channel/lolgeranimo
 exports.routeHelper = async (req, res) => { 
-    console.log("-----------------------------------------------------")
-    console.log(req.path)
-    console.log((req.params))
+    let msg;
     //  ***************************************
     //  CHANNEL
     //  ***************************************
-    if ((req.params.id == null) && req.path.endsWith("/btest")) {
-        getChannelPage(req, res)
-    }
-    else if (req.params.id == null) {
-        getChannelPage(req, res)
+    if (req.params.id == null) {
+        msg = await getChannelPage(req, res)
     }
     //  ***************************************
     //  CHANNEL - VOD 
     //  ***************************************
     if (req.params.id != null && !req.path.includes("/analysis") && !req.path.includes("/wordtree") ) {
-        getVodPage(req, res);
+        msg = await getVodPage(req, res);
     }
     //  ***************************************
     //  CHANNEL - VOD - WORDTREE
     //  ***************************************
     if (req.params.id != null && req.path.includes("/wordtree")) {
-        getWordtreePage(req, res);
+        msg = await getWordtreePage(req, res);
     }
     //  ***************************************
     //  CHANNEL - VOD - ANALYSIS
     //  ***************************************
     if (req.params.id != null && req.path.includes("/analysis")) {
-        getAnalysisPage(req, res);
-
+        msg = await getAnalysisPage(req, res);
     }
-
+    if (msg == "failed_helper") {
+        res.status(404)
+        res.render("../views/404", {})
+    }
 }
 

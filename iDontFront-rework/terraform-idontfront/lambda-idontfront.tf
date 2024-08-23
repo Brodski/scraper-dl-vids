@@ -21,16 +21,16 @@ resource "aws_lambda_function" "idontfront_lambda" {
 
   environment {
     variables = {
-      FLASK_ENV = var.ENV
       IS_LAMBDA = "true"
       ENV = var.ENV
+      
+      URL_CANONICAL_BASE = var.URL_CANONICAL_BASE
       DATABASE_HOST = var.sensitive_info.DATABASE_HOST 
       DATABASE_USERNAME = var.sensitive_info.DATABASE_USERNAME 
       DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD 
       DATABASE_PORT = var.sensitive_info.DATABASE_PORT 
       DATABASE = var.sensitive_info.DATABASE 
       BUCKET_DOMAIN = var.sensitive_info.BUCKET_DOMAIN
-      # BUCKET_DOMAIN=https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com
 
       # LD_PRELOAD = "/var/task/node_modules/canvas/build/Release/libz.so.1"
       # LDFLAGS="-Wl",-rpath=/var/task/lib"

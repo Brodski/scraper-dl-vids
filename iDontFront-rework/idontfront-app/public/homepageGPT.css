@@ -17,6 +17,7 @@ th {
     text-align: left;
     text-align: center;
     font-size: 16px;
+    white-space: break-spaces;
 }
 th:first-child {
     text-align: left;
@@ -81,11 +82,17 @@ tbody td[data-labelX] {
     color: #d3d3d3;
     padding-top: 10px;
 }
-.bold-highlight {
+.bold_highlight {
     font-weight: bold;
     color: red;
-    color: #b83d3d;
-    color: #ce4b4b;
+    /* color: #b83d3d;
+    color: #ce4b4b; */
+}
+
+.homepage__subtext {
+    font-size: 13px;
+    text-align: center;
+    padding-top: 1px;
 }
 
 
@@ -229,9 +236,11 @@ tbody td[data-labelX] {
 
 
 
+.hero-extra-padding {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
 
-
-/* Hero Banner */
 .hero-banner {
     background-image: url('./heroimgs/a2t_img\ \(2\).webp'); /* Add a compelling background image */
     background-size: cover;
@@ -275,23 +284,6 @@ tbody td[data-labelX] {
     line-height: 1.6;
 }
 
-.cta-button {
-    display: inline-block;
-    padding: 15px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #1E90FF;
-    border-radius: 4px;
-    text-decoration: none;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.cta-button:hover {
-    background-color: #FF4500;
-    transform: scale(1.05);
-}
-
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 36px;
@@ -301,12 +293,10 @@ tbody td[data-labelX] {
         font-size: 16px;
     }
 
-    .cta-button {
-        padding: 12px 25px;
+    table td:not(.table_channel_name) {
         font-size: 14px;
     }
 }
-
 
 /* @media (max-width: 199px) {
     .channel_row img {
@@ -319,3 +309,28 @@ tbody td[data-labelX] {
         padding-left: 8px;
     }
 } */
+
+
+
+
+
+
+
+
+
+.homepage_special_col > div span {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.homepage_special_col > div {
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.homepage_col_pipe {
+    color: grey;
+    font-size: 30px;
+}

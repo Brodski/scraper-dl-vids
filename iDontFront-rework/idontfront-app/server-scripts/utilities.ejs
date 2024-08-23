@@ -54,4 +54,33 @@
         }
         return `${month}-${day}-${year}`; // MM:DD:YYYY
     }
+
+    writeMetaTitle = () => {
+        return ""
+    }
+
+    getOgImageUrl = () => {
+        return process.env.URL_CANONICAL_BASE + "/imgs/ttvtranscriptions.png";
+    }
+
+    writeCanonicalBase = (urlPath) => {
+        return process.env.URL_CANONICAL_BASE + urlPath;
+    }
+
+    convertSvgToInline = async (filePath) => {
+        const svgPath = path.join(__dirname, filePath);
+        const data = await fs.readFile(svgPath, 'utf8');
+        console.log("data")
+        console.log(data)
+        return data
+    }
+
+    getRng404Url = () => {
+        let max = 71;
+        let rng = Math.floor(Math.random() * max) + 1;
+        // let domain = process.env.URL_CANONICAL_BASE
+        let domain = process.env.BUCKET_DOMAIN
+        let path = `/imgs/404s/404chibi\+(${rng}).webp`;
+        return domain + path
+    }
 %>

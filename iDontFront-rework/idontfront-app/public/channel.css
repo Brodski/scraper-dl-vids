@@ -28,7 +28,7 @@
     /* margin: 3px; */
 }
 
-a.channel__thumbnail_parent {
+.channel__thumbnail_parent {
     position: relative;
     display: block;
 }
@@ -80,6 +80,9 @@ a.channel__thumbnail_parent {
     padding: 10px;
     height: 100%;
     box-sizing: border-box;
+    display: inline-block;
+    text-decoration: none;
+    width: 100%;
 }
 
 .channel__abs_info {

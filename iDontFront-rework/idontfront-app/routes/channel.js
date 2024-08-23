@@ -1,4 +1,3 @@
-
 const Vod = require("../models/Vod");
 const Channel = require("../models/Channel");
 const DatabaseSingleton = require("../controllers/helpers/DatabaseSingleton");
@@ -11,12 +10,10 @@ async function getChannelPage(req, res) {
     let [resultsChan, fields2] = await db.getChannel(req.params.name)
     let vods = resultsVods.map( x => new Vod(x))
     let channels = resultsChan.map( x => new Channel(x))
-    console.log("vods.length:", vods.length)
-    console.log("channels.length:", channels.length)
-    console.log("channels[0]:", channels[0])
     if (channels.length < 1) {
         console.error("BAD QUERY FOR CHANNELS! OR VODS (a)")
         console.log(channels)
+        return "failed_helper"
     }
 
     // res.setHeader('Cache-Control', 'private, max-age=3600');
@@ -26,7 +23,7 @@ async function getChannelPage(req, res) {
         "vods": vods,
         "channel": channels[0],
     })
-    return
+    return "success"
 }
 
 

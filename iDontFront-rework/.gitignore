@@ -1,6 +1,7 @@
 .env_prod_local_test
 **/not_compress_original/**
 
-!**/a2t_img (2).webp
+public/heroimgs/*
+!public/heroimgs/a2t_img (2).webp
 
 !**/.gitkeep

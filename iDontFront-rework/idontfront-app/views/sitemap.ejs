@@ -24,7 +24,8 @@
     <% 
         // CHANNEL
         for (let ch of channels) {
-            console.log(`${ch.nameId}`)%>
+            // console.log(`${ch.nameId}`)
+            %>
             <url>
                 <loc><%= url_base %>/channel/<%= ch.nameId %></loc>
             </url>
@@ -33,7 +34,8 @@
         // CHANNEL- VODS
         for (let v of vods) {
             console.log(`${v.channelNameId}: ${v.id}`)
-            console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) %>
+            // console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) 
+            %>
             <url>
                 <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %></loc>
             </url>
@@ -42,9 +44,7 @@
     
     <% 
         // CHANNEL- VODS - WORDTREE
-        for (let v of vods) {
-            console.log(`${v.channelNameId}: ${v.id}`)
-            console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) %>
+        for (let v of vods) { %>
             <url>
                 <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %>/wordtree</loc>
             </url>
@@ -52,9 +52,7 @@
     <% } %>
     <% 
         // CHANNEL- VODS - ANALYSIS
-        for (let v of vods) {
-            console.log(`${v.channelNameId}: ${v.id}`)
-            console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) %>
+        for (let v of vods) { %>
             <url>
                 <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %>/analysis</loc>
             </url>

@@ -32,11 +32,9 @@ console.log("BUCKET_DOMAIN=", process.env.BUCKET_DOMAIN)
 // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
 
 if (process.env.IS_LAMBDA == "true") {
-    const img_exts = new Set([".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico"]);
+    const img_exts = new Set([".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp"]);
     module.exports.lambdaHandler = async (event, context) => {
         console.log("event.path=" + event.path);
-        console.log("event.path.lastIndexOf('.')", event.path.lastIndexOf('.'))
-        console.log("event.path.slice(event.path.lastIndexOf('.')", event.path.slice(event.path.lastIndexOf('.')))
         if (img_exts.has(event.path.slice(event.path.lastIndexOf('.')))) {
             let res = route_img2(event);
             return res;

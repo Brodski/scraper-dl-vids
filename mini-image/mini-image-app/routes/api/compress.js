@@ -6,18 +6,13 @@ const Transform = require('../../transform');
 const MAX_SIZE = 1024 * 1024 * 5; // 5 MB size limit
 
 async function compress(body) {
-    // const { imageUrl, width, percent } = body;
-    console.log("body")
-    console.log(body)
     const { imageUrl, width, percent } = { "imageUrl": body?.imageUrl, "width": body?.width, "percent": body?.percent };
     let buffImage = null;
 
-    // let buffImage = './imgs/thumb.jpg'
     try {
         buffImage = await downloadImage(imageUrl);
     } catch (error) {
-        console.error("error")
-        console.error(error)
+        console.error("error", error)
         return {"img": null, "format": null, "filename_new": null}
     }
     

@@ -10,8 +10,11 @@ import env_file as env_varz
 import json
 import os
 
+def printIntro():
+    print("IT'S RUNNING! WOOOOOOOOOO")
+    print("PREP_DB_UPDATE_VODS_NUM:", env_varz.PREP_DB_UPDATE_VODS_NUM)
+
 def prepare(isDebug=False):
-    print ("IT'S RUNNING! WOOOOOOOOOO")
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera

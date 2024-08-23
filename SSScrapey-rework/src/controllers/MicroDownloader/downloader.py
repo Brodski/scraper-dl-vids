@@ -12,12 +12,14 @@ import os
 import re
 import subprocess
 import time
+import traceback
 import urllib
 import yt_dlp
 import subprocess
 import requests
 import re
 from controllers.MicroDownloader.errorEnum import Errorz
+from utils.emailer import sendEmail
 
 
 # load_dotenv()
@@ -77,7 +79,7 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
         vod = Vod(id=Id, channels_name_id=ChannelNameId, title=Title, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, model=Model, todo_date=TodoDate, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
         resultsArr.append(vod)
 
-    if i == 0:
+    if i == 0: # i comes from parameter :/
         for vod in resultsArr:
             print(f"    (getTodoFromDatabase) todos, in order of priority - {vod.channels_name_id}: {vod.id} - {vod.transcript_status}")
 
@@ -89,8 +91,8 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
             highest_priority_vod = vod
             break
     if isDebug:
-        highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        # highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        # highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
         print("    (getTodoFromDatabase) DEBUG highest_priority_vod is :", vod.channels_name_id, vod.id)
         # highest_priority_vod.print()
@@ -147,6 +149,8 @@ def isVodTooBig(vod: Vod):
     return False
 
 def downloadTwtvVidFAST(vod: Vod, isDebug=False): 
+    # yt-dlp==2023.3.4 WORKS LOCALLY ON WINDOWS
+    # yt-dlp==2023.12.30 FAILS LOCALLY WINDOWS
     print ("000000000000                     00000000000000000")
     print ("000000000000 downloadTwtvVidFAST 00000000000000000")
     print ("000000000000                     00000000000000000")
@@ -198,6 +202,7 @@ def downloadTwtvVidFAST(vod: Vod, isDebug=False):
         meta = json.loads(meta)
     except Exception as e:
         print ("    (dlTwtvVid) Failed to extract vid!!: " + vidUrl + " : " + str(e))
+        traceback.print_exc()
         pattern = r"Video \d+ does not exist"
         if "HTTP Error 403" in str(e):
             print("Failed b/c 403. Probably private or sub only.")
@@ -345,6 +350,7 @@ def _execSubprocCmd(ffmpeg_command):
     except subprocess.CalledProcessError as e:
         print("Failed to run ffmpeg command:")
         print(e)
+        traceback.print_exc()
         return False
 
 
@@ -404,27 +410,23 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     
 
 def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
-    print("    (updateVods_Db) json_s3_img_keys", json_s3_img_keys)
-    print("    (updateVods_Db) json.dumps(json_s3_img_keys)", json.dumps(json_s3_img_keys))
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
-        # elif meta.get('requested_downloads')[0].get('title'):
-        #     title = meta.get('title')[0].get('title')
         elif meta.get('fulltitle'):
             title = meta.get('fulltitle')
         else: 
             title = vod_id
         return title
 
-    title = getTitle(downloaded_metadata)
-    duration = downloaded_metadata.get('duration')
-    duration_string = downloaded_metadata.get('duration_string')
-    view_count = downloaded_metadata.get('view_count')
-    webpage_url = downloaded_metadata.get('webpage_url')
-    thumbnail = downloaded_metadata.get('thumbnail')
-    stream_epoch = int(downloaded_metadata.get('timestamp'))
-    transcript_status = "audio2text_need"
+    title               = getTitle(downloaded_metadata)
+    duration            = downloaded_metadata.get('duration')
+    duration_string     = downloaded_metadata.get('duration_string')
+    view_count          = downloaded_metadata.get('view_count')
+    webpage_url         = downloaded_metadata.get('webpage_url')
+    thumbnail           = downloaded_metadata.get('thumbnail')
+    stream_epoch        = int(downloaded_metadata.get('timestamp'))
+    transcript_status   = "audio2text_need"
 
     connection = getConnection()
     try:
@@ -454,49 +456,83 @@ def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
     finally:
         connection.close()
 
-# Uses my sick compressing server
-# return { "original": "https://...", "small": ... }
+# Take the twitch url and cleverly modifies their naming convension to compress/expand it to what I want
 def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id # channels/vod-audio/gamesdonequick/2035111776/
+
     s3 = boto3.client('s3')
+
     thumbnail = downloaded_metadata.get('thumbnail')
 
     json_s3_img_keys = {}
 
-    # Save default
+    ################
+    # Save default #
+    ################
     try:
         response = requests.get(thumbnail)
         response.raise_for_status() 
         if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+
+            # Make name/key for s3
             content_type = response.headers['Content-Type']
             ext = content_type.split('/')[-1]
             fname_default = extract_name_from_url(thumbnail)
             img_key = f"{caption_keybase}/images/{fname_default}.{ext}"
+
+            # Save image to s3
             image_data = BytesIO(response.content)
             s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
             
+            # used later
             json_s3_img_keys['original'] = img_key
             
             print("    (updateImgs_Db) thumbnail: ", thumbnail)
             print("    (updateImgs_Db) img_key: ", img_key)
             print("    (updateImgs_Db) Saved Default thumbnail ")
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"An error occurred: {e}")
 
-    # Save compressed
+
+    #######################
+    # Save good thumbnail #
+    #######################
+    width_thumbnail_in_my_s3 = 350
+    width_thumbnail_in_my_s3 = 300
+
+    # 1 Regex for basic algebra
+    pattern = r'-([0-9]+)x([0-9]+)\.'
+    replacement = r'-\2x\1.'
+    match = re.search(pattern, thumbnail)
+    width =  float(match.group(1))
+    height = float(match.group(2))
+
+    # 2 Basic algebra to get new width, new height
+    aspect_ratio = width / height
+    multliple_width_by_this_to_get_desired_compressed_width = width_thumbnail_in_my_s3 / width
+    new_width = int(multliple_width_by_this_to_get_desired_compressed_width * width)
+    new_height = int(new_width / aspect_ratio)
+
+    # 3 New url via regex
+    replacement = fr'-{new_width}x{new_height}.'
+    new_thumbnail = re.sub(pattern, replacement, thumbnail)
+
+    ###################
+    # Save compressed #
+    ###################
     response = None
-    # compresser_endpoint = 'http://localhost:6969/api/compress'
-    compresser_endpoint = env_varz.DWN_URL_MINI_IMAGE
-    data = { 'imageUrl': thumbnail, 'width': 350, }
-    headers = { 'Content-Type': 'application/json' }
     try:
-        response = requests.post(compresser_endpoint, data=json.dumps(data), headers=headers)
+        response = requests.get(new_thumbnail)
         response.raise_for_status() 
-        content_type = response.headers['Content-Type']
-        fname_mod = response.headers.get('X-Bski-Filename') or response.headers.get('x-bski-filename')
-        img_key = f"{caption_keybase}/images/{fname_mod}"
         if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+
+            # Name the s3 key
+            fname_mod = extract_name_from_url(new_thumbnail)
+            img_key = f"{caption_keybase}/images/{fname_mod}"
+
+            # Save it in s3
             image_data = BytesIO(response.content)
+            content_type = response.headers['Content-Type']
             s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
             
             json_s3_img_keys['small'] = img_key
@@ -505,11 +541,77 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             print("    (updateImgs_Db) thumbnail: ", thumbnail)
             print("    (updateImgs_Db) img_keymod: ", img_key)
             print("    (updateImgs_Db) Saved Small thumbnail ")
-    except requests.exceptions.RequestException as e:
+            raise ValueError("This is a custom error message.")
+    except Exception as e:
         print(f"An error occurred: {e}")
+        the_msg = ''.join(traceback.format_stack())
+
+        subject = f"Downloader {os.getenv('ENV')} - Failed image 'compression' on {vod.channels_name_id} : {vod.id}"
+        msg = f"Attempted but failed thumbnail={thumbnail} on {vod.channels_name_id} : {vod.id}. \n\nStack:\n\n {the_msg}"
+        print(msg)
+        sendEmail(subject, msg)
 
     print("    (updateImgs_Db) json_s3_img_keys", json_s3_img_keys)
     return json_s3_img_keys
+
+
+# Uses my sick compressing server
+# return { "original": "https://...", "small": ... }
+# def updateImgs_Db_old(downloaded_metadata, vod: Vod) -> dict[str, str]:
+#     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id # channels/vod-audio/gamesdonequick/2035111776/
+#     s3 = boto3.client('s3')
+#     thumbnail = downloaded_metadata.get('thumbnail')
+
+#     json_s3_img_keys = {}
+
+#     # Save default
+#     try:
+#         width_thumbnail_in_my_s3 = 350
+
+#         response = requests.get(thumbnail)
+#         response.raise_for_status() 
+#         if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+#             content_type = response.headers['Content-Type']
+#             ext = content_type.split('/')[-1]
+#             fname_default = extract_name_from_url(thumbnail)
+#             img_key = f"{caption_keybase}/images/{fname_default}.{ext}"
+#             image_data = BytesIO(response.content)
+#             s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
+            
+#             json_s3_img_keys['original'] = img_key
+            
+#             print("    (updateImgs_Db) thumbnail: ", thumbnail)
+#             print("    (updateImgs_Db) img_key: ", img_key)
+#             print("    (updateImgs_Db) Saved Default thumbnail ")
+#     except requests.exceptions.RequestException as e:
+#         print(f"An error occurred: {e}")
+
+#     # Save compressed
+#     response = None
+#     compresser_endpoint = env_varz.DWN_URL_MINI_IMAGE
+#     data = { 'imageUrl': thumbnail, 'width': width_thumbnail_in_my_s3, }
+#     headers = { 'Content-Type': 'application/json' }
+#     try:
+#         response = requests.post(compresser_endpoint, data=json.dumps(data), headers=headers)
+#         response.raise_for_status() 
+#         content_type = response.headers['Content-Type']
+#         fname_mod = response.headers.get('X-Bski-Filename') or response.headers.get('x-bski-filename')
+#         img_key = f"{caption_keybase}/images/{fname_mod}"
+#         if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+#             image_data = BytesIO(response.content)
+#             s3.upload_fileobj(image_data, env_varz.BUCKET_NAME, img_key, ExtraArgs={'ContentType': content_type})
+            
+#             json_s3_img_keys['small'] = img_key
+
+#             print("    (updateImgs_Db) fname_mod:" , fname_mod)
+#             print("    (updateImgs_Db) thumbnail: ", thumbnail)
+#             print("    (updateImgs_Db) img_keymod: ", img_key)
+#             print("    (updateImgs_Db) Saved Small thumbnail ")
+#     except requests.exceptions.RequestException as e:
+#         print(f"An error occurred: {e}")
+
+#     print("    (updateImgs_Db) json_s3_img_keys", json_s3_img_keys)
+#     return json_s3_img_keys
 
 def extract_name_from_url(url):
     try:
@@ -527,13 +629,16 @@ def extract_name_from_url(url):
         else:
             filename_default = url[last_idx_slash + 1:]
 
+        # atm: `filename_defalt = thumb0-90x60.jpg `
         filename_default = re.sub(r'[^a-zA-Z0-9]', '', filename_default)
-        filename_default = "imagefile" if filename_default == "" else filename_default
         filename_default =  re.sub(r'(0x0|00x0)$', '', filename_default)
+        filename_default = filename_default if filename_default else "imagefile"
+        filename_default = filename_default[:20]
         return filename_default
     except Exception as e:
         print("oops")
         print(e)
+        traceback.print_stack()
         return "imagefile"
 
 

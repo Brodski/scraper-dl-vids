@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "${var.sensitive_info.ENV}_download_schedule"
-  description         = "Trigger ECS task daily"
+  description         = "Trigger downloader on ECS task daily"
   schedule_expression = var.downloader_schedule_cron
 }
 resource "aws_cloudwatch_event_target" "ecs" {

@@ -28,8 +28,6 @@ def goTranscribeBatch(isDebug=False):
     failed_vods_list: List[Vod] = []
     logger("Transcriber start! ")
     logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")

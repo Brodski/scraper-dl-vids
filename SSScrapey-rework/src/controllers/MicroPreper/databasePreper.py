@@ -220,8 +220,6 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
-            print("----------------------")
-            # chan.print()
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
             if len(vod_ids) == 0:

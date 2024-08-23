@@ -4,13 +4,18 @@ from typing import List
 import env_file as env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
 
-def goDownloadBatch(isDebug=False):
+def printIntro():
     print("db      =" , env_varz.DATABASE)
     print("host    =" , env_varz.DATABASE_HOST)
     print("user    =" , env_varz.DATABASE_USERNAME)
+    print("Will download this many: ")
+    print("DWN_BATCH_SIZE:", env_varz.DWN_BATCH_SIZE)
+    print("There is only 1 ecs instance for Downloader. Nothing crazy")
+    # Note: DWN_QUERY_PER_RECENT doesnt have much effect. Looks at X recent vods from the database (todo, completed, audio2text_need, ect) then gets the "todo" one
     
+def goDownloadBatch(isDebug=False):
+    printIntro()
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
-    print(f"DOWNLOAD BATCH SIZE: {download_batch_size}")
     i = 0
     gaurdrail = 25
     while i < download_batch_size and i < gaurdrail:
@@ -22,8 +27,7 @@ def goDownloadBatch(isDebug=False):
         if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403:
             print("We skipped a download, trying next entry. Error:", dl_meta)
             continue
-        print(f"Finished Index {i}")
-        print(f"download_batch_size: {i}")
+        print(f"Finished download # {i} of {download_batch_size}")
         i += 1
     return dl_meta
 
@@ -33,7 +37,7 @@ def download(i, isDebug=False):
         print("There are zero transcript_status='todo' from the query :O")
         return "nothing to do"
     # Download vod from twitch
-    # vod.printDebug()
+    vod.printDebug()
     isSuccess = downloader.lockVodDb(vod, isDebug)
     if not isSuccess:
         print("No VODS todo!")

@@ -1,27 +1,27 @@
 const express = require('express');
+const app = express();
 const fs = require('fs');
 const path = require('path');
 const serverless = require('serverless-http');
 
-console.log("process.env.NODE_ENV: ", process.env.NODE_ENV)
-console.log("process.env.ENV: ", process.env.ENV)
-console.log("process.env.LAMBDA_ENV: ", process.env.LAMBDA_ENV)
+const { mainRoutes } = require('./routes/mainRoutes');
+
 if (process.env.NODE_ENV == "local") {
     require('dotenv').config(); // reads .env by default
 } 
 if (process.env.NODE_ENV == "prod") {
-    require('dotenv').config({ path: './.env_prod' });
+    require('dotenv').config({ path: './.env_prod_local_test' });
 }
 
 
-const app = express();
-const { mainRoutes } = require('./routes/mainRoutes');
+console.log("process.env.NODE_ENV: ", process.env.NODE_ENV) // for local testing
+console.log("process.env.ENV: ", process.env.ENV)
+
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, '/views'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
 app.use(mainRoutes)
 
 console.log("DATABASE_HOST=", process.env.DATABASE_HOST)
@@ -31,21 +31,22 @@ console.log("BUCKET_DOMAIN=", process.env.BUCKET_DOMAIN)
 
 // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
 
+
+// doDebug();
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 if (process.env.IS_LAMBDA == "true") {
     const img_exts = new Set([".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp"]);
     module.exports.lambdaHandler = async (event, context) => {
         console.log("event.path=" + event.path);
         if (img_exts.has(event.path.slice(event.path.lastIndexOf('.')))) {
             let res = route_img2(event);
+            // await sleep(2000);
             return res;
         }
-        // let img_exts = [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico"]
-        // for (let ext of img_exts) {
-        //     if (event.path.endsWith(ext)) {
-        //         let res = route_img2(event);
-        //         return res;
-        //     }            
-        // }
         event.path = event.path === '' ? '/' : event.path
         context.callbackWaitsForEmptyEventLoop = false;
         const serverlessHandler = serverless(app)
@@ -60,16 +61,27 @@ else {
 
 function route_img2(event) {
     event.path = event.path == "/favicon.ico" ? "/imgs/favicon.ico" : event.path;
-    let ext = event.path.slice(event.path.lastIndexOf(".") + 1)
-    ext = ext == "ico" ? "x-icon" : ext;
+    const decodedPath = decodeURIComponent(event.path);
+    // let ext = decodedPath.slice(decodedPath.lastIndexOf(".") + 1)
+    let ext = path.extname(decodedPath);
+    console.log("(route_img2) event.path:", event.path)
+    console.log("(route_img2) decodedPath:", decodedPath)
+    console.log("(route_img2) ext:", ext)
+
+    const mimeType = getMimeType(ext);
+
+    // ext = ext == "ico" ? "x-icon" : ext;
+
+
     try {
-        const imagePath = path.join(__dirname, "public/" + event.path);
+        const imagePath = path.join(__dirname, "public/" + decodedPath);
         const imageBytes = fs.readFileSync(imagePath);
         const base64Image = imageBytes.toString('base64');
+        
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': `image/${ext}`,
+                'Content-Type': mimeType,
             },
             body: base64Image,
             isBase64Encoded: true,
@@ -87,32 +99,43 @@ function route_img2(event) {
         };
     }
 }
+function getMimeType(ext) {
+    const mimeTypes = {
+        '.ico': 'image/x-icon',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.bmp': 'image/bmp',
+        '.webp': 'image/webp',
+    };
 
-// function route_img() {
-//     const imagePath = path.join(__dirname, 'public/imgs/beard2.png');
-//     const imageBytes = fs.readFileSync(imagePath);
-//     const base64Image = imageBytes.toString('base64');
-//     return {
-//         statusCode: 200,
-//         headers: {
-//           'Content-Type': 'image/png',
-//         },
-//         body: base64Image,
-//         isBase64Encoded: true,
-//     };
-// }
+    return mimeTypes[ext.toLowerCase()] || 'application/octet-stream';
+}
 
-function doDebug() {
-    const directoryPath = process.cwd();
+
+function doDebug(coolPath) {
+    const directoryPath = coolPath ? coolPath : process.cwd();
+
+    console.log(directoryPath)
+    if (directoryPath.includes("node_modules")
+        || directoryPath.includes("canvas")
+        || directoryPath.includes("build")
+    ) {
+        return
+    }
+
     fs.readdir(directoryPath, { withFileTypes: true }, (err, files) => {
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         } 
         files.forEach(file => {
+            const itemPath = path.join(directoryPath, file.name);
             if (file.isDirectory()) {
-            console.log(`DIR: ${file.name}`);
+                console.log(`DIR: ${itemPath}`);
+                doDebug(itemPath)
             } else {
-            console.log(`FILE: ${file.name}`);
+                console.log(`FILE: ${itemPath}`);
             }
         });
     });

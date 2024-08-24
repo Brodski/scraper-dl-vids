@@ -1,5 +1,6 @@
 .env
 .env_prod
+.env_prod_local_test
 
 # we build node_modules via 'yarn install' at dockerfile
 node_modules/

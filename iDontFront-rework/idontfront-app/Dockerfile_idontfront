@@ -4,12 +4,9 @@
 # https://github.com/vdiezel/docker-node-canvas/tree/main
 # https://github.com/vdiezel/docker-node-canvas/tree/main
 #
-# A
-# docker build -t hello-lambda .
-# docker run -p 9000:8080 hello-lambda:latest
 
-# B
-# docker run -p 9000:8080 idontfront:official_v2
+# 
+# docker run  idontfront:official_v2_dev_2024.08.23_24s
 # docker exec -it 35d63e4f79f6 /bin/bash
 #
 # curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
@@ -17,20 +14,31 @@
 
 # FROM public.ecr.aws/lambda/nodejs:16
 FROM public.ecr.aws/lambda/nodejs:18
-
+ARG src_img="public/heroimgs/a2t_img (2).webp" 
+# ARG target="Dir 1/"
+# COPY ${src} ${target}
 
 ###########
 # PROJECT #
 ###########
-COPY controllers/        ${LAMBDA_TASK_ROOT}/controllers/ 
-COPY iDontFront-app.js   ${LAMBDA_TASK_ROOT}
-COPY package-lock.json   ${LAMBDA_TASK_ROOT}
-COPY package.json        ${LAMBDA_TASK_ROOT}
-COPY models/             ${LAMBDA_TASK_ROOT}/models/ 
-COPY public/             ${LAMBDA_TASK_ROOT}/public/ 
-COPY routes/             ${LAMBDA_TASK_ROOT}/routes/ 
-COPY server-scripts/     ${LAMBDA_TASK_ROOT}/server-scripts/
-COPY views/              ${LAMBDA_TASK_ROOT}/views/ 
+COPY controllers/           ${LAMBDA_TASK_ROOT}/controllers/ 
+COPY iDontFront-app.js      ${LAMBDA_TASK_ROOT}
+COPY package-lock.json      ${LAMBDA_TASK_ROOT}
+COPY package.json           ${LAMBDA_TASK_ROOT}
+COPY models/                ${LAMBDA_TASK_ROOT}/models/ 
+# Specific file types
+COPY public/*.css           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.png           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.ico           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.js            ${LAMBDA_TASK_ROOT}/public/
+COPY public/imgs/           ${LAMBDA_TASK_ROOT}/public/imgs/
+COPY public/font-assets/    ${LAMBDA_TASK_ROOT}/public/font-assets/
+COPY ${src_img}             ${LAMBDA_TASK_ROOT}/public/heroimgs/
+
+
+COPY routes/                ${LAMBDA_TASK_ROOT}/routes/ 
+COPY server-scripts/        ${LAMBDA_TASK_ROOT}/server-scripts/
+COPY views/                 ${LAMBDA_TASK_ROOT}/views/ 
 # COPY cacert-2023-08-22.pem    ${LAMBDA_TASK_ROOT}
 # COPY . ${LAMBDA_TASK_ROOT}
 RUN npm ci --production

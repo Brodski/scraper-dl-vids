@@ -8,7 +8,8 @@ function removeMoreStopWords(txt_arr) {
     let word_counter = new Map();
     for (let word of txt_arr_no_stopwords) {
         // Do this here b/c stopword library
-        word = word.replaceAll(/[.,!;:'?\+]/g, "");
+        // word = word.replaceAll(/[.,!;:'?\+]/g, ""); // REMOVED THE COMMA ????
+        word = word.replaceAll(/[.,!;:?\+]/g, "");
         word = word.toLowerCase()
         if (word_counter.has(word)) {
             let count = word_counter.get(word)

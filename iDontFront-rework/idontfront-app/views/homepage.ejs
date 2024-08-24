@@ -7,14 +7,13 @@
         <%- include('partials/head_metaGPT.ejs') %> 
 
         <% 
-            // let title = "Twitch Transcripts - VOD timestamp, dialogue, & Streamer Insights"
-            // let title = "Twitch Transcripts - Timestamped VOD Transcriptions & Streamer Insights"
             let meta_title = "Twitch Transcripts"
             let meta_url_this_page = writeCanonicalBase("") 
             let meta_description = `Transcriptions and analytics for top Twitch.tv channels. View VOD transcriptions or download in VTT, JSON, or TXT formats for closed captioning and more. Explore word frequency statistics and other analytics. Powered by audio to text AI.`
         %>
         
         <link rel="preload" as="image" href="<%= process.env.URL_CANONICAL_BASE %>/heroimgs/a2t_img%20(2).webp">
+
         <!-- STANDARD -->
         <title> <%= meta_title %> </title>
         <link rel="canonical"    href="<%= meta_url_this_page %>">
@@ -33,7 +32,6 @@
         <% // <meta name="twitter:site" content="@twitch"> %>
         <meta name="twitter:card"        content="summary">
         <meta name="twitter:title"       content="<%= meta_title %> ">
-        <meta name="twitter:title"       content="VOD Transcription - [Stream Title] by [Streamer Name]">
         <meta name="twitter:description" content="<%= meta_description %>">
         <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
         <meta name="twitter:url"         content="<%= meta_url_this_page %>">

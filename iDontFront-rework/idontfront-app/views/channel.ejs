@@ -1,10 +1,9 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
     <head>
         <%- include('partials/head_metaGPT.ejs') %> 
-
         <%
             let meta_title = channel.displayName
             let meta_url_this_page = writeCanonicalBase(`/${channel.nameId}`) 
@@ -39,8 +38,9 @@
 
         <link rel="stylesheet" type="text/css" href="/channel.css">
 
-
-
+        <script type="application/ld+json">
+            <%- writeChannelAppLp(vods, channel) %>
+        </script>
     </head>    
     <body>
         <%- include('navbar/navbarGPT.ejs') %> 
@@ -59,7 +59,6 @@
                         let streamDate      = vod.streamDate
                         let s3Audio         = vod.s3Audio
                         let href            = path + "/" +  id 
-                        let s3Thumbnails    = vod.s3Thumbnails
                         let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
                 %>
                 <div class="channel__vod">

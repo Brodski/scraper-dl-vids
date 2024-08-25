@@ -33,7 +33,7 @@
     <% 
         // CHANNEL- VODS
         for (let v of vods) {
-            console.log(`${v.channelNameId}: ${v.id}`)
+            // console.log(`${v.channelNameId}: ${v.id}`)
             // console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) 
             %>
             <url>
@@ -44,12 +44,13 @@
     
     <% 
         // CHANNEL- VODS - WORDTREE
-        for (let v of vods) { %>
-            <url>
-                <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %>/wordtree</loc>
-            </url>
+        // for (let v of vods) { 
+            // url>
+                // loc> [%=] url_base %>/channel/ [%=] v.channelNameId %>/ [%=] v.id %>/wordtree/loc>
+            // /url>
         
-    <% } %>
+     //}
+      %>
     <% 
         // CHANNEL- VODS - ANALYSIS
         for (let v of vods) { %>

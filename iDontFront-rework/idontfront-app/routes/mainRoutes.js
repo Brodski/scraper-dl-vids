@@ -11,10 +11,9 @@ router.get(["/", "/index"], cHome.homepage);
 router.get(["/robots.txt"], cRobots.robots);
 router.get(["/sitemap.xml"], cSitemap.sitemap);
 router.get(["/channel/:name", 
-            "/channel/:name/btest", 
             "/channel/:name/:id", 
-            "/channel/:name/:id/analysis", 
-            "/channel/:name/:id/wordtree"], 
+            // "/channel/:name/:id/wordtree"], 
+            "/channel/:name/:id/analysis",],
             routeHelper.routeHelper);
 
 

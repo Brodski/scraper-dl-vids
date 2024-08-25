@@ -88,7 +88,10 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         all_channels_minus_scrapped = [ch1 for ch1 in channels_all_in_db if ch1.name_id not in scrapped_id]
 
         print()
-        print(" (getNewOldChannelsFromDB) matching_channels")
+        print(" (getNewOldChannelsFromDB) scrapped_channels")
+        print([ch.name_id for ch in scrapped_channels])
+        print()
+        print(" (getNewOldChannelsFromDB) matching_channels (no one new: the scrapped_channels has no new entries)")
         print([ch.name_id for ch in matching_channels])
         print()
         print(" (getNewOldChannelsFromDB) channels_all_in_db")
@@ -99,25 +102,32 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         print()
         print(" (getNewOldChannelsFromDB) all_channels_minus_scrapped")
         print([ch.name_id for ch in all_channels_minus_scrapped])
-        if os.getenv("ENV") == "local":
-            vip_tuple = ("lolgeranimo", "nmplol")
-        else:
-            vip_tuple = ()
-        vip_tuple = ()
-        vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
+
         print()
-        print ("VIP_LIST")
-        print (vip_list)
-        for vip in vip_list:
-            vip.print()
-        print()
+        # for chan in scrapped_channels:
+        #     print("----------------")
+        #     chan.print()
+
+
+        # I think is code does nothing or bugged
+        # vip_tuple = ()
+        # if (os.getenv("ENV") != "prod") and isDebug:
+        #     vip_tuple = ("lolgeranimo", "nmplol")
+        # else:
+        #     vip_tuple = ()
+        # vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
+        # for vip in vip_list:
+        #     vip.print()
+
+        return all_channels_minus_scrapped
+        return channels_all_in_db
         return all_channels_minus_scrapped + vip_list
 
 
-def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[ScrappedChannel]):
-    all_channels_minus_scrapped
+def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[ScrappedChannel]):
+    all_channels_plus_scrapped
     cnt = -1
-    for chan in all_channels_minus_scrapped:
+    for chan in all_channels_plus_scrapped:
         cnt = cnt + 1
         url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
         print(f"-------  {cnt} (sully data) --------")
@@ -146,6 +156,7 @@ def updateChannelDataByHtmlIteratively(all_channels_minus_scrapped: List[Scrappe
             chan.followersgained    = data2[2].get_text().replace(",", "")
             chan.maxviewers         = data2[3].get_text().replace(",", "")
             chan.streamedminutes    = int(data2[4].get_text().replace(",", "")) * 60 #HOURS
+            print("    ", chan.name_id)
             chan.print()
 
         else:
@@ -225,7 +236,9 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             if len(vod_ids) == 0:
                 continue
             placeholders = ', '.join(['%s'] * len(vod_ids))
+
             query = f"SELECT Id FROM Vods WHERE Id IN ({placeholders})"
+            
             cursor.execute(query, vod_ids)
 
             # Get results

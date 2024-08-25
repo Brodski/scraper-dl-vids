@@ -11,6 +11,7 @@ async function prepWordTree(transcript_s3_txt) {
     let txt_arr = res_transcript_txt.split(/\s+/)
 
     const word_counter_txt_all = txt_arr.length
+    console.log("word_counter_txt_all", word_counter_txt_all)
     const word_counter = removeMoreStopWords(txt_arr)
     // console.log("word_counter")
     // console.log(word_counter[0]) // ['just', 57] ==> word_counter[0][0] = most frequent word
@@ -20,7 +21,8 @@ async function prepWordTree(transcript_s3_txt) {
     let wordtree_init = word_counter[0][0];
     for (let wrd of word_counter) {
         console.log(wrd)
-        if (wrd[1] < 51) {
+        // if wrd[0] doenst have .,!;:'?
+        if (wrd[1] < 51 && !['.', ',', '!', ';', ':', '\'', '?'].some(char => wrd[0].includes(char))) {
             wordtree_init = wrd[0]
             break
         }

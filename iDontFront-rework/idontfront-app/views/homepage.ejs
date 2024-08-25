@@ -1,7 +1,7 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
     <head>
         <!-- SITE -->
         <%- include('partials/head_metaGPT.ejs') %> 
@@ -9,7 +9,7 @@
         <% 
             let meta_title = "Twitch Transcripts"
             let meta_url_this_page = writeCanonicalBase("") 
-            let meta_description = `Transcriptions and analytics for top Twitch.tv channels. View VOD transcriptions or download in VTT, JSON, or TXT formats for closed captioning and more. Explore word frequency statistics and other analytics. Powered by audio to text AI.`
+            let meta_description = `Transcriptions and analytics for the top Twitch.tv channels. View VOD transcriptions or download in VTT, JSON, or TXT formats for closed captioning and more. Explore word frequency statistics and other analytics. Powered by audio to text AI.`
         %>
         
         <link rel="preload" as="image" href="<%= process.env.URL_CANONICAL_BASE %>/heroimgs/a2t_img%20(2).webp">
@@ -38,6 +38,10 @@
         
 
         <link rel="stylesheet" type="text/css" href="/homepageGPT.css">
+        
+        <script type="application/ld+json">
+            <%- writeHomepageAppLp()  %>
+        </script>
     </head>
     <body class="homepage">
         <%- include('navbar/navbarGPT.ejs') %>
@@ -62,13 +66,12 @@
                 <tr>
                     <th> Channel </th>
                     <th> Language </th>
-                    <!-- <th style="width: 60px;"> Broadcasts | Total</th> -->
                     <th> Hours Watched </th>
                     <th> Hours Streamed </th>
                     <th> Max Viewers </th>
                     <th> Average Viewers </th>
                     <th> Followers </th>
-                    <th style="text-wrap: nowrap;"> Broadcasts  |  Total</th>
+                    <!-- <th style="text-wrap: nowrap;"> Broadcasts  |  Total</th> -->
                     <!-- <th style="width: 60px;"> Broadcasts Transcribed</th> -->
                 </tr>
                 <tr>
@@ -87,13 +90,13 @@
                             <% // <a href="#" class="view-streamer-btn">View Profile</a> %>
                         </a>
                     </td>
-                    <td data-label="Language">                  <%= chann.language %> </td>
+                    <td data-label="Language">        <%= chann.language %> </td>
                     <td data-label="Hours Watched">   <%= localizeNumber((chann.viewMinutes ??  0) / 60) %> </td>
                     <td data-label="Hours Streamed">  <%= localizeNumber((chann.streamedMinutes ?? 0) / 60) %> </td>
                     <td data-label="Max Viewers">     <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
                     <td data-label="Average Viewers"> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
                     <td data-label="Followers">       <%= localizeNumber(chann.followers ?? 0) %> </td>
-                    <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> <%= chann.completedCount ?? 0 %> </span> <span class="homepage_col_pipe">-</span>  <span> <%= chann.totalCompletedCount %> </span> </div> </td>
+                    <% /* <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> [%=] chann.completedCount ?? 0 %] </span> <span class="homepage_col_pipe">-</span>  <span> [%=] chann.totalCompletedCount %] </span> </div> </td>  *? %>
                     <% /* <td data-label="Broadcasts Transcribed">   [%=] // chann.completedCount ?? 0 []  </td> %>
                      <% /*
                         chann.followersGained

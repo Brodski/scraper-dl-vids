@@ -70,14 +70,11 @@ function route_img2(event) {
 
     const mimeType = getMimeType(ext);
 
-    // ext = ext == "ico" ? "x-icon" : ext;
-
-
     try {
         const imagePath = path.join(__dirname, "public/" + decodedPath);
         const imageBytes = fs.readFileSync(imagePath);
         const base64Image = imageBytes.toString('base64');
-        
+
         return {
             statusCode: 200,
             headers: {

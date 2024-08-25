@@ -8,7 +8,7 @@
 //
 %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
   <head>
     <!-- METADATA -->
     <%- include('partials/head_metaGPT.ejs') %> 
@@ -49,7 +49,24 @@
     <!-- GOOGLE WORDTREE STUFF -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+        console.log("navigator.deviceMemory", navigator.deviceMemory)
+        console.log("vod.duration ",  <%= vod.duration %>)
+        // 
+        // console.log("vod.duration ", vod.duration )
+        // 22200 ==== 6h 10 min
+        // if (vod.duration < 1000) {
+        //     console.log("ITS TOO LONG!!!!!!")
+        //     console.log("ITS TOO LONG!!!!!!")
+        // %>
+        if ( <%= vod.duration %> > 222000 && navigator.deviceMemory >= 8) {
+            // continue
+        }
+        if ( <%= vod.duration %> > 222000 && navigator.deviceMemory <= 8) {
+            // nope
+        }
         google.charts.load('current', {packages:['wordtree']});
+        
+
         function kickIt(sentence_arr, search_val) {
             google.charts.setOnLoadCallback(drawChart);
 

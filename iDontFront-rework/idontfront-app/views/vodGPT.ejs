@@ -2,7 +2,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= lang_code %>">
     <head>
         <%- include('partials/head_metaGPT.ejs') %> 
 
@@ -10,6 +10,7 @@
             let meta_title = `${vod.title} - ${channel.displayName}`
             let meta_description = `VOD Transcript: "${vod.title}" by ${channel.displayName}. Timestamp & dialogue cue. Transcribed with audio to text AI.`
             let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}`)
+            
         %>
         <!-- STANDARD -->
         <title> <%= meta_title %> </title>
@@ -32,6 +33,9 @@
         <meta name="twitter:url"         content="<%= meta_url_this_page %>">
 
         <link rel="stylesheet" type="text/css" href="/vodGPT.css">
+        <script type="application/ld+json">
+            <%- writeVodAppLd(vod, channel) %>
+        </script>
     </head>    
     <body>
         <!-- PROFILE HEADER -->
@@ -53,7 +57,9 @@
                 </div>
 
                 <!-- VIDEO LOADS HERE -->
-                <!-- VIDEO LOADS HERE -->
+                <!-- [              ] -->
+                <!-- [              ] -->
+                <!-- [              ] -->
                 <!-- VIDEO LOADS HERE -->
 
             </section>
@@ -125,7 +131,12 @@
             <%- include('vodMiniNavGPT.ejs', {"vod": vod, "channel": channel}) %>
             
             <div>
-                Powered by audio-to-text AI. Inaccuracies will occur.
+                <div>
+                    Powered by audio-to-text AI. Inaccuracies will occur.
+                </div>
+                <p style="margin-top: 16px"> 
+                    If you're searching for keywords consider viewing the Raw Transcript VTT file.
+                </p>
             </div>
         
             <!-- MAIN TRANCRIPT -->
@@ -135,7 +146,7 @@
             let PAGE_SIZE = 3000;
             for (let n=0; n * PAGE_SIZE < transcript_json.length; n++) {
                 
-                console.log(n * PAGE_SIZE, (n+1) * PAGE_SIZE)
+                // console.log(n * PAGE_SIZE, (n+1) * PAGE_SIZE)
                 let transcript_json_aux = transcript_json.slice(n * PAGE_SIZE, (n+1) * PAGE_SIZE);
                 let class_display = n == 0 ? "" : "d-none";
                 %>
@@ -166,7 +177,6 @@
             </section>
             <button id="to_top" class="basic-btn mx-auto"> Top </button>
             <script>
-                console.log(document.querySelector("#to_top"))
                 document.querySelector("#to_top").addEventListener("click", e => {
                     document.querySelector("#twitch-iframe").scrollIntoView()
                 })

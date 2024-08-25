@@ -22,9 +22,9 @@ exports.routeHelper = async (req, res) => {
     //  ***************************************
     //  CHANNEL - VOD - WORDTREE
     //  ***************************************
-    if (req.params.id != null && req.path.includes("/wordtree")) {
-        msg = await getWordtreePage(req, res);
-    }
+    // if (req.params.id != null && req.path.includes("/wordtree")) {
+    //     msg = await getWordtreePage(req, res);
+    // }
     //  ***************************************
     //  CHANNEL - VOD - ANALYSIS
     //  ***************************************

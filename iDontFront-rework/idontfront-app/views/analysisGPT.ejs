@@ -1,7 +1,7 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
     <head>
         <%- include('partials/head_metaGPT.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/fonts.css">
@@ -10,7 +10,7 @@
         
         <% 
             let meta_title = `${vod.title} - ${channel.displayName}'s analysis`
-            let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}/wordtree`) 
+            let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}/analysis`) 
             let meta_description = `Dive into detailed statistics of "${vod.title}" by ${channel.displayName}. Explore graphs, word counts, words per minute, and more to gain insights into the VOD’s transcript and dialogue patterns.`
         %>
         <!-- STANDARD -->

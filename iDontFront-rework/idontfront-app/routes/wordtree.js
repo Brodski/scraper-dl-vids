@@ -5,6 +5,7 @@ const Channel = require("../models/Channel");
 const channelHelper = require("../controllers/channelHelper");
 
 async function getWordtreePage(req, res) {
+    let [sentence_arr, most_freq_word] = [null, null]
     let db = new DatabaseSingleton();
     let [resultsChan, fields2] = await db.getChannel(req.params.name)
     let [resultsVods, fields1] = await db.getVodById(req.params.id)
@@ -17,7 +18,11 @@ async function getWordtreePage(req, res) {
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
 
     // Process important data
-    let [sentence_arr, most_freq_word] = await channelHelper.prepWordTree(txtKey)
+    try {
+        [sentence_arr, most_freq_word] = await channelHelper.prepWordTree(txtKey)
+    } catch (e) {
+        return "failed_helper"
+    }
 
     res.render("../views/wordtree", {
         "sentence_arr": sentence_arr,

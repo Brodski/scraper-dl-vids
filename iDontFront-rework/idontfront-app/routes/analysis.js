@@ -5,6 +5,7 @@ const Channel = require("../models/Channel");
 const channelHelper = require("../controllers/channelHelper");
 
 async function getAnalysisPage(req, res) {
+    let analysisObj;
     let db = new DatabaseSingleton();
     let [resultsChan, fields2] = await db.getChannel(req.params.name)
     let [resultsVods, fields1] = await db.getVodById(req.params.id)
@@ -15,7 +16,13 @@ async function getAnalysisPage(req, res) {
         return "failed_helper"
     }
     txtKey = process.env.BUCKET_DOMAIN + "/" + encodeURI(vods[0].getS3TxtKey());
-    let analysisObj = await channelHelper.getAnalysis(txtKey)
+
+    try {
+        analysisObj = await channelHelper.getAnalysis(txtKey)
+    }  catch (e) {
+        return "failed_helper"
+    }
+
     res.render("../views/analysisGPT", { // ---> /channel/lolgeranimo
         "channel": channels[0],
         "vod": vods[0],

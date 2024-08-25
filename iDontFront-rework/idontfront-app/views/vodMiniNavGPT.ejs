@@ -3,11 +3,11 @@
     <div class="tab">
         <a class="tab-link" href="/channel/<%= channel.nameId %>/<%= vod.id %>/analysis">Transcript Stats</a>
     </div>
-    <div class="tab">
+    <!-- <div class="tab">
         <a class="tab-link" href="/channel/<%= channel.nameId %>/<%= vod.id %>/wordtree" >Word Tree</a>
-    </div>
+    </div> -->
     <div class="tab dropdown">
-        <button class="tab-link dropbtn">Raw Transcript Files</button>
+        <button class="tab-link">Raw Transcript <span class="d-none-smX">Files</span></button>
         <div class="dropdown-content">
             <a href="<%=  transcript_s3_vtt %>"> VTT </a>
             <a href="<%=  transcript_s3_json %>"> JSON </a>

@@ -541,7 +541,6 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             print("    (updateImgs_Db) thumbnail: ", thumbnail)
             print("    (updateImgs_Db) img_keymod: ", img_key)
             print("    (updateImgs_Db) Saved Small thumbnail ")
-            raise ValueError("This is a custom error message.")
     except Exception as e:
         print(f"An error occurred: {e}")
         the_msg = ''.join(traceback.format_stack())

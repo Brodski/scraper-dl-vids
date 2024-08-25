@@ -1,24 +1,26 @@
 :root {
     --img-height: 300px;
-    
-    @media (max-width: 768px) {
+    --thumbnail-f-size: 16px; /* Default value */
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
         
-    }
-    /* DESKTOP  */
-    @media (min-width: 769px) {
-        
-    }
-    /* DESKTOP */
-    @media (min-width: 1099px) {
+}
+
+/* DESKTOP 1 */
+@media (min-width: 1099px) {
+    :root {
         --thumbnail-f-size: 14px;
-    }
-    /* DESKTOP */
-    @media (min-width: 1399px) {
-        --thumbnail-f-size: 12px;
     }
 }
 
-
+/* DESKTOP 2 (big) */
+@media (min-width: 1399px) {
+    :root {
+        --thumbnail-f-size: 12px;
+    }
+}
 
 .channel__date,
 .channel__duration {
@@ -26,6 +28,9 @@
     color: white;
     /* background-color: black; */
     /* margin: 3px; */
+    @media (max-width: 400px) {
+        font-size: 10px;
+    }
 }
 
 .channel__thumbnail_parent {
@@ -111,6 +116,14 @@
     color: #ffffff;
     margin: 0 0 8px 0;
     text-decoration: none;
+    
+    @media (max-width: 769px) {
+        margin: 0;
+        font-size: 14px;
+    }
+    @media (max-width: 400px) {
+        font-size: 12px;
+    }
 }
 
 .channel__vod_title_1 {

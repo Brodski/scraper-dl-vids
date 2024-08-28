@@ -1,6 +1,24 @@
 @import url("imgs/svgs.css");
 @import url("buttons.css");
 
+/* 
+Optional Figma dark theme colors 
+
+    h1 text color: E5E7EB
+    body bg color: 
+    button bg color: 3B82F6
+    button text color: FFFFFF
+
+    mini-nav text color: 60A5FA
+    mini-nav bg color: 1F2937
+
+    transcript dialouge container bg color: 1F2937
+    transcript dialouge container heading color: E5E7EB
+
+    transcript timestamp color: 9CA3AF
+    transcript spoken text color: E5E7EB
+
+*/
 
 
 body {

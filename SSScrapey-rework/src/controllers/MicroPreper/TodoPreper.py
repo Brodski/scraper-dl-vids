@@ -58,13 +58,9 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
         startAt = (i * pageSize) 
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
-        print("url", url)
-        response = requests.get(url, headers=headers)
         print ("    (getTopChannelsSully) ----------------------")
         print ("    " + url)
-        print ("    (getTopChannelsSully) ----------------------")
-        print ('    (getTopChannelsSully) reponse code = ' + str(response.status_code))
-        # print ("response.text =" + response.text)
+        response = requests.get(url, headers=headers)
         if response.status_code >= 200 and response.status_code < 300:
             res_json = response.json()
             if 'data' in res_json:
@@ -135,8 +131,9 @@ def instantiateJsonToClassObj(json_object):
     return relevant_list
 
 def addVipList(json_object, isDebug=False):
-    if os.getenv("ENV") != "prod":
-        VIP_LIST = [
+    VIP_LIST = []
+    if os.getenv("ENV") == "local" or os.getenv("ENV") == "dev":
+        VIP_LIST.append(
             {
                 "displayname": "LoLGeranimo",
                 "language": "English",
@@ -158,9 +155,8 @@ def addVipList(json_object, isDebug=False):
                 # "previousmaxviewers": 201,
                 # "previousavgviewers":  145,
                 # "previousfollowergain": -110
-
             }
-        ]
+        )
     if os.getenv("ENV") == "local" and isDebug:
         VIP_LIST.append({
             "displayname": "Nmplol",

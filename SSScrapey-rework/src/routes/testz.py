@@ -321,16 +321,6 @@ def testGetTop500Channels_NameCompleted():
 #####
 
     
-# @app.route('/gera/')
-# async def gera():
-#     channel = "lolgeranimo"
-#     url = f'https://www.twitch.tv/{channel}/videos?filter=archives&sort=time'
-#     session = AsyncHTMLSession()    
-#     res = await session.get(url)
-#     await res.html.arender()
-#     return "links"
-
-
 # @app.route('/test/')
 # def test():
 #     res = requests.get('https://news.ycombinator.com/news')

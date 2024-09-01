@@ -269,7 +269,6 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         except Exception as e:
             logger(f"failed to upload: {file_abs}. Error {str(e)}")
 
-        # return "channels/vod-audio/lolgeranimo/1856310873/How_to_Climb_on_Adc_So_washed_up_i_m_clean_-_hellofresh-v1856310873.vtt"
     return transcripts_s3_key_arr 
 
 def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):

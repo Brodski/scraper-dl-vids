@@ -5,9 +5,7 @@ from typing import List
 import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
 import controllers.MicroPreper.TodoPreper as todoPreper
-import datetime
 import env_file as env_varz
-import json
 import os
 
 def printIntro():
@@ -26,7 +24,9 @@ def prepare(isDebug=False):
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
-
+    print("69 69 69 69 69 69 69 69 69")
+    for chan in scrapped_channels:
+        print(chan.displayname)
     # Via selenium & browser. Find videos's url, get anchor tags href
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
@@ -36,8 +36,8 @@ def prepare(isDebug=False):
         databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels) # This gaurentees there will be no overlap.
         # databasePreper.addRankingsForTodayDb(scrapped_channels) # Optional
         databasePreper.updateChannelRankingLazily(scrapped_channels)
-        databasePreper.updateVodsDb(scrapped_channels) # first 
-        databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels) # second
+        databasePreper.updateVodsDb(scrapped_channels)
+        databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels)
 
         databasePreper.deleteOldTodos()
     except Exception as e:

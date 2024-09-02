@@ -62,7 +62,6 @@ def goTranscribeBatch(isDebug=False):
         logger(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
     for v in completed_vods_list:
         logger(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
-    logger("SLEEPING BC END & debug")
     # time.sleep(100) 
     logger("gg ending")
     return "gg ending"

@@ -157,28 +157,35 @@ RUN if [ "${ENV}" = "dev" ]; then \
         git checkout dev && \
         git reset --hard origin/dev && \
         git pull origin dev --force; \
-    else \
+    elif [ "${ENV}" = "prod" ]; then \
         git reset --hard origin/master ; \
         git pull origin master --force ; \
         echo "Running in production mode" ; \
+    else \
+        echo "Unknown environment: ${ENV}" && exit 1; \
     fi
 RUN pip install -r requirements_transcriber_faster.txt 
 
+
+#################
+# Update Branch #
+#################
 WORKDIR /app/scraper-dl-vids/SSScrapey-rework/docker
 COPY dock_setup.sh /app/scraper-dl-vids/SSScrapey-rework/src/dock_setup.sh
 RUN chmod +x dock_setup.sh
 
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
+
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
-    echo "LD_LIBRARY_PATH is $LD_LIBRARY_PATH"; \
     vastai set api-key $VAST_API_KEY ; \
+    cd /app/scraper-dl-vids/SSScrapey-rework/docker ; \
     sh dock_setup.sh ; \
+    echo "LD_LIBRARY_PATH is $LD_LIBRARY_PATH"; \
     echo "VAST_API_KEY is $VAST_API_KEY " ; \
     echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
     echo "running......." ; \
+    cd /app/scraper-dl-vids/SSScrapey-rework/src ; \
     python kickWhisperer.py ; \
-    echo "DONE!!!!!!!!!!!!x" ; \
+    echo "DONE!!!!!!!!!!!!, sleeping just b/c" ; \
     sleep 90 ; \
-    echo "DONE!!!!!!!!!!!!" ; \
     echo "DONE!!!!!!!!!!!!" ; \
     vastai destroy instance $CONTAINER_ID

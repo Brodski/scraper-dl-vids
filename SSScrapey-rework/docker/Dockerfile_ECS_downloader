@@ -58,10 +58,12 @@ RUN if [ "${ENV}" = "dev" ]; then \
         git checkout dev && \
         git reset --hard origin/dev && \
         git pull origin dev --force; \
-    else \
+    elif [ "${ENV}" = "prod" ]; then \
         git reset --hard origin/master ; \
         git pull origin master --force ; \
         echo "Running in production mode" ; \
+    else \
+        echo "Unknown environment: ${ENV}" && exit 1; \
     fi
 RUN pip install -r requirements_downloader.txt \
     && apt-get install ffmpeg -y 
@@ -76,9 +78,9 @@ RUN chmod +x dock_setup.sh
 ######
 # GO #
 ######
-WORKDIR /app/scraper-dl-vids/SSScrapey-rework/src
 CMD echo "NOT DONE!!!!!!!!!!!!" ; \
+    cd /app/scraper-dl-vids/SSScrapey-rework/docker ; \
     sh dock_setup.sh ; \
-    python --version ; \
-    python kickDownloader.py && \
+    cd /app/scraper-dl-vids/SSScrapey-rework/src ; \
+    python kickDownloader.py ; \
     echo "DONE!!!!!!!!!!!!" ; 

@@ -1,0 +1,62 @@
+<% 
+    let url_base = process.env.URL_CANONICAL_BASE;
+
+    // let date_14d_ago = new Date();
+    // date_14d_ago.setDate(date_14d_ago.getDate() - 14);
+
+    for (let v of vods) {
+        console.log(`${v.channelNameId}: ${v.id}`)
+        console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`)
+        //console.log(`${v.transcribeDate}`)
+        // url>
+        //   loc>https://www.example.com/</loc>
+        //   changefreq>daily</changefreq>
+        // </url>
+        // url>
+        //   loc>https://www.example.com/about/</loc>
+        //   changefreq>monthly</changefreq>
+        // </url>
+    }
+// THIS SPACE REQUIRED FOR XML
+%><?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <% 
+        // CHANNEL
+        for (let ch of channels) {
+            // console.log(`${ch.nameId}`)
+            %>
+            <url>
+                <loc><%= url_base %>/channel/<%= ch.nameId %></loc>
+            </url>
+   <% } %>
+    <% 
+        // CHANNEL- VODS
+        for (let v of vods) {
+            // console.log(`${v.channelNameId}: ${v.id}`)
+            // console.log(v.transcribeDate instanceof Date, `${v.transcribeDate}`) 
+            %>
+            <url>
+                <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %></loc>
+            </url>
+        
+    <% } %>
+    
+    <% 
+        // CHANNEL- VODS - WORDTREE
+        // for (let v of vods) { 
+            // url>
+                // loc> [%=] url_base %>/channel/ [%=] v.channelNameId %>/ [%=] v.id %>/wordtree/loc>
+            // /url>
+        
+     //}
+      %>
+    <% 
+        // CHANNEL- VODS - ANALYSIS
+        for (let v of vods) { %>
+            <url>
+                <loc><%= url_base %>/channel/<%= v.channelNameId %>/<%= v.id %>/analysis</loc>
+            </url>
+        
+    <% } %>
+</urlset>

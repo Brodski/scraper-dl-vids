@@ -38,14 +38,6 @@
         return `${month}-${day}-${year}`; // MM:DD:YYYY
     }
     epochTo_MM_DD_YYYY = (date) => {
-        // const date = new Date(epoch * 1000);
-        // console.log("datexxx")
-        // console.log(date)
-        // console.log("year", date.getFullYear()) // year
-        // console.log("moth", date.getUTCMonth()) // month
-        // console.log("day", date.getUTCDate()) // day
-
-
         let month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
         let day = String(date.getUTCDate()).padStart(2, '0');
         let year = date.getFullYear();
@@ -54,4 +46,177 @@
         }
         return `${month}-${day}-${year}`; // MM:DD:YYYY
     }
+
+    getOgImageUrl = () => {
+        return process.env.URL_CANONICAL_BASE + "/imgs/ttvtranscripts.png";
+    }
+
+    writeCanonicalBase = (urlPath) => {
+        return process.env.URL_CANONICAL_BASE + urlPath;
+    }
+
+    getLogo = (urlPath) => {
+        return `${process.env.URL_CANONICAL_BASE}/imgs/logo120x120.png`
+    }
+
+    convertSecondsToISO8601 = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        let duration = 'PT';
+        if (hours > 0) duration += `${hours}H`;
+        if (minutes > 0) duration += `${minutes}M`;
+        if (remainingSeconds > 0 || duration === 'PT') duration += `${remainingSeconds}S`;
+
+        return duration;
+    }
+
+
+
+
+
+
+    convertSvgToInline = async (filePath) => {
+        const svgPath = path.join(__dirname, filePath);
+        const data = await fs.readFile(svgPath, 'utf8');
+        console.log("data")
+        console.log(data)
+        return data
+    }
+
+    getRng404Url = () => {
+        let max = 71;
+        let rng = Math.floor(Math.random() * max) + 1;
+        // let domain = process.env.URL_CANONICAL_BASE
+        let domain = process.env.BUCKET_DOMAIN
+        let path = `/imgs/404s/404chibi\+(${rng}).webp`;
+        return domain + path
+    }
+
+
+
+
+    writeVodAppLd = (vod, channel) => {
+        // Already has access to Vod, Channel and lang_code but I put it in the parameters anyways
+        let vodAppLd = {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "name": `${channel.displayName} - ${vod.title}. Twitch VOD Transcript`,
+            "description": `Read the full transcript of ${channel.displayName}'s Twitch stream titled '${vod.title}'. Explore key moments and insights from the VOD.`,
+            "text": `Full transcript of ${channel.displayName}'s stream titled '${vod.title}'.`,
+            "thumbnailUrl": getOgImageUrl(),
+            "uploadDate": vod.transcribeDate,
+            "inLanguage": lang_code,
+            "author": {
+                "@type": "Person",
+                "name": channel.displayName,
+                "url": `https://twitch.tv/${channel.nameId}`
+            },
+            "associatedMedia": {
+                "@type": "VideoObject",
+                "name": `${channel.displayName} - ${vod.title}`,
+                "contentUrl": `https://twitch.tv/videos/${vod.id}`,
+                "duration": convertSecondsToISO8601(parseInt(vod.duration)),
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "Twitch Transcripts",
+                "url": process.env.URL_CANONICAL_BASE,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": getLogo(),
+                    "width": 120,
+                    "height": 120
+                }
+            }
+        }
+        return JSON.stringify(vodAppLd, null, 2); // pretty printed
+        return JSON.stringify(vodAppLd);
+    }
+
+
+
+
+
+
+
+    writeChannelAppLp = (vods, channel) => {
+        // Already has access to Vod, Channel and lang_code but I put it in the parameters anyways
+        let structuredList = []
+        let i = 0
+        for (let vod of vods) {
+            i++;
+            let item = {
+                "@type": "ListItem",
+                "position": i,
+                "url": `${process.env.URL_CANONICAL_BASE}/channel/${channel.nameId}/${vod.id}`,
+                "name": `${vod.title}`,
+                "image": vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
+                }
+            structuredList.push(item)
+        }
+        let channelAppLp = {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": `${channel.displayName}'s Transcribed Twitch VODs`,
+            "description": `Browse transcribed Twitch VODs from ${channel.displayName}. Explore full transcripts, timestamps, and key moments from each stream.`,
+            "itemListElement": structuredList,
+            "author": {
+                "@type": "Person",
+                "name": `${channel.displayName}`,
+                "url": `https://twitch.tv/${channel.nameId}`
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "Twitch Transcripts",
+                "url": process.env.URL_CANONICAL_BASE,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": getLogo(),
+                    "width": 120,
+                    "height": 120
+                }
+            }
+        }
+        return JSON.stringify(channelAppLp, null, 2); // pretty
+    }
+
+
+    writeHomepageAppLp = () => {
+        let structuredList = []
+        let i = 0;
+        for (let chann of channelsList) {
+            i++;
+            let item = {
+                "@type": "ListItem",
+                "position": 1,
+                "url": `${process.env.URL_CANONICAL_BASE}/channel/${chann.nameId}`,
+                "name": chann.displayName,
+                "description": `Total of ${chann.totalCompletedCount} VODs transcribed.`
+            }
+            structuredList.push(item);
+        }
+
+        let homepageAppLp = {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Twitch Channels with Transcribed VODs",
+            "description": "Explore a list of Twitch channels that have some or many VOD transcripts.",
+            "itemListElement": structuredList,
+            "publisher": {
+                "@type": "Organization",
+                "name": "Twitch Transcripts",
+                "url": process.env.URL_CANONICAL_BASE,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${process.env.URL_CANONICAL_BASE}/imgs/logo120x120.png`,
+                    "width": 120,
+                    "height": 120
+                }
+            }
+        }
+        return JSON.stringify(homepageAppLp, null, 2); // pretty
+    }
+
 %>

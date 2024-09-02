@@ -2,6 +2,8 @@
 const DatabaseSingleton = require("../controllers/helpers/DatabaseSingleton");
 const Vod = require("../models/Vod");
 const Channel = require("../models/Channel");
+const getLangCode = require("../controllers/helpers/language2Code")
+// const writeVodAppLd = require("../controllers/helpers/applicationLd")
 
 async function getVodPage(req, res) {
     let db = new DatabaseSingleton();
@@ -12,29 +14,34 @@ async function getVodPage(req, res) {
     if (channels.length != 1 || vods.length != 1) {
         console.error("BAD QUERY FOR CHANNELS! OR VODS (b)")
         console.log(channels)
+        return "failed_helper"
     }
-    
+
     let transcript_s3_key = encodeURI(vods[0].getS3TranscriptKey());
-    // let transcript_s3_key = vods[0].getS3TranscriptKey();
     let url = process.env.BUCKET_DOMAIN + "/" + transcript_s3_key
     let response = await fetch(url);
-    console.log(" process.env.BUCKET_DOMAIN:",  process.env.BUCKET_DOMAIN)
-    console.log(" url:")
-    console.log(" url:",  url)
+
     if (!response.ok) {
         console.error("Failed HTTP-Get: ", url);
         throw new Error('HTTP error ' + response.status);
     }
+
     let transcript_json = await response.json()
     vttKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3VttKey();
     jsonKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TranscriptKey();
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
     console.log("TRANSCRIPT - VOD: ", vods[0]?.id, vods[0]?.title) 
-    res.render("../views/vod", { // ---> /channel/lolgeranimo
+    
+    // BOOM 👇
+    // BOOM 👇
+    // BOOM 👇
+    res.render("../views/vodGPT", { // ---> /channel/kaicenat
         "transcript_json": transcript_json.segments,
         "transcript_s3_vtt":  encodeURI(vttKey),
         "transcript_s3_json": encodeURI(jsonKey),
         "transcript_s3_txt":  encodeURI(txtKey),
+        "lang_code": getLangCode(channels[0]?.language),
+        // "application_Ld": writeVodAppLd(vods[0], channels[0]) ,
         "vod": vods[0],
         "channel": channels[0]
     })

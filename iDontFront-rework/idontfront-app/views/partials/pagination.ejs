@@ -1,0 +1,48 @@
+<link rel="stylesheet" type="text/css" href="/pagination.css">
+<div class="pagination">
+    <!-- <button class="pagination-btn" id="prevBtn" disabled>&laquo; Previous</button> -->
+    
+    <div class="page-numbers">
+        <!-- <button class="page-number active">1</button>
+        <button class="page-number">2</button>
+        <button class="page-number">3</button>
+        <button class="page-number">4</button>
+        <button class="page-number">5</button> -->
+    </div>
+
+    <!-- <button class="pagination-btn" id="nextBtn">Next &raquo;</button> -->
+</div>
+<script type="module"> 
+    window.addEventListener("DOMContentLoaded", e => {
+        let pages = document.querySelectorAll(".vod_paginate")
+        let paginateEle = document.querySelector(".page-numbers")
+        for (let i=0; i < pages.length; i++) {
+            let btn = document.createElement("button")
+            btn.innerText = `${i + 1}`
+            btn.classList.add("page-number")
+            btn.setAttribute("data-count", i)
+            btn.addEventListener("click", handlePageChange)
+            paginateEle.appendChild(btn)
+        }
+        let firstPage = document.querySelector(".page-numbers .page-number")
+        firstPage.classList.add("active")
+    })
+
+    function handlePageChange(e) {
+        console.log(e)
+        let pg = e.target.dataset.count 
+        document.querySelector(".page-number.active").classList.remove("active")
+        e.target.classList.add("active")
+        console.log(e.target.dataset)
+        console.log(e.target.dataset.count)
+
+        
+        document.querySelector(`#page_${pg}.vod_paginate`)?.classList.remove("d-none")
+        
+        let pagez = document.querySelectorAll(`.vod_paginate:not(#page_${pg}`)
+        for (let page of pagez) {
+            page.classList.add("d-none")
+        }
+
+    }
+</script>

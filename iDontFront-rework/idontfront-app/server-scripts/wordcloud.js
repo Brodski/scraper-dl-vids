@@ -12,26 +12,11 @@ async function loadModule(everywordz_counter) {
     const d3 = await import('d3');
     console.log('Current Working Directory:', process.cwd());
     console.log('LD_LIBRARY_PATH:', process.env.LD_LIBRARY_PATH);
-    
-    const files = fs.readdirSync(process.cwd());
-    console.log("files");
-    console.log(files);
-    // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
-    if (process.env.IS_LAMBDA == "true") {
-      const files2 = fs.readdirSync("/var/lang/lib");
-      console.log("/var/lang/lib");
-      console.log("files2");
-      console.log(files2);
 
-      
-      // process.env.LD_LIBRARY_PATH =  process.env.LAMBDA_TASK_ROOT + "/lib" + (":" + process.env.LD_LIBRARY_PATH);
+    if (process.env.IS_LAMBDA == "true") {
       process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
       process.env.PKG_CONFIG_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
       process.env.PATH = process.env.PATH + ":" + process.env.LAMBDA_TASK_ROOT + "/lib"
-      const files3 = fs.readdirSync( process.cwd() + "/lib");
-      console.log('LD_LIBRARY_PATH 2:', process.env.LD_LIBRARY_PATH);
-      console.log(process.cwd() + "/lib");
-      console.log(files3);
     } 
     
 
@@ -69,17 +54,16 @@ async function loadModule(everywordz_counter) {
         let colorScaleAux = d3.scaleSqrt() // colorScaleAux(x) returns a value between [0-1]
             .domain([minValue, maxValue])
             .range([0, 1]);
-            
-        // const colorScale = x => d3.interpolateCubehelixLong("purple", "orange")  (colorScaleAux(x)) 
-        // const colorScale = x =>  d3.interpolateHslLong("red", "blue")   (colorScaleAux(x)) 
-        // const colorScale = x =>  d3.interpolateHslLong("red", "#1b42ba")   (colorScaleAux(x)) 
-        // const colorScale = x =>  d3.interpolateHslLong("#1b42ba", "orange")   (colorScaleAux(x)) 
-        const colorScale = x =>  d3.interpolateHslLong("darkblue", "#980000")   (colorScaleAux(x)) 
+
+        // original before dark-theme
+        // const colorScale = x =>  d3.interpolateHslLong("darkblue", "#980000")   (colorScaleAux(x)) 
+        // const colorScale = x => d3.interpolateHslLong("#00c6ff", "red")(colorScaleAux(x)); // GOOD
+        const colorScale = x => d3.interpolateHslLong("#1eadd6", "#c92e2e")(colorScaleAux(x)); // GOOD // teal --->
 
         const data = d3.rollups(everywordz_counter, size, w => w)
           .slice(0, maxWords)
           .map(([key, size]) => ({text: word(key[0]), size: scaleFont(key[1]), freq: key[1] }));
-        // console.log(date) ===> [
+        // console.log(data) ===> [
         //           { text: 'just', size: 180, freq: 370 },
         //           { text: 'im', size: 127.17579250720462, freq: 229 },
         //           { text: 'right', size: 125.30259365994236, freq: 224 }, ]
@@ -109,7 +93,6 @@ async function loadModule(everywordz_counter) {
             .on("word", ({size, x, y, rotate, text, freq}) => {
                 g.append("text")
                     .attr("font-size", size) // size = method created via fontSize()
-                    // .attr("font-size", scaleFont(freq))
                     .attr("transform", `translate(${x},${y}) rotate(${rotate})`)
                     .attr("fill", colorScale(freq))
                     .text(text);
@@ -125,8 +108,6 @@ async function loadModule(everywordz_counter) {
         width: 800,
         height: 500,
         size: (x) => { return x[0].length} 
-        // size: (x) => { console.log(x); return x[0].length}  //+ Math.random(),
-        // rotate: () => (~~(Math.random() * 6) - 3) * 30
     })
     return wcSvg
 }

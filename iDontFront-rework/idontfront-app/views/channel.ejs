@@ -1,45 +1,82 @@
 <%- include("../server-scripts/utilities") %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
     <head>
-        <title> <%= channel.displayName %> </title>
-        <%- include('partials/head_meta.ejs') %> 
+        <%- include('partials/head_metaGPT.ejs') %> 
+        <%
+            let meta_title = channel.displayName
+            let meta_url_this_page = writeCanonicalBase(`/${channel.nameId}`) 
+            let meta_description = `Access full transcriptions and audio-to-text VODs from ${channel.displayName}'s Twitch stream. Review every spoken word with detailed timestamps, explore key moments, and easily navigate through past broadcasts.`
+        %>
+        <!-- {"small": "channels/vod-audio/aztecross/2171041388/images/thumb_350x197.jpeg", 
+        "original": "channels/vod-audio/aztecross/2171041388/images/thumb.jpeg"} -->
+        <!-- STANDARD -->
+        <title> <%= meta_title %> </title>
+        <link rel="canonical" href="<%= meta_url_this_page %>">
+        <meta name="description" content="<%= meta_description %>">
+
+        <!-- OPEN GRAPH -->
+        <meta property="og:site_name" content="Twitch">
+        <meta property="og:title" content="<%= meta_title %>">
+        <meta property="og:description" content="<%= meta_description %>">
+        <meta property="og:image" content="<%= getOgImageUrl() %>">
+        <meta property="og:url" content="<%= meta_url_this_page %>">
+        <meta property="og:type" content="website">
+
+        <!-- TWITTER -->
+        <% // <meta name="twitter:site" content="@twitch"> %>
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="<%= meta_title %> ">
+        <meta name="twitter:description" content="<%= meta_description %>">
+        <meta name="twitter:image" content="<%= getOgImageUrl() %>">
+        <meta name="twitter:url" content="<%= meta_url_this_page %>">
+
+
+
+
+
         <link rel="stylesheet" type="text/css" href="/channel.css">
+
+        <script type="application/ld+json">
+            <%- writeChannelAppLp(vods, channel) %>
+        </script>
     </head>    
     <body>
-        <%- include('navbar/navbar.ejs') %> 
-        <%- include('channelHeader.ejs', {"channel": channel, "isShowBack": false}) %>
-        <!-- BTEST -->
-        <!-- BTEST -->
-        <!-- BTEST -->
-        <!-- BTEST -->
-        <h4> <a href="/"> view all channels </a> </h4>
+        <%- include('navbar/navbarGPT.ejs') %> 
+        <%- include('channelHeaderGPT.ejs', {"channel": channel}) %>
+
+
         <hr/>
         <h3> Transcripts:</h3>
         <table>
-            <tr>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Title</th>
-            </tr>   
-            <% 
-                for (let vod of vods) {
-                    let duration        = vod.duration // 38541
-                    let vod_title       = vod.title
-                    let id              = vod.id
-                    let thumbnail       = vod.thumbnail
-                    let streamDate      = vod.streamDate
-                    let s3Audio         = vod.s3Audio
-                    let href            = path + "/" +  id 
-            %>
-                <tr>
-                    <td><%= epochTo_MM_DD_YYYY(streamDate) %></td>
-                    <td class="channel__duration"><%= secondsToHHmm(Number(duration)) %></td>
-                    <td> <a href="<%= href %>"> <img class="channel__thumbnail" src="<%=  thumbnail %>"/> </a> </td> %>
-                    <td><a href="<%= href %>"> <%= vod_title %> </a></td>
-                </tr>
+            <div class="channel__all_vods_container">
+                <% 
+                    for (let vod of vods) {
+                        let duration        = vod.duration // 38541
+                        let vod_title       = vod.title
+                        let id              = vod.id
+                        let streamDate      = vod.streamDate
+                        let s3Audio         = vod.s3Audio
+                        let href            = path + "/" +  id 
+                        let thumbnail       = vod.s3Thumbnails?.small ? `${process.env.BUCKET_DOMAIN}/${vod.s3Thumbnails?.small}` : vod.thumbnail
+                %>
+                <div class="channel__vod">
+                    <a class="channel__card" href="<%= href %>" >
+                        <div class="channel__thumbnail_parent" href="<%= href %>"> 
+                            <div class="channel__abs_info d-flex j-space-between">
+                                <div class="channel__date"><%= epochTo_MM_DD_YYYY(streamDate) %></div>
+                                <div class="channel__duration"><%= secondsToHHmm(Number(duration)) %></div>
+                            </div>
+                            <img class="channel__thumbnail" src="<%= thumbnail %>" alt="thumbnail of <%= channel.displayName %>"/> 
+                        </div>
+                        <div class="channel__vod_title2"> 
+                            <div class="channel__vod_title" href="<%= href %>"> <%= vod_title %> </div> 
+                        </div>
+                    </a>
+                </div>
              <% } %>
+            </div>
         </table>
     </body>
 </html>

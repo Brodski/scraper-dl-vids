@@ -4,19 +4,10 @@
         margin-left: auto;
         margin-right: auto;
     }
-    .channel_row img {
-        height: 48px;
-        width: 48px;
-        margin-top: auto;
-        margin-bottom: auto;
-    }
-    .channel_row h2 {
-        padding-left: 8px;
-    }
 }
 
-.profile_main_pic {
+/* .profile_main_pic {
     padding-right: 12px;
     height: 80px;
     width: 80px;
-}
+} */

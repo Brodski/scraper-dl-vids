@@ -2,6 +2,9 @@ variable "lambda_name" {
   type        = string
   default     = "idontfront_app"
 }
+variable "URL_CANONICAL_BASE" {
+  type = string
+}
 variable "ENV" {
   type = string
 }

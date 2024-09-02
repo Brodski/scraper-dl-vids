@@ -1,0 +1,28 @@
+<% let customClass_ = typeof customClass !== 'undefined' ? customClass : ''; %>
+<% let isBtnBackVod_  = typeof isBtnBackVod  !== 'undefined' ? isBtnBackVod  : ''; %>
+<% let extraStylez  = typeof isBtnBackVod  !== 'undefined' ? ""  : "d-flex j-center flex-column"; %>
+
+
+<link rel="stylesheet" type="text/css" href="/vodHeaderGPT.css">
+<section class="vodheader__container <%= customClass_  %>">
+    <div class="vodheader__sub_container">
+        <a class="d-flex flex-column" href="/channel/<%= channel.nameId %>">
+            <img class="vodheader__profile_pic" src="<%= channel.logo %>" alt="Streamer Profile Picture"/>
+            <button class="basic-btn vod-btn-modify"> All vods </button>
+        </a>
+        <div class="vodheader__info <%= extraStylez %>">
+            <h2> <a href="/channel/<%= channel.nameId %>"> <%= channel.displayName %> </a> </h2>
+            <p class="vod-title"> <%= vod.title %> </p>
+            <p class="vod-details"><%= epochTo_MM_DD_YYYY(vod.streamDate) %> · <%= secondsToHHmm(Number(vod.duration)) %></p>
+            <% if (isBtnBackVod_) { %>
+                <button id="btn_backvod" class="basic-btn vod-btn-modify">
+                    <a href="/channel/<%= channel.nameId %>/<%= vod.id %>">
+                        Transcript
+                    </a>
+                </button>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+

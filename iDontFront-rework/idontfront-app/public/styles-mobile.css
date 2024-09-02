@@ -4,6 +4,7 @@
 @media (max-width: 1199px) {
     body {
         max-width: 800px;
-        padding-left:6px
+        padding-left: 3px;
+        padding-right: 3px;
     }
 }

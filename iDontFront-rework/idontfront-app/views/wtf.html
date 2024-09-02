@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch.tv Transcripts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Navbar -->
+    <!-- <nav class="navbar">
+        <div class="logo-container">
+            <img src="https://dev-captions.bski.one/imgs/beard2.png" alt="Logo" id="logo">
+            <span id="site-name">Twitch.tv Transcripts</span>
+        </div>
+        <a href="#" class="home-link">Home</a>
+    </nav> -->
+
+    <main>
+        <!-- Video Information Section -->
+        <!-- <section id="vodheader__container">
+            <div id="streamer-info">
+                <img src="https://picsum.photos/200" alt="Streamer Profile Picture" id="profile-picture">
+                <div>
+                    <h2>KaiCenat</h2>
+                    <p class="vod-title">👑REVEALING NEW NYC HOUSE👑CLICK HERE👑BIG NIGHT👑WE LIT👑BIGGEST DWARF👑MASSIVE GAMER👑INCREDIBLE ATHLETE</p>
+                    <p class="vod-details">07-26-2024 · 6h 28m</p>
+                    <p class="vod-link"><a href="https://www.twitch.tv/videos/2207458801" target="_blank">Watch on Twitch</a></p>
+                </div>
+            </div>
+        </section> -->
+
+        <!-- Tabs for Sub-Pages -->
+        <!-- <div class="tab-container">
+            <div class="tab">
+                <a href="#transcript-stats" class="tab-link">Transcript Stats</a>
+            </div>
+            <div class="tab">
+                <a href="#word-tree" class="tab-link">Word Tree</a>
+            </div>
+            <div class="tab dropdown">
+                <button class="tab-link dropbtn">Raw Transcript Files</button>
+                <div class="dropdown-content">
+                    <a href="transcript.vtt" download>VTT</a>
+                    <a href="transcript.json" download>JSON</a>
+                    <a href="transcript.txt" download>TXT</a>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Video Player and Toggle Sticky Button -->
+        <!-- <section id="video-container">
+            <video id="video" controls>
+                <source src="video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <button id="toggle-sticky">Toggle Sticky</button>
+        </section> -->
+
+        <section id="transcript">
+            <div class="transcript-line">
+                <a href="#" class="timestamp">[00:00]</a>
+                <span class="cue">This is the first line of the transcript.</span>
+            </div>
+            <div class="transcript-line">
+                <a href="#" class="timestamp">[00:05]</a>
+                <span class="cue">This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.This is the second line of the transcript.</span>
+            </div>
+            <!-- Add more transcript lines here -->
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Twitch.tv Transcripts. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const videoContainer = document.getElementById('video-container');
+        const toggleStickyButton = document.getElementById('toggle-sticky');
+
+        toggleStickyButton.addEventListener('click', () => {
+            videoContainer.classList.toggle('sticky');
+        });
+    </script>
+</body>
+</html>

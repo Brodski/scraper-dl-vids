@@ -17,18 +17,12 @@ async function plot_(everywordz_counter, chartTitle) {
     let min_freq_data = last_data[1]
     let max_freq_data = data[0][1]
     let interval = Math.ceil(max_freq_data / 5);
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log("max_freq_data")
-    console.log(max_freq_data)
 
-    // const colorScale =  d3.scaleSequential(d3.interpolateBlues).domain([-100 , Math.max(...data.map(d => d[1])) ]); // d3.interpolateBlues, which maps the range [0, 1], , from light to dark
-    const colorScale = d3.scaleSequential().range(["lightblue", "darkblue"]).domain([0 , Math.max(...data.map(d => d[1])) ]);
+    // light theme
+    // const colorScale = d3.scaleSequential().range(["lightblue", "darkblue"]).domain([0 , Math.max(...data.map(d => d[1])) ]); 
+    
+    // dark theme
+    const colorScale = d3.scaleSequential().range(["#15e199", "#1795eb"]).domain([0 , Math.max(...data.map(d => d[1])) ]); 
 
     const plot = Plot.plot({
         marginTop: 20,
@@ -89,9 +83,7 @@ async function plot_(everywordz_counter, chartTitle) {
             // Plot.ruleY([-10, 0, 10])
         ],  
     });
-    console.log("plot!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    console.log("plot!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    console.log(plot)
+
     plot.id = "word-count-graph"
     return plot
 }

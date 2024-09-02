@@ -1,0 +1,186 @@
+<%- include("../server-scripts/utilities") %>
+
+
+<!DOCTYPE html>
+<html lang="<%= lang_code %>">
+    <head>
+        <%- include('partials/head_metaGPT.ejs') %> 
+
+        <% 
+            let meta_title = `${vod.title} - ${channel.displayName}`
+            let meta_description = `VOD Transcript: "${vod.title}" by ${channel.displayName}. Timestamp & dialogue cue. Transcribed with audio to text AI.`
+            let meta_url_this_page = writeCanonicalBase(`/channel/${channel.nameId}/${vod.id}`)
+            
+        %>
+        <!-- STANDARD -->
+        <title> <%= meta_title %> </title>
+        <link rel="canonical"       href="<%= meta_url_this_page %>">
+        <meta name="description"    content="<%= meta_description %>">
+
+        <!-- OPEN GRAPH -->
+        <meta property="og:site_name"   content="Twitch">
+        <meta property="og:title"       content="<%= meta_title %>">
+        <meta property="og:description" content="<%= meta_description %>">
+        <meta property="og:image"       content="<%= getOgImageUrl() %>">
+        <meta property="og:url"         content="<%= meta_url_this_page %>">
+        <meta property="og:type"        content="article">
+
+        <!-- TWITTER -->
+        <meta name="twitter:card"        content="summary">
+        <meta name="twitter:title"       content="<%= meta_title %> ">
+        <meta name="twitter:description" content="<%= meta_description %>">
+        <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
+        <meta name="twitter:url"         content="<%= meta_url_this_page %>">
+
+        <link rel="stylesheet" type="text/css" href="/vodGPT.css">
+        <script type="application/ld+json">
+            <%- writeVodAppLd(vod, channel) %>
+        </script>
+    </head>    
+    <body>
+        <!-- PROFILE HEADER -->
+        <%- include('navbar/navbarGPT.ejs') %> 
+
+        <main>
+            <!-- VOD HEADER -->
+            <%- include('vodHeaderGPT.ejs', {"vod": vod, "channel": channel}) %>
+
+            <!-- IFRAME PLAYER -->
+            <section id="twitch-iframe">
+                <!-- FAIL MESSAGE -->
+                <div class="video-error d-none" id="video-error">
+                    <p>⚠️ VOD is unavaible.</p>
+                    <a class="basic-btn" href="https://www.twitch.tv/<%= vod.channelNameId %>/videos?filter=all&sort=time" target="_blank" rel="noopener"> 
+                        <%= vod.channelNameId %> VODs on twitch 
+                        <span class="external-link">  </span>
+                    </a>
+                </div>
+
+                <!-- VIDEO LOADS HERE -->
+                <!-- [              ] -->
+                <!-- [              ] -->
+                <!-- [              ] -->
+                <!-- VIDEO LOADS HERE -->
+
+            </section>
+
+            <!-- IFRAME PLAYER JAVASCRIPT -->
+            <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+            <script type="text/javascript">
+                let player;
+                window.addEventListener("load", e => {
+                    var options = {
+                        // width: ( window.innerWidth <= 640 ? '100%' : 640),
+                        // height: ( window.innerWidth <= 640 ? 230 : 360),
+                        width: ( window.innerWidth <= 800 ? '100%' : 800),
+                        height: ( window.innerWidth <= 800 ? 230 : 450),
+                        video: <%= vod.id %>,
+                        autoplay: false,
+                        parent: ["prod-captions.bski.one"] // TODO
+                    };
+                    player = new Twitch.Player("twitch-iframe", options);
+
+                    player.addEventListener("ready", e => {
+                        player.setVolume(0);
+                        setTimeout(() => {player.setVolume(0) }, 1000)
+                    })
+
+                    pollIframeIfExists(0)
+                })
+                
+                function seekIframe(time) {
+                    player.seek(time)
+                }
+                
+                function pollIframeIfExists(count) {      
+                        if (player.getQualities().length > 0) {
+                            return
+                        }
+                        if (count >= 5 && player.getQualities().length == 0) {
+                            let msg_erro = document.querySelector("#video-error");
+                            msg_erro.classList.remove("d-none");
+                            document.querySelector("#toggle-sticky")?.classList.add("d-none");
+                            document.querySelector("#twitch-iframe iframe")?.classList.add("d-none");
+                            return
+                        }
+                        if (count < 5) {
+                            setTimeout(() => {
+                                pollIframeIfExists(count + 1)
+                            }, 1000)
+                        }
+                    }
+            </script>
+
+            <!-- TOGGLE STICKY PLAYER -->
+            <div>
+                <button 
+                    id="toggle-sticky"
+                    class="basic-btn"
+                    onclick="(() => {
+                        let iframe = document.querySelector('#twitch-iframe')
+                        iframe.classList.toggle('sticky-iframe')
+                        let msg = iframe.classList.contains('sticky-iframe') ? '☑' : '' // '✓'
+                        document.querySelector('#on-off-sticky').innerText = msg
+                    })()"
+                    > Toggle sticky
+                </button>
+                <span id="on-off-sticky"> </span>
+            </div>
+
+            <!-- MINI NAV -->
+            <%- include('vodMiniNavGPT.ejs', {"vod": vod, "channel": channel}) %>
+            
+            <div>
+                <div>
+                    Powered by audio-to-text AI. Inaccuracies will occur.
+                </div>
+                <p style="margin-top: 16px"> 
+                    If you're searching for keywords consider viewing the Raw Transcript VTT file.
+                </p>
+            </div>
+        
+            <!-- MAIN TRANCRIPT -->
+            <hr/>
+            <section id="transcript">
+            <% 
+            let PAGE_SIZE = 3000;
+            for (let n=0; n * PAGE_SIZE < transcript_json.length; n++) {
+                
+                // console.log(n * PAGE_SIZE, (n+1) * PAGE_SIZE)
+                let transcript_json_aux = transcript_json.slice(n * PAGE_SIZE, (n+1) * PAGE_SIZE);
+                let class_display = n == 0 ? "" : "d-none";
+                %>
+                <div id="page_<%= n %>" class="vod_paginate <%= class_display %>">
+                    <%
+                    let i = 0;
+                    for (let segment of transcript_json_aux) {
+                        // if (i==0) { console.log("vod's first segment: ", segment) }
+                        i++
+                        let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
+                        let min = Math.floor(parseInt(segment.start) / 60)
+                        let timestamp = min + "m" + sec + "s";
+                        let iframe_time = Math.floor(segment.start)
+                        let start = Number(Math.round(segment.start)).toFixed(2)
+                        let end   = Number(Math.round(segment.end)).toFixed(2)
+                        start = secondsToHHmmSS(start)
+                        end = secondsToHHmmSS(end) 
+                        %>
+                        <div class="transcript-line">
+                            <span class="timestamp" onclick="(() => seekIframe(<%= iframe_time %>))()">[<%= start %>]</span>
+                            <span class="cue"> <%= segment.text %> </span>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+            
+            <%-include('partials/pagination') %>
+            </section>
+            <button id="to_top" class="basic-btn mx-auto"> Top </button>
+            <script>
+                document.querySelector("#to_top").addEventListener("click", e => {
+                    document.querySelector("#twitch-iframe").scrollIntoView()
+                })
+            </script>
+        </main>
+    </body>
+</html>

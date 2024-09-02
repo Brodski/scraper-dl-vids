@@ -113,16 +113,6 @@ class DatabaseSingleton {
 
     async getChannelsForHomepage() {
         try {
-            // const sqlQuery = `
-            //     SELECT *
-            //     FROM Channels c
-            //     WHERE EXISTS (
-            //         SELECT 1
-            //         FROM Vods v
-            //         WHERE v.ChannelNameId = c.NameId
-            //         AND v.TranscriptStatus = 'completed'
-            //     ) ORDER BY CurrentRank ASC;`;
-
             // 1 Query and aggregate "Completed" transcripts and aggregate broadcasts
             // 2 Query from Channels where at least 1 vod has a complted Transcript
             const sqlQuery = `
@@ -168,18 +158,21 @@ class DatabaseSingleton {
                     AND v3.TranscriptStatus = 'completed'
                 )
             ORDER BY 
-                c.CurrentRank ASC;
-        
+                # c.CurrentRank ASC;
+                c.ViewMinutes DESC, c.PreviousViewMinutes DESC, c.Followers DESC;
             `
+            // ^ sorted by viewMinutes, then by peviouwViewMinutes, then by followers
 
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan));
-            resultChannelObj.sort( (a,b) => {
-                // first sort by viewMinutes, then by peviouwViewMinutes, then by followers
-                return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
-            })
+            let channelsStreamed = resultChannelObj.filter( chan => chan.viewMinutes > 0); 
+            let channelsZeroStreamed = resultChannelObj.filter( chan => chan.viewMinutes == 0); 
 
-            return resultChannelObj;
+            // resultChannelObj.sort( (a,b) => {
+            //     return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
+            // })
+
+            return [channelsStreamed, channelsZeroStreamed];
         } catch (error) {
             console.error('Error retrieving channels: ', error);
             // throw error;

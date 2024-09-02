@@ -75,7 +75,6 @@ tbody td[data-labelX] {
 
 
 
-/* INFO NOTICE */
 .table-subheader {
     text-align: left;
     font-size: 18px;
@@ -87,6 +86,19 @@ tbody td[data-labelX] {
     color: red;
     /* color: #b83d3d;
     color: #ce4b4b; */
+}
+.table-divider > th {
+    font-size: 18px;
+}
+.table-divider {
+    background-color: #444;
+    text-align: left;
+    color: #ffffff;
+    /* padding-top: 10px; */
+}
+.table-divider:hover {
+    background-color: #444;
+
 }
 
 .homepage__subtext {

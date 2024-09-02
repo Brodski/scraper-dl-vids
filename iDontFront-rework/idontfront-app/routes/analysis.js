@@ -23,7 +23,7 @@ async function getAnalysisPage(req, res) {
         return "failed_helper"
     }
 
-    res.render("../views/analysisGPT", { // ---> /channel/lolgeranimo
+    res.render("../views/analysisGPT", {
         "channel": channels[0],
         "vod": vods[0],
         "wordcloud": analysisObj.wordcloudSvg?.outerHTML,

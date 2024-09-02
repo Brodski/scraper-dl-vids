@@ -2,8 +2,6 @@ const { getChannelPage } = require("./channel");
 const { getVodPage } = require("./vod");
 const { getWordtreePage } = require("./wordtree");
 const { getAnalysisPage } = require("./analysis");
-// https://my-bucket-bigger-stronger-faster-richer-than-your-sad-bucket.s3.amazonaws.com/channels/completed-jsons/custom-metadata/lolgeranimo/custom-metadata.json
-
 
 exports.routeHelper = async (req, res) => { 
     let msg;

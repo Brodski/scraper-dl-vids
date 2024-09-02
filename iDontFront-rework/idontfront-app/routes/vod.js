@@ -34,9 +34,8 @@ async function getVodPage(req, res) {
     
     // BOOM 👇
     // BOOM 👇
-    // BOOM 👇    
-    // res.render("../views/vod", { // ---> /channel/lolgeranimo
-    res.render("../views/vodGPT", { // ---> /channel/lolgeranimo
+    // BOOM 👇
+    res.render("../views/vodGPT", { // ---> /channel/kaicenat
         "transcript_json": transcript_json.segments,
         "transcript_s3_vtt":  encodeURI(vttKey),
         "transcript_s3_json": encodeURI(jsonKey),

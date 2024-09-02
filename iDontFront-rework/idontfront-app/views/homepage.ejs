@@ -80,11 +80,20 @@
             </thead>
             <tbody>
             <%
+            let isHiatusDividerAdded = false;
             for (let chann of channelsList) { %>  
+                <% if (chann.viewMinutes == 0 && !isHiatusDividerAdded) { 
+                    isHiatusDividerAdded = true
+                %>
+                <tr class="table-divider">
+                    <th colspan="9"> Channels that did not stream recently: </th>
+                </tr>
+                <% } %>
+
                 <% let dataChannel = chann.nameId.toLowerCase() == chann.displayName.toLowerCase() ? chann.nameId : `${chann.nameId}_${chann.displayName}` %>
                 <tr class="channel_row img" data-channel="<%= dataChannel %>">
                     <td data-labelX class="table_channel_name ">
-                        <a class="streamer-name-linkXXX d-inflex" href="<%= "channel/" + chann.nameId %>">
+                        <a class="streamer-name-linkXXX d-inflex" href="<%= "/channel/" + chann.nameId %>">
                             <img class="" src="<%= chann.logo %>" alt="profile picture of <%= chann.displayName %>"/>
                             <h2> <%= chann.displayName %>  </h2>
                             <% // <a href="#" class="view-streamer-btn">View Profile</a> %>
@@ -96,22 +105,8 @@
                     <td data-label="Max Viewers">     <%= localizeNumber(chann.maxViewers ?? 0) %> </td>
                     <td data-label="Average Viewers"> <%= localizeNumber(chann.avgViewers ?? 0) %> </td>
                     <td data-label="Followers">       <%= localizeNumber(chann.followers ?? 0) %> </td>
-                    <% /* <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> [%=] chann.completedCount ?? 0 %] </span> <span class="homepage_col_pipe">-</span>  <span> [%=] chann.totalCompletedCount %] </span> </div> </td>  *? %>
-                    <% /* <td data-label="Broadcasts Transcribed">   [%=] // chann.completedCount ?? 0 []  </td> %>
-                     <% /*
-                        chann.followersGained
-                        chann.partner
-                        chann.affiliate
-                        chann.mature
-                        chann.previousViewMinutes
-                        chann.previousStreamedMinutes
-                        chann.previousMaxViewers
-                        chann.previousAvgViewers
-                        chann.previousFollowerGain
-                        chann.daysMeasured
-                    */ %>
-                     
-
+                    <% /* <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> [%=] chann.completedCount ?? 0 %] </span> <span class="homepage_col_pipe">-</span>  <span> [%=] chann.totalCompletedCount %] </span> </div> </td>  */ %>
+                    <% /* <td data-label="Broadcasts Transcribed">   [%=] // chann.completedCount ?? 0 []  </td> */ %>
                 </tr>
             <% } %> 
             </tbody>

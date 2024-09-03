@@ -12,7 +12,7 @@ def printIntro():
     print("DWN_BATCH_SIZE:", env_varz.DWN_BATCH_SIZE)
     print("There is only 1 ecs instance for Downloader. Nothing crazy")
     # Note: DWN_QUERY_PER_RECENT doesnt have much effect. Looks at X recent vods from the database (todo, completed, audio2text_need, ect) then gets the "todo" one
-    
+    #       It is so that we dont over prioritize all the vods from the 'top streamers'
 def goDownloadBatch(isDebug=False):
     printIntro()
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)

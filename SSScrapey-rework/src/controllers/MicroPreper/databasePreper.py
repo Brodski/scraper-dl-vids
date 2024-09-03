@@ -188,7 +188,7 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
             try:
                 cursor.executemany(sql, values)
                 connection.commit()
-                print(f"Added {len(new_channels)} new channels.")
+                print(f"MONEY 💰 Added {len(new_channels)} new channels.")
             except Exception as e:
                 print(f"Error occurred (addNewChannelToDb): {e}")
                 connection.rollback()
@@ -204,7 +204,7 @@ def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
         try:
             values = (len(scrapped_channels),) # Ensure that the value is passed as a tuple
             affected_count = cursor.execute(sql, values)
-            print("Updating Ranks. affected_count:", str(affected_count))
+            print("MONEY 💰 Updating Ranks. affected_count:", str(affected_count))
             connection.commit()
         except Exception as e:
             print(f"Error occurred (updateChannelRankingLazily A): {e}")

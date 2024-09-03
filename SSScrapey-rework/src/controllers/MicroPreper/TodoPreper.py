@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import math
 from models.ScrappedChannel import ScrappedChannel
 from typing import List, Tuple, Dict
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
@@ -41,12 +42,11 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     print ("000000000000  getTopChannelsSully    00000000000000000")
     print ("000000000000                         00000000000000000")
 
-    num_channels = int(env_varz.PREP_SULLY_NUM_CHANNELS)
-    if num_channels > 300 or (num_channels % 10) != 0:
-        raise Exception("Error, num_channels is too big or not in 10s: " + str(num_channels))
     pageSize = 100
-    days = int(env_varz.PREP_SULLY_DAYS) #14
-    loopMax = max(1, int((num_channels / pageSize)))
+    num_todo =  int(env_varz.PREP_DB_UPDATE_VODS_NUM)
+    loopMax = math.ceil(num_todo / pageSize)
+
+    days = int(env_varz.PREP_SULLY_DAYS) # 14
     type = 3 # note '3' = most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
@@ -56,7 +56,7 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     complete_json = { "data": accumilator}
     for i in range(loopMax):
         startAt = (i * pageSize) 
-        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/30/0/0/3/desc/0/100'
+        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
         print ("    (getTopChannelsSully) ----------------------")
         print ("    " + url)

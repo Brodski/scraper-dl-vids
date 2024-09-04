@@ -22,12 +22,12 @@ logger = Cloudwatch.log
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 def printIntro():
-    print("Currently running the nth instance in vast.ai:")
-    print("TRANSCRIBER_INSTANCE_CNT", env_varz.TRANSCRIBER_INSTANCE_CNT)
-    print("Total num instances")
-    print("TRANSCRIBER_NUM_INSTANCES", env_varz.TRANSCRIBER_NUM_INSTANCES)
-    print("WHSP_BATCH_SIZE", env_varz.WHSP_BATCH_SIZE)
-    print("VODs transcribed per instance:")
+    logger("Currently running the nth instance in vast.ai:")
+    logger("TRANSCRIBER_INSTANCE_CNT", env_varz.TRANSCRIBER_INSTANCE_CNT)
+    logger("Total num instances")
+    logger("TRANSCRIBER_NUM_INSTANCES", env_varz.TRANSCRIBER_NUM_INSTANCES)
+    logger("WHSP_BATCH_SIZE", env_varz.WHSP_BATCH_SIZE)
+    logger("VODs transcribed per instance:")
 
 def goTranscribeBatch(isDebug=False):
     printIntro()

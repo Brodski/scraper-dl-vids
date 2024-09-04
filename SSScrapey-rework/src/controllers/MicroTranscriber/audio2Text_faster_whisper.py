@@ -16,6 +16,8 @@ def logger():
 logger = Cloudwatch.log
 
 class Audio2Text:
+    count_logger = 0
+
     @classmethod
     def doWhisperStuff(cls, vod: Vod, relative_path: str):
         logger("Starting WhisperStuff!")
@@ -49,8 +51,10 @@ class Audio2Text:
         logger(f"Detected language {info.language} with probability {str(info.language_probability)}")
 
         result = {  "segments": [] }
+        cls.count_logger = 0
         for segment in segments: # generator()
-            logger(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}") 
+            # logger(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}") 
+            cls.aux_logger(segment)
             result["segments"].append({
                 "start" : segment.start,
                 "end" :   segment.end,
@@ -95,3 +99,12 @@ class Audio2Text:
 
         return saved_caption_files
 
+    @classmethod
+    def aux_logger(cls, segment):
+        cls.count_logger = cls.count_logger + 1
+        if cls.count_logger % 200 == 0 and not env_varz.ENV == "local":
+            logger("... still transcribing", cls.count_logger)
+        elif env_varz.ENV == "local":
+            logger(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
+        
+            

@@ -23,11 +23,12 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 def printIntro():
     logger("Currently running the nth instance in vast.ai:")
+    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger("TRANSCRIBER_INSTANCE_CNT", env_varz.TRANSCRIBER_INSTANCE_CNT)
     logger("Total num instances")
     logger("TRANSCRIBER_NUM_INSTANCES", env_varz.TRANSCRIBER_NUM_INSTANCES)
-    logger("WHSP_BATCH_SIZE", env_varz.WHSP_BATCH_SIZE)
     logger("VODs transcribed per instance:")
+    logger("WHSP_BATCH_SIZE", env_varz.WHSP_BATCH_SIZE)
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
@@ -36,13 +37,11 @@ def goTranscribeBatch(isDebug=False):
     completed_vods_list: List[Vod] = []
     failed_vods_list: List[Vod] = []
     logger("Transcriber start! ")
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
     logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
         logger("===========================================")
         logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         logger("===========================================")
-        # vod: Vod = transcribe(isDebug)
         result: Dict[Vod, bool] = transcribe(isDebug)
         vod = result["vod"]
         isPass = result["isPass"]

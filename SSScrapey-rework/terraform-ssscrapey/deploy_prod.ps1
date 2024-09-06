@@ -1,3 +1,12 @@
+#####################################################
+#                                                   #
+#     RECALL:                                       # 
+#                                                   #
+#           $ docker build                          #
+#           $ docker push                           #
+#           $ git push                              #
+#                                                   #
+#####################################################
 $TF_ENVIRONMENT="prod"
 
 terraform init -reconfigure -backend-config="key=${TF_ENVIRONMENT}/ssscrapey/terraform.tfstate"

@@ -1,4 +1,5 @@
 import datetime
+import os
 import boto3
 import logging
 import time
@@ -10,10 +11,11 @@ from botocore.exceptions import ClientError
 class Cloudwatch:
 
     cw_client = boto3.client('logs', region_name='us-east-1')
-
+    
     RETENTION_IN_DAYZ = 30
     LOG_GROUP_NAME = '/scraper/transcriber/' + env_varz.ENV
-    LOG_STREAM_NAME = f'{env_varz.ENV}_{datetime.datetime.utcnow().strftime("%Y_%m_%d-%H.%M.%S")}' if env_varz.ENV != "local" else "local"
+    LOG_STREAM_NAME = f'{env_varz.ENV}_{os.getenv("CONTAINER_ID")}_{os.getenv("TRANSCRIBER_INSTANCE_CNT")}_{datetime.datetime.utcnow().strftime("%Y_%b_%d-%Hh_%M")}' if env_varz.ENV != "local" else "local"
+    # prod_12345_2_@2024_Sep_06-22h_27m
 
     # Create Log Group
     try:

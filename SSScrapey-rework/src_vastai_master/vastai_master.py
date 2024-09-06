@@ -294,7 +294,6 @@ def printDebug(id_contract):
     for row in rows:
         row_id = str(row['id'])
         print("    (printDebug) row_id", row_id)
-        print("    (printDebug) id_contract", id_contract)
         if row_id == id_contract:
             print("WE ARE USING THIS INSTANCE!")
             print("WE ARE USING THIS INSTANCE!")

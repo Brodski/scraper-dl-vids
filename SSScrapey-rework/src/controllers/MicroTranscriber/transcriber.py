@@ -61,17 +61,34 @@ def getTodoFromDb():
     logger("     (getTodoFromDb) Getting Todo's from Db")
     resultsArr = []
     connection = getConnectionDb()
-    
+    reach_back = 2
     try:
         with connection.cursor() as cursor:
-            sql = """ 
-                    SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank, Channels.Language AS ChanLanguage
+            # sql = """ 
+            #         SELECT Vods.*, Channels.CurrentRank AS ChanCurrentRank, Channels.Language AS ChanLanguage
+            #         FROM Vods
+            #         JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+            #         WHERE Vods.TranscriptStatus = 'audio2text_need'
+            #         ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate DESC
+            #         LIMIT 100
+            #     """
+            
+            # use a Common Table Expression (CTE) 
+            sql = f"""
+                WITH RankedVods AS (
+                    SELECT 
+                        Vods.*, 
+                        Channels.CurrentRank AS ChanCurrentRank, 
+                        Channels.Language AS ChanLanguage,
+                        ROW_NUMBER() OVER (PARTITION BY Vods.ChannelNameId ORDER BY Vods.StreamDate DESC) AS RowNum
                     FROM Vods
                     JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-                    WHERE Vods.TranscriptStatus = 'audio2text_need'
-                    ORDER BY Channels.CurrentRank ASC, Vods.DownloadDate DESC
-                    LIMIT 100
-                """
+                )
+                SELECT *
+                FROM RankedVods
+                WHERE RowNum <= {reach_back} AND TranscriptStatus= 'audio2text_need'
+                ORDER BY ChanCurrentRank ASC, DownloadDate DESC;
+            """
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
@@ -80,20 +97,13 @@ def getTodoFromDb():
         connection.rollback()
     finally:
         connection.close()
-    logger("     (getTodoFromDb) ---- HIGHEST PRIORITY VODS ----")
     for counterz, vod_ in enumerate(results):
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, Language  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
         resultsArr.append(vod)
-        if counterz < 20:
-            logger(f"     (getTodoFromDb) ---- {counterz} ----")
-            logger("     (getTodoFromDb) vod.channels_name_id", vod.channels_name_id)
-            logger("     (getTodoFromDb) vod.title", vod.title)
-            logger("     (getTodoFromDb) vod.channel_current_rank", vod.channel_current_rank)
-            logger("     (getTodoFromDb) vod.id", vod.id)
-    # logger("resultsArr")
-    # logger(resultsArr)
+        logger(f"     (getTodoFromDb) ---- {counterz} ----")
+        logger("     (getTodoFromDb) vod:", vod.channels_name_id, ": ", vod.title, " - ", vod.id)
     return resultsArr
 
 def setSemaphoreDb(vod: Vod):

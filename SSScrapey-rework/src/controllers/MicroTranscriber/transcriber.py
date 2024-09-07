@@ -99,11 +99,10 @@ def getTodoFromDb():
         connection.close()
     for counterz, vod_ in enumerate(results):
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, Language  = vod_
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
+        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, ChanLanguage, RowNum  = vod_
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=ChanLanguage, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
         resultsArr.append(vod)
-        logger(f"     (getTodoFromDb) ---- {counterz} ----")
-        logger("     (getTodoFromDb) vod:", vod.channels_name_id, ": ", vod.title, " - ", vod.id)
+        logger(f"     (getTodoFromDb) {counterz} vod: {vod.channels_name_id}: {vod.title} - {vod.id}")
     return resultsArr
 
 def setSemaphoreDb(vod: Vod):

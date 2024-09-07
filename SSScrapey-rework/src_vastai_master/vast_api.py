@@ -11,7 +11,6 @@ import urllib.parse
 import json
 import os
 from urllib.parse import quote_plus  # Python 3+
-from urllib.parse import quote_plus  # Python 3+
 from configz import *
 
 

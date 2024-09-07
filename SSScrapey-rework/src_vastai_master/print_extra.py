@@ -1,7 +1,9 @@
 
+import time
 import urllib.request
 import urllib.parse
 import json
+from configz import *
 
 def print_my_instances():
     url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY

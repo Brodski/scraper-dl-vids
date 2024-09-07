@@ -5,6 +5,7 @@
 #
 # ############################################
 import os
+from configz import *
 
 try:
     from dotenv import load_dotenv

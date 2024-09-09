@@ -9,7 +9,7 @@ resource "aws_cloudwatch_event_target" "ecs" {
   role_arn    = var.iam_role_ecs_events_arn
   input       = jsonencode({})
   ecs_target {
-    task_count          = 1
+    task_count          = var.downloader_task_count
     task_definition_arn = aws_ecs_task_definition.download_task.arn
     launch_type         = "FARGATE"
     platform_version    = "LATEST"

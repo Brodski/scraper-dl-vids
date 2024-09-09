@@ -15,8 +15,6 @@
 # FROM public.ecr.aws/lambda/nodejs:16
 FROM public.ecr.aws/lambda/nodejs:18
 ARG src_img="public/heroimgs/a2t_img (2).webp" 
-# ARG target="Dir 1/"
-# COPY ${src} ${target}
 
 ###########
 # PROJECT #
@@ -52,9 +50,9 @@ ARG LIBS=/usr/lib64
 ARG OUT=/root
 
 RUN ls $LIBS > before.txt
-RUN yum -y update \
-&& yum -y groupinstall "Development Tools" \
-&& yum install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
+RUN yum -y update 
+RUN yum -y groupinstall "Development Tools" 
+RUN yum install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
 RUN ls $LIBS > after.txt
 RUN echo 'eat it1'
 RUN npm i canvas@2.11.2 --build-from-source

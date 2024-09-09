@@ -9,15 +9,8 @@ function getProfilePic(req, custom_metadata) {
     return profilePic
 }
 
-
 module.exports = { 
     prepWordTree,
     getAnalysis,
     getProfilePic
 }
-
-
-
-
-
-

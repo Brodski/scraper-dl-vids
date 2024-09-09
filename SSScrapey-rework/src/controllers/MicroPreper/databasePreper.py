@@ -47,8 +47,7 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
     with connection.cursor() as cursor:
         scrapped_name_ids = [chn.name_id for chn in scrapped_channels]
         formatted_ids = ', '.join([f"'{str(name)}'" for name in scrapped_name_ids])
-        print("formatted_ids")
-        print(formatted_ids)
+        print("   (getNewOldChannelsFromDB) formatted_ids", formatted_ids)
         query = f"SELECT * FROM Channels;"
 
         cursor.execute(query)
@@ -228,7 +227,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000     updateVodsDb    000000000")
     print("000000000000000000000000000000000000000")
     connection = getConnection()
-    max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
+    max_vods = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 

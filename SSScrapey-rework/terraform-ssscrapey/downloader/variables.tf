@@ -1,3 +1,6 @@
+variable "downloader_task_count" {
+    type        = number
+}
 variable "iam_role_ecs_events_arn" {
     type        = string
 }

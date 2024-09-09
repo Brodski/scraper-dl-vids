@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const cRobots = require("../controllers/robots");
-const cSitemap = require("../controllers/sitemap");
-const cHome = require("../controllers/home");
 const cFavicon = require("../controllers/favicon");
+const cRobots = require("./robots");
+const cSitemap = require("./sitemap");
+const cHome = require("./home");
 const routeHelper = require("./routeHelper");
 
 router.get(["/favicon.ico"], cFavicon.favicon);
-router.get(["/", "/index"], cHome.homepage);
 router.get(["/robots.txt"], cRobots.robots);
 router.get(["/sitemap.xml"], cSitemap.sitemap);
+
+router.get(["/", "/index"], cHome.homepage);
 router.get(["/channel/:name", 
             "/channel/:name/:id", 
             // "/channel/:name/:id/wordtree"], 

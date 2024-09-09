@@ -16,7 +16,7 @@ async function getChannelPage(req, res) {
         return "failed_helper"
     }
 
-    // res.setHeader('Cache-Control', 'private, max-age=3600');
+    res.set('Cache-Control', `${res.getHeader("cache-control")}, s-maxage=3600`); // 1 hours
     res.render("../views/channel", { 
         "title" : req.params.name,
         "path" : req.path,

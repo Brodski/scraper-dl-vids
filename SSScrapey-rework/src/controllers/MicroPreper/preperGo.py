@@ -10,8 +10,6 @@ import os
 
 def printIntro():
     print("IT'S RUNNING! WOOOOOOOOOO")
-    print("Will mark this many vods as 'todo':")
-    print("  PREP_DB_UPDATE_VODS_NUM:", env_varz.PREP_DB_UPDATE_VODS_NUM)
     print("Will look at these many top channels:")
     print("  PREP_SELENIUM_NUM_CHANNELS:", env_varz.PREP_SELENIUM_NUM_CHANNELS)
     print("Will look at this many past broadcasts:")
@@ -24,9 +22,7 @@ def prepare(isDebug=False):
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
-    print("69 69 69 69 69 69 69 69 69")
-    for chan in scrapped_channels:
-        print(chan.displayname)
+
     # Via selenium & browser. Find videos's url, get anchor tags href
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 

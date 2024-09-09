@@ -43,7 +43,7 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     print ("000000000000                         00000000000000000")
 
     pageSize = 100
-    num_todo =  int(env_varz.PREP_DB_UPDATE_VODS_NUM)
+    num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
     loopMax = math.ceil(num_todo / pageSize)
 
     days = int(env_varz.PREP_SULLY_DAYS) # 14

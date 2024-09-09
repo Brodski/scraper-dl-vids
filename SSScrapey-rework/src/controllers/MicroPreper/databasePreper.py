@@ -43,6 +43,7 @@ def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
     connection.close()
 
 def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
+    print("lhmmmmm")
     connection = getConnection()
     with connection.cursor() as cursor:
         scrapped_name_ids = [chn.name_id for chn in scrapped_channels]
@@ -228,10 +229,13 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000     updateVodsDb    000000000")
     print("000000000000000000000000000000000000000")
     connection = getConnection()
-    max_vods = int(env_varz.PREP_DB_UPDATE_VODS_NUM)
+    max_vods = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    print("scrapped_channels", scrapped_channels)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 
+            print("links", links)
+            print("len(links)", len(links))
             vod_ids = [ link.split('/')[-1] for link in links]
             if len(vod_ids) == 0:
                 continue

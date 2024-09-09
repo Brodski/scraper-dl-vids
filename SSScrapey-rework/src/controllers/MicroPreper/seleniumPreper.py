@@ -72,11 +72,11 @@ def isPersonOnline(soup: BeautifulSoup):
     offline_ele = soup.select(".channel-root__player--offline")
     player_ele = soup.select(".channel-root__player ")
 
-    print("  (isPersonOnline) online_ele_1 length: ", len(online_ele_1))
-    print("  (isPersonOnline) online_ele_2 length: ", len(online_ele_2))
-    print("  (isPersonOnline) online_ele_3_profile length: ", len(online_ele_3_profile))
-    print("  (isPersonOnline) offline_ele length: ", len(offline_ele))
-    print("  (isPersonOnline) player_ele length (should be 1): ", len(player_ele))
+    # print("  (isPersonOnline) online_ele_1 length: ", len(online_ele_1))
+    # print("  (isPersonOnline) online_ele_2 length: ", len(online_ele_2))
+    # print("  (isPersonOnline) online_ele_3_profile length: ", len(online_ele_3_profile))
+    # print("  (isPersonOnline) offline_ele length: ", len(offline_ele))
+    # print("  (isPersonOnline) player_ele length (should be 1): ", len(player_ele))
 
     player_ele = soup.select(".channel-root__player ")
     if player_ele[0] and player_ele[0].get_text(strip=True).lower().startswith("live"):
@@ -85,6 +85,7 @@ def isPersonOnline(soup: BeautifulSoup):
     if len(online_ele_1) + len(online_ele_2) + len(online_ele_3_profile) > 0:
         print("  (isPersonOnline) YES!!!!!!2")
         isOnline = True
+    print("  (isPersonOnline) isOnline: ", isOnline)
     return isOnline
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...

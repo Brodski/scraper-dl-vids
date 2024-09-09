@@ -41,3 +41,9 @@ variable "transcriber_schedule_cron" {
 variable "transcriber_num_instances" {
   type = string
 }
+#############################
+# Downloader  num instances #
+#############################
+variable "downloader_task_count" {
+  type = number
+}

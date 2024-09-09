@@ -72,7 +72,7 @@ def create_instance(instance_id, instance_num):
         res_json = json.loads(response_data.decode('utf-8'))
         # print(    "(create_instance) res_json: ", res_json)
         id = res_json.get("new_contract")
-    print(    "(create_instance) Created ", instance_id)
+    print(    "(create_instance) Created new instance:", id)
     return id
 
 

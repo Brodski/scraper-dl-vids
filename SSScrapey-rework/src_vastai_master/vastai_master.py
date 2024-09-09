@@ -120,12 +120,12 @@ def pollCompletion(id_contract, start_time, counter_try_again, instance_num):
     actual_status = None
     exec_time_minutes = (time.time() - start_time) / 60
     id_contract = str(id_contract)
-    rows = print_extra.print_my_instances()
+    rows = print_extra.get_my_instances()
     # get "status's" of our instance
     for row in rows:
         row_id = str(row['id'])
         if row_id == id_contract:
-            print("    (pollCompletion) actual_status: ", row.get("actual_status"))
+            print(f"    (pollCompletion) {row_id}'s actual_status: ", row.get("actual_status"))
             status_msg = row["status_msg"]
             actual_status = row["actual_status"]
             break

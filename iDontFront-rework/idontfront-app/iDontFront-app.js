@@ -3,6 +3,7 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const serverless = require('serverless-http');
+const minifyHTML = require('express-minify-html-terser');
 
 const { mainRoutes } = require('./routes/mainRoutes');
 
@@ -13,17 +14,34 @@ if (process.env.NODE_ENV == "prod") {
     require('dotenv').config({ path: './.env_prod_local_test' });
 }
 
+app.use(minifyHTML({
+    override: true,
+    exception_url: [
+        '/sitemap.xml',                        // A specific URL
+        // /\/api\/.*/,                     // A regex to exclude API routes
+        // function(req, res) {             // A function for custom logic
+        //     return req.path === '/skip'; // Skip minification for '/skip' route
+        // }
+    ],
+    htmlMinifier: {
+      collapseWhitespace: true,
+      removeComments: true,
+      minifyCSS: false,
+      minifyJS: false
+    }
+  }));
 
-console.log("process.env.NODE_ENV: ", process.env.NODE_ENV) // for local testing
-console.log("process.env.ENV: ", process.env.ENV)
-
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'stale-while-revalidate=300, stale-if-error=86400'); // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+next();
+});
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, '/views'));
 app.use(express.json());
 app.use(mainRoutes)
-
+  
 console.log("DATABASE_HOST=", process.env.DATABASE_HOST)
 console.log("DATABASE_USERNAME=", process.env.DATABASE_USERNAME)
 console.log("DATABASE=", process.env.DATABASE)
@@ -62,12 +80,7 @@ else {
 function route_img2(event) {
     event.path = event.path == "/favicon.ico" ? "/imgs/favicon.ico" : event.path;
     const decodedPath = decodeURIComponent(event.path);
-    // let ext = decodedPath.slice(decodedPath.lastIndexOf(".") + 1)
     let ext = path.extname(decodedPath);
-    console.log("(route_img2) event.path:", event.path)
-    console.log("(route_img2) decodedPath:", decodedPath)
-    console.log("(route_img2) ext:", ext)
-
     const mimeType = getMimeType(ext);
 
     try {

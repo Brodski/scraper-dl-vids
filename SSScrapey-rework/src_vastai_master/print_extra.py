@@ -5,27 +5,27 @@ import urllib.parse
 import json
 from configz import *
 
-def print_my_instances():
+def get_my_instances():
     url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY
-    print(f"  (print_my_instances) getting info at: {url}")
+    # print(f"  (get_my_instances) getting info at: {url}")
     response = urllib.request.urlopen(url)
     if response.status != 200:
         print('sadge')
         exit()
     data = response.read()
     json_data = json.loads(data)
-    # print(f"  (print_my_instances) json_data: {json_data}")
+    # print(f"  (get_my_instances) json_data: {json_data}")
     rows = json_data.get("instances")
     for row in rows:
         row['duration'] = time.time() - row['start_date'] 
         print("id: " + str(row['id']) + ", time running: " + str(row['duration']))
-    print(" (print_my_instances) current running instances (if any): ")
-    printAsTable(rows)
+    # print(" (get_my_instances) current running instances (if any): ")
+    # printAsTable(rows)
     return(rows)
 
 
 def printDebug(id_contract):
-    rows = print_my_instances()
+    rows = get_my_instances()
     for row in rows:
         row_id = str(row['id'])
         print("    (printDebug) row_id", row_id)

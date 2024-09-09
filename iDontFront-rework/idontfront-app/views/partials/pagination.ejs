@@ -29,13 +29,9 @@
     })
 
     function handlePageChange(e) {
-        console.log(e)
         let pg = e.target.dataset.count 
         document.querySelector(".page-number.active").classList.remove("active")
         e.target.classList.add("active")
-        console.log(e.target.dataset)
-        console.log(e.target.dataset.count)
-
         
         document.querySelector(`#page_${pg}.vod_paginate`)?.classList.remove("d-none")
         

@@ -4,8 +4,10 @@ locals {
   region    = local.arn_parts[3]
   api_id    = local.arn_parts[5]
   origin_id = "${var.ENV}-bski-origin-id"
-  # origin_id = "bski-captions-id"
+  cache_long = ( var.ENV == "dev"  ? 300 :                     # 5 minutes
+                 var.ENV == "prod" ? 86400 : "default_value" ) # 1 days
 }
+
 ### CLOUDFRONT LAMBDA
 ### CLOUDFRONT LAMBDA
 ### CLOUDFRONT LAMBDA
@@ -35,17 +37,26 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.origin_id
-    default_ttl = 43200       # 12 hour - applies when origin does not add HTTP headers _
-    max_ttl     = 172800      # 48 hours- applies when origin adds headers: Cache-Control max-age, Cache-Control, ect
-    min_ttl     = 0           # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
 
+    default_ttl = local.cache_long     # 1 days - applies when origin does not add HTTP headers _
+    max_ttl     = local.cache_long     # 1 days - applies when origin adds headers: Cache-Control max-age, Cache-Control, ect
+    min_ttl     = 0                    # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
+
+    compress = true # compress when header: `Accept-Encoding: gzip`
+    
     forwarded_values {
       query_string = false
       cookies {
         forward = "none"
       }
+      # headers that are forwarded: Host, X-Amz-Cf-Id, X-Forwarded-For, User-Agent, and Via
     }
     viewer_protocol_policy = "redirect-to-https"
+  }
+
+  custom_error_response {
+    error_code            = 404
+    error_caching_min_ttl = 300  # Cache the 400 response for 5 minutes
   }
 
   restrictions {

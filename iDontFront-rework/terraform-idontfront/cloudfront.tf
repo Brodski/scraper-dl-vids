@@ -71,7 +71,7 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
 }
 
 resource "aws_cloudfront_function" "url_rewrite_function" {
-  name    = "url-rewrite-function"
+  name    = "url-rewrite-function-${var.ENV}"
   runtime = "cloudfront-js-2.0"
   comment = "www rewrite"
   publish = true

@@ -9,7 +9,6 @@ async function checkSize(transcript_json, counter) {
     let jsonString = JSON.stringify(transcript_json);
     let sizeBytes = Buffer.byteLength(jsonString, 'utf8');
     let sizeMB = sizeBytes / (1024 * 1024);
-    console.log(counter, 'checking size... sizeMB:', sizeBytes)
     let MAX_SIZE_MB = 2.3 // TODO make this smaller, perhaps lower the Memory usage for lambda in terraform $$$. MAX_SIZE_MB = coefficent that does the trick
     if (sizeMB - 0.05 <= MAX_SIZE_MB || counter > 4) { // 0.05 is arbitrary "computer rounding imperfection" fix ... If counter>4 then we risk lambda max response 6MB but prob another error is causing the long looping
         return false
@@ -51,9 +50,9 @@ async function getVodPage(req, res) {
     txtKey = process.env.BUCKET_DOMAIN + "/" + vods[0].getS3TxtKey();
     console.log("TRANSCRIPT - VOD: ", vods[0]?.id, vods[0]?.title) 
 
-    console.time('check')
+    // console.time('check')
     await checkSize(transcript_json, 1)
-    console.timeEnd('check')
+    // console.timeEnd('check')
     
     // BOOM 👇
     // BOOM 👇

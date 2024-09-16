@@ -516,6 +516,9 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
     # 3 New url via regex
     replacement = fr'-{new_width}x{new_height}.'
     new_thumbnail = re.sub(pattern, replacement, thumbnail)
+    
+    print("    (updateImgs_Db) replacement-small: ", replacement)
+    print("    (updateImgs_Db) new_thumbnail-small: ", new_thumbnail)
 
     ###################
     # Save compressed #
@@ -539,7 +542,7 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
 
             print("    (updateImgs_Db) fname_mod:" , fname_mod)
             print("    (updateImgs_Db) thumbnail: ", thumbnail)
-            print("    (updateImgs_Db) img_keymod: ", img_key)
+            print("    (updateImgs_Db) img_key-small: ", img_key)
             print("    (updateImgs_Db) Saved Small thumbnail ")
     except Exception as e:
         print(f"An error occurred: {e}")

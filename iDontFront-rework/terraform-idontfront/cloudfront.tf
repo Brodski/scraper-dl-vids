@@ -14,8 +14,8 @@ locals {
 ### CLOUDFRONT LAMBDA
 resource "aws_cloudfront_distribution" "lambda_distribution" {
   enabled = true
-  aliases = [local.website_name]
-  comment = "${local.website_name}"
+  aliases = local.website_name
+  comment = join(", ", local.website_name)
   viewer_certificate {
     acm_certificate_arn = var.sensitive_info.r53_acm_certificate_arn
     ssl_support_method  = "sni-only"
@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
   # docs: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
     target_origin_id = local.origin_id
 
     default_ttl = local.cache_long     # 1 days - applies when origin does not add HTTP headers _
@@ -43,13 +43,17 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     min_ttl     = 0                    # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
 
     compress = true # compress when header: `Accept-Encoding: gzip`
-    
-    forwarded_values {
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.url_rewrite_function.arn
+    }
+    forwarded_values { 
+      # headers that are forwarded: Host, X-Amz-Cf-Id, X-Forwarded-For, User-Agent, and Via
       query_string = false
       cookies {
-        forward = "none"
+        forward = "none" 
       }
-      # headers that are forwarded: Host, X-Amz-Cf-Id, X-Forwarded-For, User-Agent, and Via
     }
     viewer_protocol_policy = "redirect-to-https"
   }
@@ -66,6 +70,32 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
   }
 }
 
+resource "aws_cloudfront_function" "url_rewrite_function" {
+  name    = "url-rewrite-function"
+  runtime = "cloudfront-js-2.0"
+  comment = "www rewrite"
+  publish = true
+
+  code = <<EOF
+function handler(event) {
+    var request = event.request;
+    var host = request.headers.host ? request.headers.host.value : null;
+    if (host === 'twitchtranscripts.com') {
+        var redirectUrl = "https://www." + host + request.uri;
+        var response = {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                'cloudfront-functions': { value: 'generated-by-CloudFront-Functions' },
+                'location': { value: redirectUrl }
+            }
+        };
+        return response;
+    }
+    return request;
+};
+EOF
+}
 # resource "aws_route53_record" "lambda_record" {
 #   depends_on = [ aws_cloudfront_distribution.lambda_distribution ]
 #   zone_id = var.sensitive_info.r53_route_id

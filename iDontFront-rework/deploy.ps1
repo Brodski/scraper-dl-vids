@@ -60,11 +60,11 @@ if ($PSBoundParameters.ContainsKey('tag')) {
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com 
 
 docker tag "idontfront:$tag_name" "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 docker push "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 
 ###################
@@ -73,6 +73,7 @@ docker push "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 cd "../terraform-idontfront"
 echo "docker_tag_name=$tag_name"
 terraform apply --var-file="vars_${TF_ENVIRONMENT}.tfvars"  -var "docker_tag_name=$tag_name" --auto-approve
+terraform apply --var-file="vars_prod.tfvars"  -var "docker_tag_name=official_v2_prod_2024.09.13_40s" --auto-approve
 echo "docker_tag_name=$tag_name"
 cd "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\iDontFront-rework"
 # terraform apply --var-file="vars_prod.tfvars"  -var "docker_tag_name=official_v2_2024.02.03_46s" --auto-approve

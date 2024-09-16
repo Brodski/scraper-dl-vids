@@ -455,3 +455,8 @@ def deleteOldTodos():
 
 
 # ALTER TABLE Vods ADD COLUMN S3Thumbnails JSON;
+
+# UPDATE Vods
+# SET TranscriptStatus = 'deleted_old'
+# WHERE TranscriptStatus = 'completed'
+#   AND TranscribeDate < '2024-06-01';

@@ -53,6 +53,9 @@
             <div class="channel__all_vods_container">
                 <% 
                     for (let vod of vods) {
+                        // console.log("'''''''''''")
+                        // console.log("vod", vod.title)
+                        // console.log("   ", vod.s3Thumbnails)
                         let duration        = vod.duration // 38541
                         let vod_title       = vod.title
                         let id              = vod.id

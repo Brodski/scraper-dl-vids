@@ -26,18 +26,46 @@ def prepare(isDebug=False):
     # Via selenium & browser. Find videos's url, get anchor tags href
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
-    try:
-        databasePreper.addNewChannelToDb(scrapped_channels)
-        all_channels_minus_scrapped: List[ScrappedChannel] = databasePreper.getNewOldChannelsFromDB(scrapped_channels)
-        databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels) # This gaurentees there will be no overlap.
-        # databasePreper.addRankingsForTodayDb(scrapped_channels) # Optional
-        databasePreper.updateChannelRankingLazily(scrapped_channels)
-        databasePreper.updateVodsDb(scrapped_channels)
-        databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels)
+    updateShit(scrapped_channels)
+    # try:
+    #     databasePreper.addNewChannelToDb(scrapped_channels)
+    #     print(" ===> hmm, wtf??")
+    #     all_channels_minus_scrapped: List[ScrappedChannel] = databasePreper.getNewOldChannelsFromDB(scrapped_channels)
+    #     databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels) # This gaurentees there will be no overlap.
+    #     # databasePreper.addRankingsForTodayDb(scrapped_channels) # Optional
+    #     databasePreper.updateChannelRankingLazily(scrapped_channels)
+    #     databasePreper.updateVodsDb(scrapped_channels)
+    #     databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels)
 
-        databasePreper.deleteOldTodos()
+    #     databasePreper.deleteOldTodos()
+    # except Exception as e:
+    #     print(f"An error occurred: {str(e)}")
+    #     print(traceback.format_exc())
+    # print("Finished step 1 Preper-Service")
+    # return "Finished step 1 Preper-Service"
+
+def doWithCallback(callback, counter):
+    if counter > 3:
+        print("Counter > 3. Ending. Shit is broke")
+        return None
+    try:
+        return callback()
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         print(traceback.format_exc())
+        return doWithCallback(callback, counter + 1)
+
+def updateShit(scrapped_channels: List[ScrappedChannel]):
+    try:
+        doWithCallback(lambda: databasePreper.addNewChannelToDb(scrapped_channels), 0)
+        print("wtf is happening here")
+        all_channels_minus_scrapped: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getNewOldChannelsFromDB(scrapped_channels), 0)
+        doWithCallback(lambda: databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels), 0) # This gaurentees there will be no overlap.
+        doWithCallback(lambda: databasePreper.updateChannelRankingLazily(scrapped_channels), 0)
+        doWithCallback(lambda: databasePreper.updateVodsDb(scrapped_channels), 0)
+        doWithCallback(lambda: databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels), 0)
+        doWithCallback(lambda: databasePreper.deleteOldTodos(), 0)
+    except Exception as e:
+        print(f"An error occurred in updateShit: {str(e)}")
     print("Finished step 1 Preper-Service")
     return "Finished step 1 Preper-Service"

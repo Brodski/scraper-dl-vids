@@ -190,6 +190,7 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
                 print(f"MONEY 💰 Added {len(new_channels)} new channels.")
             except Exception as e:
                 print(f"Error occurred (addNewChannelToDb): {e}")
+                print(traceback.format_exc())
                 connection.rollback()
             finally:
                 connection.close()

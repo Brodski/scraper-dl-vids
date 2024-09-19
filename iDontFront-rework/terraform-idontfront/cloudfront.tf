@@ -76,6 +76,7 @@ resource "aws_cloudfront_function" "url_rewrite_function" {
   comment = "www rewrite"
   publish = true
 
+  # https://github.com/aws-samples/amazon-cloudfront-functions/blob/main/redirect-based-on-country/index.js
   code = <<EOF
 function handler(event) {
     var request = event.request;

@@ -508,6 +508,9 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
     height = float(match.group(2))
 
     # 2 Basic algebra to get new width, new height
+    if width == 0 or height == 0:
+        width = 300
+        height = 168
     aspect_ratio = width / height
     multliple_width_by_this_to_get_desired_compressed_width = width_thumbnail_in_my_s3 / width
     new_width = int(multliple_width_by_this_to_get_desired_compressed_width * width)

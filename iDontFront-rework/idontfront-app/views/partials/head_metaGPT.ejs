@@ -14,14 +14,15 @@
 <meta name="theme-color" content="#1e1e1e">
 <% if (process.env.ENV != "prod") { %>
     <meta name="robots" content="noindex">
+<% } else { %>
+    <meta name="robots" content="index,follow">
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9VH2RT4ESV"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TCCM00XLF"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-9VH2RT4ESV');
+
+      gtag('config', 'G-9TCCM00XLF');
     </script>
-<% } else { %>
-    <meta name="robots" content="index,follow">
 <% } %>

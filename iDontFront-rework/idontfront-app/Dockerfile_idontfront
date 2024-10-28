@@ -60,43 +60,43 @@ RUN echo 'eat it xxxxxxx'
 RUN mkdir lib
 
 RUN cp -L $LIBS/libpixman-1.so.0 lib/ \
-&& cp -L $LIBS/libcairo.so.2 lib/ \
-&& cp -L $LIBS/libpng15.so.15 lib/ \
-&& cp -L $LIBS/libpangocairo-1.0.so.0 lib/ \
-&& cp -L $LIBS/libpango-1.0.so.0 lib/ \
-&& cp -L $LIBS/libgobject-2.0.so.0 lib/ \
-&& cp -L $LIBS/libglib-2.0.so.0 lib/ \
-&& cp -L $LIBS/libfreetype.so.6 lib/ \
-&& cp -L $LIBS/libstdc++.so.6 lib/ \
-&& cp -L $LIBS/libm.so.6 lib/ \
-&& cp -L $LIBS/libgcc_s.so.1 lib/ \
-&& cp -L $LIBS/libpthread.so.0 lib/ \
-&& cp -L $LIBS/libc.so.6 lib/ \
-&& cp -L $LIBS/libfontconfig.so.1 lib/ \
-&& cp -L $LIBS/libEGL.so.1 lib/ \
-&& cp -L $LIBS/libdl.so.2 lib/ \
-&& cp -L $LIBS/libxcb-shm.so.0 lib/ \
-&& cp -L $LIBS/libxcb.so.1 lib/ \
-&& cp -L $LIBS/libxcb-render.so.0 lib/ \
-&& cp -L $LIBS/libXrender.so.1 lib/ \
-&& cp -L $LIBS/libX11.so.6 lib/ \
-&& cp -L $LIBS/libXext.so.6 lib/ \
-&& cp -L $LIBS/libz.so.1 lib/ \
-&& cp -L $LIBS/libGL.so.1 lib/ \
-&& cp -L $LIBS/librt.so.1 lib/ \
-&& cp -L $LIBS/libpangoft2-1.0.so.0 lib/ \
-&& cp -L $LIBS/libthai.so.0 lib/ \
-&& cp -L $LIBS/libfribidi.so.0 lib/ \
-&& cp -L $LIBS/libpcre.so.1 lib/ \
-&& cp -L $LIBS/libffi.so.6 lib/ \
-&& cp -L $LIBS/libbz2.so.1 lib/ \
-&& cp -L $LIBS/libexpat.so.1 lib/ \
-&& cp -L $LIBS/libuuid.so.1 lib/ \
-&& cp -L $LIBS/libGLdispatch.so.0 lib/ \
-&& cp -L $LIBS/libXau.so.6 lib/ \
-&& cp -L $LIBS/libGLX.so.0 lib/ \
-&& cp -L $LIBS/libharfbuzz.so.0 lib/ \
-&& cp -L $LIBS/libgraphite2.so.3 lib/
+    && cp -L $LIBS/libcairo.so.2 lib/ \
+    && cp -L $LIBS/libpng15.so.15 lib/ \
+    && cp -L $LIBS/libpangocairo-1.0.so.0 lib/ \
+    && cp -L $LIBS/libpango-1.0.so.0 lib/ \
+    && cp -L $LIBS/libgobject-2.0.so.0 lib/ \
+    && cp -L $LIBS/libglib-2.0.so.0 lib/ \
+    && cp -L $LIBS/libfreetype.so.6 lib/ \
+    && cp -L $LIBS/libstdc++.so.6 lib/ \
+    && cp -L $LIBS/libm.so.6 lib/ \
+    && cp -L $LIBS/libgcc_s.so.1 lib/ \
+    && cp -L $LIBS/libpthread.so.0 lib/ \
+    && cp -L $LIBS/libc.so.6 lib/ \
+    && cp -L $LIBS/libfontconfig.so.1 lib/ \
+    && cp -L $LIBS/libEGL.so.1 lib/ \
+    && cp -L $LIBS/libdl.so.2 lib/ \
+    && cp -L $LIBS/libxcb-shm.so.0 lib/ \
+    && cp -L $LIBS/libxcb.so.1 lib/ \
+    && cp -L $LIBS/libxcb-render.so.0 lib/ \
+    && cp -L $LIBS/libXrender.so.1 lib/ \
+    && cp -L $LIBS/libX11.so.6 lib/ \
+    && cp -L $LIBS/libXext.so.6 lib/ \
+    && cp -L $LIBS/libz.so.1 lib/ \
+    && cp -L $LIBS/libGL.so.1 lib/ \
+    && cp -L $LIBS/librt.so.1 lib/ \
+    && cp -L $LIBS/libpangoft2-1.0.so.0 lib/ \
+    && cp -L $LIBS/libthai.so.0 lib/ \
+    && cp -L $LIBS/libfribidi.so.0 lib/ \
+    && cp -L $LIBS/libpcre.so.1 lib/ \
+    && cp -L $LIBS/libffi.so.6 lib/ \
+    && cp -L $LIBS/libbz2.so.1 lib/ \
+    && cp -L $LIBS/libexpat.so.1 lib/ \
+    && cp -L $LIBS/libuuid.so.1 lib/ \
+    && cp -L $LIBS/libGLdispatch.so.0 lib/ \
+    && cp -L $LIBS/libXau.so.6 lib/ \
+    && cp -L $LIBS/libGLX.so.0 lib/ \
+    && cp -L $LIBS/libharfbuzz.so.0 lib/ \
+    && cp -L $LIBS/libgraphite2.so.3 lib/
 
 RUN export LDFLAGS=-Wl,-rpath=/var/task/lib
 ENV LDFLAGS="-Wl,-rpath=/var/task/lib"

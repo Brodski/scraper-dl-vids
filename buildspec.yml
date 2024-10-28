@@ -1,0 +1,67 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo XD Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:-latest}
+$dateString = Get-Date -Format "yyyy.MM.dd_ss's'"
+$tag_name = "official_v2_${env}_${dateString}"
+$TF_ENVIRONMENT=$env
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+  post_build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Image pushed to ECR with tag $IMAGE_TAG
+
+
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "us-east-1"
+    ECR_URI: "144262561154.dkr.ecr.us-east-1.amazonaws.com"
+    ENV: "dev"     # Replace this with the actual environment value or inject from CodeBuild
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - apt-get update && apt-get install -y unzip
+
+  pre_build:
+    commands:
+      # Set up environment variables
+      - dateString=$(date +%Y.%m.%d_%H%M%S)
+      - tag_name="official_v2_${ENV}_${dateString}"
+      - export tag_name
+      # Logging into Amazon ECR
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - docker build --no-cache -t "idontfront:$tag_name" -f Dockerfile_idontfront .
+
+  post_build:
+    commands:
+      # Login to ECR again (optional if session persists)
+      - echo "Logging into Amazon ECR again..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+      # Tag and Push Docker Image
+      - echo "Tagging and pushing Docker image to ECR..."
+      - docker tag "idontfront:$tag_name" "$ECR_URI/idontfront:$tag_name"
+      - docker push "$ECR_URI/idontfront:$tag_name"
+
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes

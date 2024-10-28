@@ -16,11 +16,9 @@ if os.getenv("ENV") == "local":
     # load_dotenv(dotenv_prod_path, override=True)
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
-    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
 elif os.getenv("ENV") == "prod":
     # some prod variables passed from terraform ---> lambda
     env_vars = dotenv_values('.env_public_prod')
-    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
     load_dotenv(dotenv_prod_path, override=True)
 else:
     print("ENV is None! NEED ENV")
@@ -58,5 +56,4 @@ DWN_IS_SHORT_DEV_DL = os.getenv("DWN_IS_SHORT_DEV_DL") if os.getenv("DWN_IS_SHOR
 
 BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
 BUCKET_NAME = env_vars['BUCKET_NAME']
-SSL_FILE = env_vars['SSL_FILE']
 S3_CAPTIONS_KEYBASE = env_vars['S3_CAPTIONS_KEYBASE']

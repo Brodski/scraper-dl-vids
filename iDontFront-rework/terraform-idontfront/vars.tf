@@ -10,7 +10,6 @@ variable "ENV" {
 }
 variable "docker_tag_name" {
   type = string
-  default = "official_v2"
 }
 
 # PASSED FROM FILE

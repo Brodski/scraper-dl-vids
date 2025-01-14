@@ -44,7 +44,6 @@ def goTranscribeBatch(isDebug=False):
         logger("===========================================")
         result: Dict[Vod, bool] = transcribe(isDebug)
         vod = result["vod"]
-        isPass = result["isPass"]
         logger(f"   (goTranscribeBatch) Finished Index {i}")
         logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
         logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")

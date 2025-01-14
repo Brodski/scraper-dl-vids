@@ -12,8 +12,6 @@ print('os.getenv("ENV"):', os.getenv("ENV"))
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_local')
-    # env_vars = dotenv_values('.env_public_prod')
-    # load_dotenv(dotenv_prod_path, override=True)
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
 elif os.getenv("ENV") == "prod":
@@ -36,8 +34,8 @@ PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
 PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
 PREP_SULLY_DAYS = env_vars['PREP_SULLY_DAYS']
 
-WHSP_A2T_ASSETS_AUDIO = env_vars['WHSP_A2T_ASSETS_AUDIO']
-WHSP_A2T_ASSETS_CAPTIONS = env_vars['WHSP_A2T_ASSETS_CAPTIONS']
+WHSP_A2T_ASSETS_AUDIO="./assets/audio/"
+WHSP_A2T_ASSETS_CAPTIONS="./assets/captions/"
 WHSP_BATCH_SIZE = env_vars['WHSP_BATCH_SIZE']
 WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
 WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']

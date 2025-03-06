@@ -94,7 +94,7 @@ function handler(event) {
         return response;
     }
     return request;
-};
+}
 EOF
 }
 # resource "aws_route53_record" "lambda_record" {

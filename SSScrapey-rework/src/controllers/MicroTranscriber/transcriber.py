@@ -52,8 +52,6 @@ def getConnectionDb():
         passwd  = env_varz.DATABASE_PASSWORD,
         port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        # ssl_mode    = "VERIFY_IDENTITY",
-        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
@@ -135,10 +133,14 @@ def downloadAudio(vod: Vod):
     logger("######################################")
     logger("             downloadAudio            ")
     logger("######################################")
+
+    WHSP_A2T_ASSETS_AUDIO="./assets/audio/"
+
     audio_url = f"{env_varz.BUCKET_DOMAIN}/{urllib.parse.quote(vod.s3_audio)}"
 
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
-    relative_filename = env_varz.WHSP_A2T_ASSETS_AUDIO +  audio_name
+    
+    relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
     logger("    (downloadAudio) vod.s3_audio:", vod.s3_audio)
     logger("    (downloadAudio) audio_url", audio_url)
     logger("    (downloadAudio) audio_name", audio_name)    
@@ -251,7 +253,6 @@ def downloadAudio(vod: Vod):
 
 
 def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
-    # 100%2B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus
     logger("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
     logger("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
     logger("    (uploadCaptionsToS3) vod.id: " + vod.id) 

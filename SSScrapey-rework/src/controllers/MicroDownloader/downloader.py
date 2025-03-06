@@ -34,8 +34,6 @@ def getConnection():
         passwd  = env_varz.DATABASE_PASSWORD,
         port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        # ssl_mode    = "VERIFY_IDENTITY",
-        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
     )
     return connection
 
@@ -160,8 +158,11 @@ def downloadTwtvVidFAST(vod: Vod, isDebug=False):
     # TODO Temporarily disabling to try it out
     # if isVodTooBig(vod):
     #     return Errorz.TOO_BIG
+
+    #
+    # Format paths and direct where to download file
+    #
     start_time = time.time()
-    # format paths and direct where to download file
     main_script_path = sys.argv[0]
     absolute_path = os.path.realpath(main_script_path)
     app_root = os.path.dirname(absolute_path)

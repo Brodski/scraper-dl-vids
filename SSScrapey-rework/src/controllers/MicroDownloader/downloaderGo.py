@@ -27,7 +27,7 @@ def goDownloadBatch(isDebug=False):
         if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403:
             print("We skipped a download, trying next entry. Error:", dl_meta)
             continue
-        print(f"Finished download # {i} of {download_batch_size}")
+        print(f"Finished download # {i+1} of {download_batch_size}")
         i += 1
     return dl_meta
 

@@ -42,6 +42,7 @@ node_modules/
 venv2/
 venvIns/
 venvFaster/
+venvEmotion/
 **/.env_prod
 
 **/3090/

@@ -12,15 +12,11 @@ print('os.getenv("ENV"):', os.getenv("ENV"))
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_local')
-    # env_vars = dotenv_values('.env_public_prod')
-    # load_dotenv(dotenv_prod_path, override=True)
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
-    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
 elif os.getenv("ENV") == "prod":
     # some prod variables passed from terraform ---> lambda
     env_vars = dotenv_values('.env_public_prod')
-    env_vars['SSL_FILE'] = "/app/scraper-dl-vids/SSScrapey-rework/cacert-2023-08-22.pem"
     load_dotenv(dotenv_prod_path, override=True)
 else:
     print("ENV is None! NEED ENV")
@@ -38,8 +34,8 @@ PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
 PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
 PREP_SULLY_DAYS = env_vars['PREP_SULLY_DAYS']
 
-WHSP_A2T_ASSETS_AUDIO = env_vars['WHSP_A2T_ASSETS_AUDIO']
-WHSP_A2T_ASSETS_CAPTIONS = env_vars['WHSP_A2T_ASSETS_CAPTIONS']
+WHSP_A2T_ASSETS_AUDIO="./assets/audio/"
+WHSP_A2T_ASSETS_CAPTIONS="./assets/captions/"
 WHSP_BATCH_SIZE = env_vars['WHSP_BATCH_SIZE']
 WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
 WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']
@@ -58,5 +54,4 @@ DWN_IS_SHORT_DEV_DL = os.getenv("DWN_IS_SHORT_DEV_DL") if os.getenv("DWN_IS_SHOR
 
 BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
 BUCKET_NAME = env_vars['BUCKET_NAME']
-SSL_FILE = env_vars['SSL_FILE']
 S3_CAPTIONS_KEYBASE = env_vars['S3_CAPTIONS_KEYBASE']

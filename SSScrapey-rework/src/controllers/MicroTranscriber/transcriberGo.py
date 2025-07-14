@@ -28,12 +28,12 @@ def printIntro():
     logger("Total num instances")
     logger("TRANSCRIBER_NUM_INSTANCES", env_varz.TRANSCRIBER_NUM_INSTANCES)
     logger("VODs transcribed per instance:")
-    logger("WHSP_BATCH_SIZE", env_varz.WHSP_BATCH_SIZE)
+    logger("TRANSCRIBER_VODS_PER_INSTANCE", env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
     start_time = time.time()
-    download_batch_size = int(env_varz.WHSP_BATCH_SIZE)
+    download_batch_size = 1 if env_varz.TRANSCRIBER_VODS_PER_INSTANCE is None else int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
     completed_vods_list: List[Vod] = []
     failed_vods_list: List[Vod] = []
     logger("Transcriber start! ")

@@ -7,6 +7,9 @@ variable "docker_image" {
 variable "transcriber_num_instances" {
   type = string
 }
+variable "transcriber_vods_per_instance" {
+  type = string
+}
 variable "transcriber_schedule_cron" {
   type = string
 }

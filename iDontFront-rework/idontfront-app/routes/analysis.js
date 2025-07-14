@@ -22,7 +22,6 @@ async function getAnalysisPage(req, res) {
     }  catch (e) {
         return "failed_helper"
     }
-
     res.render("../views/analysisGPT", {
         "channel": channels[0],
         "vod": vods[0],
@@ -32,6 +31,7 @@ async function getAnalysisPage(req, res) {
         "word_counter": analysisObj.word_counter,
         "bad_words_counter": analysisObj.bad_words_counter,
         "word_counter_txt_all": analysisObj.word_counter_txt_all,
+        "word_counter_100":  analysisObj.word_counter_100
     })
     return
 }

@@ -43,7 +43,8 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
     highest_priority_vod = None #
     resultsArr = []
     connection = getConnection()
-    maxVodz = env_varz.DWN_QUERY_PER_RECENT
+    # maxVodz = env_varz.DWN_QUERY_PER_RECENT
+    maxVodz = env_varz.NUM_VOD_PER_CHANNEL
     try:
         with connection.cursor() as cursor:
             sql = f"""  SELECT 
@@ -299,10 +300,7 @@ def convertVideoToSmallAudio(meta):
 
     last_dot_index = filepath.rfind('.')
     inFile = "file:" + filepath[:last_dot_index] + ".mp3" 
-    if env_varz.DWN_COMPRESS_AUDIO == "True":
-        outFile = "file:" + filepath[:last_dot_index] + ".opus" #opus b/c of the ffmpeg cmd below
-    else:
-        outFile = inFile
+    outFile = "file:" + filepath[:last_dot_index] + ".opus" #opus b/c of the ffmpeg cmd below
     
     # print("  (dlTwtvVid) filepath= "+filepath)
     # print("  (dlTwtvVid) inFile= "+inFile)
@@ -316,9 +314,8 @@ def convertVideoToSmallAudio(meta):
 
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     ffmpeg_command = [ 'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', outFile ]
-    if env_varz.DWN_COMPRESS_AUDIO == "True":
-        print("    (convertVideoToSmallAudio): compressing Audio....")
-        _execSubprocCmd(ffmpeg_command)
+    print("    (convertVideoToSmallAudio): compressing Audio....")
+    _execSubprocCmd(ffmpeg_command)
 
     time_diff = time.time() - start_time    
     print("    (convertVideoToSmallAudio): run time = ", str(time_diff))

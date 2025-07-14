@@ -43,6 +43,7 @@ def create_instance(instance_id, instance_num):
                 'DATABASE': DATABASE,
                 'VAST_API_KEY': VAST_API_KEY,
                 'TRANSCRIBER_NUM_INSTANCES': TRANSCRIBER_NUM_INSTANCES,
+                'TRANSCRIBER_VODS_PER_INSTANCE': TRANSCRIBER_VODS_PER_INSTANCE,
                 'TRANSCRIBER_INSTANCE_CNT': (instance_num + 1),
             },
         "price": None, 

@@ -23,7 +23,7 @@ def getConnection():
     )
     return connection
 
-
+# NOT USED
 def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
@@ -315,6 +315,7 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     print("    (updateChannelWatchStats) Completed update!")
 
 def deleteOldTodos():
+    INTERVAL = 20
     print("    (deleteOldTodos) running...")
     connection = getConnection()
     sql = """
@@ -325,7 +326,7 @@ def deleteOldTodos():
                 SELECT Id
                 FROM Vods
                 WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown' OR TranscriptStatus = 'too_big' OR TranscriptStatus = 'transcribing')
-                AND TodoDate <= CURDATE() - INTERVAL 20 DAY
+                AND TodoDate <= CURDATE() - INTERVAL 10 DAY
             ) AS subquery
         );
 

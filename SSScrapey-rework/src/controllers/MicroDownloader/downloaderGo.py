@@ -9,13 +9,14 @@ def printIntro():
     print("host    =" , env_varz.DATABASE_HOST)
     print("user    =" , env_varz.DATABASE_USERNAME)
     print("Will download this many: ")
-    print("DWN_BATCH_SIZE:", env_varz.DWN_BATCH_SIZE)
+    print("NUM_VOD_PER_CHANNEL:", env_varz.NUM_VOD_PER_CHANNEL)
     print("There is only 1 ecs instance for Downloader. Nothing crazy")
-    # Note: DWN_QUERY_PER_RECENT doesnt have much effect. Looks at X recent vods from the database (todo, completed, audio2text_need, ect) then gets the "todo" one
+    # Note: NUM_VOD_PER_CHANNEL doesnt have much effect. Looks at X recent vods from the database (todo, completed, audio2text_need, ect) then gets the "todo" one
     #       It is so that we dont over prioritize all the vods from the 'top streamers'
 def goDownloadBatch(isDebug=False):
     printIntro()
-    download_batch_size = int(env_varz.DWN_BATCH_SIZE)
+    # download_batch_size = int(env_varz.DWN_BATCH_SIZE)
+    download_batch_size = int(env_varz.NUM_CHANNELS) 
     i = 0
     gaurdrail = 25
     while i < download_batch_size and i < gaurdrail:

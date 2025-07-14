@@ -13,7 +13,8 @@
 # Invoke-RestMethod -Uri "http://localhost:9000/2015-03-31/functions/function/invocations" -Method Post -Body '{}' -ContentType 'application/json'
 
 # FROM public.ecr.aws/lambda/nodejs:16
-FROM public.ecr.aws/lambda/nodejs:18
+# FROM public.ecr.aws/lambda/nodejs:18
+FROM public.ecr.aws/lambda/nodejs:22
 ARG src_img="public/heroimgs/a2t_img (2).webp" 
 
 ###########
@@ -39,7 +40,7 @@ COPY server-scripts/        ${LAMBDA_TASK_ROOT}/server-scripts/
 COPY views/                 ${LAMBDA_TASK_ROOT}/views/ 
 # COPY cacert-2023-08-22.pem    ${LAMBDA_TASK_ROOT}
 # COPY . ${LAMBDA_TASK_ROOT}
-RUN npm ci --production
+RUN npm ci --omit=dev
 ENV IS_LAMBDA="true"
 
 
@@ -50,9 +51,9 @@ ARG LIBS=/usr/lib64
 ARG OUT=/root
 
 RUN ls $LIBS > before.txt
-RUN yum -y update 
-RUN yum -y groupinstall "Development Tools" 
-RUN yum install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
+RUN dnf -y update 
+RUN dnf -y groupinstall "Development Tools" 
+RUN dnf install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
 RUN ls $LIBS > after.txt
 RUN echo 'eat it1'
 RUN npm i canvas@2.11.2 --build-from-source

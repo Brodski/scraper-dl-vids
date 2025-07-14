@@ -43,7 +43,8 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     print ("000000000000                         00000000000000000")
 
     pageSize = 100
-    num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    # num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    num_todo =  int(env_varz.NUM_VOD_PER_CHANNEL)
     loopMax = math.ceil(num_todo / pageSize)
 
     days = int(env_varz.PREP_SULLY_DAYS) # 14
@@ -135,11 +136,11 @@ def addVipList(json_object, isDebug=False):
     if os.getenv("ENV") == "local" or os.getenv("ENV") == "dev":
         VIP_LIST.append(
             {
-                "displayname": "LoLGeranimo",
+                "displayname": "Geranimo",
                 "language": "English",
                 "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-                "twitchurl": "https://www.twitch.tv/lolgeranimo",
-                "url": "lolgeranimo",
+                "twitchurl": "https://www.twitch.tv/geranimo",
+                "url": "geranimo",
                 "rownum": -21,
                 # "viewminutes": 0,
                 # "streamedminutes": 4320,

@@ -1,0 +1,131 @@
+
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+# https://github.com/vdiezel/docker-node-canvas/tree/main
+#
+
+# 
+# docker run  idontfront:official_v2_dev_2024.08.23_24s
+# docker exec -it 35d63e4f79f6 /bin/bash
+#
+# curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+# Invoke-RestMethod -Uri "http://localhost:9000/2015-03-31/functions/function/invocations" -Method Post -Body '{}' -ContentType 'application/json'
+
+# FROM public.ecr.aws/lambda/nodejs:16
+# FROM public.ecr.aws/lambda/nodejs:18
+FROM public.ecr.aws/lambda/nodejs:22
+ARG src_img="public/heroimgs/a2t_img (2).webp" 
+
+###########
+# PROJECT #
+###########
+COPY controllers/           ${LAMBDA_TASK_ROOT}/controllers/ 
+COPY iDontFront-app.js      ${LAMBDA_TASK_ROOT}
+COPY package-lock.json      ${LAMBDA_TASK_ROOT}
+COPY package.json           ${LAMBDA_TASK_ROOT}
+COPY models/                ${LAMBDA_TASK_ROOT}/models/ 
+# Specific file types
+COPY public/*.css           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.png           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.ico           ${LAMBDA_TASK_ROOT}/public/
+COPY public/*.js            ${LAMBDA_TASK_ROOT}/public/
+COPY public/imgs/           ${LAMBDA_TASK_ROOT}/public/imgs/
+COPY public/font-assets/    ${LAMBDA_TASK_ROOT}/public/font-assets/
+COPY ${src_img}             ${LAMBDA_TASK_ROOT}/public/heroimgs/
+
+
+COPY routes/                ${LAMBDA_TASK_ROOT}/routes/ 
+COPY server-scripts/        ${LAMBDA_TASK_ROOT}/server-scripts/
+COPY views/                 ${LAMBDA_TASK_ROOT}/views/ 
+# COPY cacert-2023-08-22.pem    ${LAMBDA_TASK_ROOT}
+# COPY . ${LAMBDA_TASK_ROOT}
+RUN npm ci --omit=dev
+ENV IS_LAMBDA="true"
+
+
+###################################
+# FIXING GRAPHICS LIBS FOR LAMBDA #
+###################################
+ARG LIBS=/usr/lib64
+ARG OUT=/root
+
+RUN ls $LIBS > before.txt
+RUN dnf -y update 
+RUN dnf -y groupinstall "Development Tools" 
+RUN dnf install -y gcc-c++ cairo-devel libjpeg-turbo-devel giflib-devel pango-devel python3
+RUN ls $LIBS > after.txt
+RUN echo 'eat it1'
+RUN npm i canvas@2.11.2 --build-from-source
+RUN echo 'eat it xxxxxxx'
+RUN mkdir lib
+
+RUN cp -L $LIBS/libpixman-1.so.0 lib/ \
+    && cp -L $LIBS/libcairo.so.2 lib/ \
+    && cp -L $LIBS/libpng15.so.15 lib/ \
+    && cp -L $LIBS/libpangocairo-1.0.so.0 lib/ \
+    && cp -L $LIBS/libpango-1.0.so.0 lib/ \
+    && cp -L $LIBS/libgobject-2.0.so.0 lib/ \
+    && cp -L $LIBS/libglib-2.0.so.0 lib/ \
+    && cp -L $LIBS/libfreetype.so.6 lib/ \
+    && cp -L $LIBS/libstdc++.so.6 lib/ \
+    && cp -L $LIBS/libm.so.6 lib/ \
+    && cp -L $LIBS/libgcc_s.so.1 lib/ \
+    && cp -L $LIBS/libpthread.so.0 lib/ \
+    && cp -L $LIBS/libc.so.6 lib/ \
+    && cp -L $LIBS/libfontconfig.so.1 lib/ \
+    && cp -L $LIBS/libEGL.so.1 lib/ \
+    && cp -L $LIBS/libdl.so.2 lib/ \
+    && cp -L $LIBS/libxcb-shm.so.0 lib/ \
+    && cp -L $LIBS/libxcb.so.1 lib/ \
+    && cp -L $LIBS/libxcb-render.so.0 lib/ \
+    && cp -L $LIBS/libXrender.so.1 lib/ \
+    && cp -L $LIBS/libX11.so.6 lib/ \
+    && cp -L $LIBS/libXext.so.6 lib/ \
+    && cp -L $LIBS/libz.so.1 lib/ \
+    && cp -L $LIBS/libGL.so.1 lib/ \
+    && cp -L $LIBS/librt.so.1 lib/ \
+    && cp -L $LIBS/libpangoft2-1.0.so.0 lib/ \
+    && cp -L $LIBS/libthai.so.0 lib/ \
+    && cp -L $LIBS/libfribidi.so.0 lib/ \
+    && cp -L $LIBS/libpcre.so.1 lib/ \
+    && cp -L $LIBS/libffi.so.6 lib/ \
+    && cp -L $LIBS/libbz2.so.1 lib/ \
+    && cp -L $LIBS/libexpat.so.1 lib/ \
+    && cp -L $LIBS/libuuid.so.1 lib/ \
+    && cp -L $LIBS/libGLdispatch.so.0 lib/ \
+    && cp -L $LIBS/libXau.so.6 lib/ \
+    && cp -L $LIBS/libGLX.so.0 lib/ \
+    && cp -L $LIBS/libharfbuzz.so.0 lib/ \
+    && cp -L $LIBS/libgraphite2.so.3 lib/
+
+RUN export LDFLAGS=-Wl,-rpath=/var/task/lib
+ENV LDFLAGS="-Wl,-rpath=/var/task/lib"
+RUN echo $LDFLAGS
+RUN ls -la node_modules/canvas/build/Release/
+RUN cd node_modules/canvas \
+    && npx node-gyp@9.4.1 rebuild
+
+# DEBUG
+RUN pwd
+RUN ls
+RUN objdump -p node_modules/canvas/build/Release/canvas.node | grep RPATH > grepRpath.txt
+RUN readelf -d node_modules/canvas/build/Release/canvas.node | grep 'R.*PATH' > greppath2.txt
+RUN ldd node_modules/canvas/build/Release/canvas.node > ldd.txt
+
+
+RUN mkdir $OUT/dist
+RUN cp -Lra . $OUT/dist
+
+
+# RUN yum install -y git
+
+CMD ["iDontFront-app.lambdaHandler"]
+
+# aws lambda invoke 
+#     --region eu-west-1 
+#     --endpoint http://localhost:8080 
+#     --no-sign-request 
+#     --function-name function 
+#     --cli-binary-format raw-in-base64-out 
+#     --payload '{"a":"b"}' output.txt

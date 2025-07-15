@@ -23,26 +23,6 @@ def logger():
     pass
 logger = Cloudwatch.log
 
-#  pip install webdriver-manager
-#  pip install beautifulsoup4
-#  pip install selenium
-#  pip install yt-dlp
-#  pip install python-dotenv
-#  pip install Flask
-#  pip install langcodes
-#  pip install boto3
-#  pip install mysqlclient==2.2.0
-#  pip install  transformers optimum accelerate
-
-#
-# pip install flash-attn --no-build-isolation 
-# pip install flash-attn --no-build-isolation 
-# pip install flash-attn --no-build-isolation 
-# pip install flash-attn --no-build-isolation 
-#
-#
-
-
 
 def getConnectionDb():
     connection = MySQLdb.connect(
@@ -330,7 +310,6 @@ def deleteAudioS3(vod: Vod):
     if os.getenv("ENV") != "local":
         s3 = boto3.client('s3')
         response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
-    # channels/vod-audio/gamesdonequick/2039503329/Awesome_Games_Done_Quick_2024_-_Bonus_Showrunner_Showcase_-_ft._%40Asuka424_%40ChurchnSarge_-_hotfix-v2039503329.opus
 
 def cleanUpFiles(relative_path: str):
     try:

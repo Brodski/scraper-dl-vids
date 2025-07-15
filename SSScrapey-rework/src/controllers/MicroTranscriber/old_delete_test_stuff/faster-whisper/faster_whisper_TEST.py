@@ -19,7 +19,7 @@ filename = "100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_P
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/kaicenat/2143646862/100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus"
 
 filename = "Calculated-v5057810.opus"
-audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/geranimo/5057810/Calculated-v5057810.opus"
 
 filename = "hasan"
 audio_url = r"https://my-prod-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/hasanabi/2209858294/DREAMCON+CREATOR+LEAGUE+BASKETBALL+w%E2%A7%B8+%40NMPLOL+%5Bv2209858294%5D.mp4"

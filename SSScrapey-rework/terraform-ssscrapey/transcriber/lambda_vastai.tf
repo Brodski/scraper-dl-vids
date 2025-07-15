@@ -39,6 +39,7 @@ resource "aws_lambda_function" "vast_lambda" {
       DATABASE = var.sensitive_info.DATABASE  
       DOCKER = var.docker_image
       TRANSCRIBER_NUM_INSTANCES = var.transcriber_num_instances
+      TRANSCRIBER_VODS_PER_INSTANCE = var.transcriber_vods_per_instance
     }
   }
 }

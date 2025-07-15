@@ -11,9 +11,9 @@ import os
 def printIntro():
     print("IT'S RUNNING! WOOOOOOOOOO")
     print("Will look at these many top channels:")
-    print("  PREP_SELENIUM_NUM_CHANNELS:", env_varz.PREP_SELENIUM_NUM_CHANNELS)
+    print("  NUM_CHANNELS:", env_varz.NUM_CHANNELS)
     print("Will look at this many past broadcasts:")
-    print("  PREP_SELENIUM_NUM_VODS_PER:", env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    print("  NUM_VOD_PER_CHANNEL:", env_varz.NUM_VOD_PER_CHANNEL)
 
 def prepare(isDebug=False):
     printIntro()

@@ -22,9 +22,9 @@ async function getAnalysis(transcript_s3_txt) {
     
     let freqWordPlot = await plot(word_counter, "Frequency of Words")
     let badWordPlot = await plot(bad_words_counter, "Frequency of Swear Words")
-    let wordcloudSvg = await wordcloud(word_counter)
-
-    return {freqWordPlot, badWordPlot, wordcloudSvg, bad_words_counter, word_counter, word_counter_txt_all}
+    let wordcloudSvg = await wordcloud(word_counter.slice(0,100))
+    let word_counter_100 = word_counter.slice(0,100)
+    return {freqWordPlot, badWordPlot, wordcloudSvg, bad_words_counter, word_counter, word_counter_txt_all, word_counter_100}
 }
 
 module.exports = getAnalysis

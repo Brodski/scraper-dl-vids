@@ -6,6 +6,7 @@
         <%- include('partials/head_metaGPT.ejs') %> 
         <link rel="stylesheet" type="text/css" href="/fonts.css">
         <link rel="stylesheet" type="text/css" href="/analysisGPT.css">
+        <script src="/wordcloud_client.js"></script>
 
         
         <% 
@@ -33,6 +34,19 @@
         <meta name="twitter:description" content="<%= meta_description %>">
         <meta name="twitter:image"       content="<%= getOgImageUrl() %>">
         <meta name="twitter:url"         content="<%= meta_url_this_page %>">
+        
+        
+        <!-- Load d3-cloud -->
+        <!-- <script src="https://d3js.org/d3.v4.js"></script> -->
+        <!-- <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>         -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.7/d3.layout.cloud.min.js"></script>        
+        <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const word_counter_100 = <%- JSON.stringify(word_counter_100) %>
+                gobabygo(word_counter_100)
+            });
+        </script>
 
     </head>    
     <body>
@@ -41,7 +55,9 @@
         <!-- VOD HEADER -->
         <%- include('vodHeaderGPT.ejs', {"vod": vod, "channel": channel, "isBtnBackVod": true, "customClass": "vodheader__style1"}) %>
 
+        <!-------------->
         <!-- OVERVIEW -->
+        <!-------------->
         <section class="analytics-overview vodheader__style1">
             <div> 
                 Total words spoken in broadcast: 
@@ -53,19 +69,25 @@
             </div>
         </section>
 
-        <!-- GRPAHS -->
+
         <main class="analytics-page">
+            <!------------------------>
             <!-- Word Cloud Section -->
+            <!------------------------>
             <section class="analytics-graphic-container">
                 <h2>Word Cloud</h2>
                 <div id="word-cloud-placeholder">
-                    <%- wordcloud %>
+                    <div id="word-loader">
+                    </div>
+                    <%- // wordcloud %>
                 </div>
             </section>
 
             <br/>
 
+            <!------------------------->
             <!-- SWEAR Words Section -->
+            <!------------------------->
             <section  class="bar-container analytics-graphic-container">
                 <h2>Swear Words</h2>
                 <div id="swear_data" class="d-inflex">
@@ -78,7 +100,9 @@
 
 
             
+            <!----------------------------------------->
             <!-- Top 100 Most Frequent Words Section -->
+            <!----------------------------------------->
             <section class="bar-container analytics-graphic-container">
                 <h2>Most Frequent Words</h2>
                 <div class="">

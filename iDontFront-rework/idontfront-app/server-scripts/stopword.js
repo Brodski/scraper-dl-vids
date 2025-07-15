@@ -22,7 +22,7 @@ function removeMoreStopWords(txt_arr) {
 }
 
 function stopwordz(oldString) {
-    custom_stopwords = [ "so", "he's", "she's", "it's", "we're", "it"]
+    custom_stopwords = [ "so", "he's", "she's", "it's", "we're", "it", "thats", "in"]
     let newString = removeStopwords(oldString)
     newString = removeStopwords(newString, custom_stopwords)
     

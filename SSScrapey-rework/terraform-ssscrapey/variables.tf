@@ -41,9 +41,12 @@ variable "transcriber_schedule_cron" {
 variable "transcriber_num_instances" {
   type = string
 }
+variable "transcriber_vods_per_instance" {
+  type = string
+}
 #############################
 # Downloader  num instances #
 #############################
-variable "downloader_task_count" {
+variable "downloader_aws_bs_id" {
   type = number
 }

@@ -23,7 +23,7 @@ def getConnection():
     )
     return connection
 
-
+# NOT USED
 def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
@@ -111,7 +111,7 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         # I think is code does nothing or bugged
         # vip_tuple = ()
         # if (os.getenv("ENV") != "prod") and isDebug:
-        #     vip_tuple = ("lolgeranimo", "nmplol")
+        #     vip_tuple = ("geranimo", "nmplol")
         # else:
         #     vip_tuple = ()
         # vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
@@ -228,7 +228,8 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     print("000000000     updateVodsDb    000000000")
     print("000000000000000000000000000000000000000")
     connection = getConnection()
-    max_vods = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    # max_vods = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    max_vods = int(env_varz.NUM_VOD_PER_CHANNEL)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 
@@ -263,7 +264,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                     print(f"Error occurred (updateVodsDb) a: {e}")
                     connection.rollback()
 
-            # Update the priority of vods. Recall priority essentially is the release date. eg, top-left to bottom-right https://www.twitch.tv/lolgeranimo/videos
+            # Update the priority of vods. Recall priority essentially is the release date. eg, top-left to bottom-right https://www.twitch.tv/geranimo/videos
             if previous_existing_ids:
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
@@ -315,6 +316,7 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     print("    (updateChannelWatchStats) Completed update!")
 
 def deleteOldTodos():
+    INTERVAL = 20
     print("    (deleteOldTodos) running...")
     connection = getConnection()
     sql = """
@@ -325,7 +327,7 @@ def deleteOldTodos():
                 SELECT Id
                 FROM Vods
                 WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown' OR TranscriptStatus = 'too_big' OR TranscriptStatus = 'transcribing')
-                AND TodoDate <= CURDATE() - INTERVAL 20 DAY
+                AND TodoDate <= CURDATE() - INTERVAL 10 DAY
             ) AS subquery
         );
 

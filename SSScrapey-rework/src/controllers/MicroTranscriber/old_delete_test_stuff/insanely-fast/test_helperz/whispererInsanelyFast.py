@@ -44,16 +44,16 @@ from Writer import Writer
 ########################################################
 
 filename = "Calculated-v5057810.opus"
-audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/geranimo/5057810/Calculated-v5057810.opus"
 
 filename = "Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
-audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/2028592547/Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/geranimo/2028592547/Challenger_Climb_Season_14_Begins_Adc_POV-v2028592547.opus"
 
 filename = "The_Geraniproject_I_Love_You_Guys-v28138895.opus"
-audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/lolgeranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
+audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.us-east-1.amazonaws.com/channels/vod-audio/geranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus"
 
 # filename = "Calculated-v5057810.opus"
-# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/lolgeranimo/5057810/Calculated-v5057810.opus"
+# audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/geranimo/5057810/Calculated-v5057810.opus"
 
 filename = "GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"
 audio_url = "https://my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket.s3.amazonaws.com/channels/vod-audio/auronplay/2060795159/GUSTABO_GARCIA_-_SpainRp_dia_18-v2060795159.opus"

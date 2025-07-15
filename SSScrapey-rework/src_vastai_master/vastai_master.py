@@ -154,8 +154,6 @@ def try_again(id, instance_num):
     vast_api.destroy_instance(id)
     blacklist_ids.append(id)
     print("   ! (try_again) Try again")
-    print("   ! (try_again) Try again")
-    print("   ! (try_again) Try again")
     # create a new instance b/c the current one is too shit
     find_create_confirm_instance(0, instance_num)
 

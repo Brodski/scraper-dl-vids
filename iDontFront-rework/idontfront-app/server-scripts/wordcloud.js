@@ -19,7 +19,7 @@ async function loadModule(everywordz_counter) {
       process.env.PATH = process.env.PATH + ":" + process.env.LAMBDA_TASK_ROOT + "/lib"
     } 
     
-
+    // https://observablehq.com/@d3/word-cloud
     function WordCloud(everywordz_counter, { 
         size = group => group.length + 0.1, // Given a grouping of words, returns the size factor for that word
         word = d => d,                // Given an item of the data array, returns the word

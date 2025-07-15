@@ -88,9 +88,10 @@ def isPersonOnline(soup: BeautifulSoup):
     print("  (isPersonOnline) isOnline: ", isOnline)
     return isOnline
 
-def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"LoLGeranimo", "name_id":"lolgeranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
-    vodsMax = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
+    # channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
+    channelMax = int(env_varz.NUM_CHANNELS)
+    vodsMax = int(env_varz.NUM_VOD_PER_CHANNEL)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []
@@ -102,7 +103,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     #     # return scrapped_channels
 
     #     # new debug
-    #     # return jd_onlymusic, nmplol, lolgeranimo
+    #     # return jd_onlymusic, nmplol, geranimo
     #     return channels[:channelMax]
 
     print('A running. scrap4vid.........')

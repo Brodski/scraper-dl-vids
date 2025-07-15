@@ -73,7 +73,7 @@ if (process.env.IS_LAMBDA == "true") {
     }
 }
 else {
-    const PORT = process.env.PORT || 3333;
+    const PORT = process.env.PORT || 3334;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 

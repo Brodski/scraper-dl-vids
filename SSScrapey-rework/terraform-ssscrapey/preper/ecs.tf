@@ -59,24 +59,3 @@ resource "aws_ecs_task_definition" "preper_task" {
     }
   ])
 }
-
-# TO CREATE MANY OF THESE 
-# TO CREATE MANY OF THESE 
-# TO CREATE MANY OF THESE 
-# TO CREATE MANY OF THESE 
-#         desired_count   = 2
-#         desired_count   = 2
-#         desired_count   = 2
-# resource "aws_ecs_service" "my_service" {
-#   name            = "my_service"
-#   cluster         = aws_ecs_cluster.my_cluster.id
-#   task_definition = aws_ecs_task_definition.my_task.arn
-#   desired_count   = 2
-#   launch_type     = "FARGATE"
-
-#   network_configuration {
-#     subnets         = ["subnet-abcde123"]  # Replace with your subnet IDs
-#     security_groups = ["sg-0123456789abcdef0"]  # Replace with your security group IDs
-#     assign_public_ip = true
-#   }
-# }

@@ -9,16 +9,12 @@
 #                                   #
 #####################################
 
-import urllib
-
 import controllers.MicroDownloader.downloader as downloader
 import controllers.MicroTranscriber.transcriberGo as audio2text
 import controllers.MicroPreper.preperGo as preperGo
 import controllers.MicroDownloader.downloaderGo as downloadGo
-import mocks.initHrefsData
 import datetime
 import os
-import json
 from models.ScrappedChannel import ScrappedChannel
 from models.Vod import Vod
 from typing import List
@@ -62,6 +58,6 @@ def kickDownloader(isDebug=False):
 #####################################################
 
 def kickWhisperer(isDebug=False):
-    audio2text.goTranscribeBatch(isDebug)
+    audio2text.goTranscribeBatch(isDebug, args)
     return "Woooo! done!"
 

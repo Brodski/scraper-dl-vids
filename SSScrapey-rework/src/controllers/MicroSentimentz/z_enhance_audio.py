@@ -89,11 +89,10 @@ def time_diff_print(start):
     end = time.perf_counter()
     return f"{end - start:.4f}"
 
-def chunks_fb_denoiser():
+def chunks_fb_denoiser(audio_before):
     start = time.perf_counter()
 
     # Setup names
-    audio_before = "outfileFULL.opus"
     # name, extension = os.path.splitext(audio_before)
     audio_after = audio_before.rsplit('.', 1)[0] + '_enhanced.wav'
 
@@ -123,4 +122,6 @@ def chunks_fb_denoiser():
     return audio_enhanced_abs_path
 
 
-chunks_fb_denoiser()
+filename = "_egirl_hq.wav"
+filename = "_gura.wav"
+chunks_fb_denoiser(filename)

@@ -132,52 +132,21 @@ def instantiateJsonToClassObj(json_object):
     return relevant_list
 
 def addVipList(json_object, isDebug=False):
+    import controllers.MicroPreper.seleniumPreper as seleniumPreper
+    from controllers.MicroPreper.vip_list import vip_list, vip_list_debug
+
     VIP_LIST = []
+
     if os.getenv("ENV") == "local" or os.getenv("ENV") == "dev":
-        VIP_LIST.append(
-            {
-                "displayname": "Geranimo",
-                "language": "English",
-                "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-                "twitchurl": "https://www.twitch.tv/geranimo",
-                "url": "geranimo",
-                "rownum": -21,
-                # "viewminutes": 0,
-                # "streamedminutes": 4320,
-                # "maxviewers": 215,
-                # "avgviewers": 142,
-                # "followers": 189444,
-                # "followersgained": -128,
-                # "partner": True,
-                # "affiliate": False,
-                # "mature": True,
-                # "previousviewminutes": 0,
-                # "previousstreamedminutes":  3520,
-                # "previousmaxviewers": 201,
-                # "previousavgviewers":  145,
-                # "previousfollowergain": -110
-            }
-        )
+        VIP_LIST = VIP_LIST + [vip_list]
+
     if os.getenv("ENV") == "local" and isDebug:
-        VIP_LIST.append({
-            "displayname": "Nmplol",
-            "language": "English",
-            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/e4d9bf96-311d-487a-b5eb-9f9a94e0f795-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-            "twitchurl": "https://www.twitch.tv/nmplol",
-            "url": "nmplol",
-            "rownum": -1
-        })
-        VIP_LIST.append({
-            "displayname": "台北建東",
-            "language": "Chinese",
-            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-            "twitchurl": "https://www.twitch.tv/jd_onlymusic",
-            "url": "jd_onlymusic",
-            "rownum": -3
-        })
+        VIP_LIST = VIP_LIST + vip_list_debug  
+
     for vip in VIP_LIST:
         json_object['data'].insert(0, vip)
     return json_object
+
     #     scrapped_channel = ScrappedChannel(
     #         displayname=vip.get("displayname"),
     #         language=vip.get("language"),

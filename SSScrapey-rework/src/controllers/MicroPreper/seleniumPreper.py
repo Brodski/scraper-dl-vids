@@ -133,7 +133,32 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
                 browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
-                browser.execute_script("""document.querySelector("[id='root'] main .simplebar-scroll-content").scroll(0, 10000)""")
+                # browser.execute_script("""document.querySelector("[id='root'] main .simplebar-scroll-content").scroll(0, 10000)""")
+                browser.execute_script("""
+                    function getAllScrollableElements(root = document.body) {
+                        const scrollables = [];
+                        const elements = root.getElementsByTagName("*");
+
+                        for (let el of elements) {
+                            const style = window.getComputedStyle(el);
+                            const overflowY = style.overflowY;
+                            const isScrollableY = overflowY === 'auto' || overflowY === 'scroll';
+                            const canScrollY = el.scrollHeight > el.clientHeight;
+
+                            if (isScrollableY && canScrollY) {
+                            scrollables.push(el);
+                            }
+                        }
+
+                        return scrollables;
+                    }
+
+                    const scrollables = getAllScrollableElements();
+
+                    scrollables.forEach(el => {
+                        el.scrollTop = el.scrollHeight;
+                    });
+                """)
                 time.sleep(SLEEP_SCROLL)
             
             # Scrape <a href> via BeautifulSoup

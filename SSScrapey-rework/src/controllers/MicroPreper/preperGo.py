@@ -17,9 +17,11 @@ def printIntro():
 
 def prepare(isDebug=False):
     printIntro()
+    
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
+
     # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
 
@@ -27,22 +29,6 @@ def prepare(isDebug=False):
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
     updateShit(scrapped_channels)
-    # try:
-    #     databasePreper.addNewChannelToDb(scrapped_channels)
-    #     print(" ===> hmm, wtf??")
-    #     all_channels_minus_scrapped: List[ScrappedChannel] = databasePreper.getNewOldChannelsFromDB(scrapped_channels)
-    #     databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels) # This gaurentees there will be no overlap.
-    #     # databasePreper.addRankingsForTodayDb(scrapped_channels) # Optional
-    #     databasePreper.updateChannelRankingLazily(scrapped_channels)
-    #     databasePreper.updateVodsDb(scrapped_channels)
-    #     databasePreper.updateChannelWatchStats(all_channels_minus_scrapped + scrapped_channels)
-
-    #     databasePreper.deleteOldTodos()
-    # except Exception as e:
-    #     print(f"An error occurred: {str(e)}")
-    #     print(traceback.format_exc())
-    # print("Finished step 1 Preper-Service")
-    # return "Finished step 1 Preper-Service"
 
 def doWithCallback(callback, counter):
     if counter > 3:

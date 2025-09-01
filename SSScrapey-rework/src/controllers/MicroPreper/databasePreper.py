@@ -128,10 +128,18 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
     cnt = -1
     for chan in all_channels_plus_scrapped:
         cnt = cnt + 1
-        url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
+        if env_varz.PREP_SULLY_DAYS == "7":
+            url = f'https://sullygnome.com/channel/{chan.name_id}'
+        else:
+            url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
         print(f"-------  {cnt} (sully data) --------")
         print(url)
-        response = requests.get(url)
+        headers = {
+            "accept-language": "en-US,en;q=0.9",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+        }
+
+        response = requests.get(url, headers=headers)
         if response.status_code == 200:
             text_data = response.content.decode('utf-8') 
             if response.url == "https://sullygnome.com/": # redirected

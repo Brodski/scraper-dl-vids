@@ -14,7 +14,7 @@ n_env/
 
 **/__pycache__/
 *.env
-*.vscode
+# *.vscode
 node_modules/
 *mp4.part*
 *mp4.ytdl*

@@ -132,7 +132,7 @@ class DatabaseSingleton {
                     FROM 
                         Vods
                     WHERE 
-                        StreamDate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+                        StreamDate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
                     GROUP BY 
                         ChannelNameId
                 ) v 

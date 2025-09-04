@@ -61,19 +61,11 @@ echo "docker tag idontfront:$tag_name 144262561154.dkr.ecr.us-east-1.amazonaws.c
 echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 echo "cd '../terraform-idontfront'"
 echo "terraform apply --var-file='vars_${TF_ENVIRONMENT}.tfvars'  -var 'docker_tag_name=$tag_name' --auto-approve"
+echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 
 
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com 
-
 docker tag "idontfront:$tag_name" "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
-echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 docker push "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 
 ###################
@@ -81,9 +73,3 @@ docker push "144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 ###################
 cd "../terraform-idontfront"
 terraform apply --var-file="vars_${TF_ENVIRONMENT}.tfvars"  -var "docker_tag_name=$tag_name" --auto-approve
-
-
-
-#
-#
-# $ ./deploy.ps1 -env "dev"

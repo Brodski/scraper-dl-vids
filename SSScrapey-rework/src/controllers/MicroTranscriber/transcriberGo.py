@@ -21,6 +21,7 @@ logger = Cloudwatch.log
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
+
 def printIntro():
     logger("Currently running the nth instance in vast.ai:")
     logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
@@ -30,8 +31,17 @@ def printIntro():
     logger("VODs transcribed per instance:")
     logger("TRANSCRIBER_VODS_PER_INSTANCE", env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
 
-def goTranscribeBatch(isDebug=False):
+def goTranscribeBatch(isDebug=False, args=None):
     printIntro()
+
+    if args:
+        print(args.query_todo)
+        print(args.number)
+        if args.query_todo:
+            vods_list: List[Vod] = transcriber.getTodoFromDb()
+            
+            pretty_print_query_vods(vods_list)
+    return
     start_time = time.time()
     download_batch_size = 1 if env_varz.TRANSCRIBER_VODS_PER_INSTANCE is None else int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
     completed_vods_list: List[Vod] = []
@@ -42,8 +52,10 @@ def goTranscribeBatch(isDebug=False):
         logger("===========================================")
         logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         logger("===========================================")
+
         result: Dict[Vod, bool] = transcribe(isDebug)
         vod = result["vod"]
+
         logger(f"   (goTranscribeBatch) Finished Index {i}")
         logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
         logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
@@ -111,3 +123,39 @@ def getDebugVod(vod: Vod):
     Id, ChannelNameId, Title, Duration, DurationString,ViewCount,WebpageUrl,StreamDate, TranscriptStatus, Priority, Thumbnail,TodoDate,S3Audio,ChanCurrentRank,Language  = tuple
     vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language)
     return vod
+
+
+
+
+
+def truncate(text, max_len):
+    return text if len(text) <= max_len else text[:max_len - 1] + "…"
+
+def pretty_print_query_vods(vods_list):
+    import shutil
+
+    # Fixed/default width
+    col_channel = 15
+    col_id = 10
+    col_status = 12
+
+    term_width = shutil.get_terminal_size((120, 20)).columns 
+    col_title = term_width - (col_channel + col_id + col_status + 13)  # 9 = padding & separators (3 x Columns)
+    
+    # print("term_width", term_width)
+    # print("col_channel", col_channel)
+    # print("col_id", col_id)
+    # print("col_status", col_status)
+    # print("!col_title", col_title)
+
+    # Header
+    print(f"{'Channel':<{col_channel}} | {'VOD ID':<{col_id}} | {'Title':<{col_title}} | {'Status':<{col_status}}")
+    print("-" * term_width)
+
+    for vod in vods_list:
+        ch = truncate(vod.channels_name_id, col_channel)
+        vid = truncate(str(vod.id), col_id)
+        title = truncate(vod.title, col_title)
+        status = truncate(vod.transcript_status, col_status)
+
+        print(f"{ch:<{col_channel}} | {vid:<{col_id}} | {title:<{col_title}} | {status:<{col_status}}")

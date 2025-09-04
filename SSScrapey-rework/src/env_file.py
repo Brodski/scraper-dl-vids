@@ -9,13 +9,14 @@ print('os.getenv("ENV"):', os.getenv("ENV"))
 print('os.getenv("ENV"):', os.getenv("ENV"))
 print('os.getenv("ENV"):', os.getenv("ENV"))
 
+# NOTE: 
+# some prod variables passed from terraform ---> lambda
 dotenv_prod_path ="./env_prod"
 if os.getenv("ENV") == "local":
     env_vars = dotenv_values('.env_public_local')
 elif os.getenv("ENV") == "dev":
     env_vars = dotenv_values('.env_public_dev')
 elif os.getenv("ENV") == "prod":
-    # some prod variables passed from terraform ---> lambda
     env_vars = dotenv_values('.env_public_prod')
     load_dotenv(dotenv_prod_path, override=True)
 else:
@@ -25,9 +26,11 @@ else:
 
 # DWN_BATCH_SIZE = env_vars['DWN_BATCH_SIZE']
 DWN_IS_SHORT_DEV_DL = env_vars['DWN_IS_SHORT_DEV_DL']
-DWN_URL_MINI_IMAGE = env_vars['DWN_URL_MINI_IMAGE']
+DEBUG_LEVEL = env_vars['DEBUG_LEVEL']
 
 PREP_SELENIUM_IS_HEADLESS = env_vars['PREP_SELENIUM_IS_HEADLESS']
+IS_VIP_LIST = env_vars['IS_VIP_LIST']
+IS_VIP_LIST_DEBUG = env_vars['IS_VIP_LIST_DEBUG']
 # PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
 # PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
 PREP_SULLY_DAYS = env_vars['PREP_SULLY_DAYS']

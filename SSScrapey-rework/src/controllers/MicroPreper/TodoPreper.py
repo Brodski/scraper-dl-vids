@@ -8,6 +8,13 @@ import json
 import os
 import requests
 import time
+import logging
+from utils.logging_config import LoggerConfig
+
+def logger():
+    pass
+
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 
 
@@ -38,9 +45,9 @@ import time
 
 
 def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "avgviewers": 53611, "displayname": "xQc", ...
-    print ("000000000000                         00000000000000000")
-    print ("000000000000  getTopChannelsSully    00000000000000000")
-    print ("000000000000                         00000000000000000")
+    logger.info("000000000000                         00000000000000000")
+    logger.info("000000000000  getTopChannelsSully    00000000000000000")
+    logger.info("000000000000                         00000000000000000")
 
     pageSize = 100
     # num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
@@ -59,8 +66,8 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
         startAt = (i * pageSize) 
         # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
-        print ("    (getTopChannelsSully) ----------------------")
-        print ("    " + url)
+        logger.info("----------------------")
+        logger.info("    " + url)
         response = requests.get(url, headers=headers)
         if response.status_code >= 200 and response.status_code < 300:
             res_json = response.json()
@@ -69,43 +76,43 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
                 cnt = 0
                 accumilator.extend(data)
                 for obj in data:
-                    print("    (getTopChannelsSully) " + str(i) + " @ "+ str(cnt) + " --- " + str(obj.get('url')))
+                    logger.debug(str(i) + " @ "+ str(cnt) + " --- " + str(obj.get('url')))
                     cnt= cnt + 1
-                    # print('    ' + str(obj))
-                    # print('    (getTopChannelsSully) url=' + str(obj.get('url')))
-                    # print('    (getTopChannelsSully) displayname=' + str(obj.get('displayname')))
-                    # print('    (getTopChannelsSully) language=' + str(obj.get('language')))
-                    # print('    (getTopChannelsSully) viewminutes=' + str(obj.get('viewminutes')))
-                    # print('    (getTopChannelsSully) logo=' + str(obj.get('logo')))
-                    # print('    (getTopChannelsSully) current_rank=' + str(obj.get('current_rank')))
-                    # print('     (getTopChannelsSully) viewminutes        ', obj.get('viewminutes'))
-                    # print('     (getTopChannelsSully) streamedminutes    ', obj.get('streamedminutes'))
-                    # print('     (getTopChannelsSully) maxviewers         ', obj.get('maxviewers'))
-                    # print('     (getTopChannelsSully) avgviewers         ', obj.get('avgviewers'))
-                    # print('     (getTopChannelsSully) rownum             ', obj.get('rownum'))
-                    # print('     (getTopChannelsSully) followers          ', obj.get('followers'))
-                    # print('     (getTopChannelsSully) followersgained    ', obj.get('followersgained'))
-                    # print('     (getTopChannelsSully) partner            ', obj.get('partner'))
-                    # print('     (getTopChannelsSully) affiliate          ', obj.get('affiliate'))
-                    # print('     (getTopChannelsSully) mature             ', obj.get('mature'))
-                    # print('     (getTopChannelsSully) language           ', obj.get('language'))
-                    # print('     (getTopChannelsSully) previousviewminutes     ', obj.get('previousviewminutes'))
-                    # print('     (getTopChannelsSully) previousstreamedminutes ', obj.get('previousstreamedminutes'))
-                    # print('     (getTopChannelsSully) previousmaxviewers      ', obj.get('previousmaxviewers'))
-                    # print('     (getTopChannelsSully) previousavgviewers      ', obj.get('previousavgviewers'))
-                    # print('     (getTopChannelsSully) previousfollowergain    ', obj.get('previousfollowergain'))
-                    # print('     (getTopChannelsSully) days    ', days)
+                    # logger.debug('    ' + str(obj))
+                    # logger.debug('    (getTopChannelsSully) url=' + str(obj.get('url')))
+                    # logger.debug('    (getTopChannelsSully) displayname=' + str(obj.get('displayname')))
+                    # logger.debug('    (getTopChannelsSully) language=' + str(obj.get('language')))
+                    # logger.debug('    (getTopChannelsSully) viewminutes=' + str(obj.get('viewminutes')))
+                    # logger.debug('    (getTopChannelsSully) logo=' + str(obj.get('logo')))
+                    # logger.debug('    (getTopChannelsSully) current_rank=' + str(obj.get('current_rank')))
+                    # logger.debug('     (getTopChannelsSully) viewminutes        ', obj.get('viewminutes'))
+                    # logger.debug('     (getTopChannelsSully) streamedminutes    ', obj.get('streamedminutes'))
+                    # logger.debug('     (getTopChannelsSully) maxviewers         ', obj.get('maxviewers'))
+                    # logger.debug('     (getTopChannelsSully) avgviewers         ', obj.get('avgviewers'))
+                    # logger.debug('     (getTopChannelsSully) rownum             ', obj.get('rownum'))
+                    # logger.debug('     (getTopChannelsSully) followers          ', obj.get('followers'))
+                    # logger.debug('     (getTopChannelsSully) followersgained    ', obj.get('followersgained'))
+                    # logger.debug('     (getTopChannelsSully) partner            ', obj.get('partner'))
+                    # logger.debug('     (getTopChannelsSully) affiliate          ', obj.get('affiliate'))
+                    # logger.debug('     (getTopChannelsSully) mature             ', obj.get('mature'))
+                    # logger.debug('     (getTopChannelsSully) language           ', obj.get('language'))
+                    # logger.debug('     (getTopChannelsSully) previousviewminutes     ', obj.get('previousviewminutes'))
+                    # logger.debug('     (getTopChannelsSully) previousstreamedminutes ', obj.get('previousstreamedminutes'))
+                    # logger.debug('     (getTopChannelsSully) previousmaxviewers      ', obj.get('previousmaxviewers'))
+                    # logger.debug('     (getTopChannelsSully) previousavgviewers      ', obj.get('previousavgviewers'))
+                    # logger.debug('     (getTopChannelsSully) previousfollowergain    ', obj.get('previousfollowergain'))
+                    # logger.debug('     (getTopChannelsSully) days    ', days)
         else:
-            print(f'Error: {response.status_code}')
-    print ("    (getTopChannelsSully) DONE!")
-    # print (complete_json)
+            logger.debug(f'Error: {response.status_code}')
+    logger.info("DONE!")
+    # logger.debug(complete_json)
     return complete_json
 
 
 def instantiateJsonToClassObj(json_object):
     relevant_list: List[ScrappedChannel] = []
     for channel in json_object['data']: 
-        # print(channel)
+        # logger.debug(channel)
         scrapped_channel = ScrappedChannel(
             displayname = channel.get('displayname'), 
             language = channel.get('language'), 
@@ -132,52 +139,21 @@ def instantiateJsonToClassObj(json_object):
     return relevant_list
 
 def addVipList(json_object, isDebug=False):
+    import controllers.MicroPreper.seleniumPreper as seleniumPreper
+    from controllers.MicroPreper.vip_list import vip_list, vip_list_debug
+
     VIP_LIST = []
+
     if os.getenv("ENV") == "local" or os.getenv("ENV") == "dev":
-        VIP_LIST.append(
-            {
-                "displayname": "Geranimo",
-                "language": "English",
-                "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-                "twitchurl": "https://www.twitch.tv/geranimo",
-                "url": "geranimo",
-                "rownum": -21,
-                # "viewminutes": 0,
-                # "streamedminutes": 4320,
-                # "maxviewers": 215,
-                # "avgviewers": 142,
-                # "followers": 189444,
-                # "followersgained": -128,
-                # "partner": True,
-                # "affiliate": False,
-                # "mature": True,
-                # "previousviewminutes": 0,
-                # "previousstreamedminutes":  3520,
-                # "previousmaxviewers": 201,
-                # "previousavgviewers":  145,
-                # "previousfollowergain": -110
-            }
-        )
+        VIP_LIST = VIP_LIST + [vip_list]
+
     if os.getenv("ENV") == "local" and isDebug:
-        VIP_LIST.append({
-            "displayname": "Nmplol",
-            "language": "English",
-            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/e4d9bf96-311d-487a-b5eb-9f9a94e0f795-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-            "twitchurl": "https://www.twitch.tv/nmplol",
-            "url": "nmplol",
-            "rownum": -1
-        })
-        VIP_LIST.append({
-            "displayname": "台北建東",
-            "language": "Chinese",
-            "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/14b5d29d-d934-485d-aa1d-12d44e05f77e-profile_image-70x70.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-            "twitchurl": "https://www.twitch.tv/jd_onlymusic",
-            "url": "jd_onlymusic",
-            "rownum": -3
-        })
+        VIP_LIST = VIP_LIST + vip_list_debug  
+
     for vip in VIP_LIST:
         json_object['data'].insert(0, vip)
     return json_object
+
     #     scrapped_channel = ScrappedChannel(
     #         displayname=vip.get("displayname"),
     #         language=vip.get("language"),

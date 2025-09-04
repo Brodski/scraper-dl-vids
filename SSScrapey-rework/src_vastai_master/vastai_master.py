@@ -87,7 +87,6 @@ def find_create_confirm_instance(rerun_count, instance_num):
     # print_extra.printAsTable(goodOffers)
 
     instance_first = goodOffers[0]
-    # if create_auto or os.environ.get("IS_VASTAI_CREATE_INSTANCE") == "true": # env set in lambda_vastai.tf
     # exit(0)
     try:
         id_create = instance_first.get("id")

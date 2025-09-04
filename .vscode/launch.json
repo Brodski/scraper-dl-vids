@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Preper :)",
+            "name": "Preper",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickPreper.py",
@@ -16,6 +16,20 @@
                 "like",
                 "--file",
                 "myEmail_5.conf"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        
+        {
+            "name": "Downloader",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/kickDownloader.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                // "--quick-dl",
             ],
             "console": "integratedTerminal",
             "justMyCode": true

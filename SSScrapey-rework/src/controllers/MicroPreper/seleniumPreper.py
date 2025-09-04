@@ -16,6 +16,13 @@ import mocks.initHrefsData
 import os
 import re
 import time
+import logging
+from utils.logging_config import LoggerConfig
+
+def logger():
+    pass
+
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 ###
 # Assembly AI multi lingual speech recognition
@@ -72,20 +79,20 @@ def isPersonOnline(soup: BeautifulSoup):
     offline_ele = soup.select(".channel-root__player--offline")
     player_ele = soup.select(".channel-root__player ")
 
-    # print("  (isPersonOnline) online_ele_1 length: ", len(online_ele_1))
-    # print("  (isPersonOnline) online_ele_2 length: ", len(online_ele_2))
-    # print("  (isPersonOnline) online_ele_3_profile length: ", len(online_ele_3_profile))
-    # print("  (isPersonOnline) offline_ele length: ", len(offline_ele))
-    # print("  (isPersonOnline) player_ele length (should be 1): ", len(player_ele))
+    # logger.debug("  (isPersonOnline) online_ele_1 length: " +  len(online_ele_1))
+    # logger.debug("  (isPersonOnline) online_ele_2 length: " +  len(online_ele_2))
+    # logger.debug("  (isPersonOnline) online_ele_3_profile length: " +  len(online_ele_3_profile))
+    # logger.debug("  (isPersonOnline) offline_ele length: " +  len(offline_ele))
+    # logger.debug("  (isPersonOnline) player_ele length (should be 1): " +  len(player_ele))
 
     player_ele = soup.select(".channel-root__player ")
     if player_ele[0] and player_ele[0].get_text(strip=True).lower().startswith("live"):
-        print("  (isPersonOnline) YES!!!!!!")
+        logger.debug("  (isPersonOnline) YES!!!!!!")
         isOnline = True
     if len(online_ele_1) + len(online_ele_2) + len(online_ele_3_profile) > 0:
-        print("  (isPersonOnline) YES!!!!!!2")
+        logger.debug("  (isPersonOnline) YES!!!!!!2")
         isOnline = True
-    print("  (isPersonOnline) isOnline: ", isOnline)
+    logger.debug("  (isPersonOnline) isOnline: " +  str(isOnline))
     return isOnline
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
@@ -99,14 +106,14 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     browser = None
     # if isDebug:
     #     # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-    #     # print(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
+    #     # logger.debug(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
     #     # return scrapped_channels
 
     #     # new debug
     #     # return jd_onlymusic, nmplol, geranimo
     #     return channels[:channelMax]
 
-    print('A running. scrap4vid.........')
+    logger.debug('A running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     firefox_profile = webdriver.FirefoxProfile()
     firefox_profile.set_preference("media.block-play-until-visible", False)
@@ -116,9 +123,9 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
 
     try:
-        print('B running. scrap4vid.........')
+        logger.debug('B running. scrap4vid.........')
         browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
-        print(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
+        logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:
             if cnt >= channelMax:
                 break
@@ -128,12 +135,11 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             idx_print = url.find('?filter')
             print ("--------------------")
             print (str(cnt) + ": " + browser.title)
-            print(url[:idx_print])
+            logger.debug(url[:idx_print])
             time.sleep(4)
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
                 browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
-                # browser.execute_script("""document.querySelector("[id='root'] main .simplebar-scroll-content").scroll(0, 10000)""")
                 browser.execute_script("""
                     function getAllScrollableElements(root = document.body) {
                         const scrollables = [];
@@ -172,28 +178,15 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                 match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
                 if match and tag['href'] not in allHrefs:
                     allHrefs.append(match.group(1)) # /videos/1983739230
-                    # print("ADDING NEW ELE!", allHrefs[-1])
 
-                ## OLD BELOW ##
-                #
-                # # Skip very recent broadcasts, b/c they might currently be streaming (incomplete vod)
-                # # TODO bugs may occur for marathon vids (_isVidFinished)
-                # inner_text = tag.get_text(separator="|").lower()
-                # if ( not (("hours" in inner_text) or ("minutes" in inner_text) or ("today" in inner_text))):
-                #     match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
-                #     if match and tag['href'] not in allHrefs:
-                #         allHrefs.append(match.group(1)) # /videos/1983739230
-                # else:
-                #     # print("skipping a['href'] @ text=" + tag['href'])
-                #     pass
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
-            print(f"Got {len(channel.links)} vids for {browser.title}")
+            logger.debug(f"Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
-        print("An error occurred :(")
-        print(f"{e}")
+        logger.error("An error occurred :(")
+        logger.error(f"{e}")
         stack_trace = traceback.format_exc()
-        print(stack_trace)
+        logger.error(stack_trace)
     finally:
         # Ensure the browser is closed even if an error occurs
         if browser:

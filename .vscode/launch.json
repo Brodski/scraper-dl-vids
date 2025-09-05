@@ -19,13 +19,25 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
-        },
-        
+        },        
         {
             "name": "Downloader",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickDownloader.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                // "--quick-dl",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },        
+        {
+            "name": "Transcriber",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/kickTranscriber.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
             "cwd": "${workspaceFolder}/SSScrapey-rework/src",
             "args": [

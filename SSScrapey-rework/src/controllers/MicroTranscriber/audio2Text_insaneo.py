@@ -10,10 +10,13 @@ import datetime
 import json
 import os
 import env_file as env_varz
+import logging
+from utils.logging_config import LoggerConfig
 
+# logger = Cloudwatch.log
 def logger():
     pass
-logger = Cloudwatch.log
+logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
 
 def doInsaneWhisperStuff(vod: Vod, relative_path: str, isDebug=False):
     print("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
@@ -71,7 +74,7 @@ def doInsaneWhisperStuff(vod: Vod, relative_path: str, isDebug=False):
             generate_kwargs = generate_kwargs
         )
     
-    logger("outputs length:", len(outputs))
+    logger.debug("outputs length:" + str(len(outputs)))
     # logger(outputs)
     logger()
     logger()

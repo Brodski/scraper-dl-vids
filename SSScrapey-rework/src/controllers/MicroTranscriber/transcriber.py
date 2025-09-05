@@ -17,11 +17,14 @@ import time
 # import torch
 import urllib.parse
 import urllib.request
-# from controllers.MicroTranscriber.Writer import Writer
+import logging
+from utils.logging_config import LoggerConfig
 
+# logger = Cloudwatch.log
 def logger():
     pass
-logger = Cloudwatch.log
+logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+
 
 
 def getConnectionDb():
@@ -36,7 +39,7 @@ def getConnectionDb():
     return connection
 
 def getTodoFromDb():
-    logger("     (getTodoFromDb) Getting Todo's from Db")
+    logger.debug("     (getTodoFromDb) Getting Todo's from Db")
     resultsArr = []
     connection = getConnectionDb()
     reach_back = 2
@@ -71,7 +74,7 @@ def getTodoFromDb():
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
     except Exception as e:
-        logger(f"Error occurred (getTodoFromDb): {e}")
+        logger.error(f"Error occurred (getTodoFromDb): {e}")
         connection.rollback()
     finally:
         connection.close()
@@ -80,10 +83,33 @@ def getTodoFromDb():
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, ChanLanguage, RowNum  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=ChanLanguage, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
         resultsArr.append(vod)
-        # logger(f"     (getTodoFromDb) {counterz} vod: {vod.channels_name_id}: {vod.title} - {vod.id}")
+        # logger.debug(f"     (getTodoFromDb) {counterz} vod: {vod.channels_name_id}: {vod.title} - {vod.id}")
     return resultsArr
 
+
+def unsetSemaphoreDb(vod: Vod):
+    logger.debug("UNLOCKING VOD: " + str(vod.id))
+    connection = getConnectionDb()
+    t_status = "audio2text_need"
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                UPDATE Vods
+                SET TranscriptStatus = %s
+                WHERE Id = %s;
+                """
+            values = (t_status, vod.id)
+            affected_count = cursor.execute(sql, values)
+            connection.commit()
+    except Exception as e:
+        logger.error(f"Error occurred (unsetProcessingDb): {e}")
+        connection.rollback()
+    finally:
+        connection.close()
+
+
 def setSemaphoreDb(vod: Vod):
+    logger.debug("LOCKING VOD: " + str(vod.id))
     connection = getConnectionDb()
     t_status = "transcribing"
     try:
@@ -97,22 +123,16 @@ def setSemaphoreDb(vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        logger(f"Error occurred (setSemaphoreDb): {e}")
+        logger.error(f"Error occurred (setSemaphoreDb): {e}")
         connection.rollback()
     finally:
         connection.close()
 
 
-
-
-
-
-
-
 def downloadAudio(vod: Vod):
-    logger("######################################")
-    logger("             downloadAudio            ")
-    logger("######################################")
+    print("######################################")
+    print("             downloadAudio            ")
+    print("######################################")
 
     WHSP_A2T_ASSETS_AUDIO="./assets/audio/"
 
@@ -121,18 +141,18 @@ def downloadAudio(vod: Vod):
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     
     relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
-    logger("    (downloadAudio) vod.s3_audio:", vod.s3_audio)
-    logger("    (downloadAudio) audio_url", audio_url)
-    logger("    (downloadAudio) audio_name", audio_name)    
-    logger("    (downloadAudio) relative_filename", relative_filename)    
+    logger.debug("    (downloadAudio) vod.s3_audio:" + str( vod.s3_audio))
+    logger.debug("    (downloadAudio) audio_url" + str( audio_url))
+    logger.debug("    (downloadAudio) audio_name" + str( audio_name))
+    logger.debug("    (downloadAudio) relative_filename" + str( relative_filename))
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     except:
         stack_trace = traceback.format_exc()
-        logger("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =", (audio_url, relative_filename))
-        logger(stack_trace)
-        logger("    (downloadAudio) sleeping 1.5 min for some reason....")
-        time.sleep(90) # 1.5 min
+        logger.debug("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =" + str( (audio_url, relative_filename)))
+        logger.debug(stack_trace)
+        logger.debug("    (downloadAudio) sleeping 1 min for some reason....")
+        time.sleep(60)
         return None
 
     return relative_path
@@ -159,11 +179,11 @@ def downloadAudio(vod: Vod):
 #     file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
 #     start_time = time.time()
 
-#     logger("    (doInsaneWhisperStuff) Channel=" + vod.channels_name_id)
-#     logger("    (doInsaneWhisperStuff) model_size_insane: " + model_size_insane)
-#     logger("    (doInsaneWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-#     logger("    (doInsaneWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
-#     logger("    (doInsaneWhisperStuff) Running it ...")
+#     logger.debug("    (doInsaneWhisperStuff) Channel=" + vod.channels_name_id)
+#     logger.debug("    (doInsaneWhisperStuff) model_size_insane: " + model_size_insane)
+#     logger.debug("    (doInsaneWhisperStuff) torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+#     logger.debug("    (doInsaneWhisperStuff) is_flash_attn_2_available(): " + str(is_flash_attn_2_available()))
+#     logger.debug("    (doInsaneWhisperStuff) Running it ...")
 
 
 #     pipe = pipeline( # https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline
@@ -193,26 +213,26 @@ def downloadAudio(vod: Vod):
 #             generate_kwargs = generate_kwargs
 #         )
     
-#     logger("outputs length:", len(outputs))
-#     # logger(outputs)
-#     logger()
-#     logger()
+#     logger.debug("outputs length:" + str( len(outputs))
+#     # logger.debug(outputs)
+#     logger.debug("")
+#     logger.debug("")
 
 #     saved_caption_files = write_files(outputs, file_name)
 
 #     end_time = time.time() - start_time
 
-#     logger("========================================")
-#     logger("Complete!")
-#     logger(f"Detected language {lang_code}!")
-#     logger()
-#     logger("run time =" + str(end_time))
-#     logger()
-#     logger("Saved files: " + str(saved_caption_files))
-#     logger()
-#     logger("model_size_insane: " + model_size_insane)
-#     logger()
-#     logger("========================================")
+#     logger.debug("========================================")
+#     logger.debug("Complete!")
+#     logger.debug(f"Detected language {lang_code}!")
+#     logger.debug("")
+#     logger.debug("run time =" + str(end_time))
+#     logger.debug("")
+#     logger.debug("Saved files: " + str(saved_caption_files))
+#     logger.debug("")
+#     logger.debug("model_size_insane: " + model_size_insane)
+#     logger.debug("")
+#     logger.debug("========================================")
 #     return saved_caption_files
 
 # def write_files(outputs, filename):
@@ -233,10 +253,10 @@ def downloadAudio(vod: Vod):
 
 
 def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
-    logger("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-    logger("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
-    logger("    (uploadCaptionsToS3) vod.id: " + vod.id) 
-    logger("    (uploadCaptionsToS3) vod.title: " + vod.title) 
+    logger.debug("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
+    logger.debug("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
+    logger.debug("    (uploadCaptionsToS3) vod.id: " + vod.id) 
+    logger.debug("    (uploadCaptionsToS3) vod.title: " + vod.title) 
 
     s3 = boto3.client('s3')
     transcripts_s3_key_arr = []
@@ -257,16 +277,16 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
             s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
             transcripts_s3_key_arr.append(s3CapFileKey)
         except Exception as e:
-            logger(f"failed to upload: {file_abs}. Error {str(e)}")
+            logger.error(f"failed to upload: {file_abs}. Error {str(e)}")
 
     return transcripts_s3_key_arr 
 
 def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
-    logger(vod.print())
+    logger.debug(vod.print())
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)
-    logger("   (setCompletedStatusDb) transcripts_keys:", transcripts_keys)
+    logger.debug("   (setCompletedStatusDb) transcripts_keys:" + str( transcripts_keys))
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -281,32 +301,13 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
             affected_count = cursor.execute(sql, values)
             connection.commit()
     except Exception as e:
-        logger(f"Error occurred (setCompletedStatusDb): {e}")
-        connection.rollback()
-    finally:
-        connection.close()
-
-def unsetProcessingDb(vod: Vod):
-    connection = getConnectionDb()
-    t_status = "audio2text_need"
-    try:
-        with connection.cursor() as cursor:
-            sql = """
-                UPDATE Vods
-                SET TranscriptStatus = %s
-                WHERE Id = %s;
-                """
-            values = (t_status, vod.id)
-            affected_count = cursor.execute(sql, values)
-            connection.commit()
-    except Exception as e:
-        logger(f"Error occurred (unsetProcessingDb): {e}")
+        logger.error(f"Error occurred (setCompletedStatusDb): {e}")
         connection.rollback()
     finally:
         connection.close()
 
 def deleteAudioS3(vod: Vod):
-    logger(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
+    logger.debug(f" ====  Deleting vod: {vod.channels_name_id} {vod.id} ==== ")
     if os.getenv("ENV") != "local":
         s3 = boto3.client('s3')
         response = s3.delete_object(Bucket=env_varz.BUCKET_NAME, Key=vod.s3_audio)
@@ -316,10 +317,10 @@ def cleanUpFiles(relative_path: str):
         file_abs = os.path.abspath(relative_path)
         if os.getenv("ENV") != "local":
             os.remove(file_abs)
-            logger("     (cleanUpFiles) FILE DELETED")
+            logger.debug("     (cleanUpFiles) FILE DELETED")
     except Exception as e:
-        logger('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
-        logger(str(e))
+        logger.error('     (cleanUpFiles) failed to run cleanUpFiles() on: ',  relative_path)
+        logger.error(str(e))
     return 
 
 

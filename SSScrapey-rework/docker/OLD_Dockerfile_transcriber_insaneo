@@ -152,7 +152,7 @@ CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "VAST_API_KEY is $VAST_API_KEY " ; \
     echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
     echo "running......." ; \
-    python kickWhisperer.py ; \
+    python kickTranscriber.py ; \
     echo "DONE!!!!!!!!!!!!x" ; \
     sleep 90 ; \
     echo "DONE!!!!!!!!!!!!" ; \

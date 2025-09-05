@@ -1,4 +1,5 @@
 # import controllers.MicroTranscriber.cloudwatch as cloudwatch
+import sys
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
@@ -14,66 +15,69 @@ import traceback
 import urllib.parse
 import urllib.request
 from typing import List
+import logging
+from utils.logging_config import LoggerConfig
 
+# logger = Cloudwatch.log
 def logger():
     pass
-logger = Cloudwatch.log
+logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-
 def printIntro():
-    logger("Currently running the nth instance in vast.ai:")
-    logger('CONTAINER_ID! ', os.getenv("CONTAINER_ID"))
-    logger("TRANSCRIBER_INSTANCE_CNT", env_varz.TRANSCRIBER_INSTANCE_CNT)
-    logger("Total num instances")
-    logger("TRANSCRIBER_NUM_INSTANCES", env_varz.TRANSCRIBER_NUM_INSTANCES)
-    logger("VODs transcribed per instance:")
-    logger("TRANSCRIBER_VODS_PER_INSTANCE", env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
+    logger.info("Current vast.ai container_id:")
+    logger.info('   CONTAINER_ID! ' + str(os.getenv("CONTAINER_ID")))
+    logger.info("Currently running this nth instance:" + env_varz.TRANSCRIBER_INSTANCE_CNT)
+    logger.info(f"   TRANSCRIBER_INSTANCE_CNT: {env_varz.TRANSCRIBER_INSTANCE_CNT}")
+    logger.info("Total num instances")
+    logger.info(f"   TRANSCRIBER_NUM_INSTANCES: {env_varz.TRANSCRIBER_NUM_INSTANCES}")
+    logger.info("VODs transcribed per instance:")
+    logger.info(f"   TRANSCRIBER_VODS_PER_INSTANCE: {env_varz.TRANSCRIBER_VODS_PER_INSTANCE}")
 
 def goTranscribeBatch(isDebug=False, args=None):
     printIntro()
-
     if args:
         print(args.query_todo)
         print(args.number)
         if args.query_todo:
             vods_list: List[Vod] = transcriber.getTodoFromDb()
-            
             pretty_print_query_vods(vods_list)
-    return
+            return
+    print("ENDNNDNDNDNDN")
+
     start_time = time.time()
-    download_batch_size = 1 if env_varz.TRANSCRIBER_VODS_PER_INSTANCE is None else int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE)
+    download_batch_size = 1 if env_varz.TRANSCRIBER_VODS_PER_INSTANCE is None else env_varz.TRANSCRIBER_VODS_PER_INSTANCE
     completed_vods_list: List[Vod] = []
     failed_vods_list: List[Vod] = []
-    logger("Transcriber start! ")
-    logger(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
+    logger.debug("Transcriber start!")
+    logger.debug(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
     for i in range(0, download_batch_size):
-        logger("===========================================")
-        logger(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
-        logger("===========================================")
+        print("===========================================")
+        print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
+        print("===========================================")
 
         result: Dict[Vod, bool] = transcribe(isDebug)
         vod = result["vod"]
 
-        logger(f"   (goTranscribeBatch) Finished Index {i}")
-        logger(f"   (goTranscribeBatch) download_batch_size: {i+1}")
-        logger(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
+        logger.debug(f"   (goTranscribeBatch) Finished Index {i}")
+        logger.debug(f"   (goTranscribeBatch) download_batch_size: {i+1}")
+        logger.debug(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
         if result["isPass"]:
             completed_vods_list.append(vod)
         else:
             failed_vods_list.append(vod)
     elapsed_time = time.time() - start_time
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger("Completed: ")
+    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.debug("Completed: ")
     for v in failed_vods_list:
-        logger(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
+        logger.debug(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
     for v in completed_vods_list:
-        logger(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
+        logger.debug(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
     # time.sleep(100) 
-    logger("gg ending")
+    logger.debug("gg ending")
     return "gg ending"
 
 def transcribe(isDebug=False) -> Dict[Vod, bool]:
@@ -81,41 +85,44 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
     vods_list = transcriber.getTodoFromDb()
     vod: Vod = vods_list[0] if len(vods_list) > 0 else None
     relative_path = None
-    logger('IN THEORY, AUDIO TO TEXT THIS:')
+    logger.debug('IN THEORY, AUDIO TO TEXT THIS:')
     if not vod and not isDebug:
-        logger("jk, vod is null, nothing to do. no audio2text_need")
+        logger.info("jk, vod is null, nothing to do. no audio2text_need")
         return None
     if isDebug:
         vod = getDebugVod(vod)
-    logger(vod.print())
+    logger.debug(vod.print())
 
     # Set TranscrptStatus = "transcribing"
     transcriber.setSemaphoreDb(vod)
 
     # Do the transcribing
+
     try:
         vod.printDebug()
         relative_path = transcriber.downloadAudio(vod)
-        # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
         saved_caption_files = Audio2Text.doWhisperStuff(vod, relative_path)
+        # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
 
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
         transcriber.deleteAudioS3(vod)
+    except KeyboardInterrupt:
+        logger.debug("\nCtrl+C detected. Exiting gracefully.")
+        transcriber.unsetSemaphoreDb(vod) # "vod" is highest priority 'todo' vod
+        sys.exit()
     except Exception as e:
         error_message = f"ERROR Transcribing vod: {e}"
         stack_trace = traceback.format_exc()
-        logger(error_message + "\n" + stack_trace)
-        vod.print()
-        transcriber.unsetProcessingDb(vod)
+        logger.error(error_message + "\n" + stack_trace)
+        transcriber.unsetSemaphoreDb(vod)
         return {"vod": vod, "isPass": False}
 
     transcriber.cleanUpFiles(relative_path)
-    logger("Finished step 3 Transcriber-Service")
+    logger.debug("Finished step 3 Transcriber-Service")
     return {"vod": vod, "isPass": True}
 
 def getDebugVod(vod: Vod):
-    vod.print() if vod else logger("Null nod")
     # tuple =  ('2143646862', 'kaicenat', '⚔️100+ HR STREAM⚔️ELDEN RING⚔️CLICK HERE⚔️GAMER⚔️BIGGEST DWARF⚔️ELITE⚔️PRAY 4 ME⚔️', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/jtv_user_pictures/1d8cd548-04fa-49fb-bfcd-f222f73482b6-profile_image-70x70.png', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/kaicenat/2143646862/100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus', '-1', 'English')
     tuple =  ('40792901', 'nmplol', 'And you will know my name is the LORD', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus', '-1', 'English')
     # tuple =  ('1964894986', 'jd_onlymusic', '夜市特攻隊「永和樂華夜市」ft. 陳老師', '732', '12:12', 1205, 'https://www.twitch.tv/videos/1964894986',datetime.datetime(2023, 10, 2, 18, 26, 30),'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/jd_onlymusic/1964894986/ft.-v1964894986.opus','-3', 'Chinese')
@@ -142,12 +149,6 @@ def pretty_print_query_vods(vods_list):
     term_width = shutil.get_terminal_size((120, 20)).columns 
     col_title = term_width - (col_channel + col_id + col_status + 13)  # 9 = padding & separators (3 x Columns)
     
-    # print("term_width", term_width)
-    # print("col_channel", col_channel)
-    # print("col_id", col_id)
-    # print("col_status", col_status)
-    # print("!col_title", col_title)
-
     # Header
     print(f"{'Channel':<{col_channel}} | {'VOD ID':<{col_id}} | {'Title':<{col_title}} | {'Status':<{col_status}}")
     print("-" * term_width)

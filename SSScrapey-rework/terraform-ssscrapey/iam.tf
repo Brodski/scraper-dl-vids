@@ -83,11 +83,6 @@ resource "aws_iam_role_policy_attachment" "ecs_events_role_policy_attachment" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-# need this for logs for w/e reason
-resource "aws_iam_role_policy_attachment" "ecs_events_role_policy_cloudwatch_agent" {
-  role       = aws_iam_role.ecs_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/CloudWatchAgentServerPolicy"
-}
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"

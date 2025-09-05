@@ -1,4 +1,4 @@
-variable "downloader_aws_bs_id" {
+variable "downloader_num_instances" {
     type        = number
 }
 variable "iam_role_ecs_events_arn" {

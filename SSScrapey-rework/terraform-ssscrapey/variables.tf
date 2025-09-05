@@ -47,6 +47,6 @@ variable "transcriber_vods_per_instance" {
 #############################
 # Downloader  num instances #
 #############################
-variable "downloader_aws_bs_id" {
+variable "downloader_num_instances" {
   type = number
 }

@@ -27,7 +27,7 @@ module "downloader" {
     sensitive_info              = var.sensitive_info
     downloader_schedule_cron    = var.downloader_schedule_cron
     docker_image                = var.downloader_docker_image
-    downloader_aws_bs_id       = var.downloader_aws_bs_id
+    downloader_num_instances       = var.downloader_num_instances
 }
 
 module "transcriber" {

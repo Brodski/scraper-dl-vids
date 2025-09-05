@@ -110,21 +110,6 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         logger.debug([ch.name_id for ch in all_channels_minus_scrapped])
 
         logger.debug("")
-        # for chan in scrapped_channels:
-        #     logger.debug("----------------")
-        #     chan.print()
-
-
-        # I think thi code does nothing or bugged
-        # vip_tuple = ()
-        # if (os.getenv("ENV") != "prod") and isDebug:
-        #     vip_tuple = ("geranimo", "nmplol")
-        # else:
-        #     vip_tuple = ()
-        # vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
-        # for vip in vip_list:
-        #     vip.print()
-
         return all_channels_minus_scrapped
         return channels_all_in_db
         return all_channels_minus_scrapped + vip_list

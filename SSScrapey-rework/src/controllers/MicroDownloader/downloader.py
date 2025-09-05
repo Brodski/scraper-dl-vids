@@ -161,7 +161,7 @@ def isVodTooBig(vod: Vod):
     ]
     try:
         logger.debug("    (downloadPreCheck) YT_DLP: getting metadata ... " + vidUrl)
-        meta = _execSubprocCmd(yt_dlp_cmd)
+        meta, stderr = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(meta)
         duration = meta['duration']
         logger.debug("    (downloadPreCheck) duration: " + str(duration))
@@ -223,16 +223,16 @@ def downloadTwtvVidFAST(vod: Vod, isDebug=False):
         logger.debug("    (dlTwtvVid) YT_DLP: downloading ... " + vidUrl)
         logger.debug("\n    (dlTwtvVid) yt_dlp_cmd: " + str(yt_dlp_cmd))
         logger.debug("")
-        metax = _execSubprocCmd(yt_dlp_cmd)
+        metax, stderr = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(metax)
     except Exception as e:
         logger.error("    (dlTwtvVid) Failed to extract vid!!: " + vidUrl + " : " + str(e))
         traceback.print_exc()
         pattern = r"Video \d+ does not exist"
-        if "HTTP Error 403" in str(e):
+        if "HTTP Error 403" in str(e) or "HTTP Error 403" in stderr:
             logger.error("Failed b/c 403. Probably private or sub only.")
             return Errorz.UNAUTHORIZED_403
-        if re.search(pattern, str(e)):
+        if re.search(pattern, str(e)) or re.search(pattern, stderr):
             logger.error("Failed b/c 'that content is unavailable'. Probably deleted")
             return Errorz.DELETED_404
         else:
@@ -346,7 +346,8 @@ def _execSubprocCmd(ffmpeg_command):
         # logger.debug(stderr)
         # logger.debug("    (exec) returncode:")
         # logger.debug(returncode)
-        return stdoutput
+        # stdoutput = stdoutput if stdoutput not in ("", None) else stderr
+        return stdoutput, stderr
     except subprocess.CalledProcessError as e:
         logger.error("Failed to run ffmpeg command:")
         logger.error(e)
@@ -520,7 +521,6 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
     replacement = fr'-{new_width}x{new_height}.'
     new_thumbnail = re.sub(pattern, replacement, thumbnail)
     
-    logger.debug("    (updateImgs_Db) replacement-small: " + replacement)
     logger.debug("    (updateImgs_Db) new_thumbnail-small: " + new_thumbnail)
 
     ###################
@@ -628,7 +628,6 @@ def extract_name_from_url(url):
         if last_idx_dot > last_idx_slash:
             last_idx_junk_before = url.rfind("/", 0, last_idx_dot)
             filename_default = url[last_idx_junk_before + 1:last_idx_dot]
-            logger.debug("filename_default" + filename_default)
 
         # else www.bigboy.com/image/of/bigboy
         else:

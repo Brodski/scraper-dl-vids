@@ -45,6 +45,19 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Splitter",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/fucker.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                // "--quick-dl",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

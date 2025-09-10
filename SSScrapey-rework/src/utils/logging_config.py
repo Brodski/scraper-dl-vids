@@ -11,6 +11,7 @@ class LoggerConfig:
             
         dateformat = '%H:%M:%S'
         formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(name)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
+        # formatter_cues_transcribing: logging.Formatter = logging.Formatter('%(asctime)s| %(message)s', dateformat)
 
         if not self.logger.handlers:  # prevent duplicate handlers
             console_handler = logging.StreamHandler()

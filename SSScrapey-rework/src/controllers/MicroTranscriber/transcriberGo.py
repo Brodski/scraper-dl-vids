@@ -1,4 +1,5 @@
 # import controllers.MicroTranscriber.cloudwatch as cloudwatch
+import math
 import sys
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
@@ -6,6 +7,7 @@ from models.Vod import Vod
 from typing import Dict, List
 import boto3
 import controllers.MicroTranscriber.transcriber as transcriber
+import controllers.MicroTranscriber.split_ffmpeg as split_ffmpeg
 import datetime
 import env_file as env_varz
 import json
@@ -39,7 +41,6 @@ def goTranscribeBatch(isDebug=False, args=None):
     printIntro()
     if args:
         print(args.query_todo)
-        print(args.number)
         if args.query_todo:
             vods_list: List[Vod] = transcriber.getTodoFromDb()
             pretty_print_query_vods(vods_list)
@@ -52,31 +53,41 @@ def goTranscribeBatch(isDebug=False, args=None):
     failed_vods_list: List[Vod] = []
     logger.debug("Transcriber start!")
     logger.debug(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
+    download_batch_size = 2
     for i in range(0, download_batch_size):
         print("===========================================")
         print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
 
+        Audio2Text.download_batch_size = download_batch_size
+        Audio2Text.current_num = i + 1
+
         result: Dict[Vod, bool] = transcribe(isDebug)
         vod = result["vod"]
 
-        logger.debug(f"   (goTranscribeBatch) Finished Index {i}")
-        logger.debug(f"   (goTranscribeBatch) download_batch_size: {i+1}")
-        logger.debug(f"   (goTranscribeBatch) Time to download vid: {time.time() - start_time}")
+        logger.info(f"   (goTranscribeBatch) Finished Index {i}")
+        logger.info(f"   (goTranscribeBatch) download_batch_size: {download_batch_size}")
         if result["isPass"]:
             completed_vods_list.append(vod)
         else:
             failed_vods_list.append(vod)
-    elapsed_time = time.time() - start_time
-    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger.debug("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger.debug("Completed: ")
+    elapsed_time = math.ceil(time.time() - start_time)
+    logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
+    logger.info("")
+    logger.info("Completed: ")
     for v in failed_vods_list:
-        logger.debug(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
+        logger.info(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
     for v in completed_vods_list:
-        logger.debug(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
+        logger.info(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
+        # logger.info(f"Audio uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
+    for t in Audio2Text.completed_uploaded_tscripts:
+        logger.debug(f"Transcripts @ {t}")
+        logger.debug(f"")
+
     # time.sleep(100) 
+    logger.debug("gg ending")
     logger.debug("gg ending")
     return "gg ending"
 
@@ -93,14 +104,13 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
         vod = getDebugVod(vod)
     logger.debug(vod.print())
 
-    # Set TranscrptStatus = "transcribing"
-    transcriber.setSemaphoreDb(vod)
+    transcriber.setSemaphoreDb(vod) # Set TranscrptStatus = "transcribing"
 
     # Do the transcribing
-
     try:
-        vod.printDebug()
-        relative_path = transcriber.downloadAudio(vod)
+        relative_path: str = transcriber.downloadAudio(vod)
+
+        splitted_files = split_ffmpeg.splitHugeFile(vod, relative_path)
         saved_caption_files = Audio2Text.doWhisperStuff(vod, relative_path)
         # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
 

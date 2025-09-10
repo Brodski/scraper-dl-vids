@@ -1,6 +1,6 @@
 import traceback
 import types
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
+from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
 # from transformers import pipeline
 # from transformers.utils import is_flash_attn_2_available
@@ -24,7 +24,6 @@ from utils.logging_config import LoggerConfig
 def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
-
 
 
 def getConnectionDb():
@@ -81,7 +80,7 @@ def getTodoFromDb():
     for counterz, vod_ in enumerate(results):
         # Tuple unpacking
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, ChanLanguage, RowNum  = vod_
-        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=ChanLanguage, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails)
+        vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=ChanLanguage, s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails, duration=Duration, duration_string=DurationString)
         resultsArr.append(vod)
         # logger.debug(f"     (getTodoFromDb) {counterz} vod: {vod.channels_name_id}: {vod.title} - {vod.id}")
     return resultsArr
@@ -141,10 +140,8 @@ def downloadAudio(vod: Vod):
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     
     relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
-    logger.debug("    (downloadAudio) vod.s3_audio:" + str( vod.s3_audio))
-    logger.debug("    (downloadAudio) audio_url" + str( audio_url))
-    logger.debug("    (downloadAudio) audio_name" + str( audio_name))
-    logger.debug("    (downloadAudio) relative_filename" + str( relative_filename))
+    logger.debug("audio_url: " + str( audio_url))
+    logger.debug("audio_name: " + str( audio_name))
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     except:
@@ -276,6 +273,8 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         try:
             s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
             transcripts_s3_key_arr.append(s3CapFileKey)
+            # logger.info(f"Transcripts uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
+            Audio2Text.completed_uploaded_tscripts.append(f"{env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
         except Exception as e:
             logger.error(f"failed to upload: {file_abs}. Error {str(e)}")
 

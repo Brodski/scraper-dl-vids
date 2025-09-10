@@ -5,40 +5,44 @@ from typing import Dict, Any
 from datetime import datetime
 
 class Vod:
-    id = str
-    channels_name_id = str
-    transcript_status = str
-    priority = int 
     channel_current_rank = str # optional
-    todo_date = datetime
-    upload_date = datetime
-    s3_audio = str
+    channels_name_id = str
+    download_date = str
+    duration = int
+    duration_string = str
+    id = str
     language = str
     model = str
-    download_date = str
-    stream_date = str
+    priority = int 
+    s3_audio = str
     s3_caption_files = str
-    transcribe_date = datetime
-    title = str
     s3_thumbnails = str
+    stream_date = str
+    title = str
+    todo_date = datetime
+    transcribe_date = datetime
+    transcript_status = str
+    upload_date = datetime
 
     def __init__(self,  **kwargs):
-        self.id = kwargs.get('id')
-        self.channels_name_id = kwargs.get('channels_name_id')
-        self.transcript_status = kwargs.get('transcript_status')
-        self.priority = kwargs.get('priority')
         self.channel_current_rank = kwargs.get('channel_current_rank')
-        self.todo_date = kwargs.get('todo_date')
-        self.upload_date = kwargs.get('upload_date')
-        self.s3_audio = kwargs.get('s3_audio')
+        self.channels_name_id = kwargs.get('channels_name_id')
+        self.download_date = kwargs.get('download_date')
+        self.duration = kwargs.get('duration')
+        self.duration_string = kwargs.get('duration_string')
+        self.id = kwargs.get('id')
         self.language = kwargs.get('language')
         self.model = kwargs.get('model')
-        self.download_date = kwargs.get('download_date')
-        self.stream_date = kwargs.get('stream_date')
+        self.priority = kwargs.get('priority')
+        self.s3_audio = kwargs.get('s3_audio')
         self.s3_caption_files = kwargs.get('s3_caption_files')
-        self.transcribe_date = kwargs.get('transcribe_date')
-        self.title = kwargs.get('title')
         self.s3_thumbnails = kwargs.get('s3_thumbnails')
+        self.stream_date = kwargs.get('stream_date')
+        self.title = kwargs.get('title')
+        self.todo_date = kwargs.get('todo_date')
+        self.transcribe_date = kwargs.get('transcribe_date')
+        self.transcript_status = kwargs.get('transcript_status')
+        self.upload_date = kwargs.get('upload_date')
 
 
     # def __repr__(self):

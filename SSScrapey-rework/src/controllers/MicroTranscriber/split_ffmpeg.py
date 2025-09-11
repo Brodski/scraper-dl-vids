@@ -7,6 +7,7 @@ from models.Vod import Vod
 from utils.logging_config import LoggerConfig
 import env_file as env_varz
 from models.Silence import Silence
+from models.Splitted import Splitted
 import bisect
 
 
@@ -14,16 +15,15 @@ def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
 
+SPLIT_LENGTH = 57600 # 16 hours
 
 # NOISE
-#  ffmpeg -i .\BLAST_Open_London_2025_-_Day_3_-_ECSTATIC_vs_fnatic_M80_vs_Virtus.pro_Vitality_vs_GamerLegion_FaZe_vs_NAVI-v2552631701.opus -af silencedetect=noise=-30dB:d=10 -f null -
 #  ffmpeg -i input.opus -af silencedetect=noise=-30dB:d=10 -f null -
 
 # SPLIT
 # ffmpeg -i input_file -ss 106200 -to 145500 -c copy output_file
+
 def splitHugeFile(vod: Vod, relative_path: str):
-    if vod.duration < 72000: # 20 hours 
-        return [relative_path]
     noise_vol = "30dB"
     duration = "10" # seconds
     command = [
@@ -37,23 +37,22 @@ def splitHugeFile(vod: Vod, relative_path: str):
     silence_output_raw = _execSubprocCmd(command)
     silence_list: List[Silence] = parse_silence_data(silence_output_raw)
     
-    parts_list: List[str] = split_files(vod, silence_list, relative_path)
-    logger.debug("PARTSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-    logger.debug(parts_list)
-    return parts_list
+    splitted_list: List[Splitted] = split_files(vod, silence_list, relative_path)
+    # logger.debug("PARTSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+    # logger.debug(splitted_list)
+    return splitted_list
     
 
 
 # ffmpeg -i input_file -ss 106200 -to 145500 -c copy output_file
 def split_files(vod: Vod, silence_list: list[Silence], relative_path: str) -> int:
-    SPLIT_LENGTH = 14400 # 4 hours
     quotient = int(vod.duration) // SPLIT_LENGTH
     remainder = int(vod.duration) % SPLIT_LENGTH
 
     logger.debug("quotient " + str( quotient))
     logger.debug("remainder " + str( remainder))
 
-    parts: List[str] = [] # FAZEATHON_part0_.opus, FAZEATHON_part2_.opus, FAZEATHON_part3_.opus ....
+    splitted_list: List[Splitted] = [] # FAZEATHON_part0_.opus, FAZEATHON_part2_.opus, FAZEATHON_part3_.opus ....
 
     silences_of_split: List[Silence] = []
 
@@ -67,13 +66,15 @@ def split_files(vod: Vod, silence_list: list[Silence], relative_path: str) -> in
         logger.debug(f"{i}, {(SPLIT_LENGTH * (i+1))}")
         logger.debug(f"silence_list[{index}]: {silence_list[index]}")
 
-    for i in range(0, len(silences_of_split), 2):  # step of 2
+    # THIS CAN BE BETTER
+    # step of 2, b/c the lines looks like: -------> # 1. silenncedectect @ start: 12.2s
+    for i in range(0, len(silences_of_split), 2):   # 2. silenncedectect @ end: 23.1s
         output_path = get_filename_stupidly_(relative_path, i)
-        output_path = cut_the_file(i, silences_of_split, vod, relative_path, output_path)
-        parts.append(output_path)
+        splitted: Splitted = cut_the_file(i, silences_of_split, vod, relative_path, output_path)
+        splitted_list.append(splitted)
 
 
-    return parts
+    return splitted_list
 
 
 def get_filename_stupidly_(filename, count):
@@ -83,23 +84,33 @@ def get_filename_stupidly_(filename, count):
 
 
 def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, output_file):
-    if i >6:
-        logger.debug('shiiiiiiitxxx')
     if i == 0:
-        silences_of_split
         start = 0
-        end = int(silences_of_split[1].start - 2)
+        end = int(silences_of_split[1].start - 2) # arbitray 2s offset
     elif i >= (len(silences_of_split) - 1):
         start = int(silences_of_split[i].start)
-        end = vod.duration
+        end = int(vod.duration)
     else:
         start = int(silences_of_split[i].start)
-        end = int(silences_of_split[i+1].start - 2)
+        end = int(silences_of_split[i+1].start - 2) # arbitray 2s offset
+    # sometimes there is no silence where we want it to be
+    #
+    #    s[i]                                           s[i+1]
+    #      ↓                                             ↓     
+    #    12000s -------------------------------------- 39000s     <------------ THIS IS NOT GOOD
+    #    12000s -------- <4 hours> ------- 26400
+    if ((start + SPLIT_LENGTH) < end): # prob can fix in future at "this can be better" line above
+        start_extended = start + SPLIT_LENGTH
+        end = start_extended
+        if i < len(silences_of_split):
+            silences_of_split[i+1].start = start_extended
+
     logger.debug(f'cutting the file @  {start} to {(end)}' )
+
     command = [
         "ffmpeg",
+        "-ss", str(start), # order is import, need -ss before -i. Makes fast.
         "-i", input_file,
-        "-ss", str(start),
         "-to", str(end),
         "-c", "copy", output_file,
         "-y",
@@ -115,19 +126,11 @@ def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, out
         )
 
         stdout, stderr = process.communicate()  
-        
-        # for line in process.stderr:
-        #     logger.debug(line, end="")
-        # logger.debug("STDOUT:", stdout)
-        # logger.debug("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        # logger.debug("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        # logger.debug("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        # logger.debug("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        # logger.debug("STDERR:", stderr)
 
         logger.debug("process.returncode (0 is good): " + str(process.returncode))
         if process.returncode == 0:
-            return output_file
+            splitted = Splitted(duration = (end - start), relative_path = output_file)
+            return splitted
         else:
             output = stdout.splitlines() + stderr.splitlines()
             logger.debug(output)

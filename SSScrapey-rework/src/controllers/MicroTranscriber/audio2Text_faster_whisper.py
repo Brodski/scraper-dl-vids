@@ -13,6 +13,7 @@ from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 import logging
 from utils.logging_config import LoggerConfig
 from datetime import datetime
+from models.Splitted import Splitted
 
 # logger = Cloudwatch.log
 def logger():
@@ -30,7 +31,7 @@ class Audio2Text:
     completed_uploaded_tscripts = []
 
     @classmethod
-    def doWhisperStuff(cls, vod: Vod, relative_path: str):
+    def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted]):
         logger.debug("Starting WhisperStuff!")
         def get_language_code(full_language_name):
             try:
@@ -40,48 +41,56 @@ class Audio2Text:
                 logger.debug(f"Error finding language code: {str(e)}")
                 return None
 
+        ###############
+        #### SETUP ####
+        ###############
         lang_code = get_language_code(vod.language)
         model_size = env_varz.WHSP_MODEL_SIZE
         compute_type = env_varz.WHSP_COMPUTE_TYPE
         cpu_threads = int(env_varz.WHSP_CPU_THREADS)
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        if env_varz.ENV == "local" and device == "cuda":
-            compute_type = "float16"
-        file_abspath = os.path.abspath(relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
-        file_name = os.path.basename(relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
+        # if env_varz.ENV == "local" and device == "cuda":
+        #     compute_type = "float16"
 
         logger.debug("loading model........")
         if cls.model is None:
             cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
-
-        logger.debug("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        logger.debug("    Channel=" + vod.channels_name_id)
-        logger.debug("    file_abspath=" + file_abspath)
-        logger.debug("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-        logger.debug("    model_size: " + model_size)
 
         if env_varz.ENV == "local":
             import ctypes
             ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
 
         start_time_model = time.time()
-
-        segments, info = cls.model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=True, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
-
-        end_time_model = time.time() - start_time_model
-        start_time_vod = time.time()
-
-
         result = {  "segments": [] }
-        cls.count_logger = 0
-        for segment in segments: # generator()
-            # logger.debug(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}") 
-            cls.aux_logger(segment, vod)
-            result["segments"].append({
-                "start" : segment.start,
-                "end" :   segment.end,
-                "text" :  segment.text,
-            })
+
+        for i, split in enumerate(splitted_list):
+            file_abspath = os.path.abspath(split.relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
+            file_name = os.path.basename(splitted_list[0].relative_path) # And_you_will_know_my_name_is_the_LORD-v40792901.opus
+
+            logger.debug("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+            logger.debug("    Channel=" + vod.channels_name_id)
+            logger.debug("    file_abspath=" + file_abspath)
+            logger.debug("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
+            logger.debug("    model_size: " + model_size)
+
+            segments, info = cls.model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=False, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
+
+            end_time_model = time.time() - start_time_model
+            start_time_vod = time.time()
+
+
+            cls.count_logger = 0
+            offset = splitted_list[i-1].duration if i > 0 else 0
+            for segment in segments: # generator()
+                segment.start = segment.start + offset
+                segment.end = segment.end + offset
+                cls.aux_logger(segment, vod)
+
+                result["segments"].append({
+                    "start" : segment.start,
+                    "end" :   segment.end,
+                    "text" :  segment.text,
+                })
 
         saved_caption_files = cls.writeCaptionsLocally(result, file_name)
         end_time_vod = time.time() - start_time_vod
@@ -126,14 +135,24 @@ class Audio2Text:
     @classmethod
     def aux_logger(cls, segment, vod: Vod):
         cls.count_logger = cls.count_logger + 1
+        
+        current_time = datetime.now().strftime("%H:%M:%S")
+        msg = f"{cls.current_num} of {cls.download_batch_size}|id:{vod.id}"
+
         if cls.count_logger % 200 == 0 and not env_varz.ENV == "local":
             logger.debug("... still transcribing" + str(cls.count_logger))
-        elif env_varz.ENV == "local":
-            # logger.debug(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
-            current_time = datetime.now().strftime("%H:%M:%S")
-            
-            msg = f"{cls.current_num} of {cls.download_batch_size}|id:{vod.id}"
+        # THIS !!!!!!!!!
+        # THIS !!!!!!!!!
+        # THIS !!!!!!!!!
+        # THIS !!!!!!!!!
+        elif env_varz.ENV == "local" and cls.count_logger % 200 == 0:
+            print(f"{current_time}| ... still transcribing " + str(cls.count_logger))
             print(f"{current_time}|{msg}|[{segment.start:.0f}s -> {segment.end:.0f}s] {segment.text}")
+            return
+        # elif env_varz.ENV == "local":
+        #     # logger.debug(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
+        #     print(f"{current_time}|{msg}|[{segment.start:.0f}s -> {segment.end:.0f}s] {segment.text}")
+
 
             
             

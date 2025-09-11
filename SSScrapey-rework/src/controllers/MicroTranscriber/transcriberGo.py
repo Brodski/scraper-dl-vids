@@ -19,6 +19,8 @@ import urllib.request
 from typing import List
 import logging
 from utils.logging_config import LoggerConfig
+from models.Splitted import Splitted
+from datetime import datetime
 
 # logger = Cloudwatch.log
 def logger():
@@ -37,14 +39,16 @@ def printIntro():
     logger.info("VODs transcribed per instance:")
     logger.info(f"   TRANSCRIBER_VODS_PER_INSTANCE: {env_varz.TRANSCRIBER_VODS_PER_INSTANCE}")
 
-def goTranscribeBatch(isDebug=False, args=None):
+def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = None):
     printIntro()
     if args:
-        print(args.query_todo)
         if args.query_todo:
             vods_list: List[Vod] = transcriber.getTodoFromDb()
             pretty_print_query_vods(vods_list)
             return
+        if args.num_vods_override:
+            env_varz.NUM_CHANNELS = args.num_vods_override
+
     print("ENDNNDNDNDNDN")
 
     start_time = time.time()
@@ -62,8 +66,8 @@ def goTranscribeBatch(isDebug=False, args=None):
         Audio2Text.download_batch_size = download_batch_size
         Audio2Text.current_num = i + 1
 
-        result: Dict[Vod, bool] = transcribe(isDebug)
-        vod = result["vod"]
+        result: Dict[Vod, bool] = transcribe(isDebug, mofo)
+        vod: Vod = result["vod"]
 
         logger.info(f"   (goTranscribeBatch) Finished Index {i}")
         logger.info(f"   (goTranscribeBatch) download_batch_size: {download_batch_size}")
@@ -71,11 +75,13 @@ def goTranscribeBatch(isDebug=False, args=None):
             completed_vods_list.append(vod)
         else:
             failed_vods_list.append(vod)
+    logger.info("---------------------------------------------")
+    logger.info("---------------------------------------------")
+    logger.info("---------------------------------------------")
     elapsed_time = math.ceil(time.time() - start_time)
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
-    logger.info("")
     logger.info("Completed: ")
     for v in failed_vods_list:
         logger.info(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
@@ -83,16 +89,21 @@ def goTranscribeBatch(isDebug=False, args=None):
         logger.info(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
         # logger.info(f"Audio uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
     for t in Audio2Text.completed_uploaded_tscripts:
-        logger.debug(f"Transcripts @ {t}")
-        logger.debug(f"")
+        try:
+            if t.endswith(".json"):
+                logger.debug(f"Transcripts @ {t}")
+                logger.debug(f"")
+        except:
+            logger.error("oops, .endswith() is not a real method")
 
     # time.sleep(100) 
     logger.debug("gg ending")
     logger.debug("gg ending")
     return "gg ending"
 
-def transcribe(isDebug=False) -> Dict[Vod, bool]:
+def transcribe(isDebug=False, mofo: List[Splitted] | None = None) -> Dict[Vod, bool]:
     # Setup. Get Vod
+    start_time = time.time()
     vods_list = transcriber.getTodoFromDb()
     vod: Vod = vods_list[0] if len(vods_list) > 0 else None
     relative_path = None
@@ -109,9 +120,17 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
     # Do the transcribing
     try:
         relative_path: str = transcriber.downloadAudio(vod)
+        print("env_varz.WHSP_IS_BIG_FILES_ENABLED: " + str(env_varz.WHSP_IS_BIG_FILES_ENABLED))
 
-        splitted_files = split_ffmpeg.splitHugeFile(vod, relative_path)
-        saved_caption_files = Audio2Text.doWhisperStuff(vod, relative_path)
+        if env_varz.WHSP_IS_BIG_FILES_ENABLED == "True":
+            print("YES YEYSYSEYYEYSY  BIG_FILES_ENABLED")
+            splitted_list: List[Splitted] = split_ffmpeg.splitHugeFile(vod, relative_path)
+        elif mofo == None:
+            split = Splitted(relative_path = relative_path)
+            splitted_list = [split]
+        else: 
+            splitted_list = mofo
+        saved_caption_files = Audio2Text.doWhisperStuff(vod, splitted_list)
         # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
 
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
@@ -130,6 +149,7 @@ def transcribe(isDebug=False) -> Dict[Vod, bool]:
 
     transcriber.cleanUpFiles(relative_path)
     logger.debug("Finished step 3 Transcriber-Service")
+    logger.info(f"Time taken for {vod.channels_name_id}-{vod.id}: { math.ceil(time.time() - start_time)}")
     return {"vod": vod, "isPass": True}
 
 def getDebugVod(vod: Vod):

@@ -3,7 +3,8 @@ import os
 import boto3
 import logging
 import time
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 from botocore.exceptions import ClientError
 
 # https://stackoverflow.com/questions/30897897/python-boto-writing-to-aws-cloudwatch-logs-without-sequence-token
@@ -14,7 +15,8 @@ class Cloudwatch(logging.Handler):
         self.cw_client = boto3.client('logs', region_name='us-east-1')
         
         self.LOG_GROUP_NAME = '/scraper/transcriber/' + env_varz.ENV
-        self.LOG_STREAM_NAME = f'{env_varz.ENV}_{os.getenv("CONTAINER_ID")}_{os.getenv("TRANSCRIBER_INSTANCE_CNT")}_{datetime.datetime.utcnow().strftime("%Y_%b_%d-%Hh_%M")}' if env_varz.ENV != "local" else "local"
+        self.LOG_STREAM_NAME = f'{env_varz.ENV}_{os.getenv("CONTAINER_ID")}_count{os.getenv("TRANSCRIBER_INSTANCE_CNT")}_{datetime.datetime.utcnow().strftime("%Y_%b_%d-%Hh_%M")}' if env_varz.ENV != "local" else "local"
+        # prod_12345_count2_@2024_Sep_06-22h_27m
 
         RETENTION_IN_DAYZ = 30
 

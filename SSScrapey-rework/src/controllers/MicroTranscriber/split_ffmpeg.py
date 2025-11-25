@@ -5,7 +5,8 @@ import traceback
 from typing import List
 from models.Vod import Vod
 from utils.logging_config import LoggerConfig
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 from models.Silence import Silence
 from models.Splitted import Splitted
 import bisect

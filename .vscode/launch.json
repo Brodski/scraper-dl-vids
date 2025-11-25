@@ -1,41 +1,52 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    ///////////
+    // NOTE 
+    // vscode's debugger is a piece of shit
+    // MUST 
+    // 1 ctrl+shift+P 
+    // 2"Python: select intrepter" 
+    // 3 NOT SELECT  ".SSScrapey-rework/src/venvFaster/Scripts/python.exe"
+    // 4 Done.
+    //
+    // Silent non-errors if you use the venvFaster python, ↓
+    // It might not be obeying ```python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python.exe"```
+    // ////////
     "version": "0.2.0",
     "configurations": [
         {
             "name": "Preper",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickPreper.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
             "cwd": "${workspaceFolder}/SSScrapey-rework/src",
-            "args": [
-                "--which-action",
-                "like",
-                "--file",
-                "myEmail_5.conf"
-            ],
             "console": "integratedTerminal",
-            "justMyCode": true
-        },        
+            "justMyCode": true,
+            "args": [
+                "--env",
+                "local"
+            ],
+        },
         {
             "name": "Downloader",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickDownloader.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
             "cwd": "${workspaceFolder}/SSScrapey-rework/src",
             "args": [
-                // "--quick-dl",
+                "--env",
+                "local",
+                "--dwn_batch_size",
+                "2",
+                "--dwn_is_short_dev_dl"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
-        },        
+        },
         {
             "name": "Transcriber",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickTranscriber.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
@@ -48,7 +59,7 @@
         },
         {
             "name": "Splitter",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/SSScrapey-rework/src/test_deleteme.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
@@ -58,6 +69,13 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/app.py",
+            "console": "integratedTerminal"
         }
     ]
 }

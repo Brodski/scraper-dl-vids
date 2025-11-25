@@ -9,7 +9,8 @@ import datetime
 # from controllers.MicroTranscriber.Writer import Writer
 import json
 import os
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import logging
 from utils.logging_config import LoggerConfig
 

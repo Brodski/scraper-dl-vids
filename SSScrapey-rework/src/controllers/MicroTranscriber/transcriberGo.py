@@ -9,7 +9,8 @@ import boto3
 import controllers.MicroTranscriber.transcriber as transcriber
 import controllers.MicroTranscriber.split_ffmpeg as split_ffmpeg
 import datetime
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import json
 import os
 import time
@@ -41,23 +42,11 @@ def printIntro():
 
 def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = None):
     printIntro()
-    if args:
-        if args.query_todo:
-            vods_list: List[Vod] = transcriber.getTodoFromDb()
-            pretty_print_query_vods(vods_list)
-            return
-        if args.num_vods_override:
-            env_varz.NUM_CHANNELS = args.num_vods_override
-
-    print("ENDNNDNDNDNDN")
 
     start_time = time.time()
-    download_batch_size = 1 if env_varz.TRANSCRIBER_VODS_PER_INSTANCE is None else env_varz.TRANSCRIBER_VODS_PER_INSTANCE
+    download_batch_size = env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1
     completed_vods_list: List[Vod] = []
     failed_vods_list: List[Vod] = []
-    logger.debug("Transcriber start!")
-    logger.debug(f"TRANSCRIBE BATCH SIZE: {download_batch_size}")
-    download_batch_size = 2
     for i in range(0, download_batch_size):
         print("===========================================")
         print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")

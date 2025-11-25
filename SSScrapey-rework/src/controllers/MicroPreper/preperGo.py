@@ -5,10 +5,12 @@ from typing import List
 import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
 import controllers.MicroPreper.TodoPreper as todoPreper
-import env_file as env_varz
+
+from env_file import env_varz
 import os
 import logging
 from utils.logging_config import LoggerConfig
+print("4a ENV at start:", os.getenv("ENV"))
 
 def logger():
     pass
@@ -23,6 +25,8 @@ def printIntro():
     logger.debug("  NUM_VOD_PER_CHANNEL:" +  env_varz.NUM_VOD_PER_CHANNEL)
 
 def prepare(isDebug=False):
+    print("IN PREPER GO")
+
     printIntro()
     
     # Make http request to sullygnome. 3rd party website
@@ -51,7 +55,6 @@ def doWithCallback(callback, counter):
 def updateShit(scrapped_channels: List[ScrappedChannel]):
     try:
         doWithCallback(lambda: databasePreper.addNewChannelToDb(scrapped_channels), 0)
-        logger.debug("wtf is happening here")
         all_channels_minus_scrapped: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getNewOldChannelsFromDB(scrapped_channels), 0)
         doWithCallback(lambda: databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels), 0) # This gaurentees there will be no overlap.
         doWithCallback(lambda: databasePreper.updateChannelRankingLazily(scrapped_channels), 0)

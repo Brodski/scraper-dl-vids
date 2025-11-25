@@ -1,6 +1,7 @@
 import json
 import urllib
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 from typing import Dict, Any
 from datetime import datetime
 

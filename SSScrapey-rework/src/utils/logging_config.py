@@ -1,6 +1,7 @@
 # logging_config.py
 import logging
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import os
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
@@ -10,7 +11,7 @@ class LoggerConfig:
         self.logger.setLevel(self.get_log_level()) # Both the logger and the handler must be set (handler >= logger)
             
         dateformat = '%H:%M:%S'
-        formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(name)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
+        formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(filename)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
         # formatter_cues_transcribing: logging.Formatter = logging.Formatter('%(asctime)s| %(message)s', dateformat)
 
         if not self.logger.handlers:  # prevent duplicate handlers

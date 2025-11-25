@@ -5,6 +5,8 @@
 #           $ docker build                          #
 #           $ docker push                           #
 #           $ git push                              #
+#     NEED TO RUN:                                  #
+#           $ SSScrapy-rework/docker/build_all_ssscrapy_prod.ps1
 #                                                   #
 #####################################################
 $TF_ENVIRONMENT="prod"

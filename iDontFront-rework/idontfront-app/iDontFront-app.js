@@ -74,7 +74,7 @@ if (process.env.IS_LAMBDA == "true") {
 }
 else {
     const PORT = process.env.PORT || 3334;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`Server running on port ${PORT} \n----> http://localhost:3334/`));
 }
 
 function route_img2(event) {

@@ -91,4 +91,4 @@ Werkzeug==3.0.2
 wsproto==1.2.0
 xxhash==3.4.1
 yarl==1.9.4
-yt-dlp==2024.4.9
+yt-dlp==2025.11.12

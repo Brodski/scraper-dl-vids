@@ -2,7 +2,8 @@ from models.Vod import Vod
 from typing import List
 # from whisper.utils import get_writer
 from controllers.MicroTranscriber.whisper_writer_copypaste import get_writer
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import faster_whisper
 import json
 import os

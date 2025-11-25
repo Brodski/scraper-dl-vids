@@ -9,9 +9,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from typing import List
-from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-import env_file as env_varz
+from env_file import env_varz
 import mocks.initHrefsData
 import os
 import re
@@ -19,6 +18,7 @@ import time
 import logging
 from utils.logging_config import LoggerConfig
 
+print("3b ENV at start:", os.getenv("ENV"))
 def logger():
     pass
 
@@ -38,6 +38,8 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 #
 ######################################################################################### 
 ######################################################################################### 
+WIDTH = 1450
+HEIGHT = 1050
 options = Options()
 if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
     options.add_argument('--headless')
@@ -45,7 +47,7 @@ if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
 
 # options.add_argument('--autoplay-policy=no-user-gesture-required')
 options.add_argument('--autoplay-policy=user-required') 
-options.add_argument('--window-size=1550,1250') # width, height
+options.add_argument(f'--window-size={WIDTH},{HEIGHT}')
 options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
 # chrome_prefs = {
 #     "profile.default_content_setting_values.autoplay": 2,  # 2 means Block autoplay
@@ -125,6 +127,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     try:
         logger.debug('B running. scrap4vid.........')
         browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
+        browser.set_window_size(WIDTH, HEIGHT)
         logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:
             if cnt >= channelMax:
@@ -174,7 +177,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             allHrefs = []
             for idx, tag in enumerate(vids):
                 if idx == 0 and isOnline:
-                    continue # if guy is streaming, skip the current vod
+                    continue # if guy is streaming, skip the current vod. (TODO if your a coward like geranimo you dont auto publish vods, and the first vod will get skipped)
                 match = re.search(r'(/videos/\d+)(\?.*)', tag['href'])
                 if match and tag['href'] not in allHrefs:
                     allHrefs.append(match.group(1)) # /videos/1983739230

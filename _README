@@ -1,0 +1,14 @@
+
+### PREPER / DOWNLOADER / TRANSCRIBER ###
+cd \SSScrapey-rework\src
+.\venvFaster\Scripts\activate
+
+python kickPreper.py --env local
+python kickDownloader.py 
+python kickTranscriber.py
+
+### IDONTFRONT ###
+cd iDontFront-rework\idontfront-app
+nodemon .\iDontFront-app.js
+
+

@@ -3,7 +3,8 @@ import math
 from models.ScrappedChannel import ScrappedChannel
 from typing import List, Tuple, Dict
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import json
 import os
 import requests

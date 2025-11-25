@@ -7,7 +7,8 @@ from models.Vod import Vod
 from typing import List
 # from whisper.utils import get_writer
 import boto3
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 # import faster_whisper
 import json
 # import langcodes

@@ -25,4 +25,5 @@ def sendEmail(subject, body):
             }
         }
     )
-    print(response)
+    # print(response)
+    print("Email sent: " + subject)

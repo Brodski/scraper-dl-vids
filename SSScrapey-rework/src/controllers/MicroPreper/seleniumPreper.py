@@ -3,10 +3,10 @@ import traceback
 from bs4 import BeautifulSoup
 from models.ScrappedChannel import ScrappedChannel
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from typing import List
 from webdriver_manager.firefox import GeckoDriverManager
@@ -40,19 +40,6 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 ######################################################################################### 
 WIDTH = 1450
 HEIGHT = 1050
-options = Options()
-if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
-    options.add_argument('--headless')
-    os.environ["MOZ_HEADLESS"] = "1"
-
-# options.add_argument('--autoplay-policy=no-user-gesture-required')
-options.add_argument('--autoplay-policy=user-required') 
-options.add_argument(f'--window-size={WIDTH},{HEIGHT}')
-options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
-# chrome_prefs = {
-#     "profile.default_content_setting_values.autoplay": 2,  # 2 means Block autoplay
-# }
-# options.add_experimental_option("prefs", chrome_prefs)
 browser = None
 
 
@@ -106,27 +93,31 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     everyChannel:List[ScrappedChannel] = []
     cnt = 0
     browser = None
-    # if isDebug:
-    #     # scrapped_channels: List[ScrappedChannel] = mocks.initHrefsData.getHrefsData()
-    #     # logger.debug(json.dumps(scrapped_channels, default=lambda o: o.__dict__, indent=4))
-    #     # return scrapped_channels
 
-    #     # new debug
-    #     # return jd_onlymusic, nmplol, geranimo
-    #     return channels[:channelMax]
 
     logger.debug('A running. scrap4vid.........')
     # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    firefox_profile = webdriver.FirefoxProfile()
+    firefox_profile = FirefoxProfile()
     firefox_profile.set_preference("media.block-play-until-visible", False)
     firefox_profile.set_preference("media.autoplay.blocking_policy", 5)
     firefox_profile.set_preference("media.autoplay.default", 1)
     firefox_profile.set_preference("media.autoplay.enabled.user-gestures-needed", False)
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
 
+    options = Options()
+    if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
+        options.add_argument('--headless')
+        os.environ["MOZ_HEADLESS"] = "1"
+    options.add_argument('--autoplay-policy=user-required') 
+    options.add_argument(f'--window-size={WIDTH},{HEIGHT}')
+    options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
+    # options.add_argument('--autoplay-policy=no-user-gesture-required')
+    options.profile = firefox_profile
+
     try:
         logger.debug('B running. scrap4vid.........')
-        browser = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install(), options=options, firefox_profile=firefox_profile))
+        service = FirefoxService(GeckoDriverManager().install())
+        browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(WIDTH, HEIGHT)
         logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         for channel in channels:

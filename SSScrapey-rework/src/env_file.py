@@ -114,7 +114,7 @@ class EnvVars:
         if args.env is None and os.getenv("ENV") is None:
             print("🛑 WE NEED `ENV`. ENDING")
             sys.exit(1)
-        os.environ['ENV'] = args.env
+        os.environ['ENV'] = os.getenv("ENV") if os.getenv("ENV") else args.env
 
         print("Envrionment is: ", os.getenv("ENV"))
         if os.getenv("ENV") == "local":

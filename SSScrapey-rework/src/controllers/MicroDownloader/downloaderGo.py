@@ -10,6 +10,8 @@ from controllers.MicroDownloader.errorEnum import Errorz
 import logging
 from utils.logging_config import LoggerConfig
 from utils.emailer import sendEmail
+from utils.emailer import Status
+
 def logger():
     pass
 
@@ -30,7 +32,7 @@ class MetadataShitty:
         self.channelId   = kwargs.get("channelId")
         self.msg         = kwargs.get("msg")
         self.status      = kwargs.get("status")
-        self.runtime_ffmpeg      = kwargs.get("runtime_ffmpeg")
+        self.runtime_ffmpeg_dl      = kwargs.get("runtime_ffmpeg_dl")
         self.runtime_dl          = kwargs.get("runtime_dl")
         self.duration_string     = kwargs.get("duration_string")
 
@@ -74,7 +76,7 @@ def download(i, isDebug=False):
         ## Post maintenance
         if vod == None or vod.id == None:
             logger.debug("There are zero transcript_status='todo' from the query :O")
-            metadata_array_global.append(MetadataShitty(channelId="", vodTitle="", vodId="", status="nothing to do", msg="Nothing to do apparently"))
+            metadata_array_global.append(MetadataShitty(channelId="", vodTitle="", vodId="", status=Status.NOTHING_TODO, msg="Nothing to do apparently"))
             return "nothing to do"
 
         isSuccess = downloader.lockVodDb(vod, isDebug)
@@ -87,7 +89,7 @@ def download(i, isDebug=False):
         ###################
         # ACTUAL DOWNLOAD #
         ###################
-        runtime_ffmpeg = None
+        runtime_ffmpeg_dl = None
         runtime_dl = None
         downloaded_metadata, runtime_dl = downloader.downloadTwtvVidFAST(vod)
 
@@ -115,7 +117,7 @@ def download(i, isDebug=False):
         # Post process vod #
         ####################
         downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
-        downloaded_metadata, outfile, runtime_ffmpeg = downloader.convertVideoToSmallAudio(downloaded_metadata)
+        downloaded_metadata, outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata)
         
         #############
         # Upload DB #
@@ -137,12 +139,12 @@ def download(i, isDebug=False):
         logger.error(f"\nUnexpected error: {e}")
         traceback.print_exc()
         tb = traceback.format_exc()  # full stack trace as a string
-        metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status="Failed", msg=tb, runtime_ffmpeg=runtime_ffmpeg, runtime_dl=runtime_dl))
+        metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=Status.FAILED, msg=tb, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl))
         vod = downloader.unlockVodDb(vod)
         return
 
     ### SUCCESS ###
-    metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status="Success", runtime_ffmpeg=runtime_ffmpeg, runtime_dl=runtime_dl))
+    metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=Status.SUCCESS, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl))
     return downloaded_metadata
 
 
@@ -170,10 +172,10 @@ def sendReport(elapsed_time=0):
         vod_id          = getattr(metadata, 'vodId', 'Unknown')
         vod_title       = getattr(metadata, 'vodTitle', 'Untitled')
         duration_string = getattr(metadata, 'duration_string', 'NA')
-        runtime_ffmpeg  = getattr(metadata, 'runtime_ffmpeg', 'NA') 
+        runtime_ffmpeg_dl  = getattr(metadata, 'runtime_ffmpeg_dl', 'NA') 
         runtime_dl      = getattr(metadata, 'runtime_dl', 'NA') 
         
-        runtime_ffmpeg if runtime_ffmpeg else 0
+        runtime_ffmpeg_dl if runtime_ffmpeg_dl else 0
         runtime_dl if runtime_dl else 0
 
         msg_lines.append(
@@ -183,7 +185,7 @@ def sendReport(elapsed_time=0):
             f"VOD Title: {vod_title}\n"
             f"VOD ID: {vod_id}\n"
             f"Duration: {duration_string}\n"
-            f"runtime_ffmpeg (sec): {float(runtime_ffmpeg):.2f}\n"
+            f"runtime_ffmpeg_dl (sec): {float(runtime_ffmpeg_dl):.2f}\n"
             f"runtime_dl (sec): {float(runtime_dl):.2f}\n"
             f"Message: {message}\n"
         )

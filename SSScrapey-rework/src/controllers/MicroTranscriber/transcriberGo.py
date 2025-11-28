@@ -8,6 +8,7 @@ from typing import Dict, List
 import boto3
 import controllers.MicroTranscriber.transcriber as transcriber
 import controllers.MicroTranscriber.split_ffmpeg as split_ffmpeg
+from controllers.MicroTranscriber.utils import TOO_BIG_LENGTH
 import datetime
 # import env_file as env_varz
 from env_file import env_varz
@@ -22,6 +23,9 @@ import logging
 from utils.logging_config import LoggerConfig
 from models.Splitted import Splitted
 from datetime import datetime
+from utils.emailer import MetadataShitty
+from utils.emailer import Status
+from utils.emailer import write_transcriber_email
 
 # logger = Cloudwatch.log
 def logger():
@@ -40,14 +44,18 @@ def printIntro():
     logger.info("VODs transcribed per instance:")
     logger.info(f"   TRANSCRIBER_VODS_PER_INSTANCE: {env_varz.TRANSCRIBER_VODS_PER_INSTANCE}")
 
-def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = None):
+def goTranscribeBatch(isDebug=False):
     printIntro()
 
     start_time = time.time()
-    download_batch_size = env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1
-    completed_vods_list: List[Vod] = []
-    failed_vods_list: List[Vod] = []
+    download_batch_size = int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1)
+    completed_vods_list:  List[Vod] = []
+    failed_vods_list:     List[Vod] = []
+    metadata_arr:         List[MetadataShitty] = []
+    metadataX: MetadataShitty = MetadataShitty()
     for i in range(0, download_batch_size):
+    #for vod in transcriber.getFromFancyMap(magical_ordered_map):        
+        # process vod...
         print("===========================================")
         print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
@@ -55,15 +63,17 @@ def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = No
         Audio2Text.download_batch_size = download_batch_size
         Audio2Text.current_num = i + 1
 
-        result: Dict[Vod, bool] = transcribe(isDebug, mofo)
-        vod: Vod = result["vod"]
+        # result: Dict[Vod, bool] = transcribe(isDebug)
+        metadataX: MetadataShitty = transcribe(isDebug)
+        vod: Vod = metadataX.vod
 
         logger.info(f"   (goTranscribeBatch) Finished Index {i}")
         logger.info(f"   (goTranscribeBatch) download_batch_size: {download_batch_size}")
-        if result["isPass"]:
+        if metadataX.status == Status.SUCCESS:
             completed_vods_list.append(vod)
         else:
             failed_vods_list.append(vod)
+        metadata_arr.append(metadataX)
     logger.info("---------------------------------------------")
     logger.info("---------------------------------------------")
     logger.info("---------------------------------------------")
@@ -72,6 +82,13 @@ def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = No
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("Completed: ")
+
+
+    ##############################
+    # POST TRANSCRIBE DEBUG INFO #
+    ##############################
+    write_transcriber_email(metadata_arr, Audio2Text.completed_uploaded_tscripts, elapsed_time)
+
     for v in failed_vods_list:
         logger.info(f"FAILED: {v.channels_name_id} - {v.title} - id: {v.id}")
     for v in completed_vods_list:
@@ -85,61 +102,79 @@ def goTranscribeBatch(isDebug=False, args=None, mofo: List[Splitted] | None = No
         except:
             logger.error("oops, .endswith() is not a real method")
 
-    # time.sleep(100) 
-    logger.debug("gg ending")
     logger.debug("gg ending")
     return "gg ending"
 
-def transcribe(isDebug=False, mofo: List[Splitted] | None = None) -> Dict[Vod, bool]:
-    # Setup. Get Vod
-    start_time = time.time()
-    vods_list = transcriber.getTodoFromDb()
-    vod: Vod = vods_list[0] if len(vods_list) > 0 else None
-    relative_path = None
+
+def transcribe(isDebug=False) -> MetadataShitty:
+    ### GET THE VOD ###
+    metadata_ = MetadataShitty()
+    vods_list       = transcriber.getTodoFromDb()
+            
+    magical_ordered_map: Dict[int, List[Vod]]  = transcriber.convertToFancyMap(vods_list)
+    # OLD ↓ ➔
+    vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
+    # NEW ↓
+    gen             = transcriber.getFromFancyMap(magical_ordered_map)      # <--- smart
+    # for vod in gen:
+    #     vod: Vod = vod
+    #     print(vod.transcript_status, vod.channels_name_id, vod.id, vod.stream_date)
+    # return
+    vod: Vod        = next(gen, None)
+    vod: Vod        = vod          if not isDebug        else getDebugVod(vod)
+    start_time      = time.time()
+    metadata_       = MetadataShitty(vod=vod)
+
+    ### -.- 
     logger.debug('IN THEORY, AUDIO TO TEXT THIS:')
     if not vod and not isDebug:
         logger.info("jk, vod is null, nothing to do. no audio2text_need")
-        return None
-    if isDebug:
-        vod = getDebugVod(vod)
+        metadata_.status = Status.NOTHING_TODO
+        return metadata_
     logger.debug(vod.print())
 
     transcriber.setSemaphoreDb(vod) # Set TranscrptStatus = "transcribing"
 
-    # Do the transcribing
+    #######################
+    # Do the transcribing #
+    #######################
     try:
         relative_path: str = transcriber.downloadAudio(vod)
-        print("env_varz.WHSP_IS_BIG_FILES_ENABLED: " + str(env_varz.WHSP_IS_BIG_FILES_ENABLED))
 
-        if env_varz.WHSP_IS_BIG_FILES_ENABLED == "True":
-            print("YES YEYSYSEYYEYSY  BIG_FILES_ENABLED")
-            splitted_list: List[Splitted] = split_ffmpeg.splitHugeFile(vod, relative_path)
-        elif mofo == None:
-            split = Splitted(relative_path = relative_path)
-            splitted_list = [split]
-        else: 
-            splitted_list = mofo
-        saved_caption_files = Audio2Text.doWhisperStuff(vod, splitted_list)
-        # saved_caption_files = transcriber.doInsaneWhisperStuff(vod, relative_path, isDebug)
+        ### I guess there is a bug with really big files, so I do this? 
+        splitted_list: List[Splitted] = split_ffmpeg.splitHugeFile(vod, relative_path)
 
+        ########################
+        # BOOM TRANSCRIBE BABY #
+        ########################
+        saved_caption_files, metadata_ = Audio2Text.doWhisperStuff(vod, splitted_list)
+
+        ################
+        # POST PROCESS #
+        ################
         transcripts_s3_key_arr = transcriber.uploadCaptionsToS3(saved_caption_files, vod)
         transcriber.setCompletedStatusDb(transcripts_s3_key_arr, vod)
         transcriber.deleteAudioS3(vod)
+        transcriber.deleteAudioLocally(relative_path)
     except KeyboardInterrupt:
         logger.debug("\nCtrl+C detected. Exiting gracefully.")
         transcriber.unsetSemaphoreDb(vod) # "vod" is highest priority 'todo' vod
         sys.exit()
     except Exception as e:
-        error_message = f"ERROR Transcribing vod: {e}"
         stack_trace = traceback.format_exc()
+        error_message = f"ERROR Transcribing vod: {e}"
         logger.error(error_message + "\n" + stack_trace)
         transcriber.unsetSemaphoreDb(vod)
-        return {"vod": vod, "isPass": False}
+        metadata_.status = Status.FAILED
+        metadata_.msg = error_message
+        return metadata_
+        # return {"vod": vod, "isPass": False}
 
-    transcriber.cleanUpFiles(relative_path)
     logger.debug("Finished step 3 Transcriber-Service")
-    logger.info(f"Time taken for {vod.channels_name_id}-{vod.id}: { math.ceil(time.time() - start_time)}")
-    return {"vod": vod, "isPass": True}
+    logger.info(f"Time taken for: {vod.channels_name_id}, id: {vod.id}: { math.ceil(time.time() - start_time)}")
+    metadata_.status = Status.SUCCESS
+    return metadata_
+    # return {"vod": vod, "isPass": True}
 
 def getDebugVod(vod: Vod):
     # tuple =  ('2143646862', 'kaicenat', '⚔️100+ HR STREAM⚔️ELDEN RING⚔️CLICK HERE⚔️GAMER⚔️BIGGEST DWARF⚔️ELITE⚔️PRAY 4 ME⚔️', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/jtv_user_pictures/1d8cd548-04fa-49fb-bfcd-f222f73482b6-profile_image-70x70.png', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/kaicenat/2143646862/100%252B_HR_STREAM_ELDEN_RING_CLICK_HERE_GAMER_BIGGEST_DWARF_ELITE_PRAY_4_ME-v2143646862.opus', '-1', 'English')
@@ -151,15 +186,16 @@ def getDebugVod(vod: Vod):
     return vod
 
 
-
-
-
-def truncate(text, max_len):
-    return text if len(text) <= max_len else text[:max_len - 1] + "…"
-
+###############################
+## Don't think this is used at all
+###############################
 def pretty_print_query_vods(vods_list):
     import shutil
 
+
+    def truncate(text, max_len):
+        return text if len(text) <= max_len else text[:max_len - 1] + "…"
+    
     # Fixed/default width
     col_channel = 15
     col_id = 10

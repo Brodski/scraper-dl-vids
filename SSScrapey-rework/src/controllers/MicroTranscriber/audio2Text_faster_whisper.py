@@ -15,6 +15,7 @@ import logging
 from utils.logging_config import LoggerConfig
 from datetime import datetime
 from models.Splitted import Splitted
+from utils.emailer import MetadataShitty
 
 # logger = Cloudwatch.log
 def logger():
@@ -32,8 +33,10 @@ class Audio2Text:
     completed_uploaded_tscripts = []
 
     @classmethod
-    def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted]):
+    def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted]) -> tuple[List[str], MetadataShitty]:
+        logger.debug("#######################")
         logger.debug("Starting WhisperStuff!")
+        logger.debug("#######################")
         def get_language_code(full_language_name):
             try:
                 language_code = langcodes.find(full_language_name).language
@@ -45,18 +48,19 @@ class Audio2Text:
         ###############
         #### SETUP ####
         ###############
-        lang_code = get_language_code(vod.language)
-        model_size = env_varz.WHSP_MODEL_SIZE
-        compute_type = env_varz.WHSP_COMPUTE_TYPE
-        cpu_threads = int(env_varz.WHSP_CPU_THREADS)
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        # if env_varz.ENV == "local" and device == "cuda":
-        #     compute_type = "float16"
+        lang_code       = get_language_code(vod.language)
+        model_size      = env_varz.WHSP_MODEL_SIZE
+        compute_type    = env_varz.WHSP_COMPUTE_TYPE
+        cpu_threads     = int(env_varz.WHSP_CPU_THREADS)
+        device          = "cuda" if torch.cuda.is_available() else "cpu"
 
-        logger.debug("loading model........")
+        metadata_ = MetadataShitty(vod=vod, model_size=model_size, compute_type=compute_type, cpu_threads=cpu_threads, device=device)
+
+        logger.debug("⌛ loading model........")
         if cls.model is None:
             cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
-
+        else:
+            logger.info("✅ Model is loaded already")
         if env_varz.ENV == "local":
             import ctypes
             ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
@@ -78,7 +82,6 @@ class Audio2Text:
 
             end_time_model = time.time() - start_time_model
             start_time_vod = time.time()
-
 
             cls.count_logger = 0
             offset = splitted_list[i-1].duration if i > 0 else 0
@@ -112,7 +115,11 @@ class Audio2Text:
         logger.debug("")
         logger.debug("========================================")
 
-        return saved_caption_files
+        metadata_.whsp_lang = info.language 
+        metadata_.runtime_model_ts = end_time_model
+        metadata_.runtime_ts = end_time_vod
+
+        return saved_caption_files, metadata_
 
     @classmethod
     def writeCaptionsLocally(self, result, audio_basename):
@@ -140,9 +147,9 @@ class Audio2Text:
         current_time = datetime.now().strftime("%H:%M:%S")
         msg = f"{cls.current_num} of {cls.download_batch_size}|id:{vod.id}"
 
-        if cls.count_logger % 200 == 0 and not env_varz.ENV == "local":
+        if not env_varz.ENV == "local" and cls.count_logger % 200 == 0:
             logger.debug("... still transcribing" + str(cls.count_logger))
-        # THIS !!!!!!!!!
+        # TODO? would be nice to make these less goofy
         # THIS !!!!!!!!!
         # THIS !!!!!!!!!
         # THIS !!!!!!!!!
@@ -150,10 +157,6 @@ class Audio2Text:
             print(f"{current_time}| ... still transcribing " + str(cls.count_logger))
             print(f"{current_time}|{msg}|[{segment.start:.0f}s -> {segment.end:.0f}s] {segment.text}")
             return
-        # elif env_varz.ENV == "local":
-        #     # logger.debug(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
-        #     print(f"{current_time}|{msg}|[{segment.start:.0f}s -> {segment.end:.0f}s] {segment.text}")
-
 
             
             

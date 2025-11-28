@@ -5,6 +5,7 @@ import traceback
 from typing import List
 from models.Vod import Vod
 from utils.logging_config import LoggerConfig
+from controllers.MicroTranscriber.utils import TOO_BIG_LENGTH
 # import env_file as env_varz
 from env_file import env_varz
 from models.Silence import Silence
@@ -16,7 +17,6 @@ def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
 
-SPLIT_LENGTH = 57600 # 16 hours
 
 # NOISE
 #  ffmpeg -i input.opus -af silencedetect=noise=-30dB:d=10 -f null -
@@ -24,29 +24,39 @@ SPLIT_LENGTH = 57600 # 16 hours
 # SPLIT
 # ffmpeg -i input_file -ss 106200 -to 145500 -c copy output_file
 
-def splitHugeFile(vod: Vod, relative_path: str):
-    noise_vol = "30dB"
-    duration = "10" # seconds
+SPLIT_LENGTH = 57600 # 16 hours
+TOO_BIG_LENGTH_X = TOO_BIG_LENGTH # IMPORTED # 18 hours
+
+
+def splitHugeFile(vod: Vod, relative_path: str) -> List[Splitted]:
+    noise_vol    = "30dB"
+    duration     = "10" # seconds
+
+    # My code is bugged and shit, i'll need to fix it another day
+    split = Splitted(relative_path = relative_path)
+    splitted_list = [split]
+    return splitted_list
+
+    if int(vod.duration) < SPLIT_LENGTH or env_varz.WHSP_IS_BIG_FILES_ENABLED == "False":
+        split = Splitted(relative_path = relative_path)
+        splitted_list = [split]
+        return splitted_list
+
     command = [
         "ffmpeg",
         "-i", relative_path,
         "-af", f"silencedetect=noise=-{noise_vol}:d={duration}",
         "-f", "null", "-"
     ]
-    
     logger.debug("doing shit command:" + str(command))
+    
     silence_output_raw = _execSubprocCmd(command)
+
     silence_list: List[Silence] = parse_silence_data(silence_output_raw)
-    
-    splitted_list: List[Splitted] = split_files(vod, silence_list, relative_path)
-    # logger.debug("PARTSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-    # logger.debug(splitted_list)
-    return splitted_list
-    
 
-
-# ffmpeg -i input_file -ss 106200 -to 145500 -c copy output_file
-def split_files(vod: Vod, silence_list: list[Silence], relative_path: str) -> int:
+    ############
+    # SPLIT IT #
+    ############
     quotient = int(vod.duration) // SPLIT_LENGTH
     remainder = int(vod.duration) % SPLIT_LENGTH
 
@@ -62,6 +72,8 @@ def split_files(vod: Vod, silence_list: list[Silence], relative_path: str) -> in
         _bisect_silence_trick = Silence()
         _bisect_silence_trick.start = SPLIT_LENGTH * (i+1)
         index = bisect.bisect_left(silence_list, _bisect_silence_trick)
+        # silences_of_split.append(silence_list[index])
+
         silences_of_split.append(silence_list[index])
 
         logger.debug(f"{i}, {(SPLIT_LENGTH * (i+1))}")
@@ -74,9 +86,7 @@ def split_files(vod: Vod, silence_list: list[Silence], relative_path: str) -> in
         splitted: Splitted = cut_the_file(i, silences_of_split, vod, relative_path, output_path)
         splitted_list.append(splitted)
 
-
     return splitted_list
-
 
 def get_filename_stupidly_(filename, count):
     last_dot_index = filename.rfind('.')
@@ -84,16 +94,17 @@ def get_filename_stupidly_(filename, count):
     return filename_new
 
 
-def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, output_file):
+def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, output_file) -> Splitted:
     if i == 0:
         start = 0
-        end = int(silences_of_split[1].start - 2) # arbitray 2s offset
+        end = int(silences_of_split[0].start + 2) # arbitray 2s offset
     elif i >= (len(silences_of_split) - 1):
         start = int(silences_of_split[i].start)
         end = int(vod.duration)
     else:
         start = int(silences_of_split[i].start)
-        end = int(silences_of_split[i+1].start - 2) # arbitray 2s offset
+        end = int(silences_of_split[i+1].start + 2) # arbitray 2s offset, again
+
     # sometimes there is no silence where we want it to be
     #
     #    s[i]                                           s[i+1]
@@ -103,22 +114,25 @@ def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, out
     if ((start + SPLIT_LENGTH) < end): # prob can fix in future at "this can be better" line above
         start_extended = start + SPLIT_LENGTH
         end = start_extended
-        if i < len(silences_of_split):
+        if i < (len(silences_of_split) - 1):
             silences_of_split[i+1].start = start_extended
+        if end > int(vod.duration):
+            end = int(vod.duration)
 
     logger.debug(f'cutting the file @  {start} to {(end)}' )
 
-    command = [
-        "ffmpeg",
-        "-ss", str(start), # order is import, need -ss before -i. Makes fast.
-        "-i", input_file,
-        "-to", str(end),
-        "-c", "copy", output_file,
-        "-y",
-    ]
-    logger.debug("command")
-    logger.debug(str(command))
     try:
+        # ffmpeg -ss 106200 -i input_file  -to 145500 -c copy output_file
+        command = [
+            "ffmpeg",
+            "-ss", str(start), # order is import, need -ss before -i. Makes fast.
+            "-i", input_file,
+            "-to", str(end),
+            "-c", "copy", output_file,
+            "-y",
+        ]
+        logger.debug("command")
+        logger.debug(str(command))
         process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -142,10 +156,10 @@ def cut_the_file(i, silences_of_split: List[Silence] , vod: Vod, input_file, out
         traceback.print_exc()
         return False
 
+# This code is sorta duplicated. It is in Downloader too
 def _execSubprocCmd(command):
     logger.debug('doing some shit........')
     try:
-        # process = subprocess.run(
         process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -154,8 +168,6 @@ def _execSubprocCmd(command):
         )
 
         stdout, stderr = process.communicate()  
-        # logger.debug("STDOUT:", stdout)
-        # logger.debug("STDERR:", stderr)
 
         logger.debug("process.returncode (0 is good): " + str(process.returncode))
         if process.returncode == 0:
@@ -200,12 +212,13 @@ def parse_silence_data(silence_output):
             # }
             # current_silence['start'] = float(start_match.group(1))
             silence_curent.start = float(start_match.group(1))
+
             # pro trick next line
-            logger.debug(line)
+            # logger.debug(line)
             line = next(silence_iter)
             while "size=" in line and "bitrate=" in line:
                 line = next(silence_iter)
-            logger.debug(line)
+            # logger.debug(line)
 
             end_match = silence_end_pattern.search(line)
             duration_match = silence_duration_pattern.search(line)
@@ -219,15 +232,13 @@ def parse_silence_data(silence_output):
             # silences.append(current_silence)
             silences.append(silence_curent)
 
-    # for i, s in enumerate(silences):
-    #     logger.debug(f"Silence {i+1}: start={s['start']}s, end={s['end']}s, duration={s['duration']}s")
-    logger.debug("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    for s in silences:
-        logger.debug(s)
-    logger.debug("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2")
+    # logger.debug("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    # for s in silences:
+    #     logger.debug(s)
+    # logger.debug("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2")
     return silences
 
 def parse_silence_data_Xtest(vod, silence_output_raw, rel_path):
     silence_list: List[Silence] = parse_silence_data(silence_output_raw)
-    split_files(vod, silence_list, rel_path)
+    # split_files(vod, silence_list, rel_path)
 

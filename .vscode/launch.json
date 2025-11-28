@@ -52,7 +52,10 @@
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
             "cwd": "${workspaceFolder}/SSScrapey-rework/src",
             "args": [
-                // "--quick-dl",
+                "--env",
+                "local",
+                "--transcriber_vods_per_instance",
+                "2"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

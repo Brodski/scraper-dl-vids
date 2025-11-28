@@ -92,8 +92,8 @@ class EnvVars:
 
 
         ##################################################################
-        ### Uses reflection to update all env_varz values from the args  #
         ### I AM THE BEST                                                #
+        ### Uses reflection to update all env_varz values from the args  #
         ##################################################################
         for key, value in vars(args).items():
             if value and hasattr(self, key.upper()):
@@ -179,104 +179,4 @@ class EnvVars:
 # BAM                              #
 ####################################
 env_varz = EnvVars()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ###################################
-# # LOAD SECRET SENSITIVE VARIABLES #
-# ###################################
-# # NOTE: 
-# # some prod variables passed from terraform ---> lambda
-# dotenv_prod_path ="./env_prod"
-# dotenv_local_path ="./env"
-# dotenv_dev_path ="./env"
-# if os.getenv("ENV") == "local":
-#     env_vars = dotenv_values('.env_public_local')
-#     load_dotenv(dotenv_local_path, override=True)
-# elif os.getenv("ENV") == "dev":
-#     env_vars = dotenv_values('.env_public_dev')
-#     load_dotenv(dotenv_dev_path, override=True)
-# elif os.getenv("ENV") == "prod":
-#     env_vars = dotenv_values('.env_public_prod')
-#     load_dotenv(dotenv_prod_path, override=True)
-# else:
-#     print("ENV is None! NEED ENV")
-#     sys.exit(1) 
-
-
-# #########################
-# # LOAD PUBLIC VARIABLES #
-# # idk why i did this    #
-# #########################
-# ##
-# ## DOWNLOADER
-# ##
-# # DWN_BATCH_SIZE = env_vars['DWN_BATCH_SIZE']
-# DWN_IS_SHORT_DEV_DL = env_vars['DWN_IS_SHORT_DEV_DL']
-
-# ##
-# ## PREPER
-# ##
-# PREP_SELENIUM_IS_HEADLESS = env_vars['PREP_SELENIUM_IS_HEADLESS']
-# PREP_SULLY_DAYS = env_vars['PREP_SULLY_DAYS']
-# # PREP_SELENIUM_NUM_CHANNELS = env_vars['PREP_SELENIUM_NUM_CHANNELS']
-# # PREP_SELENIUM_NUM_VODS_PER = env_vars['PREP_SELENIUM_NUM_VODS_PER']
-
-# ##
-# ## WHISPER/TRANSCRIBER
-# ##
-# WHSP_A2T_ASSETS_AUDIO="./assets/audio/"
-# WHSP_A2T_ASSETS_CAPTIONS="./assets/captions/"
-# WHSP_COMPUTE_TYPE = env_vars['WHSP_COMPUTE_TYPE']
-# WHSP_CPU_THREADS = env_vars['WHSP_CPU_THREADS']
-# WHSP_MODEL_SIZE = env_vars['WHSP_MODEL_SIZE']
-# WHSP_IS_CLOUDWATCH = env_vars['WHSP_IS_CLOUDWATCH']
-# WHSP_IS_BIG_FILES_ENABLED = env_vars['WHSP_IS_BIG_FILES_ENABLED']
-
-# TRANSCRIBER_NUM_INSTANCES = int(os.getenv("TRANSCRIBER_NUM_INSTANCES") if os.getenv("TRANSCRIBER_NUM_INSTANCES") else 1)
-# TRANSCRIBER_VODS_PER_INSTANCE = os.getenv("TRANSCRIBER_VODS_PER_INSTANCE")
-# TRANSCRIBER_INSTANCE_CNT = os.getenv("TRANSCRIBER_INSTANCE_CNT") if os.getenv("TRANSCRIBER_INSTANCE_CNT") else ""
-
-# BUCKET_DOMAIN = env_vars['BUCKET_DOMAIN']
-# BUCKET_NAME = env_vars['BUCKET_NAME']
-# DEBUG_LEVEL = env_vars['DEBUG_LEVEL']
-# IS_VIP_LIST = env_vars['IS_VIP_LIST']
-# IS_VIP_LIST_DEBUG = env_vars['IS_VIP_LIST_DEBUG']
-# NUM_CHANNELS = env_vars['NUM_CHANNELS']
-# NUM_VOD_PER_CHANNEL = env_vars['NUM_VOD_PER_CHANNEL']
-# S3_CAPTIONS_KEYBASE = env_vars['S3_CAPTIONS_KEYBASE']
-
-# ###############################################
-# # "RELOAD" VARIABLES - from Terraform or .env #
-# # b/c its nice to find variables via inteli-sense instead of os.getenv("string-shit")
-# ###############################################
-# ENV = os.getenv("ENV")
-# DATABASE = os.getenv("DATABASE")
-# DATABASE_HOST = os.getenv("DATABASE_HOST")
-# DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
-# DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-# DATABASE_PORT = os.getenv("DATABASE_PORT")
-# # AWS_ACCESS_KEY_ID not loaded here. idk why
-# # AWS_SECRET_ACCESS_KEY not loaded here. idk why
 

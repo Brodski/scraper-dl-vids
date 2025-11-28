@@ -197,8 +197,6 @@ silencedetect = """
     """
 
 
-from controllers.MicroTranscriber.split_ffmpeg import splitHugeFile
-from controllers.MicroTranscriber.split_ffmpeg import parse_silence_data_Xtest
 from models.Vod import Vod
 from models.Splitted import Splitted
 
@@ -207,10 +205,9 @@ import controllers.MicroTranscriber.transcriberGo as transcriberGo
 # if __name__ == "__main__":
 #     rel_path = "./assets/audio/FAZEATHON_DAY_24_30_-_IRL_AMONG_US_LATER_GFUEL_HOUSE_SUBS_30%2525_OFF_sub_subgoal_po-v2259700312.opus"
 #     rel_path = "./assets/audio/FAZEATHON_day24_CUT.opus"
-#     # splitHugeFile(None, rel_path), 
     
 #     vod = Vod(duration_string = '47:11:00', duration= 169860, id = '2259700312', language = 'English', model = None, priority = 4, title = 'FAZEATHON DAY 24/30 -> IRL AMONG US LATER', transcript_status = 'audio2text need')
-#     parse_silence_data_Xtest(vod, silencedetect.splitlines(), rel_path)
+
 
 if __name__ == "__main__":
     splited1 = Splitted(duration=29185, relative_path='./assets/audio/FAZEATHON_DAY_24_30_-_IRL_AMONG_US_LATER_GFUEL_HOUSE_SUBS_30%2525_OFF_sub_subgoal_po-v2259700312_part0_.opus')

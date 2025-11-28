@@ -172,8 +172,8 @@ def sendReport(elapsed_time=0):
         vod_id          = getattr(metadata, 'vodId', 'Unknown')
         vod_title       = getattr(metadata, 'vodTitle', 'Untitled')
         duration_string = getattr(metadata, 'duration_string', 'NA')
-        runtime_ffmpeg_dl  = getattr(metadata, 'runtime_ffmpeg_dl', 'NA') 
-        runtime_dl      = getattr(metadata, 'runtime_dl', 'NA') 
+        runtime_ffmpeg_dl  = getattr(metadata, 'runtime_ffmpeg_dl', -69) 
+        runtime_dl      = getattr(metadata, 'runtime_dl', -69) 
         
         runtime_ffmpeg_dl if runtime_ffmpeg_dl else 0
         runtime_dl if runtime_dl else 0

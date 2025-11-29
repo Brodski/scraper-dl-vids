@@ -1,4 +1,5 @@
-name: Build and Push Docker Image
+name: Baby Build and Push Docker Image
+
 on:
   push:
     branches:
@@ -13,13 +14,13 @@ on:
       build_dir:
         description: "Directory containing the Dockerfile"
         required: true
-        default: "./SSScrapey-rework/docker/"
+        default: "SSScrapey-rework/docker"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkotu code
+      - name: checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}

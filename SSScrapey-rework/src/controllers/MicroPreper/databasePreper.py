@@ -7,7 +7,8 @@ from models.ScrappedChannel import ScrappedChannel
 from utils.emailer import sendEmail
 from utils.logging_config import LoggerConfig
 from typing import List
-import env_file as env_varz
+# import env_file as env_varz
+from env_file import env_varz
 import MySQLdb
 import os
 import logging
@@ -25,8 +26,7 @@ def getConnection():
         passwd  = env_varz.DATABASE_PASSWORD,
         port    = int(env_varz.DATABASE_PORT),
         autocommit  = False,
-        # ssl_mode    = "VERIFY_IDENTITY",
-        # ssl         = { "ca": env_varz.SSL_FILE } # See https://planetscale.com/docs/concepts/secure-connections#ca-root-configuration to determine the path to your operating systems certificate file.
+        charset="utf8mb4"
     )
     return connection
 
@@ -103,28 +103,10 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         logger.debug("channels_all_in_db:")
         logger.debug([ch.name_id for ch in channels_all_in_db])
         logger.debug("")
-        logger.debug("scrapped_channels:")
-        logger.debug([ch.name_id for ch in scrapped_channels])
-        logger.debug("")
         logger.debug("all_channels_minus_scrapped:")
         logger.debug([ch.name_id for ch in all_channels_minus_scrapped])
 
         logger.debug("")
-        # for chan in scrapped_channels:
-        #     logger.debug("----------------")
-        #     chan.print()
-
-
-        # I think thi code does nothing or bugged
-        # vip_tuple = ()
-        # if (os.getenv("ENV") != "prod") and isDebug:
-        #     vip_tuple = ("geranimo", "nmplol")
-        # else:
-        #     vip_tuple = ()
-        # vip_list = [channel for channel in scrapped_channels if channel.name_id in vip_tuple]
-        # for vip in vip_list:
-        #     vip.print()
-
         return all_channels_minus_scrapped
         return channels_all_in_db
         return all_channels_minus_scrapped + vip_list
@@ -139,7 +121,7 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
             url = f'https://sullygnome.com/channel/{chan.name_id}'
         else:
             url = f'https://sullygnome.com/channel/{chan.name_id}/{env_varz.PREP_SULLY_DAYS}'
-        logger.info(f"-------  {cnt} (sully data) --------")
+        logger.info(f"-------  {cnt} (updating every channel in the DB via sully) --------")
         logger.info(url)
         headers = {
             "accept-language": "en-US,en;q=0.9",
@@ -149,73 +131,97 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             text_data = response.content.decode('utf-8') 
-            if response.url == "https://sullygnome.com/": # redirected
+            if response.url == "https://sullygnome.com/": # ❌ -> redirected
+                ################################
+                # ERROR SOLUTION - WRITE EMAIL #
+                # silent error b/c redirect    # 
+                ################################
+                ### SUBJECT
                 subject = f"Preper {os.getenv('ENV')} - Failed selenium scrap on a channel"
-                msg = f"Attempted but failed url={url} - cnt={cnt} \nThey redirected! response.url is now: " + response.url
+                ### BODY
+                msg = f"Attempted but failed url={url} - cnt={cnt} \n"
+                msg = msg + f"They redirected! response.url is now: " + response.url + "\n"
+                msg = msg + f"⚠ Must update manually!\n"
+                msg = msg + f"1. Google search missing channel. eg '{chan.name_id} twitch' \n"
+                msg = msg + f"2. Go to HeidiSQL -> find NameId='{chan.name_id}' -> update 'NameID' and maybe 'DisplayName'.\n"
+                msg = msg + f"3. Done \n"
                 logger.error(msg)
                 sendEmail(subject, msg)
-                # docker builder prune
                 continue
-        
-            soup = BeautifulSoup(text_data, 'html.parser')
-            data1 = soup.select("#pageHeaderMiddle .MiddleSubHeaderContainer .MiddleSubHeaderItemValue")
-            data2 = soup.select(".InfoStatPanelContainerTop .InfoStatPanelWrapper .InfoStatPanelTL")
-            
-            chan.followers  = data1[0].get_text().replace(",", "")
-            chan.partner    = True if data1[2].get_text().lower() == "partnered" else False
-            chan.mature     = True if data1[3].get_text().lower() == "yes" else False
+            else: # ✅
+                ########################
+                # UPDATE STREAMER INFO #
+                ########################
+                # TODO?? i could catch errors with css/html updates better, and notify me about changes.
+                soup = BeautifulSoup(text_data, 'html.parser')
+                data1 = soup.select("#pageHeaderMiddle .MiddleSubHeaderContainer .MiddleSubHeaderItemValue")
+                data2 = soup.select(".InfoStatPanelContainerTop .InfoStatPanelWrapper .InfoStatPanelTL")
+                data3 = soup.select(".PageHeaderInner .PageHeaderMiddleTop img")
+                
+                chan.followers  = data1[0].get_text().replace(",", "")
+                chan.partner    = True if data1[2].get_text().lower() == "partnered" else False
+                chan.mature     = True if data1[3].get_text().lower() == "yes" else False
 
-            chan.avgviewers         = data2[0].get_text().replace(",", "")
-            chan.viewminutes        = int(data2[1].get_text().replace(",", "")) * 60 # HOURS
-            chan.followersgained    = data2[2].get_text().replace(",", "")
-            chan.maxviewers         = data2[3].get_text().replace(",", "")
-            chan.streamedminutes    = int(data2[4].get_text().replace(",", "")) * 60 #HOURS
-            logger.debug("    " +  chan.name_id)
-            chan.print()
+                chan.avgviewers         = data2[0].get_text().replace(",", "")
+                chan.viewminutes        = int(data2[1].get_text().replace(",", "")) * 60 # HOURS
+                chan.followersgained    = data2[2].get_text().replace(",", "")
+                chan.maxviewers         = data2[3].get_text().replace(",", "")
+                chan.streamedminutes    = int(data2[4].get_text().replace(",", "")) * 60 #HOURS
+                chan.logo               = data3[0].attrs["src"]
+
+                logger.debug(chan.name_id)
+                # chan.print()
 
         else:
             logger.debug('An error has occurred.')
 
 def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
-    connection = getConnection()
-    days_measured = int(env_varz.PREP_SULLY_DAYS)
-    with connection.cursor() as cursor:
-        # Make SQL Query
-        name_ids = [chn.name_id for chn in scrapped_channels]
-        formatted_ids = ', '.join([f"'{str(name)}'" for name in name_ids])
-        query = f"SELECT NameId FROM Channels WHERE NameId IN ({formatted_ids})"
+    connection = None
+    try:
+        connection = getConnection()
+        days_measured = int(env_varz.PREP_SULLY_DAYS)
 
-        cursor.execute(query)
+        with connection.cursor() as cursor:
+            # Make SQL Query
+            name_ids = [chn.name_id for chn in scrapped_channels]
+            formatted_ids = ', '.join([f"'{str(name)}'" for name in name_ids])
+            query = f"SELECT NameId FROM Channels WHERE NameId IN ({formatted_ids})"
 
-        # Get results
-        existing_name_ids = [row[0] for row in cursor.fetchall()]
-        non_existing_name_ids = set(name_ids) - set(existing_name_ids)
-        new_channels = [chan for chan in scrapped_channels if chan.name_id not in existing_name_ids]
+            cursor.execute(query)
 
-        logger.debug("Existing IDs:" +  existing_name_ids)
-        logger.debug("New IDs: " + str(new_channels))
+            # Get results
+            existing_name_ids = [row[0] for row in cursor.fetchall()]
+            non_existing_name_ids = set(name_ids) - set(existing_name_ids)
+            new_channels: List[ScrappedChannel] = [chan for chan in scrapped_channels if chan.name_id not in existing_name_ids]
 
-        # Add new channels to database
-        if new_channels:
-            sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId, ViewMinutes, StreamedMinutes, MaxViewers, AvgViewers, Followers, FollowersGained, Partner, Affiliate, Mature, PreviousViewMinutes, PreviousStreamedMinutes, PreviousMaxViewers, PreviousAvgViewers, PreviousFollowerGain, DaysMeasured) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id, chan.viewminutes, chan.streamedminutes, chan.maxviewers, chan.avgviewers, chan.followers, chan.followersgained, chan.partner, chan.affiliate, chan.mature, chan.previousviewminutes, chan.previousstreamedminutes, chan.previousmaxviewers, chan.previousavgviewers, chan.previousfollowergain, days_measured) for chan in new_channels]
-            try:
+            logger.debug("Existing IDs:" +  str(existing_name_ids))
+            logger.debug("New IDs: " + str(new_channels))
+
+            # Add new channels to database
+            if new_channels:
+                sql = "INSERT INTO Channels (DisplayName, Language, Logo, CurrentRank, TwitchUrl, NameId, ViewMinutes, StreamedMinutes, MaxViewers, AvgViewers, Followers, FollowersGained, Partner, Affiliate, Mature, PreviousViewMinutes, PreviousStreamedMinutes, PreviousMaxViewers, PreviousAvgViewers, PreviousFollowerGain, DaysMeasured) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = [(chan.displayname, chan.language, chan.logo, chan.current_rank, chan.twitchurl, chan.name_id, chan.viewminutes, chan.streamedminutes, chan.maxviewers, chan.avgviewers, chan.followers, chan.followersgained, chan.partner, chan.affiliate, chan.mature, chan.previousviewminutes, chan.previousstreamedminutes, chan.previousmaxviewers, chan.previousavgviewers, chan.previousfollowergain, days_measured) for chan in new_channels]
+
                 cursor.executemany(sql, values)
                 connection.commit()
                 logger.debug(f"MONEY 💰 Added {len(new_channels)} new channels.")
-            except Exception as e:
-                logger.error(f"Error occurred (addNewChannelToDb): {e}")
-                logger.error(traceback.format_exc())
-                connection.rollback()
-            finally:
-                connection.close()
+            else:
+                logger.debug("No new channels to add.")
+    except Exception as e:
+        logger.error(f"Error occurred (addNewChannelToDb): {e}")
+        logger.error(traceback.format_exc())
+        if connection:
+            connection.rollback()
+    finally:
+        if connection:
+            connection.close()
 
 def updateChannelRankingLazily(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
         # A. Depriorities all old ones by pushing it down in Ranking
         sql = "UPDATE Channels SET CurrentRank = CurrentRank + %s"
-        logger.debug("len(scrapped_channels)" + len(scrapped_channels))
+        logger.debug("len(scrapped_channels): " + str(len(scrapped_channels)))
         try:
             values = (len(scrapped_channels),) # Ensure that the value is passed as a tuple
             affected_count = cursor.execute(sql, values)
@@ -249,6 +255,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
         for chan in scrapped_channels:
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
+            link_prio_map = {link: i for i, link in enumerate(vod_ids)} # hacky trick to make the vod_ids have a prioity, eg vod order, 1st vod is prioritized, 2nd, ect
             if len(vod_ids) == 0:
                 continue
             placeholders = ', '.join(['%s'] * len(vod_ids))
@@ -263,16 +270,20 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             previous_existing_ids = set(existing_ids) - set(non_existing_ids)
             logger.debug("Channel: " + str(chan.name_id))
             logger.debug("Links: " + str(vod_ids))
-            logger.debug("Updating priorities on IDs :" +  str((previous_existing_ids)))
+            logger.debug("Updating priorities on IDs (already in DB): " +  str((previous_existing_ids)))
             logger.debug("Adding new IDs :" +  str(non_existing_ids))
             logger.debug("")
 
             # Add new vods to the Vods table
             if non_existing_ids:
                 trans_status = "todo"            
-                values = [(vod_id, chan.name_id, trans_status, idx) for idx, vod_id in enumerate(non_existing_ids)]
+                #                                            priority = link_prio_map[vod_id] = vod order, left to right
+                #                                                    ↓
+                values = [(vod_id, chan.name_id, trans_status, link_prio_map[vod_id]) for idx, vod_id in enumerate(non_existing_ids)]
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 try:
+                    logger.debug("non_existing_ids " + sql)
+                    logger.debug(str(values))
                     cursor.executemany(sql, values)
                     connection.commit()
                 except Exception as e:
@@ -282,8 +293,10 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             # Update the priority of vods. Recall priority essentially is the release date. eg, top-left to bottom-right https://www.twitch.tv/geranimo/videos
             if previous_existing_ids:
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
-                values = [(idx, vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
+                values = [(link_prio_map[vod_id], vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
                 try:
+                    logger.debug("previous " + sql)
+                    logger.debug(str(values))
                     cursor.executemany(sql, values)
                     connection.commit()
                 except Exception as e:
@@ -291,7 +304,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                     connection.rollback()
     if connection.open:
         connection.close()
-    logger.debug("    (updateVodsDb) Completed update!")
+    logger.debug("Completed update!")
 
 def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
@@ -331,21 +344,24 @@ def updateChannelWatchStats(scrapped_channels: List[ScrappedChannel]):
     logger.debug("Completed update!")
 
 def deleteOldTodos():
-    INTERVAL = 20
     logger.debug("running...")
     connection = getConnection()
-    sql = """
+    days = 10
+    sql = f"""
         DELETE FROM Vods
         WHERE Id IN (
             SELECT Id
             FROM (
                 SELECT Id
                 FROM Vods
-                WHERE (TranscriptStatus = 'todo' OR TranscriptStatus = 'unknown' OR TranscriptStatus = 'too_big' OR TranscriptStatus = 'transcribing')
-                AND TodoDate <= CURDATE() - INTERVAL 10 DAY
+                WHERE (TranscriptStatus = 'todo'
+                    OR TranscriptStatus = 'unknown'
+                    OR TranscriptStatus = 'too_big'
+                    OR TranscriptStatus = 'downloading'
+                    OR TranscriptStatus = 'transcribing')
+                AND TodoDate <= CURDATE() - INTERVAL {days} DAY
             ) AS subquery
         );
-
     """
     try:
         with connection.cursor() as cursor:

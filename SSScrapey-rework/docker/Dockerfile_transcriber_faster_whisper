@@ -184,7 +184,7 @@ CMD echo "NOT DONE!!!!!!!!!!!!" ; \
     echo "CONTAINER_API_KEY is $CONTAINER_API_KEY " ; \
     echo "running......." ; \
     cd /app/scraper-dl-vids/SSScrapey-rework/src ; \
-    python kickWhisperer.py ; \
+    python kickTranscriber.py ; \
     echo "DONE!!!!!!!!!!!!, sleeping just b/c" ; \
     sleep 90 ; \
     echo "DONE!!!!!!!!!!!!" ; \

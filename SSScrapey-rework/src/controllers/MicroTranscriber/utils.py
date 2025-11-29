@@ -16,3 +16,5 @@ def format_timestamp(seconds: float, always_include_hours: bool = False, decimal
     return (
         f"{hours_marker}{minutes:02d}:{seconds:02d}{decimal_marker}{milliseconds:03d}"
     )
+
+TOO_BIG_LENGTH = 64800 # 18 hours

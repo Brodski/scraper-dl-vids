@@ -44,6 +44,8 @@ venvIns/
 venvFaster/
 venvEmotion/
 **/.env_prod
+**/.env_local
+**/.env
 
 **/3090/
 **/4090/

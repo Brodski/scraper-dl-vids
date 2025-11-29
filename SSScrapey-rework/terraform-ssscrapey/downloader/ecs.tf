@@ -1,17 +1,23 @@
 resource "aws_ecs_cluster" "download_cluster" {
   name = "${var.sensitive_info.ENV}_download_cluster"
+
+  
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_ecs_task_definition" "download_task" {
   family                   = "${var.sensitive_info.ENV}_download_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1024"
+  cpu                      = "2048"
   memory                   = "4096"
   execution_role_arn       = var.iam_role_ecs_exec_arn
 
   runtime_platform {
-    cpu_architecture        = "X86_64" # ARM64
+    cpu_architecture        = "X86_64" #ARM64
     operating_system_family = "LINUX"
   }
   container_definitions = jsonencode([

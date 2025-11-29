@@ -3,14 +3,17 @@ name: Baby Build and Push Docker Image
 on:
   push:
     branches:
-      - main
-      - master
+      - mainX
+      - masterX
   workflow_dispatch:
     inputs:
       branch:
         description: "Branch to build"
         required: true
-        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
       env_type:
         description: "Environment to build (dev or prod)"
         required: true
@@ -19,6 +22,14 @@ on:
         options:
           - dev
           - prod
+      env_type:
+        description: "Micro Service??"
+        required: true
+        default: "preper"
+        type: choice
+        options:
+          - preper
+          - downloader
 
 jobs:
   build:

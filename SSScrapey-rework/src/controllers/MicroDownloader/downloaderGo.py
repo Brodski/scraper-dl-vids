@@ -3,7 +3,7 @@ import time
 import traceback
 import controllers.MicroDownloader.downloader as downloader
 from models.Vod import Vod
-from typing import List
+from typing import Dict, List
 # import env_file as env_varz
 from env_file import env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
@@ -22,8 +22,6 @@ def printIntro():
     logger.debug("host    =" + env_varz.DATABASE_HOST)
     logger.debug("user    =" + env_varz.DATABASE_USERNAME)
     logger.debug("This instance will download this many: " + env_varz.DWN_BATCH_SIZE)
-    # Note: NUM_VOD_PER_CHANNEL doesnt have much effect. Looks at X recent vods from the database (todo, completed, audio2text_need, ect) then gets the "todo" one
-    #       It is so that we dont over prioritize all the vods from the 'top streamers'
 
 class MetadataShitty:
     def __init__(self, **kwargs):
@@ -46,32 +44,39 @@ def goDownloadBatch(isDebug=False):
     ########################
 
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
-    # download_batch_size = int(env_varz.NUM_CHANNELS) 
+
     i = 0
     gaurdrail = 15
     while i < download_batch_size and i < gaurdrail:
         gaurdrail -= 1
         logger.debug("===========================================")
-        logger.debug(f"    DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
+        logger.debug(f"    ⚔️ DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         logger.debug("===========================================")
         dl_meta = download(i, isDebug)
         if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403 or dl_meta == None:
             logger.debug("We skipped a download, trying next entry. Error:" + str(dl_meta))
             i += 1
             continue
-        logger.debug(f"Finished download {i+1} of {download_batch_size}")
+        logger.debug(f"✅ Finished download {i+1} of {download_batch_size}")
         i += 1
 
     elapsed_time = time.time() - start_time
     sendReport(str(int(elapsed_time)))
     return dl_meta
 
+import utils.generic_stuff as utils_generic
+
 def download(i, isDebug=False):
     try:
         ###########################
         # PRE-DOWNLOAD, GET TO-DO #
         ###########################
-        vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
+
+        # vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
+        vods_list       = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
+        magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
+        gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
+        vod: Vod        = next(gen, None)
 
         ## Post maintenance
         if vod == None or vod.id == None:
@@ -134,7 +139,7 @@ def download(i, isDebug=False):
     except KeyboardInterrupt:
         logger.debug("\nCtrl+C detected. Exiting gracefully.")
         vod = downloader.unlockVodDb(vod)
-        sys.exit(1)
+        sys.exit()
     except Exception as e:
         logger.error(f"\nUnexpected error: {e}")
         traceback.print_exc()

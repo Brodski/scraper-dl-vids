@@ -52,26 +52,39 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
     highest_priority_vod = None #
     resultsArr = []
     connection = getConnection()
-    # maxVodz = env_varz.DWN_QUERY_PER_RECENT
-    maxVodz = env_varz.NUM_VOD_PER_CHANNEL
+    # maxVodz = env_varz.DWN_QUERY_PER_RECENT <- old-old
+    # maxVodz = env_varz.NUM_VOD_PER_CHANNEL <- old
+    maxVodz = env_varz.PREP_NUM_VOD_PER_CHANNEL
+    reach_back = 9
     try:
         with connection.cursor() as cursor:
-            sql = f"""  SELECT 
-                            subquery.*
-                        FROM (
-                            SELECT 
-                                Vods.*,
-                                Channels.CurrentRank,
-                                ROW_NUMBER() OVER (
-                                    PARTITION BY Vods.ChannelNameId 
-                                    ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC
-                                ) as rn
-                            FROM Vods 
-                            JOIN Channels ON Vods.ChannelNameId = Channels.NameId
-                            ) AS subquery 
-                        WHERE subquery.rn <= {maxVodz}
-                        ORDER BY CurrentRank
-                    """
+            sql = f"""  
+                    SELECT 
+                        Vods.*,
+                        Channels.CurrentRank
+                    FROM Vods
+                    JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+                    WHERE Vods.TodoDate >= NOW() - INTERVAL 8 DAY
+                        AND Vods.TranscriptStatus = 'todo'
+                    ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC;
+                """
+            # BELOW. 
+            # sql = f"""  SELECT 
+            #                 subquery.*
+            #             FROM (
+            #                 SELECT 
+            #                     Vods.*,
+            #                     Channels.CurrentRank,
+            #                     ROW_NUMBER() OVER (
+            #                         PARTITION BY Vods.ChannelNameId 
+            #                         ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC
+            #                     ) as rn
+            #                 FROM Vods 
+            #                 JOIN Channels ON Vods.ChannelNameId = Channels.NameId
+            #                 ) AS subquery 
+            #             WHERE subquery.rn <= {maxVodz}
+            #             ORDER BY CurrentRank
+            #         """
             cursor.execute(sql)
             results = cursor.fetchall()
             column_names = [desc[0] for desc in cursor.description]
@@ -85,9 +98,12 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
         connection.close()
     for vod_ in results:
         # Tuple unpacking
-        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, RowNum  = vod_
+        # Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank, RowNum  = vod_
+        Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio,  s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails, duration=Duration, duration_string=DurationString)
         resultsArr.append(vod)
+    return resultsArr
+
     #Recall, results arr is sorted by priority via smart sql query
     highest_priority_vod: Vod = None
     for vod in resultsArr:
@@ -186,9 +202,9 @@ def isVodDownloadable(vod: Vod):
 def downloadTwtvVidFAST(vod: Vod):
     # yt-dlp==2023.3.4 WORKS LOCALLY ON WINDOWS
     # yt-dlp==2023.12.30 FAILS LOCALLY WINDOWS
-    print("000000000000                     00000000000000000")
-    print("000000000000 downloadTwtvVidFAST 00000000000000000")
-    print("000000000000                     00000000000000000")
+    logger.info("000000000000                     00000000000000000")
+    logger.info("000000000000 downloadTwtvVidFAST 00000000000000000")
+    logger.info("000000000000                     00000000000000000")
     # TODO Temporarily disabling to try it out
     is_downloadable = isVodDownloadable(vod)
     if is_downloadable in (Errorz.TOO_BIG, Errorz.DELETED_404, Errorz.UNAUTHORIZED_403):
@@ -332,9 +348,9 @@ def removeNonSerializable(meta):
 # Uploads: channels/vod-audio/lck/2023-06-02/576354726/Clip: AF vs. KT - SB vs. DWG [2020 LCK Spring Split]-v576354726.mp3
 #
 def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
-    print("000000000000                 00000000000000000")
-    print("000000000000 uploadAudioToS3 00000000000000000")
-    print("000000000000                 00000000000000000")
+    logger.info("000000000000                 00000000000000000")
+    logger.info("000000000000 uploadAudioToS3 00000000000000000")
+    logger.info("000000000000                 00000000000000000")
 
     # ext = downloaded_metadata.get("requested_downloads")[0].get('ext')
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id

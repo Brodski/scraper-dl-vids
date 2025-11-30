@@ -85,9 +85,8 @@ def isPersonOnline(soup: BeautifulSoup):
     return isOnline
 
 def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    # channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
-    channelMax = int(env_varz.NUM_CHANNELS)
-    vodsMax = int(env_varz.NUM_VOD_PER_CHANNEL)
+    channelMax = int(env_varz.PREP_NUM_CHANNELS)
+    vodsMax = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
     everyChannel:List[ScrappedChannel] = []
@@ -127,10 +126,9 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
             url = f'https://www.twitch.tv/{channel.name_id}/videos?filter=archives&sort=time'
             browser.get(url)
             idx_print = url.find('?filter')
-            print ("--------------------")
-            print (str(cnt) + ": " + browser.title)
-            logger.debug(url[:idx_print])
-            time.sleep(4)
+            logger.debug(channel.name_id)
+            logger.debug("  " + url[:idx_print])
+            time.sleep(3)
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
                 browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
@@ -175,7 +173,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
 
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
-            logger.debug(f"Got {len(channel.links)} vids for {browser.title}")
+            logger.debug(f"  Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
         logger.error("An error occurred :(")
         logger.error(f"{e}")

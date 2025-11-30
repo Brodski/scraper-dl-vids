@@ -52,10 +52,10 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
 
     pageSize = 100
     # num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
-    num_todo =  int(env_varz.NUM_VOD_PER_CHANNEL)
+    num_todo =  int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
     loopMax = math.ceil(num_todo / pageSize)
 
-    days = int(env_varz.PREP_SULLY_DAYS) # 14
+    days = int(env_varz.PREP_SULLY_DAYS) # 7 
     type = 3 # note '3' = most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
@@ -154,28 +154,3 @@ def addVipList(json_object, isDebug=False):
     for vip in VIP_LIST:
         json_object['data'].insert(0, vip)
     return json_object
-
-    #     scrapped_channel = ScrappedChannel(
-    #         displayname=vip.get("displayname"),
-    #         language=vip.get("language"),
-    #         logo=vip.get("logo"),
-    #         twitchurl=vip.get("twitchurl"),
-    #         name_id=vip.get("url"),
-    #         current_rank=vip.get("rownum"),
-    #         viewminutes=vip.get("viewminutes"),
-    #         streamedminutes=vip.get("streamedminutes"),
-    #         maxviewers=vip.get("maxviewers"),
-    #         avgviewers=vip.get("avgviewers"),
-    #         followers=vip.get("followers"),
-    #         followersgained=vip.get("followersgained"),
-    #         partner=vip.get("partner"),
-    #         affiliate=vip.get("affiliate"),
-    #         mature=vip.get("mature"),
-    #         previousviewminutes=vip.get("previousviewminutes"),
-    #         previousstreamedminutes=vip.get("previousstreamedminutes"),
-    #         previousmaxviewers=vip.get("previousmaxviewers"),
-    #         previousavgviewers=vip.get("previousavgviewers"),
-    #         previousfollowergain=vip.get("previousfollowergain")
-    #     )
-    #     channels.insert(0,scrapped_channel)
-    # return channels

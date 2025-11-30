@@ -12,6 +12,10 @@ from env_file import env_varz
 import MySQLdb
 import os
 import logging
+from models.MetadataP import MetadataP
+
+
+metadata_p = MetadataP()
 
 def logger():
     pass
@@ -115,6 +119,8 @@ def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
 def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[ScrappedChannel]):
     all_channels_plus_scrapped
     cnt = -1
+    metadata_p.num_channels_updated_via_sully = len(all_channels_plus_scrapped)
+    metadata_p.num_channels_updated_via_sully_actual = 0
     for chan in all_channels_plus_scrapped:
         cnt = cnt + 1
         if env_varz.PREP_SULLY_DAYS == "7":
@@ -137,7 +143,7 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
                 # silent error b/c redirect    # 
                 ################################
                 ### SUBJECT
-                subject = f"Preper {os.getenv('ENV')} - Failed selenium scrap on a channel"
+                subject = f"Preper {os.getenv('ENV')} - (Redirect) Failed selenium scrap on a channel"
                 ### BODY
                 msg = f"Attempted but failed url={url} - cnt={cnt} \n"
                 msg = msg + f"They redirected! response.url is now: " + response.url + "\n"
@@ -169,10 +175,22 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
                 chan.streamedminutes    = int(data2[4].get_text().replace(",", "")) * 60 #HOURS
                 chan.logo               = data3[0].attrs["src"]
 
+                metadata_p.num_channels_updated_via_sully_actual += 1
                 logger.debug(chan.name_id)
                 # chan.print()
 
         else:
+            subject = f"Preper {os.getenv('ENV')} - (Error) Failed selenium scrap on a channel"
+            ### BODY
+            msg = f"Some error occured :("
+            msg = msg + f"Attempted but failed url={url} - cnt={cnt} \n"
+            msg = msg + f"status_code = " + str(response.status_code) + "\n"
+            msg = msg + "url: " +    str(response.url) + "\n"
+            msg = msg + "headers: "+ str(dict(response.headers)) + "\n"
+            msg = msg + "body: " +   str(response.text[:500])  # avoid logging huge payload)s
+            logger.error(msg)
+            sendEmail(subject, msg)
+            continue
             logger.debug('An error has occurred.')
 
 def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
@@ -204,7 +222,12 @@ def addNewChannelToDb(scrapped_channels: List[ScrappedChannel]):
 
                 cursor.executemany(sql, values)
                 connection.commit()
-                logger.debug(f"MONEY 💰 Added {len(new_channels)} new channels.")
+                logger.debug(f"MONEY 💰 Added {len(new_channels)} new channels:")
+                for chan in new_channels:
+                    logger.debug(f"  New: " + chan.displayname)
+
+                metadata_p.new_channels = new_channels
+                    
             else:
                 logger.debug("No new channels to add.")
     except Exception as e:
@@ -250,9 +273,13 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
     logger.info("000000000000000000000000000000000000000")
     connection = getConnection()
     # max_vods = int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
-    max_vods = int(env_varz.NUM_VOD_PER_CHANNEL)
+    max_vods = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
     with connection.cursor() as cursor:
         for chan in scrapped_channels:
+            chan: ScrappedChannel = chan
+            if chan.name_id not in metadata_p.vods_updated:
+                metadata_p.vods_updated[chan.name_id] = {}
+
             links = chan.links[:max_vods] 
             vod_ids = [ link.split('/')[-1] for link in links]
             link_prio_map = {link: i for i, link in enumerate(vod_ids)} # hacky trick to make the vod_ids have a prioity, eg vod order, 1st vod is prioritized, 2nd, ect
@@ -276,16 +303,16 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
 
             # Add new vods to the Vods table
             if non_existing_ids:
-                trans_status = "todo"            
-                #                                            priority = link_prio_map[vod_id] = vod order, left to right
+                trans_status = "todo"
+                #                                      priority = link_prio_map[vod_id] = vod order, left to right
                 #                                                    ↓
                 values = [(vod_id, chan.name_id, trans_status, link_prio_map[vod_id]) for idx, vod_id in enumerate(non_existing_ids)]
                 sql = "INSERT INTO Vods (Id, ChannelNameId, TranscriptStatus, Priority, TodoDate) VALUES (%s, %s, %s, %s, NOW())"
                 try:
-                    logger.debug("non_existing_ids " + sql)
-                    logger.debug(str(values))
                     cursor.executemany(sql, values)
                     connection.commit()
+
+                    metadata_p.vods_updated[chan.name_id]["new"] = non_existing_ids # non_existing_ids is List
                 except Exception as e:
                     logger.error(f"Error occurred (updateVodsDb) a: {e}")
                     connection.rollback()
@@ -295,10 +322,9 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
                 sql = "UPDATE Vods SET Priority = %s WHERE ID = %s  AND TranscriptStatus = 'todo'"
                 values = [(link_prio_map[vod_id], vod_id) for idx, vod_id in enumerate(previous_existing_ids)]
                 try:
-                    logger.debug("previous " + sql)
-                    logger.debug(str(values))
                     cursor.executemany(sql, values)
                     connection.commit()
+                    metadata_p.vods_updated[chan.name_id]["prev_existing"] = previous_existing_ids
                 except Exception as e:
                     logger.error(f"Error occurred (updateVodsDb): {e}")
                     connection.rollback()
@@ -368,6 +394,7 @@ def deleteOldTodos():
             cursor.execute(sql)
             affected_rows = cursor.rowcount 
             logger.info("    (deleteOldTodos) deleted affected_rows:" + str(affected_rows))
+            metadata_p.deleted_olds_num = str(affected_rows)
         connection.commit()  # Commit the transaction
     except Exception as e:
         logger.error(f"Error occurred (deleteOldTodos): {e}")

@@ -35,7 +35,7 @@ def sendEmail(subject, body):
         }
     )
     # print(response)
-    print("Email sent: " + subject)
+    # print("Email sent: " + subject)
 
 from enum import Enum
 from models.Vod import Vod

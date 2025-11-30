@@ -1,3 +1,5 @@
+import math
+import time
 import traceback
 from models.ScrappedChannel import ScrappedChannel
 from models.Vod import Vod
@@ -10,7 +12,11 @@ from env_file import env_varz
 import os
 import logging
 from utils.logging_config import LoggerConfig
-print("4a ENV at start:", os.getenv("ENV"))
+from utils.emailer import sendEmail
+from models.MetadataP import MetadataP
+
+
+metadata_p: MetadataP = MetadataP()
 
 def logger():
     pass
@@ -20,15 +26,26 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 def printIntro():
     logger.debug("IT'S RUNNING! WOOOOOOOOOO")
     logger.debug("Will look at these many top channels:")
-    logger.debug("  NUM_CHANNELS:" +  env_varz.NUM_CHANNELS)
+    logger.debug("  PREP_NUM_CHANNELS:" +  env_varz.PREP_NUM_CHANNELS)
     logger.debug("Will look at this many past broadcasts:")
-    logger.debug("  NUM_VOD_PER_CHANNEL:" +  env_varz.NUM_VOD_PER_CHANNEL)
+    logger.debug("  PREP_NUM_VOD_PER_CHANNEL:" +  env_varz.PREP_NUM_VOD_PER_CHANNEL)
 
 def prepare(isDebug=False):
-    print("IN PREPER GO")
+    logger.info("IN PREPER GO")
 
     printIntro()
-    
+    start_time      = time.time()
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
+    time.sleep(7200)
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
@@ -40,6 +57,18 @@ def prepare(isDebug=False):
     scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
 
     updateShit(scrapped_channels)
+    elapsed_time = math.ceil(time.time() - start_time)
+    elapsed_time_MIN = round(elapsed_time / 60, 2)
+    logger.info("++++++++++++++++++++++++++++")
+    logger.info("++++++++++++++++++++++++++++")
+    logger.info("++++++++++++++++++++++++++++")
+    logger.info("FINISHED! TOTAL TIME RUNNING = " + str(elapsed_time) + f" = {str(elapsed_time_MIN)} minutes")
+    logger.info("FINISHED! TOTAL TIME RUNNING = " + str(elapsed_time) + f" = {str(elapsed_time_MIN)} minutes")
+    logger.info("FINISHED! TOTAL TIME RUNNING = " + str(elapsed_time) + f" = {str(elapsed_time_MIN)} minutes")
+    logger.info("DONE!")
+    metadata_p.elapsed_time = elapsed_time
+    metadata_p.format_and_email_msg()
+
 
 def doWithCallback(callback, counter):
     if counter > 3:
@@ -63,5 +92,10 @@ def updateShit(scrapped_channels: List[ScrappedChannel]):
         doWithCallback(lambda: databasePreper.deleteOldTodos(), 0)
     except Exception as e:
         logger.error(f"An error occurred in updateShit: {str(e)}")
+        the_msg = "An error occurred in updateShit:\n" + ''.join(traceback.format_stack())
+
+        subject = f"Preper {os.getenv('ENV')} - (error)"
+        sendEmail(subject, the_msg)
+
     logger.info("Finished step 1 Preper-Service")
     return "Finished step 1 Preper-Service"

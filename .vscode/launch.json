@@ -39,7 +39,7 @@
                 "local",
                 "--dwn_batch_size",
                 "2",
-                "--dwn_is_short_dev_dl"
+                // "--dwn_is_short_dev_dl"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

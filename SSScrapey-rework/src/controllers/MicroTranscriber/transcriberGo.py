@@ -54,6 +54,7 @@ def goTranscribeBatch(isDebug=False):
     metadata_arr:         List[MetadataShitty] = []
     metadataX: MetadataShitty = MetadataShitty()
     for i in range(0, download_batch_size):
+        # generator v
     #for vod in transcriber.getFromFancyMap(magical_ordered_map):        
         # process vod...
         print("===========================================")
@@ -106,16 +107,19 @@ def goTranscribeBatch(isDebug=False):
     return "gg ending"
 
 
+import utils.generic_stuff as utils_generic
 def transcribe(isDebug=False) -> MetadataShitty:
     ### GET THE VOD ###
     metadata_ = MetadataShitty()
     vods_list       = transcriber.getTodoFromDb()
             
-    magical_ordered_map: Dict[int, List[Vod]]  = transcriber.convertToFancyMap(vods_list)
+    # magical_ordered_map: Dict[int, List[Vod]]  = transcriber.convertToFancyMap(vods_list)
+    magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
     # OLD ↓ ➔
     vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
     # NEW ↓
-    gen             = transcriber.getFromFancyMap(magical_ordered_map)      # <--- smart
+    # gen             = transcriber.getFromFancyMap(magical_ordered_map)      # <--- smart
+    gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
     # for vod in gen:
     #     vod: Vod = vod
     #     print(vod.transcript_status, vod.channels_name_id, vod.id, vod.stream_date)

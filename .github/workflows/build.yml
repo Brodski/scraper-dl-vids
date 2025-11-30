@@ -22,6 +22,7 @@ on:
         options:
           - preper
           - downloader
+          - transcriber
 
 jobs:
   build:

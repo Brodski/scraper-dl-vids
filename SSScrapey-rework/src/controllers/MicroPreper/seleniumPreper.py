@@ -18,7 +18,6 @@ import time
 import logging
 from utils.logging_config import LoggerConfig
 
-print("3b ENV at start:", os.getenv("ENV"))
 def logger():
     pass
 

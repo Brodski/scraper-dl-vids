@@ -21,7 +21,7 @@ def find_aws_logging_info():
     # Fetch task metadata
     response = requests.get(f"{metadata_uri}/task")
     response.raise_for_status()
-    task_metadata = response.json
+    task_metadata = response.json()
     logger.debug("response.json()")
     logger.debug(response.json())
     logger.debug("zzz")
@@ -45,9 +45,9 @@ def find_aws_logging_info():
     awslogs_group  = log_options.get("awslogs-group")
     awslogs_region = log_options.get("awslogs-region")
 
-    logger.info("Stream:", awslogs_stream)
-    logger.info("Group:",  awslogs_group)
-    logger.info("Region:", awslogs_region)
+    logger.info("Stream: " + awslogs_stream)
+    logger.info("Group: " +  awslogs_group)
+    logger.info("Region: " + awslogs_region)
 
     if not awslogs_group:
         raise ValueError(f"Container shiiiiiiiit not found in metadata")

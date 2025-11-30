@@ -18,7 +18,22 @@ def find_aws_logging_info():
     # Fetch task metadata
     response = requests.get(f"{metadata_uri}/task")
     response.raise_for_status()
-    task_metadata = response.json()
+    task_metadata = response.json
+    logger.debug("response.json()")
+    logger.debug(response.json())
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("zzz")
+    logger.debug("task_metadata")
+    logger.debug(task_metadata)
 
     # Find your container (replace 'app' with your container name)
     container_name = "app"

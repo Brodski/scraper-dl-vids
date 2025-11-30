@@ -27,9 +27,9 @@ def find_aws_logging_info():
     bski_contaier = task_metadata["Containers"][0] # the only container is my container
 
     log_options = bski_contaier["LogOptions"]
-    awslogs_stream = log_options.get("awslogs-stream")
-    awslogs_group  = log_options.get("awslogs-group")
-    awslogs_region = log_options.get("awslogs-region")
+    awslogs_stream: str = log_options.get("awslogs-stream")
+    awslogs_group:  str = log_options.get("awslogs-group")
+    awslogs_region: str = log_options.get("awslogs-region")
 
     logger.info("Stream: " + awslogs_stream)
     logger.info("Group: " +  awslogs_group)
@@ -42,9 +42,9 @@ def find_aws_logging_info():
     cli = cli + 'set PYTHONUTF8=1\n'
     cli = cli + 'aws logs get-log-events '
     cli = cli + f' --log-group-name "{awslogs_group}" '
-    cli = cli + f' --log-stream-name "{awslogs_stream} '
-    cli = cli + f' --output text > {out_} '
-    cli = cli + f' --region {awslogs_region}\n\n'
+    cli = cli + f' --log-stream-name "{awslogs_stream.replace("/", ".").replace("\\", ".")}" '
+    cli = cli + f' --region {awslogs_region} '
+    cli = cli + f' --output text > "{out_}" \n\n'
 
     logger.info(" ################################")
     logger.info(" ######                    ######")

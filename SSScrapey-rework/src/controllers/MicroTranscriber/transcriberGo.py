@@ -26,6 +26,7 @@ from datetime import datetime
 from utils.emailer import MetadataShitty
 from utils.emailer import Status
 from utils.emailer import write_transcriber_email
+from utils.ecs_meta import find_aws_logging_info
 
 # logger = Cloudwatch.log
 def logger():
@@ -46,6 +47,7 @@ def printIntro():
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
+    cli = find_aws_logging_info()
 
     start_time = time.time()
     download_batch_size = int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1)

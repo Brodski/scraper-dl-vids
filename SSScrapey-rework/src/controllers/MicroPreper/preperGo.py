@@ -35,18 +35,8 @@ def prepare(isDebug=False):
 
     printIntro()
     start_time      = time.time()
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    find_aws_logging_info()
-    time.sleep(100)
+    cli = find_aws_logging_info()
+
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
@@ -68,7 +58,7 @@ def prepare(isDebug=False):
     logger.info("FINISHED! TOTAL TIME RUNNING = " + str(elapsed_time) + f" = {str(elapsed_time_MIN)} minutes")
     logger.info("DONE!")
     metadata_p.elapsed_time = elapsed_time
-    metadata_p.format_and_email_msg()
+    metadata_p.write_preper_email()
 
 
 def doWithCallback(callback, counter):

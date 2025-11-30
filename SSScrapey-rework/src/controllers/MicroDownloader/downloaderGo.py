@@ -9,8 +9,12 @@ from env_file import env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
 import logging
 from utils.logging_config import LoggerConfig
+from utils.emailer import write_downloader_report
 from utils.emailer import sendEmail
 from utils.emailer import Status
+from utils.ecs_meta import find_aws_logging_info
+import utils.generic_stuff as utils_generic
+
 
 def logger():
     pass
@@ -38,6 +42,7 @@ metadata_array_global: List[MetadataShitty] = []
 
 def goDownloadBatch(isDebug=False):
     printIntro()
+    cli = find_aws_logging_info()
     start_time = time.time()
     ####################### #
     # LOOP FOR X DOWNLOADS #
@@ -61,10 +66,9 @@ def goDownloadBatch(isDebug=False):
         i += 1
 
     elapsed_time = time.time() - start_time
-    sendReport(str(int(elapsed_time)))
+    # sendReport(str(int(elapsed_time)))
+    write_downloader_report(metadata_array_global, str(int(elapsed_time)))
     return dl_meta
-
-import utils.generic_stuff as utils_generic
 
 def download(i, isDebug=False):
     try:
@@ -201,7 +205,9 @@ def sendReport(elapsed_time=0):
         summary_lines.append(f"{status}: {count}")
 
     # Combine summary and detailed report
+    cli = find_aws_logging_info()
     report_message = "\n".join(summary_lines + [""] + msg_lines)
+    report_message + "\n" + cli
 
     sendEmail(f"Downloader {env_varz.ENV} report", report_message)
     logger.info(report_message)

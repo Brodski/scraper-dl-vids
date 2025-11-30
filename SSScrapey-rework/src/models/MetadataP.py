@@ -37,7 +37,7 @@ class MetadataP:
         self._initialized = True
 
 
-    def format_and_email_msg(self):
+    def write_preper_email(self):
         subject = f"Preper {env_varz.ENV} Report"
         elapsed_time_MIN = round(self.elapsed_time / 60, 2)
         msg_chan = ""

@@ -14,7 +14,7 @@ import logging
 from utils.logging_config import LoggerConfig
 from utils.emailer import sendEmail
 from models.MetadataP import MetadataP
-
+from utils.ecs_meta import find_aws_logging_info
 
 metadata_p: MetadataP = MetadataP()
 
@@ -45,7 +45,8 @@ def prepare(isDebug=False):
     logger.info("SLEEPING FOR 2 hours!!!!!!!!")
     logger.info("SLEEPING FOR 2 hours!!!!!!!!")
     logger.info("SLEEPING FOR 2 hours!!!!!!!!")
-    time.sleep(7200)
+    find_aws_logging_info()
+    time.sleep(100)
     # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.getTopChannelsSully() 
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera

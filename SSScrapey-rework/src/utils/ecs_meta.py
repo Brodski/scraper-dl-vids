@@ -13,30 +13,16 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 def find_aws_logging_info():
     if env_varz.ENV == "local":
         return
-    # Get metadata URI from environment variable
+
     metadata_uri = os.environ.get("ECS_CONTAINER_METADATA_URI_V4")
     if not metadata_uri:
         raise EnvironmentError("ECS_CONTAINER_METADATA_URI_V4 is not set")
 
-    # Fetch task metadata
     response = requests.get(f"{metadata_uri}/task")
     response.raise_for_status()
     task_metadata = response.json()
-    logger.debug("response.json()")
-    logger.debug(response.json())
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("zzz")
-    logger.debug("task_metadata")
-    logger.debug(task_metadata)
+    # logger.debug("task_metadata")
+    # logger.debug(task_metadata)
 
     bski_contaier = task_metadata["Containers"][0] # the only container is my container
 
@@ -49,6 +35,26 @@ def find_aws_logging_info():
     logger.info("Group: " +  awslogs_group)
     logger.info("Region: " + awslogs_region)
 
-    if not awslogs_group:
-        raise ValueError(f"Container shiiiiiiiit not found in metadata")
 
+    # awslogs_stream, awslogs_group, awslogs_region = find_aws_logging_info()
+    out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{awslogs_stream}.txt"
+    cli = "\n"
+    cli = cli + 'set PYTHONUTF8=1\n'
+    cli = cli + 'aws logs get-log-events '
+    cli = cli + f' --log-group-name "{awslogs_group}" '
+    cli = cli + f' --log-stream-name "{awslogs_stream} '
+    cli = cli + f' --output text > {out_} '
+    cli = cli + f' --region {awslogs_region}\n\n'
+
+    logger.info(" ################################")
+    logger.info(" ######                    ######")
+    logger.info(" ###### AWS CLI - get logs ######")
+    logger.info(" ######                    ######")
+    logger.info(" ################################")
+    logger.info(cli)
+
+    return cli
+    return awslogs_stream, awslogs_group, awslogs_region
+
+
+# def get_aws_cli_view_logs():

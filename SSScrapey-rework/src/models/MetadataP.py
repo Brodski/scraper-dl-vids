@@ -5,6 +5,7 @@ from models.ScrappedChannel import ScrappedChannel
 from utils.emailer import sendEmail
 import logging
 from utils.logging_config import LoggerConfig
+from utils.ecs_meta import find_aws_logging_info
 
 def logger():
     pass
@@ -57,6 +58,8 @@ class MetadataP:
                 count = count + 1
         msg_vods_updated = msg_vods_updated + "Total vods existing + new = " + str(count)
 
+        cli = find_aws_logging_info()
+            
         lines = [
             "Metadata Summary",
             "----------------",
@@ -69,7 +72,7 @@ class MetadataP:
             f"Expected PREP_NUM_VOD_PER_CHANNEL: {env_varz.PREP_NUM_VOD_PER_CHANNEL}",
             f"Expected num chans updated via Sully updated : {self.num_channels_updated_via_sully}",
             f"Actual chan's updated via Sully updated : {self.num_channels_updated_via_sully_actual}",
-            "",
+            f"cli = \n{cli}",
         ]
 
         body = "\n".join(lines)

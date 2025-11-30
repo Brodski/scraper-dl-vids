@@ -38,12 +38,6 @@ def find_aws_logging_info():
     logger.debug("task_metadata")
     logger.debug(task_metadata)
 
-    # Find your container (replace 'app' with your container name)
-    container_name = "app"
-    container_info = next(
-        (c for c in task_metadata["Containers"] if c["Name"] == container_name), None
-    )
-
     bski_contaier = task_metadata["Containers"][0] # the only container is my container
 
     log_options = bski_contaier["LogOptions"]
@@ -56,5 +50,5 @@ def find_aws_logging_info():
     logger.info("Region:", awslogs_region)
 
     if not awslogs_group:
-        raise ValueError(f"Container {container_name} not found in metadata")
+        raise ValueError(f"Container shiiiiiiiit not found in metadata")
 

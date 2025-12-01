@@ -5,16 +5,22 @@ import urllib.parse
 import json
 from configz import *
 
+def get_my_instance_baby(id):
+    url = f"https://console.vast.ai/api/v0/instances/{id}/?owner=me&api_key=" + VAST_API_KEY
+    with urllib.request.urlopen(url) as response:
+        data = response.read()  # Read response bytes
+        json_data = json.loads(data)  # Parse JSON
+    print(json_data)
+    return(json_data["instances"])
+
 def get_my_instances():
     url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY
-    # print(f"  (get_my_instances) getting info at: {url}")
     response = urllib.request.urlopen(url)
     if response.status != 200:
         print('sadge')
         exit()
     data = response.read()
     json_data = json.loads(data)
-    # print(f"  (get_my_instances) json_data: {json_data}")
     rows = json_data.get("instances")
     for row in rows:
         row['duration'] = time.time() - row['start_date'] 

@@ -27,18 +27,18 @@ resource "aws_lambda_function" "vast_lambda" {
 
   environment {
     variables = {
-      IS_VASTAI_CREATE_INSTANCE = var.IS_VASTAI_CREATE_INSTANCE
-      VAST_API_KEY = var.sensitive_info.VAST_API_KEY
-      MY_AWS_SECRET_ACCESS_KEY = var.sensitive_info.MY_AWS_SECRET_ACCESS_KEY
-      MY_AWS_ACCESS_KEY_ID = var.sensitive_info.MY_AWS_ACCESS_KEY_ID
-      ENV = var.sensitive_info.ENV
-      DATABASE_HOST = var.sensitive_info.DATABASE_HOST
-      DATABASE_USERNAME = var.sensitive_info.DATABASE_USERNAME
-      DATABASE_PASSWORD = var.sensitive_info.DATABASE_PASSWORD
-      DATABASE_PORT = var.sensitive_info.DATABASE_PORT
-      DATABASE = var.sensitive_info.DATABASE  
-      DOCKER = var.docker_image
-      TRANSCRIBER_NUM_INSTANCES = var.transcriber_num_instances
+      IS_VASTAI_CREATE_INSTANCE     = var.IS_VASTAI_CREATE_INSTANCE
+      VAST_API_KEY                  = var.sensitive_info.VAST_API_KEY
+      MY_AWS_SECRET_ACCESS_KEY      = var.sensitive_info.MY_AWS_SECRET_ACCESS_KEY
+      MY_AWS_ACCESS_KEY_ID          = var.sensitive_info.MY_AWS_ACCESS_KEY_ID
+      ENV                           = var.sensitive_info.ENV
+      DATABASE_HOST                 = var.sensitive_info.DATABASE_HOST
+      DATABASE_USERNAME             = var.sensitive_info.DATABASE_USERNAME
+      DATABASE_PASSWORD             = var.sensitive_info.DATABASE_PASSWORD
+      DATABASE_PORT                 = var.sensitive_info.DATABASE_PORT
+      DATABASE                      = var.sensitive_info.DATABASE
+      DOCKER                        = var.docker_image
+      TRANSCRIBER_NUM_INSTANCES     = var.transcriber_num_instances
       TRANSCRIBER_VODS_PER_INSTANCE = var.transcriber_vods_per_instance
     }
   }

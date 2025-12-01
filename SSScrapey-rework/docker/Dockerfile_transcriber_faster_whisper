@@ -48,7 +48,7 @@
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#    ssh -p 56598 root@213.181.122.2 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 22460 root@ssh3.vast.ai -L 8080:localhost:8080  -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy

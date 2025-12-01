@@ -115,38 +115,45 @@ def pollCompletion(id_contract, start_time, counter_try_again, instance_num):
     if counter_try_again > 11: # 11 min
         print(f"    (pollCompletion) Ending! counter_try_again > 11. counter_try_again={counter_try_again}")
         return
-    status_msg = None
-    actual_status = None
-    exec_time_minutes = (time.time() - start_time) / 60
-    id_contract = str(id_contract)
-    rows = print_extra.get_my_instances()
-    # get "status's" of our instance
-    for row in rows:
-        row_id = str(row['id'])
-        if row_id == id_contract:
-            print(f"    (pollCompletion) {row_id}'s actual_status: ", row.get("actual_status"))
-            status_msg = row["status_msg"]
-            actual_status = row["actual_status"]
-            break
+    status_msg          = None
+    actual_status       = None
+    exec_time_minutes   = (time.time() - start_time) / 60
+    id_contract         = str(id_contract)
+    # rows                = print_extra.get_my_instances()
+    data                = print_extra.get_my_instance_baby(id_contract)
+    status_msg : str    = data["status_msg"]
+    actual_status : str = data["actual_status"]
+    print(f"    (pollCompletion) {id_contract}'s actual_status: ", actual_status)
     
     if status_msg and status_msg.lower().startswith("unexpected fault address"):
         print("    (pollCompletion) nope not ready, 'unexpected fault address' end it")
-        try_again(str(row['id']), instance_num)
+        try_again(id_contract, instance_num)
         return
     if status_msg and "unable to find image" in status_msg.lower():
         print("    (pollCompletion) nope not ready, end it")
-        try_again(str(row['id']), instance_num)
+        try_again(id_contract, instance_num)
         return
-    if actual_status and actual_status == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
+    if actual_status and actual_status.lower() == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
         print("    (pollCompletion) nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
-        try_again(str(row['id']), instance_num)
+        try_again(id_contract, instance_num)
         return
-    if actual_status and actual_status == "running":
+    if actual_status and actual_status.lower() == "running":
         print("    (pollCompletion) Running. Transcriber app should be running. :)")
         return "success"
-    # print('    (pollCompletion) sleeping for 60 sec')
     time.sleep(60) 
     return pollCompletion(id_contract, start_time, counter_try_again+1, instance_num)
+
+def nice_data(data):
+    data["cpu_name"]
+    data["cpu_ram"]
+    data["gpu_arch"]
+    data["gpu_name"]
+    data["gpu_totalram"]
+    data["gpuCostPerHour"]
+    data["internet_down_cost_per_tb"]
+    data["internet_up_cost_per_tb"]
+    data["min_bid"]
+    data["vram_costperhour"]
 
 def try_again(id, instance_num):
     print("   ! (try_again) end it")
@@ -167,5 +174,5 @@ def handler_kickit(event, context):
         time.sleep(60) # wait 1 minute
 
 if __name__ == '__main__':
-    find_create_confirm_instance(0, 0)
+    handler_kickit(None, None)
     

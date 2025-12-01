@@ -45,6 +45,7 @@ def find_aws_logging_info():
         stack = traceback.format_exc()
         logger.error("something broke with aws cli cloudwatch finder")
         logger.error(stack)
+        return "NA"
 
 def find_aws_logging_info_transcriber():
     if env_varz.ENV == "local":

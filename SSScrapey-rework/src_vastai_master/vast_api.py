@@ -62,16 +62,16 @@ def create_instance(instance_id, instance_num):
         "force": False
         }
     data_json = json.dumps(data_dict).encode('utf-8')
-    if os.environ.get('ENV') == None or os.environ.get('ENV') == "local":
-        print("ending early b/c local\n" *9)
-        exit(0)
+    # if os.environ.get('ENV') == None or os.environ.get('ENV') == "local":
+    #     print("ending early b/c local\n" *9)
+    #     exit(0)
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
     id = None
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
         res_json = json.loads(response_data.decode('utf-8'))
-        # print(    "(create_instance) res_json: ", res_json)
+        print(    "(create_instance) res_json: ", res_json)
         id = res_json.get("new_contract")
     print(    "(create_instance) Created new instance:", id)
     return id

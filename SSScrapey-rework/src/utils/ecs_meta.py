@@ -37,7 +37,7 @@ def find_aws_logging_info():
         logger.info("Region: " + awslogs_region)
 
 
-        cli = get_aws_cli_view_logs()
+        cli = get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region)
 
         return cli
         return awslogs_stream, awslogs_group, awslogs_region

@@ -49,7 +49,7 @@ def find_aws_logging_info():
 def find_aws_logging_info_transcriber():
     if env_varz.ENV == "local":
          return
-    from controllers.MicroTranscriber.Cloudwatch import Cloudwatch
+    from controllers.MicroTranscriber.cloudwatch import Cloudwatch
     cloudwatch: Cloudwatch = Cloudwatch()
     awslogs_group = cloudwatch.LOG_GROUP_NAME
     awslogs_stream = cloudwatch.LOG_STREAM_NAME

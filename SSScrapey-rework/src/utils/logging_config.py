@@ -3,7 +3,7 @@ import logging
 # import env_file as env_varz
 from env_file import env_varz
 import os
-from controllers.MicroTranscriber.Cloudwatch import Cloudwatch
+from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
 class LoggerConfig:
     def __init__(self, name, is_cloudwatch_logs=False):

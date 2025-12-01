@@ -46,7 +46,7 @@ venvEmotion/
 **/.env_prod
 **/.env_local
 **/.env
-
+logs
 **/3090/
 **/4090/
 

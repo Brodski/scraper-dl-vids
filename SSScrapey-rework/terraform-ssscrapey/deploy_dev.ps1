@@ -25,3 +25,4 @@ terraform apply -var-file="vars_${TF_ENVIRONMENT}.tfvars"  --auto-approve
 #  --log-group-name "/your/log/group" \             /scraper/preper_dev"
 #  --log-stream-name "your-log-stream" \            "ecs/dev_preper_container/216d64aa08f0448686cf06b67fee7aac"
 #  --output text > logs.txt
+#  --region us-east-1

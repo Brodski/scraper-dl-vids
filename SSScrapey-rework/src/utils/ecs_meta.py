@@ -59,7 +59,8 @@ def find_aws_logging_info_transcriber():
 
 
 def get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region):
-        out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{awslogs_stream}.txt".replace("/", ".").replace("\\", ".")
+        filename = awslogs_stream.replace("/", ".").replace("\\", ".")
+        out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{filename}.txt"
         cli = "\n"
         cli = cli + 'set PYTHONUTF8=1\n'
         cli = cli + 'aws logs get-log-events '

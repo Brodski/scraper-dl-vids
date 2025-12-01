@@ -4,7 +4,6 @@ from typing import Dict, List
 from utils.logging_config import LoggerConfig
 import logging
 
-# logger = Cloudwatch.log
 def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()

@@ -1,7 +1,5 @@
-# import controllers.MicroTranscriber.cloudwatch as cloudwatch
 import math
 import sys
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
 from typing import Dict, List
@@ -27,8 +25,8 @@ from utils.emailer import MetadataShitty
 from utils.emailer import Status
 from utils.emailer import write_transcriber_email
 from utils.ecs_meta import find_aws_logging_info
+from utils.ecs_meta import find_aws_logging_info_transcriber
 
-# logger = Cloudwatch.log
 def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
@@ -47,7 +45,8 @@ def printIntro():
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
-    cli = find_aws_logging_info()
+    # cli = find_aws_logging_info()
+    cli = find_aws_logging_info_transcriber()
 
     start_time = time.time()
     download_batch_size = int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1)

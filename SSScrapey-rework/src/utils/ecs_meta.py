@@ -37,7 +37,28 @@ def find_aws_logging_info():
         logger.info("Region: " + awslogs_region)
 
 
-        # awslogs_stream, awslogs_group, awslogs_region = find_aws_logging_info()
+        cli = get_aws_cli_view_logs()
+
+        return cli
+        return awslogs_stream, awslogs_group, awslogs_region
+    except:
+        stack = traceback.format_exc()
+        logger.error("something broke with aws cli cloudwatch finder")
+        logger.error(stack)
+
+def find_aws_logging_info_transcriber():
+    if env_varz.ENV == "local":
+         return
+    from controllers.MicroTranscriber.Cloudwatch import Cloudwatch
+    cloudwatch: Cloudwatch = Cloudwatch()
+    awslogs_group = cloudwatch.LOG_GROUP_NAME
+    awslogs_stream = cloudwatch.LOG_STREAM_NAME
+    awslogs_region = "us-east-1"
+    cli = get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region)
+    return cli
+
+
+def get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region):
         out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{awslogs_stream}.txt".replace("/", ".").replace("\\", ".")
         cli = "\n"
         cli = cli + 'set PYTHONUTF8=1\n'
@@ -55,11 +76,4 @@ def find_aws_logging_info():
         logger.info(cli)
 
         return cli
-        return awslogs_stream, awslogs_group, awslogs_region
-    except:
-        stack = traceback.format_exc()
-        logger.error("something broke with aws cli cloudwatch finder")
-        logger.error(stack)
 
-
-# def get_aws_cli_view_logs():

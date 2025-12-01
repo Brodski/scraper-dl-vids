@@ -10,14 +10,12 @@ import os
 import time
 import torch
 import langcodes
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 import logging
 from utils.logging_config import LoggerConfig
 from datetime import datetime
 from models.Splitted import Splitted
 from utils.emailer import MetadataShitty
 
-# logger = Cloudwatch.log
 def logger():
     pass
 logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()

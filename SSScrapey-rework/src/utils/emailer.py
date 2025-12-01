@@ -5,6 +5,7 @@ import boto3
 import logging
 from utils.logging_config import LoggerConfig
 from utils.ecs_meta import find_aws_logging_info
+from utils.ecs_meta import find_aws_logging_info_transcriber
 
 def logger():
     pass
@@ -114,8 +115,9 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         summary_lines.append(f"{status}: {count}")
 
     # Combine summary and detailed report
-    cli = find_aws_logging_info()
+    cli = find_aws_logging_info_transcriber()
     report_message = "\n".join(summary_lines + [""] + msg_lines)
+    report_message = report_message + "\n" + cli
 
     sendEmail(f"Transcriber {env_varz.ENV} report", report_message)
     logger.info(report_message)
@@ -173,7 +175,7 @@ def write_downloader_report(metadata_array_global, elapsed_time=0):
     # Combine summary and detailed report
     cli = find_aws_logging_info()
     report_message = "\n".join(summary_lines + [""] + msg_lines)
-    report_message + "\n" + cli
+    report_message = report_message + "\n" + cli
 
     sendEmail(f"Downloader {env_varz.ENV} report", report_message)
     logger.info(report_message)

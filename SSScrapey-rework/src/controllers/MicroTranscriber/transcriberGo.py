@@ -29,7 +29,7 @@ from utils.ecs_meta import find_aws_logging_info_transcriber
 
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -45,6 +45,9 @@ def printIntro():
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
+    for key in sorted(os.environ):
+        logger.info(f"{key}={os.environ[key]}")
+
     # cli = find_aws_logging_info()
     cli = find_aws_logging_info_transcriber()
 

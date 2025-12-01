@@ -48,7 +48,7 @@ def find_aws_logging_info():
         return "NA"
 
 def find_aws_logging_info_transcriber():
-    if env_varz.ENV == "local":
+    if env_varz.ENV == "local" and env_varz.WHSP_IS_CLOUDWATCH != "True":
          return
     from controllers.MicroTranscriber.cloudwatch import Cloudwatch
     cloudwatch: Cloudwatch = Cloudwatch()
@@ -60,6 +60,7 @@ def find_aws_logging_info_transcriber():
 
 
 def get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region):
+    try:
         filename = awslogs_stream.replace("/", ".").replace("\\", ".")
         out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{filename}.txt"
         cli = "\n"
@@ -78,4 +79,9 @@ def get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region):
         logger.info(cli)
 
         return cli
+    except Exception:
+        err = traceback.format_exc()
+        logger.error("Failed to go aws cli for some reason")
+        logger.error(err)
+        return "cli failed :("
 

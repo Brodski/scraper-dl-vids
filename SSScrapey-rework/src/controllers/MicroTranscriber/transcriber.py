@@ -25,7 +25,7 @@ from utils.emailer import MetadataShitty
 # logger = Cloudwatch.log
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 
 def getConnectionDb():

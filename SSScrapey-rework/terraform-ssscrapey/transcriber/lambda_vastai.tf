@@ -1,14 +1,27 @@
 locals {
   lambda_name = "${var.sensitive_info.ENV}_vastai_master"
-  log_name = "/scraper/vastai_master/${var.sensitive_info.ENV}"
+  log_name = "/lambda/vastai_master/${var.sensitive_info.ENV}"
 }
 
+# data "archive_file" "lambda_zip" {
+#     type = "zip"
+#     output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
+#     source_dir = "${path.module}/../../src_vastai_master"
+# }
 data "archive_file" "lambda_zip" {
-    type = "zip"
-    output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
-    source_dir = "${path.module}/../../src_vastai_master"
-}
+  type        = "zip"
+  output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
 
+  source {
+    content      = file("${path.module}/../../src_vastai_master/lambda_function.py")
+    filename     = "lambda_function.py"
+  }
+
+  source {
+    content      = file("${path.module}/../../src_vastai_master/extra_module.py")
+    filename     = "extra_module.py"
+  }
+}
 resource "aws_lambda_function" "vast_lambda" {
   function_name = "${local.lambda_name}"
 

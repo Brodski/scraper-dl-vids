@@ -12,7 +12,9 @@ import json
 import os
 from urllib.parse import quote_plus  # Python 3+
 from configz import *
+from emailer_vast import MetadataVast
 
+metadata_vast: MetadataVast = MetadataVast()
 
 def requestOffersHttp(query_args):
     query_args["api_key"] = VAST_API_KEY
@@ -71,22 +73,30 @@ def create_instance(instance_id, instance_num):
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
         res_json = json.loads(response_data.decode('utf-8'))
+        ### THE RESPONE DATA IS VERY SMALL  = {new_contract: 123, <1 other field>}##
         print(    "(create_instance) res_json: ", res_json)
         id = res_json.get("new_contract")
+
+        ### METADATA ###
+        metadata_vast.created.append({'id': id, 'status_code': str(response.status)})
     print(    "(create_instance) Created new instance:", id)
     return id
 
 
 def destroy_instance(id):
     print("Destryoing instance: " + str(id))
-    url = "https://console.vast.ai/api/v0/instances/" + id + "/?api_key=" + VAST_API_KEY
+    url = "https://console.vast.ai/api/v0/instances/" + str(id) + "/?api_key=" + VAST_API_KEY
     data_dict = {}
     data_json = json.dumps(data_dict).encode('utf-8')
 
     request = urllib.request.Request(url, data=data_json, method='DELETE')
     with urllib.request.urlopen(request) as response:
         response_data = response.read()
-        # print(response_data.decode('utf-8'))
-        # status_code = response.getcode()
+        status_code   = response.getcode()
+        print(response_data.decode('utf-8'))
+        print("delete's status_code " + str(status_code))
+
+        ### METADATA ###
+        metadata_vast.deleted.append({'id': id, 'status_code': status_code})
     print("DONE :)")
 

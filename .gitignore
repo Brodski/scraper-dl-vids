@@ -49,7 +49,7 @@ venvEmotion/
 logs
 **/3090/
 **/4090/
-
+**/build/
 **/.env_docker_local
 
 # See docker file.

@@ -22,8 +22,6 @@ def find_aws_logging_info():
         response = requests.get(f"{metadata_uri}/task")
         response.raise_for_status()
         task_metadata = response.json()
-        # logger.debug("task_metadata")
-        # logger.debug(task_metadata)
 
         bski_contaier = task_metadata["Containers"][0] # the only container is my container
 

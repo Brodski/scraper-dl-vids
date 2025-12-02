@@ -19,6 +19,8 @@ def getFromFancyMap(d: dict[int, list]):
     # }
     # outputs -> 1 column, 2nd column, 3rd, ....
     # outputs -> a1,b1,c1, a2,b2,c2, a3,b3, b4, b5, b6   
+    if not d:
+        return
     keys = d.keys()
     max_len = max(len(d[k]) for k in keys)
     for x in range(max_len): # x = column
@@ -28,6 +30,9 @@ def getFromFancyMap(d: dict[int, list]):
                 yield row[x] 
 
 def convertToFancyMap(vod_list: List[Vod]) -> Dict[int, List[Vod]]:
+    if not vod_list:
+        return {}  # Return empty dict if the list is empty
+
     sub_list = []
     magical_ordered_map = {}
     previous = vod_list[0].channels_name_id # initialize
@@ -42,7 +47,8 @@ def convertToFancyMap(vod_list: List[Vod]) -> Dict[int, List[Vod]]:
         sub_list.append(vod)
     
     # Add the last group
-    magical_ordered_map[idx_rank + 1] = sub_list
+    magical_ordered_map[idx_rank] = sub_list
+    # magical_ordered_map[idx_rank + 1] = sub_list # chatgpt says + 1 is wrong
 
     mega_count = 0
     for key, v_list in magical_ordered_map.items():

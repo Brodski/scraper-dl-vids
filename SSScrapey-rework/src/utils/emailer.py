@@ -1,4 +1,5 @@
 from collections import Counter
+import traceback
 from typing import List
 import boto3
 
@@ -62,6 +63,49 @@ class MetadataShitty:
         self.runtime_ffmpeg_dl = kwargs.get("runtime_ffmpeg_dl")
         self.runtime_dl        = kwargs.get("runtime_dl")
 
+def extra_data_about_instance():
+    import torch
+    import os
+
+    logical_cores = ""
+    gpu_name = ""
+    total_vram = ""
+    cpu_manufacturer = ""
+    cpu_model = ""
+    cpu_frequency_mhz = ""
+    cpu_cache = ""
+    ### Vendor / manufacturer ###
+    try:
+        try:
+            with open("/proc/cpuinfo") as f:
+                for line in f:
+                    if ":" in line:
+                        key, value = map(str.strip, line.split(":", 1))
+                        if key == "vendor_id":
+                            cpu_manufacturer = value
+                        elif key == "model name":
+                            cpu_model = value
+                        elif key == "cpu MHz":
+                            cpu_frequency_mhz = float(value)
+                        elif key == "cache size":
+                            cpu_cache = value
+        except:
+            pass
+
+        logical_cores = os.cpu_count()
+        gpu_name      = torch.cuda.get_device_name(0)
+        deviceX       = torch.device("cuda:0")
+        total_vram    = torch.cuda.get_device_properties(deviceX).total_memory
+
+        print("VRAM (bytes):", total_vram)
+        print("VRAM (GB):", total_vram / 1024**3)
+    except Exception as e:
+        stack_trace = traceback.format_exc()
+        error_message = f"ERROR Transcribing vod: {e}"
+        logger.error(error_message + "\n" + stack_trace)
+
+    return logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache
+
 
 def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_uploaded_tscripts, elapsed_time):
     total = env_varz.TRANSCRIBER_VODS_PER_INSTANCE
@@ -73,6 +117,24 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     hours   = mins / 60
     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
     msg_lines.append("\n")
+
+    #################
+    ### GPU & CPU ###
+    #################
+    logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
+    msg_lines.append(
+        f"gpu_name: {gpu_name}\n"
+        f"logical_cores: {logical_cores}\n"
+        f"total_vram: {total_vram}\n"
+        f"cpu_manufacturer: {cpu_manufacturer}\n"
+        f"cpu_model: {cpu_model}\n"
+        f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
+        f"cpu_cache: {cpu_cache}\n"
+    )
+
+    ############
+    ### VODS ###
+    ############
     for idx, metadata in enumerate(metadata_arr):
         metadata: MetadataShitty = metadata
 
@@ -108,8 +170,6 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
             f"Transcript @: {transcript_url}\n"
             f"Message: {metadata.msg}\n"
         )
-
-    # Build summary
     summary_lines = ["Transcriber Report Summary:", f"Total expected items: {total}", f"Total actual item {str(len(metadata_arr))}"]
     for status, count in status_counter.items():
         summary_lines.append(f"{status}: {count}")

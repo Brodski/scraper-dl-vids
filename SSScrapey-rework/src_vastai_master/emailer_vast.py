@@ -45,6 +45,13 @@ class MetadataVast():
         self.successes      = [] # {id, runtime}
         self.errorz         = []
 
+    def empty_singleton_bc_lambda(self):
+        self.deleted        = []
+        self.created        = []
+        self.try_again_arr  = []
+        self.successes      = []
+        self.errorz         = []
+
     def send_fail_msg(self, trace=""):
         env = os.getenv("ENV")
         subject = f"Vast-master/Lambda {env} Failed"
@@ -53,6 +60,7 @@ class MetadataVast():
         print(subject)
         print(body)
         sendEmail(subject, body)
+        self.empty_singleton_bc_lambda()
 
     def send_success_msg(self):
         env = os.getenv("ENV")
@@ -62,16 +70,39 @@ class MetadataVast():
         print(subject)
         print(body)
         sendEmail(subject, body)
+        self.empty_singleton_bc_lambda()
 
     def format_msg(self):
         def appender(items):
             msg = ""
-            for err in items:
-                for key, value in err.items():
+            for thing in items:
+                for key, value in thing.items():
                     msg += f"{key}: {value}\n"
+                msg += "\n"
             return msg
-
+        ######################
+        ### AWS CLI HELPER ###
+        ######################
+        awslogs_group  = os.environ.get("AWS_LAMBDA_LOG_GROUP_NAME")
+        awslogs_stream = os.environ.get("AWS_LAMBDA_LOG_STREAM_NAME")
+        awslogs_region = os.environ.get("AWS_REGION")
+        filename = awslogs_stream.replace("/", ".").replace("\\", ".")
+        out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{filename}.txt"
+        cli = "\n"
+        cli = cli + "set PYTHONUTF8=1\n"
+        cli = cli + "aws logs get-log-events "
+        cli = cli + f" --log-group-name '{awslogs_group}' "
+        cli = cli + f" --log-stream-name '{awslogs_stream}' "
+        cli = cli + f" --region {awslogs_region} "
+        cli = cli + f" --output text > '{out_}' \n\n"
+        cli = cli + r"\s*\d+\s*\n\s*EVENT"
+        #######################
+        ### ACTUAL MESSAGES ###
+        #######################
         msg = ""
+        msg += f"Group: {awslogs_group}\n"
+        msg += f"Stream: {awslogs_stream}\n"
+        msg += f"Region: {awslogs_region}\n"
         msg += " ----- SUCCESSES -----\n"
         msg += appender(self.successes)
 
@@ -86,5 +117,6 @@ class MetadataVast():
         
         msg += " ----- DELETED -----\n"
         msg += appender(self.deleted)
+        msg += cli
 
         return msg

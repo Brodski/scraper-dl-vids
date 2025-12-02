@@ -34,6 +34,7 @@ def find_create_confirm_instance(rerun_count, instance_num):
     ### FIND VIABLE INSTANCE ###
     ###                      ###
     ############################
+    print(f"  (find_create_confirm_instance) TOP rerun_count: {rerun_count}, instance_num: {instance_num}")
     if (rerun_count >= 2):
         print("  (find_create_confirm_instance) We have reran too many time,  ENDING!\n" * 3)
         return

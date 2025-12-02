@@ -26,4 +26,5 @@ terraform apply -var-file="vars_${TF_ENVIRONMENT}.tfvars"  --auto-approve
 #  --log-stream-name "your-log-stream" \            "2025/12/01/dev_vastai_master[$LATEST]bf814868a6c144789a94005820bbe5ea"
 #  --output text > logs.txt
 #  --region us-east-1
-aws logs get-log-events   --log-group-name "/scraper/vastai_master/dev"  --log-stream-name "2025/12/01/dev_vastai_master[$LATEST]bf814868a6c144789a94005820bbe5ea"  --region us-east-1  --output text > logs.txt
+
+# aws logs get-log-events   --log-group-name "/scraper/vastai_master/dev"  --log-stream-name "2025/12/01/dev_vastai_master[$LATEST]bf814868a6c144789a94005820bbe5ea"  --region us-east-1  --output text > logs.txt

@@ -3,25 +3,23 @@ locals {
   log_name = "/lambda/vastai_master/${var.sensitive_info.ENV}"
 }
 
-# data "archive_file" "lambda_zip" {
-#     type = "zip"
-#     output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
-#     source_dir = "${path.module}/../../src_vastai_master"
-# }
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
-
-  source {
-    content      = file("${path.module}/../../src_vastai_master/lambda_function.py")
-    filename     = "lambda_function.py"
+resource "null_resource" "build_app" {
+  provisioner "local-exec" {
+    # command     = "build.ps1"
+    command     = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File build.ps1"
+    working_dir = "${path.module}/../../src_vastai_master"
   }
-
-  source {
-    content      = file("${path.module}/../../src_vastai_master/extra_module.py")
-    filename     = "extra_module.py"
+  triggers = {
+    always = timestamp()
   }
 }
+
+data "archive_file" "lambda_zip" {
+    type = "zip"
+    output_path = "${path.module}/../../src_vastai_master/output_vastai_lambda_code.zip"
+    source_dir = "${path.module}/../../src_vastai_master/build"
+}
+
 resource "aws_lambda_function" "vast_lambda" {
   function_name = "${local.lambda_name}"
 

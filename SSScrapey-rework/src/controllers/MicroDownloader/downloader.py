@@ -10,7 +10,6 @@ import json
 import MySQLdb
 import os
 import re
-import subprocess
 import time
 import traceback
 import urllib
@@ -263,6 +262,11 @@ def downloadTwtvVidFAST(vod: Vod):
     
 
 def convertVideoToSmallAudio(meta):
+    if env_varz.DWN_SKIP_COMPRESS_AUDIO == True or env_varz.DWN_SKIP_COMPRESS_AUDIO == "True":
+        logger.debug("DWN_SKIP_COMPRESS_AUDIO==False, not compressing Audio!")
+        outFile = inFile
+        return meta, outFile, 0
+    
     start_time = time.time()
     filepath = meta.get('_filename') #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
 
@@ -270,11 +274,6 @@ def convertVideoToSmallAudio(meta):
     inFile = "file:" + filepath[:last_dot_index] + ".mp4" 
     outFile = "file:" + filepath[:last_dot_index] + ".opus" #opus b/c of the ffmpeg cmd below
 
-    if env_varz.DWN_SKIP_COMPRESS_AUDIO == True or env_varz.DWN_SKIP_COMPRESS_AUDIO == "True":
-        logger.debug("DWN_SKIP_COMPRESS_AUDIO==False, not compressing Audio!")
-        outFile = inFile
-        return meta, outFile, 0
-    
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     ffmpeg_command = [ 'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', '-application', 'voip', '-compression_level', '5', outFile ]
     
@@ -352,7 +351,7 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     logger.info("000000000000 uploadAudioToS3 00000000000000000")
     logger.info("000000000000                 00000000000000000")
 
-    # ext = downloaded_metadata.get("requested_downloads")[0].get('ext')
+    ### Pretty sure I did something stupid and convoluted here 2 years ago, with the keys and names ###
     caption_keybase = env_varz.S3_CAPTIONS_KEYBASE + vod.channels_name_id + "/" + vod.id
     vod_title = os.path.basename(outfile)
     vod_encode = urllib.parse.quote(vod_title)
@@ -392,7 +391,7 @@ def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
     webpage_url         = downloaded_metadata.get('webpage_url')
     thumbnail           = downloaded_metadata.get('thumbnail')
     stream_epoch        = int(downloaded_metadata.get('timestamp'))
-    transcript_status   = "audio2text_need"
+    transcript_status   = "audio_need_opus" if env_varz.DWN_SKIP_COMPRESS_AUDIO in (True, "True") else "audio2text_need" 
 
     connection = getConnection()
     try:

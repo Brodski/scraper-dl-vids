@@ -11,6 +11,7 @@ testvids/
 t_env/
 venv/
 n_env/
+**/venv_wsl
 
 **/__pycache__/
 *.env
@@ -51,6 +52,11 @@ logs
 **/4090/
 **/build/
 **/.env_docker_local
+**/build_arm
+**/build_x86
+**/build_python
+
+
 
 # See docker file.
 # https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.1/local_installers/12.x/cudnn-local-repo-debian11-8.9.1.23_1.0-1_amd64.deb/ 

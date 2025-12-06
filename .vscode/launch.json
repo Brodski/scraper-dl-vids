@@ -74,6 +74,22 @@
             "justMyCode": true
         },
         {
+            "name": "Piper",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/MICROS_2_0/ffmpeg_thing/chatgpt.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venv_wsl/bin/python",
+            "cwd": "${workspaceFolder}/MICROS_2_0/ffmpeg_thing",
+            "args": [
+                "--env",
+                "local",
+                "--transcriber_vods_per_instance",
+                "2"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Splitter",
             "type": "debugpy",
             "request": "launch",

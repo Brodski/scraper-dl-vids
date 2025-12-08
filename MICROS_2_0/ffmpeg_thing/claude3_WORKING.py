@@ -15,12 +15,18 @@ bucket    = "my-dev-bucket-bigger-stronger-faster-richer-than-your-bucket"
 key_small = "channels/vod-audio/caedrel/2510842357/BUDAPEST_MAJOR_-_FAZE_ELIMINATION-v2629297105.mp4"
 key_big   = "channels/vod-audio/caedrel/2510842357/DROPS_NUT_RAIDERS_TESTICULAR_TORSION_TUESDAY_EXPEDITION_TIME_BUNGULATE-v2628130294.mp4"
 
-key = key_big
-output_key = key.replace(".mp4", "_420_CLAUDE_MAGIC.opus")
-chunk_size = 10 * 1024 * 1024  # 1MB or whatever works
-max_chunk = chunk_size * 2
-start = 0
+key            = key_big
+output_key     = key.replace(".mp4", "_420_CLAUDE_MAGIC.opus")
+chunk_size     = 10 * 1024 * 1024                               # 1MB or whatever works
+max_chunk      = chunk_size * 2
+start          = 0
 
+parts          = []
+part_number    = 1
+part_buffer    = b""
+MIN_PART_SIZE  = 5 * 1024 * 1024                                # 5MB minimum for S3
+
+mpu = s3.create_multipart_upload(Bucket=bucket, Key=output_key)
 
 # Stream chunk to ffmpeg
 ffmpeg = subprocess.Popen(
@@ -45,16 +51,7 @@ ffmpeg = subprocess.Popen(
 )
 
 
-processed_data = b""
-
-# Create the multipart upload
-mpu = s3.create_multipart_upload(Bucket=bucket, Key=output_key)
-parts = []
-
-part_number = 1
-
-total_proccess = 0
-total_s3_dl = 0
+output_queue = queue.Queue(maxsize=10)
 
 
 
@@ -86,29 +83,6 @@ def read_from_ffmpeg(ffmpeg_proc, output_queue):
         output_queue.put(chunk)
     output_queue.put(None)  # Sentinel
 
-# Main code
-output_queue = queue.Queue(maxsize=10)
-
-# Start threads
-write_thread = threading.Thread(
-    target=write_to_ffmpeg,
-    args=(ffmpeg, s3, bucket, key, chunk_size)
-)
-read_thread = threading.Thread(
-    target=read_from_ffmpeg,
-    args=(ffmpeg, output_queue)
-)
-
-
-
-
-part_buffer = b""
-MIN_PART_SIZE = 5 * 1024 * 1024  # 5MB minimum for S3
-
-
-write_thread.start()
-read_thread.start()
-
 
 def upload_some_parts():
     # if part_buffer:
@@ -124,14 +98,32 @@ def upload_some_parts():
     parts.append({"ETag": part_resp["ETag"], "PartNumber": part_number})
     part_number += 1
     time.sleep(10)
+
+#################
+# Start threads #
+#################
+write_thread = threading.Thread(
+    target=write_to_ffmpeg,
+    args=(ffmpeg, s3, bucket, key, chunk_size)
+)
+
+read_thread = threading.Thread(
+    target=read_from_ffmpeg,
+    args=(ffmpeg, output_queue)
+)
+
+
+write_thread.start()
+read_thread.start()
+
     
 shitcount = 0
 while True:
     chunk_ff_out = output_queue.get()
-    if chunk_ff_out is None:  # Done
+    if chunk_ff_out is None:  # Done. Final chunk needs to be pushed. can be < MIN_PART_SIZE
         upload_some_parts()
-        # Upload any remaining data as the final part
         break
+
     # print('reading...', len(chunk_ff_out))
     if shitcount % 10 == 1:
         print(f"{shitcount}: reading... ff_out bytez {len(chunk_ff_out)} - len(part_buffer)={len(part_buffer)}")
@@ -139,21 +131,25 @@ while True:
     ### 💣 BOOM ###
     part_buffer += chunk_ff_out
 
-    # if len(chunk_ff_out) > 0:
+
     if len(part_buffer) >= MIN_PART_SIZE:
         upload_some_parts()
         part_buffer = b""
     shitcount += 1
     # time.sleep(5)
+
+
+
+
 write_thread.join()
 
 ffmpeg.stdin.close() if not ffmpeg.stdin.closed else None  # Make sure stdin is closed
 
 read_thread.join()
+
 ffmpeg.wait()
 
 print("gg we complete it now")
-# Complete multipart upload
 print("parts")
 print(parts)
 

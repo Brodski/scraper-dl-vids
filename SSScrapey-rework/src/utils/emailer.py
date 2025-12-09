@@ -115,9 +115,10 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     seconds = int(elapsed_time)
     mins    = seconds / 60
     hours   = mins / 60
+    total_duration = 0
     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
     msg_lines.append("\n")
-
+    
     #################
     ### GPU & CPU ###
     #################
@@ -137,6 +138,8 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     ############
     for idx, metadata in enumerate(metadata_arr):
         metadata: MetadataShitty = metadata
+        if metadata.vod and metadata.vod.duration and isinstance(metadata.vod.duration, (int, float)) and metadata.vod.duration >= 0:
+            total_duration = total_duration + metadata.vod.duration
 
         status          = metadata.status
         status_counter[status] += 1
@@ -170,7 +173,18 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
             f"Transcript @: {transcript_url}\n"
             f"Message: {metadata.msg}\n"
         )
+    total_seconds = int(total_duration)
+    total_mins    = total_seconds / 60
+    total_hours   = total_mins / 60
+    
+    average_runtime = int(total_duration / seconds)
+    average_mins = average_runtime / 60
+    average_hours = average_mins / 60
+    total_msg = f"total_seconds={total_seconds} sec = {total_mins} min = {total_hours}"
+    avg_msg = f"total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
     summary_lines = ["Transcriber Report Summary:", f"Total expected items: {total}", f"Total actual item {str(len(metadata_arr))}"]
+    summary_lines.append(total_msg)
+    summary_lines.append(avg_msg)
     for status, count in status_counter.items():
         summary_lines.append(f"{status}: {count}")
 
@@ -190,7 +204,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
 # i vibe coded this
 ##############
 from collections import Counter
-def write_downloader_report(metadata_array_global, elapsed_time=0):
+def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed_time=0):
     total = env_varz.DWN_BATCH_SIZE
     status_counter = Counter()
 
@@ -198,6 +212,9 @@ def write_downloader_report(metadata_array_global, elapsed_time=0):
     seconds = int(elapsed_time)
     mins    = seconds / 60
     hours   = mins / 60
+
+    total_duration = 0
+
     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
     msg_lines.append("\n")
     for idx, metadata in enumerate(metadata_array_global):
@@ -209,11 +226,15 @@ def write_downloader_report(metadata_array_global, elapsed_time=0):
         vod_id          = getattr(metadata, 'vodId', 'Unknown')
         vod_title       = getattr(metadata, 'vodTitle', 'Untitled')
         duration_string = getattr(metadata, 'duration_string', 'NA')
+        vod             = getattr(metadata, 'vod', None)
         runtime_ffmpeg_dl  = metadata.runtime_ffmpeg_dl or -69
         runtime_dl      = metadata.runtime_dl or -69
         
         runtime_ffmpeg_dl if runtime_ffmpeg_dl else 0
         runtime_dl if runtime_dl else 0
+
+        if vod and vod.duration and isinstance(vod.duration, (int, float)) and vod.duration >= 0:
+            total_duration = total_duration + metadata.vod.duration
 
         msg_lines.append(
             f"-------------{idx}--------------\n"
@@ -227,8 +248,24 @@ def write_downloader_report(metadata_array_global, elapsed_time=0):
             f"Message: {message}\n"
         )
 
+
+
+    total_seconds = int(total_duration)
+    total_mins    = total_seconds / 60
+    total_hours   = total_mins / 60
+    
+    average_runtime = int(total_duration / seconds)
+    average_mins    = average_runtime / 60
+    average_hours   = average_mins / 60
+    total_msg       = f"total_seconds={total_seconds} sec = {total_mins} min = {total_hours}"
+    avg_msg         = f"total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
+    
+
     # Build summary
     summary_lines = ["Download Report Summary:", f"Total expected items: {total}", f"Total actual item {str(len(metadata_array_global))}"]
+    summary_lines.append(total_msg)
+    summary_lines.append(avg_msg)
+
     for status, count in status_counter.items():
         summary_lines.append(f"{status}: {count}")
 

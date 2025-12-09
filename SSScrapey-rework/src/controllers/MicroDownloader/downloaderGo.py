@@ -37,6 +37,7 @@ class MetadataShitty:
         self.runtime_ffmpeg_dl      = kwargs.get("runtime_ffmpeg_dl")
         self.runtime_dl          = kwargs.get("runtime_dl")
         self.duration_string     = kwargs.get("duration_string")
+        self.vod: Vod            = kwargs.get("vod")
 
 metadata_array_global: List[MetadataShitty] = []
 
@@ -153,62 +154,6 @@ def download(i, isDebug=False):
         return
 
     ### SUCCESS ###
-    metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=Status.SUCCESS, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl))
+    metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, vod=vod, status=Status.SUCCESS, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl))
     return downloaded_metadata
 
-
-##############
-# SEND EMAIL #
-# i vibe coded this
-##############
-# from collections import Counter
-# def sendReport(elapsed_time=0):
-#     total = env_varz.DWN_BATCH_SIZE
-#     status_counter = Counter()
-
-#     msg_lines = []
-#     seconds = int(elapsed_time)
-#     mins    = seconds / 60
-#     hours   = mins / 60
-#     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
-#     msg_lines.append("\n")
-#     for idx, metadata in enumerate(metadata_array_global):
-#         status = getattr(metadata, 'status', 'N/A')
-#         status_counter[status] += 1
-
-#         message         = getattr(metadata, 'msg', '')
-#         channel         = getattr(metadata, 'channelId', 'Unknown')
-#         vod_id          = getattr(metadata, 'vodId', 'Unknown')
-#         vod_title       = getattr(metadata, 'vodTitle', 'Untitled')
-#         duration_string = getattr(metadata, 'duration_string', 'NA')
-#         runtime_ffmpeg_dl  = metadata.runtime_ffmpeg_dl or -69
-#         runtime_dl      = metadata.runtime_dl or -69
-        
-#         runtime_ffmpeg_dl if runtime_ffmpeg_dl else 0
-#         runtime_dl if runtime_dl else 0
-
-#         msg_lines.append(
-#             f"-------------{idx}--------------\n"
-#             f"Status: {status}\n"
-#             f"Channel ID: {channel}\n"
-#             f"VOD Title: {vod_title}\n"
-#             f"VOD ID: {vod_id}\n"
-#             f"Duration: {duration_string}\n"
-#             f"runtime_ffmpeg_dl (sec): {float(runtime_ffmpeg_dl):.2f}\n"
-#             f"runtime_dl (sec): {float(runtime_dl):.2f}\n"
-#             f"Message: {message}\n"
-#         )
-
-#     # Build summary
-#     summary_lines = ["Download Report Summary:", f"Total expected items: {total}", f"Total actual item {str(len(metadata_array_global))}"]
-#     for status, count in status_counter.items():
-#         summary_lines.append(f"{status}: {count}")
-
-#     # Combine summary and detailed report
-#     cli = find_aws_logging_info()
-#     report_message = "\n".join(summary_lines + [""] + msg_lines)
-#     report_message + "\n" + cli
-
-#     sendEmail(f"Downloader {env_varz.ENV} report", report_message)
-#     logger.info(report_message)
-#     # logger.debug(f"Going to download: {vod.channels_name_id} - {vod.id} - title: {vod.title}")

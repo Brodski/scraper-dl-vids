@@ -38,7 +38,6 @@ def find_aws_logging_info():
         cli = get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region)
 
         return cli
-        return awslogs_stream, awslogs_group, awslogs_region
     except:
         stack = traceback.format_exc()
         logger.error("something broke with aws cli cloudwatch finder")

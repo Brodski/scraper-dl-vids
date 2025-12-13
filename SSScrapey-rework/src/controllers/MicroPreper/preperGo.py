@@ -46,7 +46,7 @@ def prepare(isDebug=False, retry_count=0):
 
     # Via selenium & browser. Find videos's url, get anchor tags href
     try:
-        scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+        scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels) # returns -> /mocks/initHrefsData.py
     except Exception:
         tb = traceback.format_exc()
         logger.error("Something broke in our Firefox scraping :(")

@@ -45,10 +45,7 @@ def printIntro():
 
 def goTranscribeBatch(isDebug=False):
     printIntro()
-    # for key in sorted(os.environ):
-    #     logger.info(f"{key}={os.environ[key]}")
 
-    # cli = find_aws_logging_info()
     cli = find_aws_logging_info_transcriber()
 
     start_time = time.time()
@@ -58,9 +55,8 @@ def goTranscribeBatch(isDebug=False):
     metadata_arr:         List[MetadataShitty] = []
     metadataX: MetadataShitty = MetadataShitty()
     for i in range(0, download_batch_size):
+    #for vod in transcriber.getFromFancyMap(magical_ordered_map):
         # generator v
-    #for vod in transcriber.getFromFancyMap(magical_ordered_map):        
-        # process vod...
         print("===========================================")
         print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")

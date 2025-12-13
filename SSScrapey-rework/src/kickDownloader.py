@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # CLI ARGS #
     ############
     if env_varz.dwn_query_todo == True:    # $ python .\kickDownloader.py --dwn_query_todo
-        vods_list       = downloadDb.getTodoFromDatabase(0, False)
+        vods_list = downloadDb.getTodoFromDatabase(0, False)
         utils_generic.convertToFancyMap(vods_list)
         # ^ auto prints
 

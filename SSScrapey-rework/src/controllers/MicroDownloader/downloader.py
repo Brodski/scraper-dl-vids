@@ -311,13 +311,9 @@ def _execSubprocCmd(ffmpeg_command):
         stdoutput = process.stdout
         stderr = process.stderr
         returncode = process.returncode
-        # if "--download-sections" in ffmpeg_command and stderr != 1:
-        #     # "--dump-json" doesnt work --download-sections for some reason
-        #     hacky_fix_meta_dump = ['yt-dlp', ffmpeg_command[1], '--dump-json'] # url = ffmpeg_command[1]
-        #     stdoutput, _, _ = yt_dlp.utils.Popen.run(hacky_fix_meta_dump, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         # logger.debug(stdoutput)
-        logger.debug("    (exec) stderr:")
-        logger.debug(stderr)
+        # logger.debug("    (exec) stderr:")
+        # logger.debug(stderr)
         logger.debug("    (exec) returncode:")
         logger.debug(returncode)
         # stdoutput = stdoutput if stdoutput not in ("", None) else stderr
@@ -370,10 +366,10 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     s3fileKey = caption_keybase + "/" + vod_encode
     s3metaKey = caption_keybase + "/metadata.json"
     outfile_aux = outfile[5:]
-    logger.debug("    (uploadAudioToS3) uploading channel: " + vod.channels_name_id)
-    logger.debug("    (uploadAudioToS3) vod_id:" + vod.id)
-    logger.debug("    (uploadAudioToS3) meta.get(fulltitle)= " + downloaded_metadata.get('fulltitle'))
-    logger.debug("    (uploadAudioToS3) s3fileKey= " + s3fileKey)
+    logger.debug("    uploading channel: " + vod.channels_name_id)
+    logger.debug("    vod_id:" + vod.id)
+    logger.debug("    meta.get(fulltitle)= " + downloaded_metadata.get('fulltitle'))
+    logger.debug("    s3fileKey= " + s3fileKey)
     # logger.debug(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
@@ -465,7 +461,7 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             # used later
             json_s3_img_keys['original'] = img_key
             
-            logger.debug("    (updateImgs_Db) Saved *Default* thumbnail: " + img_key)
+            logger.debug("     Saved *Default* thumbnail: " + img_key)
     except Exception as e:
         logger.error(f"An error occurred: {e}")
 
@@ -496,7 +492,7 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
     replacement = fr'-{new_width}x{new_height}.'
     new_thumbnail = re.sub(pattern, replacement, thumbnail)
     # 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/ed8c9e0388e846f9f5f3_geranimo_315294119415_1763235443//thumb/thumb0-300x168.jpg'
-    logger.debug("    (updateImgs_Db) new_thumbnail-small: " + new_thumbnail)
+    logger.debug("     new_thumbnail-small: " + new_thumbnail)
 
     ###################
     # Save compressed #
@@ -518,7 +514,7 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             
             json_s3_img_keys['small'] = img_key
 
-            logger.debug("    (updateImgs_Db) Saved Small thumbnail ")
+            logger.debug("     Saved Small thumbnail ")
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         the_msg = ''.join(traceback.format_stack())
@@ -528,7 +524,7 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
         logger.error(msg)
         sendEmail(subject, msg)
 
-    logger.debug("    (updateImgs_Db) json_s3_img_keys" + str(json_s3_img_keys))
+    logger.debug("     json_s3_img_keys" + str(json_s3_img_keys))
     return json_s3_img_keys
 
 
@@ -557,9 +553,9 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             
 #             json_s3_img_keys['original'] = img_key
             
-#             logger.debug("    (updateImgs_Db) thumbnail: " + thumbnail)
-#             logger.debug("    (updateImgs_Db) img_key: " + img_key)
-#             logger.debug("    (updateImgs_Db) Saved Default thumbnail ")
+#             logger.debug("     thumbnail: " + thumbnail)
+#             logger.debug("     img_key: " + img_key)
+#             logger.debug("     Saved Default thumbnail ")
 #     except requests.exceptions.RequestException as e:
 #         logger.debug(f"An error occurred: {e}")
 
@@ -580,14 +576,14 @@ def updateImgs_Db(downloaded_metadata, vod: Vod) -> dict[str, str]:
             
 #             json_s3_img_keys['small'] = img_key
 
-#             logger.debug("    (updateImgs_Db) fname_mod:" + fname_mod)
-#             logger.debug("    (updateImgs_Db) thumbnail: " +thumbnail)
-#             logger.debug("    (updateImgs_Db) img_keymod: " + img_key)
-#             logger.debug("    (updateImgs_Db) Saved Small thumbnail ")
+#             logger.debug("     fname_mod:" + fname_mod)
+#             logger.debug("     thumbnail: " +thumbnail)
+#             logger.debug("     img_keymod: " + img_key)
+#             logger.debug("     Saved Small thumbnail ")
 #     except requests.exceptions.RequestException as e:
 #         logger.debug(f"An error occurred: {e}")
 
-#     logger.debug("    (updateImgs_Db) json_s3_img_keys" + json_s3_img_keys)
+#     logger.debug("     json_s3_img_keys" + json_s3_img_keys)
 #     return json_s3_img_keys
 
 def extract_name_from_url(url):

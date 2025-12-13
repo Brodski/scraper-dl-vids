@@ -66,6 +66,8 @@ class Audio2Text:
             ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
 
         result = {  "segments": [] }
+        end_time_model = time.time() - start_time_model
+        start_time_vod = time.time()
 
         for i, split in enumerate(splitted_list):
             file_abspath = os.path.abspath(split.relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
@@ -79,8 +81,6 @@ class Audio2Text:
 
             segments, info = cls.model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=False, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
 
-            end_time_model = time.time() - start_time_model
-            start_time_vod = time.time()
 
             cls.count_logger = 0
             offset = splitted_list[i-1].duration if i > 0 else 0

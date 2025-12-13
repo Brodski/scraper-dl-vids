@@ -83,7 +83,7 @@ def isPersonOnline(soup: BeautifulSoup):
     logger.debug("  (isPersonOnline) isOnline: " +  str(isOnline))
     return isOnline
 
-def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
+def scrape4VidHref(channels:  List[ScrappedChannel], retry_count=0): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
     channelMax = int(env_varz.PREP_NUM_CHANNELS)
     vodsMax = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
     SLEEP_SCROLL = 2
@@ -178,6 +178,10 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
         logger.error(f"{e}")
         stack_trace = traceback.format_exc()
         logger.error(stack_trace)
+        if retry_count < 3:
+            logger.info("some error occured, trying again...")
+            time.sleep(10)
+            scrape4VidHref(channels, retry_count + 1)
     finally:
         # Ensure the browser is closed even if an error occurs
         if browser:

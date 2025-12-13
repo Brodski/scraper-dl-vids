@@ -1,22 +1,25 @@
+from typing import Dict, List
+from env_file import env_varz
+env_varz.init_argz()
+
 import time
 import controllers.MicroDownloader.downloaderGo as downloadGo
 import controllers.MicroDownloader.downloader as downloadDb
-from env_file import env_varz
+import utils.generic_stuff as utils_generic
+from models.Vod import Vod
+
 
 
 if __name__ == "__main__":
     print('starting go download batch...')
-
-    env_varz.init_argz()
-
     
     ############
     # CLI ARGS #
     ############
-    if env_varz.dwn_query_todo == True:    # $ python .\kickDownloader.py --query-todo
-        print("env_varz.dwn_query_todo:", env_varz.dwn_query_todo)
-        downloadDb.getTodoFromDatabase(0, False)
-        exit(0)
+    if env_varz.dwn_query_todo == True:    # $ python .\kickDownloader.py --dwn_query_todo
+        vods_list       = downloadDb.getTodoFromDatabase(0, False)
+        utils_generic.convertToFancyMap(vods_list)
+        # ^ auto prints
 
     ##############
     # GO BABY GO #
@@ -29,5 +32,5 @@ if __name__ == "__main__":
 
     print('Finished kickDownloader')
     print("-------------------")
-    print("Total time: ", str(int(elapsed_time)))
+    print("Total time: ", str(int(elapsed_time)), "sec")
     print("-------------------")

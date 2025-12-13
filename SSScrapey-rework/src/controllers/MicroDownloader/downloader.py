@@ -13,7 +13,7 @@ import re
 import time
 import traceback
 import urllib
-import yt_dlp
+# import yt_dlp
 import subprocess
 import requests
 import re
@@ -47,9 +47,15 @@ def getConnection():
 # Get last "5" recent vods from EVERY channel. 
 # Take from the most popular channel
 # Does NOT care about status, eg 'todo', 'downloading' ect
-def getTodoFromDatabase(i, isDebug=False) -> Vod:
+def getTodoFromDatabase(i, isDebug=False) -> List[Vod]:
+    return getTodoFromDatabase_aux(i, 'todo', isDebug)
+
+def getCompressNeedFromDatabase(i, isDebug=False) -> List[Vod]:
+    return getTodoFromDatabase_aux(i, "audio_need_opus", isDebug)
+
+def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
     highest_priority_vod = None #
-    resultsArr = []
+    resultsArr: List[Vod] = []
     connection = getConnection()
     # maxVodz = env_varz.DWN_QUERY_PER_RECENT <- old-old
     # maxVodz = env_varz.NUM_VOD_PER_CHANNEL <- old
@@ -64,7 +70,7 @@ def getTodoFromDatabase(i, isDebug=False) -> Vod:
                     FROM Vods
                     JOIN Channels ON Vods.ChannelNameId = Channels.NameId
                     WHERE Vods.TodoDate >= NOW() - INTERVAL 8 DAY
-                        AND Vods.TranscriptStatus = 'todo'
+                        AND Vods.TranscriptStatus = '{tr_status}'
                     ORDER BY Channels.CurrentRank ASC, Vods.TodoDate DESC;
                 """
             # BELOW. 
@@ -182,7 +188,7 @@ def isVodDownloadable(vod: Vod):
         'yt-dlp', vidUrl, '--dump-json',
     ]
     try:
-        meta, stderr = _execSubprocCmd(yt_dlp_cmd)
+        meta, stderr, returncode = _execSubprocCmd(yt_dlp_cmd)
         if "HTTP Error 403" in stderr or "You must be logged into an account that has access to this subscriber-only" in stderr:
             logger.error("Failed b/c 403. Probably private or sub only.")
             return Errorz.UNAUTHORIZED_403
@@ -198,7 +204,7 @@ def isVodDownloadable(vod: Vod):
         traceback.print_exc()
     return True
 
-def downloadTwtvVidFAST(vod: Vod):
+def downloadTwtvVidFAST(vod: Vod, is_hls_retry=False):
     # yt-dlp==2023.3.4 WORKS LOCALLY ON WINDOWS
     # yt-dlp==2023.12.30 FAILS LOCALLY WINDOWS
     logger.info("000000000000                     00000000000000000")
@@ -224,7 +230,9 @@ def downloadTwtvVidFAST(vod: Vod):
     # output_template = 'C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework/assets/audio/%(title)s-%(id)s.%(ext)s'
 
     yt_dlp_cmd = [
-        'yt-dlp', vidUrl, 
+        'yt-dlp', vidUrl,
+        # *(["--hls-prefer-ffmpeg"] if is_hls_retry else []),
+        *(['--downloader', 'm3u8:ffmpeg'] if is_hls_retry else []),
         '--dump-json',
         '--output', output_template,
         '--format', 'worst', 
@@ -244,12 +252,15 @@ def downloadTwtvVidFAST(vod: Vod):
         yt_dlp_cmd.append('*0:00-10:00') # download only first 10 min
 
     try:
-        logger.debug(f"    (dlTwtvVid) YT_DLP: downloading - {vod.channels_name_id}, vodId: {vod.id} ")
-        logger.debug("    (dlTwtvVid) YT_DLP: downloading url: " + vidUrl)
-        logger.debug("\n    (dlTwtvVid) yt_dlp_cmd: " + str(yt_dlp_cmd))
+        logger.debug(f"     YT_DLP: downloading - {vod.channels_name_id}, vodId: {vod.id} ")
+        logger.debug("     YT_DLP: downloading url: " + vidUrl)
+        logger.debug("\n     yt_dlp_cmd: " + str(yt_dlp_cmd))
         logger.debug("")
-        metax, stderr = _execSubprocCmd(yt_dlp_cmd)
+        metax, stderr, returncode = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(metax)
+        if returncode == 1 and "ERROR: Initialization fragment found after media fragments, unable to download" in stderr:
+            logger.info(f"ERROR! with yt_dlp :( Retrying with 'hls' -> returncode={returncode}. stderr={stderr}")
+            return downloadTwtvVidFAST(vod, True)
     except Exception as e:
         logger.error("    (dlTwtvVid) Failed to extract vid!!: " + vidUrl + " : " + str(e))
         traceback.print_exc()
@@ -261,14 +272,15 @@ def downloadTwtvVidFAST(vod: Vod):
     return meta, runtime
     
 
-def convertVideoToSmallAudio(meta):
+# def convertVideoToSmallAudio(meta):
+def convertVideoToSmallAudio(filepath):
+    # filepath = C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
     if env_varz.DWN_SKIP_COMPRESS_AUDIO == True or env_varz.DWN_SKIP_COMPRESS_AUDIO == "True":
         logger.debug("DWN_SKIP_COMPRESS_AUDIO==False, not compressing Audio!")
         outFile = inFile
-        return meta, outFile, 0
+        return outFile, 0
     
     start_time = time.time()
-    filepath = meta.get('_filename') #C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
 
     last_dot_index = filepath.rfind('.')
     inFile = "file:" + filepath[:last_dot_index] + ".mp4" 
@@ -283,7 +295,7 @@ def convertVideoToSmallAudio(meta):
 
     runtime_secs = time.time() - start_time    
     logger.debug("\n    (convertVideoToSmallAudio): run time (secs) = " + str(int(runtime_secs)) + "\n")
-    return meta, outFile, runtime_secs
+    return outFile, runtime_secs
 
 
 def _execSubprocCmd(ffmpeg_command):
@@ -304,12 +316,12 @@ def _execSubprocCmd(ffmpeg_command):
         #     hacky_fix_meta_dump = ['yt-dlp', ffmpeg_command[1], '--dump-json'] # url = ffmpeg_command[1]
         #     stdoutput, _, _ = yt_dlp.utils.Popen.run(hacky_fix_meta_dump, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         # logger.debug(stdoutput)
-        # logger.debug("    (exec) stderr:")
-        # logger.debug(stderr)
-        # logger.debug("    (exec) returncode:")
-        # logger.debug(returncode)
+        logger.debug("    (exec) stderr:")
+        logger.debug(stderr)
+        logger.debug("    (exec) returncode:")
+        logger.debug(returncode)
         # stdoutput = stdoutput if stdoutput not in ("", None) else stderr
-        return stdoutput, stderr
+        return stdoutput, stderr, int(returncode)
     except subprocess.CalledProcessError as e:
         logger.error("Failed to run ffmpeg command:")
         logger.error(e)

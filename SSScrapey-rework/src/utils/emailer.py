@@ -51,7 +51,7 @@ class Status(Enum):
 
 class MetadataShitty:
     def __init__(self, **kwargs):
-        self.vod: Vod            = kwargs.get("vod")
+        self.vod: Vod           = kwargs.get("vod")
 
         self.msg               = kwargs.get("msg")
         self.status: Status    = kwargs.get("status") # also is type "Errorz" from download
@@ -115,7 +115,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     seconds = int(elapsed_time)
     mins    = seconds / 60
     hours   = mins / 60
-    total_duration = 0
+    vod_total_duration = 0
     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
     msg_lines.append("\n")
     
@@ -123,8 +123,9 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     ### GPU & CPU ###
     #################
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
+    msg_lines.append("**************")
     msg_lines.append(
-        f"gpu_name: {gpu_name}\n"
+        f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
         f"logical_cores: {logical_cores}\n"
         f"total_vram: {total_vram}\n"
         f"cpu_manufacturer: {cpu_manufacturer}\n"
@@ -132,6 +133,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
         f"cpu_cache: {cpu_cache}\n"
     )
+    msg_lines.append("**************")
 
     ############
     ### VODS ###
@@ -139,7 +141,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     for idx, metadata in enumerate(metadata_arr):
         metadata: MetadataShitty = metadata
         if metadata.vod and metadata.vod.duration and isinstance(metadata.vod.duration, (int, float)) and metadata.vod.duration >= 0:
-            total_duration = total_duration + metadata.vod.duration
+            vod_total_duration = vod_total_duration + int(metadata.vod.duration)
 
         status          = metadata.status
         status_counter[status] += 1
@@ -173,15 +175,15 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
             f"Transcript @: {transcript_url}\n"
             f"Message: {metadata.msg}\n"
         )
-    total_seconds = int(total_duration)
+    total_seconds = int(vod_total_duration)
     total_mins    = total_seconds / 60
     total_hours   = total_mins / 60
     
-    average_runtime = int(total_duration / seconds)
+    average_runtime = int(vod_total_duration / seconds)
     average_mins = average_runtime / 60
     average_hours = average_mins / 60
     total_msg = f"total_seconds={total_seconds} sec = {total_mins} min = {total_hours}"
-    avg_msg = f"total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
+    avg_msg = f"vod_total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
     summary_lines = ["Transcriber Report Summary:", f"Total expected items: {total}", f"Total actual item {str(len(metadata_arr))}"]
     summary_lines.append(total_msg)
     summary_lines.append(avg_msg)
@@ -213,7 +215,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     mins    = seconds / 60
     hours   = mins / 60
 
-    total_duration = 0
+    vod_total_duration = 0
 
     msg_lines.append(f"TOTAL TIME: {seconds:.2f} secs = {mins:.2f} min = {hours:.2f} hours")
     msg_lines.append("\n")
@@ -234,7 +236,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
         runtime_dl if runtime_dl else 0
 
         if vod and vod.duration and isinstance(vod.duration, (int, float)) and vod.duration >= 0:
-            total_duration = total_duration + metadata.vod.duration
+            vod_total_duration = vod_total_duration + metadata.vod.duration
 
         msg_lines.append(
             f"-------------{idx}--------------\n"
@@ -250,15 +252,15 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
 
 
 
-    total_seconds = int(total_duration)
+    total_seconds = int(vod_total_duration)
     total_mins    = total_seconds / 60
     total_hours   = total_mins / 60
     
-    average_runtime = int(total_duration / seconds)
+    average_runtime = int(vod_total_duration / seconds)
     average_mins    = average_runtime / 60
     average_hours   = average_mins / 60
     total_msg       = f"total_seconds={total_seconds} sec = {total_mins} min = {total_hours}"
-    avg_msg         = f"total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
+    avg_msg         = f"vod_total_duration / total_runtime = {average_runtime} sec = {average_mins} min = {average_hours}"
     
 
     # Build summary

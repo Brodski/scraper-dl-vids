@@ -3,6 +3,8 @@ from models.Vod import Vod
 from typing import Dict, List
 from utils.logging_config import LoggerConfig
 import logging
+import re
+import unicodedata
 
 def logger():
     pass

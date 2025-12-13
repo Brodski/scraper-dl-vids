@@ -56,6 +56,7 @@ class MetadataP:
                 # print(name_id, key, value)
                 msg_vods_updated += f"    {name_id}, {key}, {value}\n"
                 count = count + 1
+            msg_vods_updated += "\n"
         msg_vods_updated = msg_vods_updated + "Total vods existing + new = " + str(count)
 
         cli = find_aws_logging_info()

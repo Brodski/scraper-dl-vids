@@ -4,7 +4,7 @@ import traceback
 import boto3 # boto3 comes for free in all lambda :o
 import os
 import time
-# import pymysql
+import pymysql
 
 
 os.environ["LD_LIBRARY_PATH"] = "/opt/lib:" + os.environ.get("LD_LIBRARY_PATH", "")

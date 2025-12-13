@@ -30,7 +30,7 @@ def printIntro():
     logger.debug("Will look at this many past broadcasts:")
     logger.debug("  PREP_NUM_VOD_PER_CHANNEL:" +  env_varz.PREP_NUM_VOD_PER_CHANNEL)
 
-def prepare(isDebug=False):
+def prepare(isDebug=False, retry_count=0):
     logger.info("IN PREPER GO")
 
     printIntro()
@@ -45,7 +45,18 @@ def prepare(isDebug=False):
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
 
     # Via selenium & browser. Find videos's url, get anchor tags href
-    scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+    try:
+        scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels, isDebug) # returns -> /mocks/initHrefsData.py
+    except Exception:
+        tb = traceback.format_exc()
+        logger.error("Something broke in our Firefox scraping :(")
+        logger.error(tb)
+        if retry_count < 3:
+            logger.error(f"We will retry. At {retry_count} of max 3")
+            prepare(isDebug, retry_count + 1)
+            return
+        raise
+        
 
     updateShit(scrapped_channels)
     elapsed_time = math.ceil(time.time() - start_time)
@@ -73,6 +84,8 @@ def doWithCallback(callback, counter):
         return doWithCallback(callback, counter + 1)
 
 def updateShit(scrapped_channels: List[ScrappedChannel]):
+    if scrapped_channels is None:
+        raise Exception("scrapped_channels is None, wtf man?")
     try:
         doWithCallback(lambda: databasePreper.addNewChannelToDb(scrapped_channels), 0)
         all_channels_minus_scrapped: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getNewOldChannelsFromDB(scrapped_channels), 0)

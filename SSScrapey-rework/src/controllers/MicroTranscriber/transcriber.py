@@ -150,7 +150,8 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)
-    logger.debug("   (setCompletedStatusDb) transcripts_keys:" + str( transcripts_keys))
+    # logger.debug("   (setCompletedStatusDb) transcripts_keys:" + str( transcripts_keys))
+    logger.debug(f"Completed: {vod.channels_name_id} - {vod.id} - {vod.title[:30]}")
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -214,9 +215,9 @@ def downloadAudio(vod: Vod):
 
 def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     logger.debug("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-    logger.debug("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
-    logger.debug("    (uploadCaptionsToS3) vod.id: " + vod.id) 
-    logger.debug("    (uploadCaptionsToS3) vod.title: " + vod.title) 
+    logger.debug("    channel: " + vod.channels_name_id)
+    logger.debug("    vod.id: " + vod.id) 
+    logger.debug("    vod.title: " + vod.title) 
 
     s3 = boto3.client('s3')
     transcripts_s3_key_arr = []

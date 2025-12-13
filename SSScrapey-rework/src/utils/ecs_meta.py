@@ -13,7 +13,7 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 def find_aws_logging_info():
     if env_varz.ENV == "local":
-        return
+        return "<cloudwatch disabled or ENV=local>"
     try:
         metadata_uri = os.environ.get("ECS_CONTAINER_METADATA_URI_V4")
         if not metadata_uri:
@@ -47,7 +47,7 @@ def find_aws_logging_info():
 
 def find_aws_logging_info_transcriber():
     if env_varz.ENV == "local" and env_varz.WHSP_IS_CLOUDWATCH != "True":
-         return
+         return "<cloudwatch disabled or ENV=local>"
     from controllers.MicroTranscriber.cloudwatch import Cloudwatch
     cloudwatch: Cloudwatch = Cloudwatch()
     awslogs_group = cloudwatch.LOG_GROUP_NAME

@@ -77,7 +77,6 @@ def download(i, isDebug=False):
         # PRE-DOWNLOAD, GET TO-DO #
         ###########################
 
-        # vod = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
         vods_list       = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
         magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
         gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
@@ -127,7 +126,8 @@ def download(i, isDebug=False):
         # Post process vod #
         ####################
         downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
-        downloaded_metadata, outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata)
+        # downloaded_metadata, outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata)
+        outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata.get('_filename'))
         
         #############
         # Upload DB #

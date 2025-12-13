@@ -34,25 +34,6 @@ def getConnection():
     )
     return connection
 
-# NOT USED
-def addRankingsForTodayDb(scrapped_channels: List[ScrappedChannel]):
-    connection = getConnection()
-    with connection.cursor() as cursor:
-        values = [(chan.name_id, int(chan.current_rank)) for chan in scrapped_channels]
-        sql = "INSERT INTO Rankings (TodoDate, ChannelNameId, Ranking) VALUES (NOW(), %s, %s)"
-        logger.debug("Adding new Ranks:" +  str(values))
-        logger.debug("Adding new sql:" +  str(sql))
-        try:
-            with connection.cursor() as cursor:
-                cursor.executemany(sql, values)  # Batch insert
-            connection.commit()
-        except Exception as e:
-            logger.error(f"Error occurred: {e}")
-            stack_trace = traceback.format_exc()
-            logger.error(stack_trace)
-            connection.rollback()
-    connection.close()
-
 def getNewOldChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
     connection = getConnection()
     with connection.cursor() as cursor:
@@ -404,18 +385,6 @@ def deleteOldTodos():
 
 
 
-# YYYY-MM-DD
-# CREATE TABLE Rankings (
-#     RankingId INT NOT NULL AUTO_INCREMENT,
-#     ChannelNameId VARCHAR(255),
-#     Ranking SMALLINT,
-#     TodoDate DATETIME,
-
-#     PRIMARY KEY (RankingID),
-#     FOREIGN KEY (ChannelNameId) REFERENCES Channels(NameId)
-# );
-
-
 # CREATE TABLE Channels (
 #     NameId VARCHAR(255),
 #     DisplayName VARCHAR(255),
@@ -461,7 +430,6 @@ def deleteOldTodos():
 # ALTER TABLE Vods ADD COLUMN TodoDate DATETIME;
 # ALTER TABLE Vods ADD COLUMN S3Link VARCHAR(255);
 # ALTER TABLE Vods ADD COLUMN TranscribeDate DATETIME;
-# ALTER TABLE Rankings ADD COLUMN TodoDate DATETIME;
 
 # ALTER TABLE Channels
 # ADD COLUMN ViewMinutes INT,
@@ -500,9 +468,6 @@ def deleteOldTodos():
 
 ##################
 
-# ALTER TABLE Rankings
-# ADD Time TIME,
-# ADD Datetime DATETIME
 
 # ALTER TABLE Vods 
 # ADD Id VARCHAR(255);

@@ -54,6 +54,8 @@ class Audio2Text:
 
         metadata_ = MetadataShitty(vod=vod, model_size=model_size, compute_type=compute_type, cpu_threads=cpu_threads, device=device)
 
+        start_time_model = time.time()
+
         logger.debug("⌛ loading model........")
         if cls.model is None:
             cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
@@ -63,7 +65,6 @@ class Audio2Text:
             import ctypes
             ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
 
-        start_time_model = time.time()
         result = {  "segments": [] }
 
         for i, split in enumerate(splitted_list):
@@ -101,16 +102,16 @@ class Audio2Text:
         logger.debug("Complete!")
         logger.debug("model_size: " + model_size)
         logger.debug(f"Detected language {info.language} with probability {str(info.language_probability)}")
-        logger.debug("")
+        logger.debug("-")
         logger.debug(f"Channel: {vod.channels_name_id}")
         logger.debug(f"{vod.id}: {vod.title}")
-        logger.debug("")
+        logger.debug("-")
         logger.debug("Model load run time =" + str(end_time_model))
         logger.debug("Vod transcribe run time =" + str(end_time_vod))
         logger.debug("Model + Vod =" + str(end_time_model + end_time_vod))
         # logger.debug("")
         # logger.debug("Saved files: " + str(saved_caption_files))
-        logger.debug("")
+        logger.debug("-")
         logger.debug("========================================")
 
         metadata_.whsp_lang = info.language 

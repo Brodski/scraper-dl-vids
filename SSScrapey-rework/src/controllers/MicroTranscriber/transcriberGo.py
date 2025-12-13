@@ -64,9 +64,13 @@ def goTranscribeBatch(isDebug=False):
         Audio2Text.download_batch_size = download_batch_size
         Audio2Text.current_num = i + 1
 
-        # result: Dict[Vod, bool] = transcribe(isDebug)
-        metadataX: MetadataShitty = transcribe(isDebug)
-        vod: Vod = metadataX.vod
+        try:
+            metadataX: MetadataShitty = transcribe(isDebug)
+            vod: Vod = metadataX.vod
+        except KeyboardInterrupt:    
+            logger.info("ending b/c ctrl + c")
+            # metadata_arr.append(metadataX)
+            break
 
         logger.info(f"   (goTranscribeBatch) Finished Index {i}")
         logger.info(f"   (goTranscribeBatch) download_batch_size: {download_batch_size}")
@@ -94,12 +98,9 @@ def goTranscribeBatch(isDebug=False):
         logger.info(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
         # logger.info(f"Audio uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
     for t in Audio2Text.completed_uploaded_tscripts:
-        try:
-            if t.endswith(".json"):
-                logger.debug(f"Transcripts @ {t}")
-                logger.debug(f"")
-        except:
-            logger.error("oops, .endswith() is not a real method")
+        if t.endswith(".json"):
+            logger.debug(f"Transcripts @ {t}")
+            logger.debug(f"")
 
     logger.debug("gg ending")
     return "gg ending"
@@ -156,7 +157,8 @@ def transcribe(isDebug=False) -> MetadataShitty:
     except KeyboardInterrupt:
         logger.debug("\nCtrl+C detected. Exiting gracefully.")
         transcriber.unsetSemaphoreDb(vod) # "vod" is highest priority 'todo' vod
-        sys.exit()
+        raise
+        # sys.exit()
     except Exception as e:
         stack_trace = traceback.format_exc()
         error_message = f"ERROR Transcribing vod: {e}"

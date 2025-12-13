@@ -400,7 +400,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_arr)
     
     for idx, metadata in enumerate(metadata_arr):
-        vod: Vod          = metadata.vod
+        vod: Vod          = metadata.vod if metadata.vod is not None else Vod()
         vod_id            = vod.id      if vod else "(no vod)"
         vod_title         = vod.title   if vod else "(no vod)"
         channel           = vod.channels_name_id            if vod else "(no vod)"
@@ -417,14 +417,14 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         msg_lines.append(
             f"-------------{idx}--------------\n"
             f"Status: {metadata.status}\n"
-            f"Channel ID: {channel}\n"
-            f"VOD Title: {vod_title}\n"
-            f"VOD ID: {vod_id}\n"
             f"Vod Duration: {vod.duration_string}\n"
-            f"Model load time: {runtime_model_ts}s\n"
-            f"Whisper transcription time: {runtime_ts}s\n"
-            f"Total Transcription time: {runtime_model_ts + runtime_ts}s\n"         
-            f"Whisper Lang: {metadata.whsp_lang}\n"
+            f"Total Transcription time: {runtime_model_ts + runtime_ts}s\n"     
+            f"    Model load time: {runtime_model_ts}s\n"
+            f"    Whisper transcription time: {runtime_ts}s\n"    
+            f"Channel ID: {channel}\n"
+            f"    VOD Title: {vod_title}\n"
+            f"    VOD ID: {vod_id}\n"
+            f"    Whisper Lang: {metadata.whsp_lang}\n"
             f"Device: {metadata.device}\n"
             f"Transcript @: {transcript_url}\n"
             f"Message: {metadata.msg}\n"

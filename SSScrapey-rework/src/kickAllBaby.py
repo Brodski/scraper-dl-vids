@@ -9,6 +9,15 @@ import controllers.MicroPreper.preperGo as preperGo
 from models.Vod import Vod
 
 
+#
+#
+#
+# python .\kickAllBaby.py --env local --transcriber_vods_per_instance 2 --transcriber_num_instances 1 --transcriber_instance_cnt 1
+#
+#
+#
+
+
 def print_time_it(start_time):
     elapsed_time = time.time() - start_time
     print("-------------------")
@@ -26,7 +35,7 @@ if __name__ == "__main__":
     start_time = time.time()
     
     ### BOOOOOOOM ###
-    preperGo.prepare()
+    # preperGo.prepare()
 
     print('Finished preper')
     print_time_it(start_time)

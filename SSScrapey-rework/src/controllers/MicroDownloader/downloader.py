@@ -289,12 +289,12 @@ def convertVideoToSmallAudio(filepath):
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     ffmpeg_command = [ 'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', '-application', 'voip', '-compression_level', '5', outFile ]
     
-    logger.debug("    (convertVideoToSmallAudio): compressing Audio....\n")
+    logger.debug("    compressing Audio....\n")
     logger.debug(str(ffmpeg_command))
     _execSubprocCmd(ffmpeg_command)
 
     runtime_secs = time.time() - start_time    
-    logger.debug("\n    (convertVideoToSmallAudio): run time (secs) = " + str(int(runtime_secs)) + "\n")
+    logger.debug("\n    run time (secs) = " + str(int(runtime_secs)) + "\n")
     return outFile, runtime_secs
 
 
@@ -373,7 +373,12 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     # logger.debug(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
-        s3.upload_file(os.path.abspath(outfile_aux), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
+        if env_varz.DWN_SKIP_COMPRESS_AUDIO == "False" or env_varz.DWN_SKIP_COMPRESS_AUDIO == False:
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            s3.upload_file(os.path.abspath(outfile_aux), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
         s3.put_object(Body=json.dumps(downloaded_metadata, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return s3fileKey
     except Exception as e:
@@ -399,7 +404,8 @@ def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
     webpage_url         = downloaded_metadata.get('webpage_url')
     thumbnail           = downloaded_metadata.get('thumbnail')
     stream_epoch        = int(downloaded_metadata.get('timestamp'))
-    transcript_status   = "audio_need_opus" if env_varz.DWN_SKIP_COMPRESS_AUDIO in (True, "True") else "audio2text_need" 
+    # transcript_status   = "audio_need_opus" if env_varz.DWN_SKIP_COMPRESS_AUDIO in (True, "True") else "audio2text_need" 
+    transcript_status   = "audio2text_need" 
 
     connection = getConnection()
     try:

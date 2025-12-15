@@ -1,3 +1,4 @@
+import sys
 from typing import Dict, List
 from env_file import env_varz
 env_varz.init_argz()
@@ -16,9 +17,10 @@ if __name__ == "__main__":
     ############
     # CLI ARGS #
     ############
-    if env_varz.dwn_query_todo == True:    # $ python .\kickDownloader.py --dwn_query_todo
+    if env_varz.dwn_query_todo == True:    # $ python .\kickDownloader.py --dwn_query_todo --env locl
         vods_list = downloadDb.getTodoFromDatabase(0, False)
         utils_generic.convertToFancyMap(vods_list)
+        sys.exit(0)
         # ^ auto prints
 
     ##############

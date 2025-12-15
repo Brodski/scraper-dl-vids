@@ -34,7 +34,7 @@ class MetadataShitty:
         self.channelId   = kwargs.get("channelId")
         self.msg         = kwargs.get("msg")
         self.status      = kwargs.get("status")
-        self.runtime_ffmpeg_dl      = kwargs.get("runtime_ffmpeg_dl")
+        self.runtime_ffmpeg_dl   = kwargs.get("runtime_ffmpeg_dl")
         self.runtime_dl          = kwargs.get("runtime_dl")
         self.duration_string     = kwargs.get("duration_string")
         self.vod: Vod            = kwargs.get("vod")
@@ -126,7 +126,6 @@ def download(i, isDebug=False):
         # Post process vod #
         ####################
         downloaded_metadata = downloader.removeNonSerializable(downloaded_metadata)
-        # downloaded_metadata, outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata)
         outfile, runtime_ffmpeg_dl = downloader.convertVideoToSmallAudio(downloaded_metadata.get('_filename'))
         
         #############

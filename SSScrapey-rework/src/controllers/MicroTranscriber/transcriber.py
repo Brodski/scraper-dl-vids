@@ -191,6 +191,9 @@ def downloadAudio(vod: Vod):
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     
     relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
+    relative_filename_aux = relative_filename.rsplit(".opus", 1)
+    relative_filename_mp4 = ".mp4".join(relative_filename_aux)
+    logger.debug("relative_filename_mp4------------- " +   relative_filename_mp4)
     logger.debug("audio_url: " + str( audio_url))
     logger.debug("audio_name: " + str( audio_name))
     
@@ -198,6 +201,10 @@ def downloadAudio(vod: Vod):
     if os.path.exists(relative_filename):
         logger.debug(f"File already exists: {relative_filename}")
         return relative_filename
+    
+    if os.path.exists(relative_filename_mp4):
+        logger.debug(f"File already exists: {relative_filename_mp4}")
+        return relative_filename_mp4
 
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg

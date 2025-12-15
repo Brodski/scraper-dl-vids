@@ -104,7 +104,7 @@ def download(i, isDebug=False):
 
         ### ERROR CHECK ###
         if downloaded_metadata in (Errorz.UNAUTHORIZED_403, Errorz.DELETED_404, Errorz.TOO_BIG, Errorz.UNKNOWN ):
-            metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=downloaded_metadata, msg=downloaded_metadata))
+            metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=downloaded_metadata, msg=downloaded_metadata, vod=vod))
         if downloaded_metadata == Errorz.UNAUTHORIZED_403:
             downloader.updateErrorVod(vod,"unauthorized")
             logger.debug("nope gg. 403 sub only")
@@ -134,7 +134,7 @@ def download(i, isDebug=False):
         s3fileKey = downloader.uploadAudioToS3_v2(downloaded_metadata, outfile, vod)
         if (s3fileKey):
             json_s3_img_keys = downloader.updateImgs_Db(downloaded_metadata, vod)
-            vod.title, vod.duration_string = downloader.updateVods_Db(downloaded_metadata, vod.id, s3fileKey, json_s3_img_keys)
+            vod.title, vod.duration_string = downloader.updateVods_Db(downloaded_metadata, vod, s3fileKey, json_s3_img_keys)
         downloader.cleanUpDownloads(downloaded_metadata)
 
     #################
@@ -148,7 +148,7 @@ def download(i, isDebug=False):
         logger.error(f"\nUnexpected error: {e}")
         traceback.print_exc()
         tb = traceback.format_exc()  # full stack trace as a string
-        metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=Status.FAILED, msg=tb, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl))
+        metadata_array_global.append(MetadataShitty(channelId=vod.channels_name_id, vodTitle=vod.title, vodId=vod.id, duration_string=vod.duration_string, status=Status.FAILED, msg=tb, runtime_ffmpeg_dl=runtime_ffmpeg_dl, runtime_dl=runtime_dl, vod=vod))
         vod = downloader.unlockVodDb(vod)
         return
 

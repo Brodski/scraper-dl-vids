@@ -330,7 +330,7 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours = {vod_total_mins:.2f} min = {vod_total_secs:.2f} sec")
     summary_lines.append(f"📐 ratio = {avg_secs:.2f} vod secs per compute seconds")
     summary_lines.append(f"          = vod min / compute min = vod hours / compute hour")
-    summary_lines.append(f"          = vod_total_seconds / total_runtime = {vod_total_seconds:.2f} / {elapsed_time:.2f} \n---> (x seconds complete per 1 second of compute)")
+    summary_lines.append(f"          = vod_total_seconds / total_runtime = {vod_total_seconds:.2f} / {elapsed_time:.2f}")
     summary_lines.append(f"          ---> (x seconds completed per 1 second of compute)")
     
     for status, count in status_counter.items():

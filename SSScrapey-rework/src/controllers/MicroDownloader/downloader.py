@@ -275,16 +275,17 @@ def downloadTwtvVidFAST(vod: Vod, is_hls_retry=False):
 # def convertVideoToSmallAudio(meta):
 def convertVideoToSmallAudio(filepath):
     # filepath = C:\Users\SHAAAZAM\scraper-dl-vids\assets\audio\Calculated-v5057810.mp3
-    if env_varz.DWN_SKIP_COMPRESS_AUDIO == True or env_varz.DWN_SKIP_COMPRESS_AUDIO == "True":
-        logger.debug("DWN_SKIP_COMPRESS_AUDIO==False, not compressing Audio!")
-        outFile = inFile
-        return outFile, 0
     
     start_time = time.time()
 
     last_dot_index = filepath.rfind('.')
     inFile = "file:" + filepath[:last_dot_index] + ".mp4" 
     outFile = "file:" + filepath[:last_dot_index] + ".opus" #opus b/c of the ffmpeg cmd below
+
+    if env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == True or env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == "True":
+        logger.debug("DWN_IS_SKIP_COMPRESS_AUDIO==False, not compressing Audio!")
+        outFile = inFile
+        return outFile, 0
 
     # https://superuser.com/questions/1422460/codec-and-setting-for-lowest-bitrate-ffmpeg-output
     ffmpeg_command = [ 'ffmpeg', '-y', '-i',  inFile, '-c:a', 'libopus', '-ac', '1', '-ar', '16000', '-b:a', '10K', '-vbr', 'constrained', '-application', 'voip', '-compression_level', '5', outFile ]
@@ -373,7 +374,7 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     # logger.debug(json.dumps(downloaded_metadata, default=lambda o: o.__dict__))
     s3 = boto3.client('s3')
     try:
-        if env_varz.DWN_SKIP_COMPRESS_AUDIO == "False" or env_varz.DWN_SKIP_COMPRESS_AUDIO == False:
+        if env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == "False" or env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == False:
             logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
             logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
             logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
@@ -387,7 +388,7 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
         # return None
     
 
-def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
+def updateVods_Db(downloaded_metadata, vod: Vod, s3fileKey, json_s3_img_keys):
     def getTitle(meta):
         if meta.get('title'):
             title = meta.get('title')
@@ -396,7 +397,7 @@ def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
         else: 
             title = vod_id
         return title
-
+    vod_id              = vod.id
     title               = getTitle(downloaded_metadata)
     duration            = downloaded_metadata.get('duration')
     duration_string     = downloaded_metadata.get('duration_string')
@@ -404,8 +405,10 @@ def updateVods_Db(downloaded_metadata, vod_id, s3fileKey, json_s3_img_keys):
     webpage_url         = downloaded_metadata.get('webpage_url')
     thumbnail           = downloaded_metadata.get('thumbnail')
     stream_epoch        = int(downloaded_metadata.get('timestamp'))
-    # transcript_status   = "audio_need_opus" if env_varz.DWN_SKIP_COMPRESS_AUDIO in (True, "True") else "audio2text_need" 
+    # transcript_status   = "audio_need_opus" if env_varz.DWN_IS_SKIP_COMPRESS_AUDIO in (True, "True") else "audio2text_need" 
     transcript_status   = "audio2text_need" 
+
+    vod.duration = int(duration)
 
     connection = getConnection()
     try:

@@ -10,7 +10,7 @@ class EnvVars:
     def __init__(self):
         self.DWN_IS_SHORT_DEV_DL = None
         self.DWN_BATCH_SIZE = None
-        self.DWN_SKIP_COMPRESS_AUDIO = None
+        self.DWN_IS_SKIP_COMPRESS_AUDIO = None
         self.PREP_SELENIUM_IS_HEADLESS = None
         self.PREP_SULLY_DAYS = None
         self.PREP_NUM_CHANNELS = None
@@ -48,7 +48,7 @@ class EnvVars:
         ######################################################
         parser.add_argument("--dwn_is_short_dev_dl", action="store_true")
         parser.add_argument("--dwn_batch_size")
-        parser.add_argument("--dwn_skip_compress_audio", action="store_true")
+        parser.add_argument("--dwn_is_skip_compress_audio", action="store_true")
         parser.add_argument("--prep_selenium_is_headless")
         parser.add_argument("--prep_sully_days")
         parser.add_argument("--prep_num_channels")
@@ -137,7 +137,7 @@ class EnvVars:
         #########################
         self.DWN_IS_SHORT_DEV_DL            = env_vars['DWN_IS_SHORT_DEV_DL']
         self.DWN_BATCH_SIZE                 = env_vars['DWN_BATCH_SIZE']
-        self.DWN_SKIP_COMPRESS_AUDIO        = env_vars['DWN_SKIP_COMPRESS_AUDIO']
+        self.DWN_IS_SKIP_COMPRESS_AUDIO     = env_vars['DWN_IS_SKIP_COMPRESS_AUDIO']
         self.PREP_SELENIUM_IS_HEADLESS      = env_vars['PREP_SELENIUM_IS_HEADLESS']
         self.PREP_SULLY_DAYS                = env_vars['PREP_SULLY_DAYS']
         self.PREP_NUM_CHANNELS              = env_vars['PREP_NUM_CHANNELS']

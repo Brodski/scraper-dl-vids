@@ -343,14 +343,14 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     msg_lines = []
     
     for idx, metadata in enumerate(metadata_array_global):
-        status = getattr(metadata, 'status', 'N/A')
-        message = getattr(metadata, 'msg', '')
-        channel = getattr(metadata, 'channelId', 'Unknown')
-        vod_id = getattr(metadata, 'vodId', 'Unknown')
-        vod_title = getattr(metadata, 'vodTitle', 'Untitled')
-        duration_string = getattr(metadata, 'duration_string', 'NA')
+        status            = getattr(metadata, 'status', 'N/A')
+        message           = getattr(metadata, 'msg', '')
+        channel           = getattr(metadata, 'channelId', 'Unknown')
+        vod_id            = getattr(metadata, 'vodId', 'Unknown')
+        vod_title         = getattr(metadata, 'vodTitle', 'Untitled')
+        duration_string   = getattr(metadata, 'duration_string', 'NA')
         runtime_ffmpeg_dl = metadata.runtime_ffmpeg_dl or 0
-        runtime_dl = metadata.runtime_dl or 0
+        runtime_dl        = metadata.runtime_dl or 0
 
         msg_lines.append(
             f"-------------{idx}--------------\n"

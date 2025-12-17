@@ -57,6 +57,7 @@ def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
     highest_priority_vod = None #
     resultsArr: List[Vod] = []
     connection = getConnection()
+    results = None
     # maxVodz = env_varz.DWN_QUERY_PER_RECENT <- old-old
     # maxVodz = env_varz.NUM_VOD_PER_CHANNEL <- old
     maxVodz = env_varz.PREP_NUM_VOD_PER_CHANNEL
@@ -92,7 +93,7 @@ def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
             #         """
             cursor.execute(sql)
             results = cursor.fetchall()
-            column_names = [desc[0] for desc in cursor.description]
+            # column_names = [desc[0] for desc in cursor.description]
             # Nice to uncomment when updating vod properties
             # print("    (getTodoFromDatabase) vod_ column_names")
             # logger.debug(column_names)
@@ -107,6 +108,7 @@ def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
         Id, ChannelNameId, Title, Duration, DurationString, TranscriptStatus, StreamDate, TodoDate, DownloadDate, TranscribeDate, S3Audio, S3CaptionFiles, WebpageUrl, Model, Priority, Thumbnail, ViewCount, S3Thumbnails,         ChanCurrentRank  = vod_
         vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio,  s3_caption_files=S3CaptionFiles, transcribe_date=TranscribeDate, s3_thumbnails=S3Thumbnails, duration=Duration, duration_string=DurationString)
         resultsArr.append(vod)
+        logger.info(f"resultsArr length! = {len(resultsArr)}")
     return resultsArr
 
     #Recall, results arr is sorted by priority via smart sql query
@@ -140,6 +142,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             sql = f"SELECT Id, ChannelNameId, TranscriptStatus FROM Vods WHERE Id = {vod.id};"
             cursor.execute(sql)
             result = cursor.fetchone()  # Use fetchone() since we expect only one row for a specific id
+            logger.debug(f"GOT! {sql}")
             # id = result[0]
             # channel_name_id = result[1]
             # transcript_status = result[2]
@@ -153,6 +156,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             values = (transcript_dl_status, vod.id)
             affected_count = cursor.execute(sql, values)
             connection.commit()
+            logger.debug(f"locked: {values}")
         return True
     except Exception as e:
         logger.error(f"Error occurred: {e}")

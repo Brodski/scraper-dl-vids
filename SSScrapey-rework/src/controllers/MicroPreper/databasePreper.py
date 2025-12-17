@@ -394,8 +394,8 @@ def deleteOldTodos():
 
 # For some reason, we get entries in Channels that have no Vods transcribed
 def deleteOldDeadChannels(new_channels: List[ScrappedChannel]):
-    if env_varz.ENV == "prod":
-        return
+    # if env_varz.ENV == "prod":
+    #     return
     logger.debug("new_channels:")
     for chan in new_channels:
         chan: ScrappedChannel = chan

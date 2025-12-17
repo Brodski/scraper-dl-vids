@@ -22,11 +22,22 @@ resource "aws_iam_policy" "lambda_policy" {
       Action = [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "logs:PutLogEvents",
       ],
       Effect = "Allow",
       Resource = "arn:aws:logs:*:*:*"
-    }]
+    },
+    {
+      Effect = "Allow",
+      Action = [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      Resource = "*"
+      # OR restrict to your identity:
+      # Resource = "arn:aws:ses:us-east-1:144262561154:identity/loganwallace.smash@gmail.com"
+    }
+    ]
   })
 }
 

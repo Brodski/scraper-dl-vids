@@ -7,6 +7,7 @@ from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
 class LoggerConfig:
     def __init__(self, name, is_cloudwatch_logs=False):
+        is_cloudwatch_logs = env_varz.WHSP_IS_CLOUDWATCH == "True"
         self.logger = logging.getLogger(name)
         self.logger.setLevel(self.get_log_level()) # Both the logger and the handler must be set (handler >= logger)
             

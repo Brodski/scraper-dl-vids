@@ -10,9 +10,11 @@ class EnvVars:
     def __init__(self):
         self.DWN_IS_SHORT_DEV_DL = None
         self.DWN_BATCH_SIZE = None
-        self.DWN_SKIP_COMPRESS_AUDIO = None
+        self.DWN_IS_SKIP_COMPRESS_AUDIO = None
         self.PREP_SELENIUM_IS_HEADLESS = None
         self.PREP_SULLY_DAYS = None
+        self.PREP_NUM_CHANNELS = None
+        self.PREP_NUM_VOD_PER_CHANNEL = None
         self.WHSP_A2T_ASSETS_AUDIO = None
         self.WHSP_A2T_ASSETS_CAPTIONS = None
         self.WHSP_COMPUTE_TYPE = None
@@ -28,8 +30,6 @@ class EnvVars:
         self.DEBUG_LEVEL = None
         self.IS_VIP_LIST = None
         self.IS_VIP_LIST_DEBUG = None
-        self.NUM_CHANNELS = None
-        self.NUM_VOD_PER_CHANNEL = None
         self.S3_CAPTIONS_KEYBASE = None
         self.ENV = None
         self.DATABASE = None
@@ -48,9 +48,11 @@ class EnvVars:
         ######################################################
         parser.add_argument("--dwn_is_short_dev_dl", action="store_true")
         parser.add_argument("--dwn_batch_size")
-        parser.add_argument("--dwn_skip_compress_audio", action="store_true")
+        parser.add_argument("--dwn_is_skip_compress_audio", action="store_true")
         parser.add_argument("--prep_selenium_is_headless")
         parser.add_argument("--prep_sully_days")
+        parser.add_argument("--prep_num_channels")
+        parser.add_argument("--prep_num_vod_per_channel")
         parser.add_argument("--whsp_a2t_assets_audio")
         parser.add_argument("--whsp_a2t_assets_captions")
         parser.add_argument("--whsp_compute_type")
@@ -66,8 +68,6 @@ class EnvVars:
         parser.add_argument("--debug_level")
         parser.add_argument("--is_vip_list")
         parser.add_argument("--is_vip_list_debug")
-        parser.add_argument("--num_channels")
-        parser.add_argument("--num_vod_per_channel")
         parser.add_argument("--s3_captions_keybase")
         parser.add_argument("--env")
         parser.add_argument("--database")
@@ -137,9 +137,11 @@ class EnvVars:
         #########################
         self.DWN_IS_SHORT_DEV_DL            = env_vars['DWN_IS_SHORT_DEV_DL']
         self.DWN_BATCH_SIZE                 = env_vars['DWN_BATCH_SIZE']
-        self.DWN_SKIP_COMPRESS_AUDIO        = env_vars['DWN_SKIP_COMPRESS_AUDIO']
+        self.DWN_IS_SKIP_COMPRESS_AUDIO     = env_vars['DWN_IS_SKIP_COMPRESS_AUDIO']
         self.PREP_SELENIUM_IS_HEADLESS      = env_vars['PREP_SELENIUM_IS_HEADLESS']
         self.PREP_SULLY_DAYS                = env_vars['PREP_SULLY_DAYS']
+        self.PREP_NUM_CHANNELS              = env_vars['PREP_NUM_CHANNELS']
+        self.PREP_NUM_VOD_PER_CHANNEL       = env_vars['PREP_NUM_VOD_PER_CHANNEL']
         self.WHSP_A2T_ASSETS_AUDIO          = "./assets/audio/"
         self.WHSP_A2T_ASSETS_CAPTIONS       = "./assets/captions/"
         self.WHSP_COMPUTE_TYPE              = env_vars['WHSP_COMPUTE_TYPE']
@@ -155,8 +157,6 @@ class EnvVars:
         self.DEBUG_LEVEL                = env_vars['DEBUG_LEVEL']
         self.IS_VIP_LIST                = env_vars['IS_VIP_LIST']
         self.IS_VIP_LIST_DEBUG          = env_vars['IS_VIP_LIST_DEBUG']
-        self.NUM_CHANNELS               = env_vars['NUM_CHANNELS']
-        self.NUM_VOD_PER_CHANNEL        = env_vars['NUM_VOD_PER_CHANNEL']
         self.S3_CAPTIONS_KEYBASE        = env_vars['S3_CAPTIONS_KEYBASE']
 
         ###############################################
@@ -179,4 +179,5 @@ class EnvVars:
 # BAM                              #
 ####################################
 env_varz = EnvVars()
+
 

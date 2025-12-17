@@ -3,22 +3,25 @@ name: Baby Build and Push Docker Image
 on:
   push:
     branches:
-      - main
-      - master
+      - mainX
+      - masterX
   workflow_dispatch:
     inputs:
-      branch:
+      branch_build:
         description: "Branch to build"
         required: true
-        default: "dev"
-      env_type:
-        description: "Environment to build (dev or prod)"
-        required: true
-        default: "dev"
         type: choice
         options:
           - dev
-          - prod
+          - master
+      micro_serv:
+        description: "Micro Service??"
+        required: true
+        default: "preper"
+        type: choice
+        options:
+          - preper
+          - downloader
 
 jobs:
   build:
@@ -50,13 +53,14 @@ jobs:
       - name: Build and push multi-arch Docker image
         working-directory: "SSScrapey-rework/docker"
         run: |
-          ENV=${{ github.event.inputs.env_type }}
+          ENV=${{ github.event.inputs.branch_build }}
+          MICRO=${{ github.event.inputs.micro_serv }}
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --build-arg ENV_TYPE=${ENV} \
             --no-cache \
-            -f Dockerfile_ECS_preper \
-            -t cbrodski/preper:official_v2_${ENV} \
+            -f Dockerfile_ECS_${MICRO} \
+            -t cbrodski/${MICRO}:official_v2_${ENV} \
             --push \
             .
     # --push Required for multi-arch images, because Buildx cant store them locally

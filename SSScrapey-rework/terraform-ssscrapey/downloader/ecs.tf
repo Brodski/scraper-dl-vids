@@ -12,12 +12,15 @@ resource "aws_ecs_task_definition" "download_task" {
   family                   = "${var.sensitive_info.ENV}_download_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "2048"
-  memory                   = "4096"
+  # cpu                      = "2048"
+  # memory                   = "4096"
+  cpu                      = "1024"    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+  memory                   = "2048"
   execution_role_arn       = var.iam_role_ecs_exec_arn
 
   runtime_platform {
-    cpu_architecture        = "X86_64" #ARM64
+    # cpu_architecture        = "X86_64" #ARM64
+    cpu_architecture        = "ARM64" #
     operating_system_family = "LINUX"
   }
   container_definitions = jsonencode([

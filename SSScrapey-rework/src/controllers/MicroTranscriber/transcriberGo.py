@@ -1,7 +1,5 @@
-# import controllers.MicroTranscriber.cloudwatch as cloudwatch
 import math
 import sys
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch 
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
 from typing import Dict, List
@@ -26,11 +24,12 @@ from datetime import datetime
 from utils.emailer import MetadataShitty
 from utils.emailer import Status
 from utils.emailer import write_transcriber_email
+from utils.ecs_meta import find_aws_logging_info
+from utils.ecs_meta import find_aws_logging_info_transcriber
 
-# logger = Cloudwatch.log
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -47,6 +46,8 @@ def printIntro():
 def goTranscribeBatch(isDebug=False):
     printIntro()
 
+    cli = find_aws_logging_info_transcriber()
+
     start_time = time.time()
     download_batch_size = int(env_varz.TRANSCRIBER_VODS_PER_INSTANCE if env_varz.TRANSCRIBER_VODS_PER_INSTANCE != None else 1)
     completed_vods_list:  List[Vod] = []
@@ -54,8 +55,8 @@ def goTranscribeBatch(isDebug=False):
     metadata_arr:         List[MetadataShitty] = []
     metadataX: MetadataShitty = MetadataShitty()
     for i in range(0, download_batch_size):
-    #for vod in transcriber.getFromFancyMap(magical_ordered_map):        
-        # process vod...
+    #for vod in transcriber.getFromFancyMap(magical_ordered_map):
+        # generator v
         print("===========================================")
         print(f"    TRANSCRIBE BATCH - {i+1} of {download_batch_size}  ")
         print("===========================================")
@@ -63,9 +64,13 @@ def goTranscribeBatch(isDebug=False):
         Audio2Text.download_batch_size = download_batch_size
         Audio2Text.current_num = i + 1
 
-        # result: Dict[Vod, bool] = transcribe(isDebug)
-        metadataX: MetadataShitty = transcribe(isDebug)
-        vod: Vod = metadataX.vod
+        try:
+            metadataX: MetadataShitty = transcribe(isDebug)
+            vod: Vod = metadataX.vod
+        except KeyboardInterrupt:    
+            logger.info("ending b/c ctrl + c")
+            # metadata_arr.append(metadataX)
+            break
 
         logger.info(f"   (goTranscribeBatch) Finished Index {i}")
         logger.info(f"   (goTranscribeBatch) download_batch_size: {download_batch_size}")
@@ -82,8 +87,6 @@ def goTranscribeBatch(isDebug=False):
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("Completed: ")
-
-
     ##############################
     # POST TRANSCRIBE DEBUG INFO #
     ##############################
@@ -95,31 +98,25 @@ def goTranscribeBatch(isDebug=False):
         logger.info(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
         # logger.info(f"Audio uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
     for t in Audio2Text.completed_uploaded_tscripts:
-        try:
-            if t.endswith(".json"):
-                logger.debug(f"Transcripts @ {t}")
-                logger.debug(f"")
-        except:
-            logger.error("oops, .endswith() is not a real method")
+        if t.endswith(".json"):
+            logger.debug(f"Transcripts @ {t}")
+            logger.debug(f"")
 
     logger.debug("gg ending")
     return "gg ending"
 
 
+import utils.generic_stuff as utils_generic
 def transcribe(isDebug=False) -> MetadataShitty:
     ### GET THE VOD ###
     metadata_ = MetadataShitty()
-    vods_list       = transcriber.getTodoFromDb()
-            
-    magical_ordered_map: Dict[int, List[Vod]]  = transcriber.convertToFancyMap(vods_list)
+    vods_list = transcriber.getTodoFromDb()
+
+    magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
     # OLD ↓ ➔
-    vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
+    # vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
     # NEW ↓
-    gen             = transcriber.getFromFancyMap(magical_ordered_map)      # <--- smart
-    # for vod in gen:
-    #     vod: Vod = vod
-    #     print(vod.transcript_status, vod.channels_name_id, vod.id, vod.stream_date)
-    # return
+    gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
     vod: Vod        = next(gen, None)
     vod: Vod        = vod          if not isDebug        else getDebugVod(vod)
     start_time      = time.time()
@@ -127,9 +124,10 @@ def transcribe(isDebug=False) -> MetadataShitty:
 
     ### -.- 
     logger.debug('IN THEORY, AUDIO TO TEXT THIS:')
-    if not vod and not isDebug:
+    if not vod:
         logger.info("jk, vod is null, nothing to do. no audio2text_need")
         metadata_.status = Status.NOTHING_TODO
+        metadata_.vod = Vod()
         return metadata_
     logger.debug(vod.print())
 
@@ -159,7 +157,8 @@ def transcribe(isDebug=False) -> MetadataShitty:
     except KeyboardInterrupt:
         logger.debug("\nCtrl+C detected. Exiting gracefully.")
         transcriber.unsetSemaphoreDb(vod) # "vod" is highest priority 'todo' vod
-        sys.exit()
+        raise
+        # sys.exit()
     except Exception as e:
         stack_trace = traceback.format_exc()
         error_message = f"ERROR Transcribing vod: {e}"

@@ -24,7 +24,7 @@
             "justMyCode": true,
             "args": [
                 "--env",
-                "local"
+                "prod"
             ],
         },
         {
@@ -37,9 +37,10 @@
             "args": [
                 "--env",
                 "local",
-                "--dwn_batch_size",
-                "2",
-                "--dwn_is_short_dev_dl"
+                // "--dwn_query_todo"
+                // "--dwn_batch_size",
+                // "2",
+                // "--dwn_is_short_dev_dl"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
@@ -51,6 +52,53 @@
             "program": "${workspaceFolder}/SSScrapey-rework/src/kickTranscriber.py",
             "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
             "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                "--env",
+                "local",
+                "--transcriber_vods_per_instance", "2",
+                "--transcriber_num_instances", "1",
+                "--transcriber_instance_cnt", "1"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "All Local",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/kickAllBaby.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                "--env",
+                "local",
+                "--transcriber_vods_per_instance", "1",
+                "--transcriber_num_instances", "1",
+                "--transcriber_instance_cnt", "1"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Vast.AI",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src_vastai_master/vastai_master.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src_vastai_master/venv2/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src_vastai_master",
+            "args": [
+                // "--quick-dl",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Piper",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/MICROS_2_0/ffmpeg_thing/chatgpt.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venv_wsl/bin/python",
+            "cwd": "${workspaceFolder}/MICROS_2_0/ffmpeg_thing",
             "args": [
                 "--env",
                 "local",
@@ -73,11 +121,11 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
-        {
+         {
             "name": "Python: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/app.py",
+            "program": "${workspaceFolder}/SSScrapey-rework/src_vastai_master/fuckshit.py",
             "console": "integratedTerminal"
         }
     ]

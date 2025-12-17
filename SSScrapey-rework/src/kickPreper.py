@@ -1,7 +1,8 @@
-
-import os
-import controllers.MicroPreper.preperGo as preperGo
 from env_file import env_varz
+env_varz.init_argz()
+
+import controllers.MicroPreper.preperGo as preperGo
+
 
 
 #####################################################

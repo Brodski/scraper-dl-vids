@@ -10,6 +10,19 @@ from botocore.exceptions import ClientError
 # https://stackoverflow.com/questions/30897897/python-boto-writing-to-aws-cloudwatch-logs-without-sequence-token
 # boto3 docs: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/logs.html
 class Cloudwatch(logging.Handler):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        # prevent re-initialization
+        if hasattr(self, "_initialized") and self._initialized:
+            return
+
+
     def __init__(self):
         super().__init__()
         self.cw_client = boto3.client('logs', region_name='us-east-1')

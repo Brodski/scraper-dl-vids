@@ -20,12 +20,12 @@ import urllib.request
 import logging
 from utils.logging_config import LoggerConfig
 from controllers.MicroTranscriber.utils import TOO_BIG_LENGTH
-from utils.emailer import MetadataShitty
+
 
 # logger = Cloudwatch.log
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 
 def getConnectionDb():
@@ -150,7 +150,8 @@ def setCompletedStatusDb(transcripts_s3_key_arr: List[str], vod: Vod):
     connection = getConnectionDb()
     t_status = "completed"
     transcripts_keys = json.dumps(transcripts_s3_key_arr)
-    logger.debug("   (setCompletedStatusDb) transcripts_keys:" + str( transcripts_keys))
+    # logger.debug("   (setCompletedStatusDb) transcripts_keys:" + str( transcripts_keys))
+    logger.debug(f"Completed: {vod.channels_name_id} - {vod.id} - {vod.title[:30]}")
     try:
         with connection.cursor() as cursor:
             sql = """
@@ -190,6 +191,9 @@ def downloadAudio(vod: Vod):
     audio_name = os.path.basename(audio_url)  # A trick to get the file name. eg) audio_url="https://[...].com/Calculated-v5057810.mp3" ---> audio_name="Calculated-v5057810.mp3"
     
     relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
+    relative_filename_aux = relative_filename.rsplit(".opus", 1)
+    relative_filename_mp4 = ".mp4".join(relative_filename_aux)
+    logger.debug("relative_filename_mp4------------- " +   relative_filename_mp4)
     logger.debug("audio_url: " + str( audio_url))
     logger.debug("audio_name: " + str( audio_name))
     
@@ -197,6 +201,10 @@ def downloadAudio(vod: Vod):
     if os.path.exists(relative_filename):
         logger.debug(f"File already exists: {relative_filename}")
         return relative_filename
+    
+    if os.path.exists(relative_filename_mp4):
+        logger.debug(f"File already exists: {relative_filename_mp4}")
+        return relative_filename_mp4
 
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
@@ -214,9 +222,9 @@ def downloadAudio(vod: Vod):
 
 def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
     logger.debug("XXXXXXXXXXXXXX  uploadCaptionsToS3  XXXXXXXXXXXXXX")
-    logger.debug("    (uploadCaptionsToS3) channel: " + vod.channels_name_id)
-    logger.debug("    (uploadCaptionsToS3) vod.id: " + vod.id) 
-    logger.debug("    (uploadCaptionsToS3) vod.title: " + vod.title) 
+    logger.debug("    channel: " + vod.channels_name_id)
+    logger.debug("    vod.id: " + vod.id) 
+    logger.debug("    vod.title: " + vod.title) 
 
     s3 = boto3.client('s3')
     transcripts_s3_key_arr = []
@@ -262,52 +270,3 @@ def deleteAudioLocally(relative_path: str):
         logger.error(str(e))
     return 
 
-
-def getFromFancyMap(d: dict[int, list]):
-    # https://chatgpt.com/c/69278b8e-856c-8332-9475-66ce608d2298
-    # data: Dict[int, List[Vod]] = {
-    #     1: [a1,a2,a3],
-    #     2: [b1,b2,b3,b4,b5,b6],
-    #     3: [c1,c2],
-    # }
-    # outputs -> 1 column, 2nd column, 3rd, ....
-    # outputs -> a1,b1,c1, a2,b2,c2, a3,b3, b4, b5, b6   
-    keys = d.keys()
-    max_len = max(len(d[k]) for k in keys)
-    for x in range(max_len): # x = column
-        for y in keys: # y = row
-            row = d[y]
-            if x < len(row):
-                yield row[x] 
-
-def convertToFancyMap(vod_list: List[Vod]) -> Dict[int, List[Vod]]:
-    sub_list = []
-    magical_ordered_map = {}
-    previous = vod_list[0].channels_name_id # initialize
-    idx_rank = 0
-    for i, vod in enumerate(vod_list):
-        current = vod.channels_name_id
-        if previous != current:
-            magical_ordered_map[idx_rank] = sub_list
-            previous = current
-            sub_list = []
-            idx_rank += 1
-        sub_list.append(vod)
-    
-    # Add the last group
-    magical_ordered_map[idx_rank + 1] = sub_list
-
-    mega_count = 0
-    for key, v_list in magical_ordered_map.items():
-        logger.debug(f"----------- {str(key)} -----------")
-        for i, v in enumerate(v_list):
-            v: Vod = v
-            # logger.debug(i, " - ", v.channels_name_id, v.id, v.stream_date)
-            logger.debug(f"{i} - {v.channels_name_id} {v.id} {v.stream_date}")
-            mega_count += 1
-    logger.debug("Total = " + str(mega_count))
-    return magical_ordered_map
-
-    # "Transformers now supports natively BetterTransformer optimizations ... no need to use `model.to_bettertransformers()` Details: https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-and-memory-efficient-attention-through-pytorchs-scaleddotproductattention."
-    # if not is_flash_attn_2_available() or better_transformer:
-    #     pipe.model = pipe.model.to_bettertransformer()

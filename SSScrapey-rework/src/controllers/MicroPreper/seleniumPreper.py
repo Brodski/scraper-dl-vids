@@ -17,8 +17,8 @@ import re
 import time
 import logging
 from utils.logging_config import LoggerConfig
+from utils.emailer import sendEmail
 
-print("3b ENV at start:", os.getenv("ENV"))
 def logger():
     pass
 
@@ -84,19 +84,19 @@ def isPersonOnline(soup: BeautifulSoup):
     logger.debug("  (isPersonOnline) isOnline: " +  str(isOnline))
     return isOnline
 
-def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
-    # channelMax = int(env_varz.PREP_SELENIUM_NUM_CHANNELS)
-    channelMax = int(env_varz.NUM_CHANNELS)
-    vodsMax = int(env_varz.NUM_VOD_PER_CHANNEL)
+
+everyChannel:List[ScrappedChannel] = []
+def scrape4VidHref(channels:  List[ScrappedChannel], index=0, retry_count=0): # gets returns -> {...} = [ { "displayname":"Geranimo", "name_id":"geranimo", "links":[ "/videos/1758483887", "/videos/1747933567",...
+    channelMax = int(env_varz.PREP_NUM_CHANNELS)
+    vodsMax = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
     SLEEP_SCROLL = 2
     NUM_BOT_SCROLLS = 2
-    everyChannel:List[ScrappedChannel] = []
-    cnt = 0
+    MAX_RETRY = 3
+    # everyChannel:List[ScrappedChannel] = []
+    index_aux = index
     browser = None
 
-
     logger.debug('A running. scrap4vid.........')
-    # browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     firefox_profile = FirefoxProfile()
     firefox_profile.set_preference("media.block-play-until-visible", False)
     firefox_profile.set_preference("media.autoplay.blocking_policy", 5)
@@ -105,32 +105,33 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
     firefox_profile.set_preference("media.autoplay.block-event.enabled", True)        
 
     options = Options()
-    if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
-        options.add_argument('--headless')
-        os.environ["MOZ_HEADLESS"] = "1"
     options.add_argument('--autoplay-policy=user-required') 
     options.add_argument(f'--window-size={WIDTH},{HEIGHT}')
     options.add_argument('--disable-features=PreloadMediaEngagementData, MediaEngagementBypassAutoplayPolicies') # width, height
+    if env_varz.PREP_SELENIUM_IS_HEADLESS == "True":
+        options.add_argument('--headless')
+        os.environ["MOZ_HEADLESS"] = "1"
     # options.add_argument('--autoplay-policy=no-user-gesture-required')
     options.profile = firefox_profile
 
     try:
         logger.debug('B running. scrap4vid.........')
+        logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
         service = FirefoxService(GeckoDriverManager().install())
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(WIDTH, HEIGHT)
-        logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
-        for channel in channels:
-            if cnt >= channelMax:
-                break
-            cnt = cnt + 1
+        # for channel in channels:
+        for i in range(index, len(channels)):
+            print(f"i={i}, index={index}")
+            index_aux = i
+            channel: ScrappedChannel = channels[i]
+            
             url = f'https://www.twitch.tv/{channel.name_id}/videos?filter=archives&sort=time'
             browser.get(url)
             idx_print = url.find('?filter')
-            print ("--------------------")
-            print (str(cnt) + ": " + browser.title)
-            logger.debug(url[:idx_print])
-            time.sleep(4)
+            logger.debug(channel.name_id)
+            logger.debug("  " + url[:idx_print])
+            time.sleep(2)
             browser.execute_script(scriptPauseVidsJs)
             for i in range(NUM_BOT_SCROLLS):
                 browser.execute_script("window.scrollTo(0,document.body.scrollHeight)") # scroll to the bottom, load all the videos.
@@ -159,7 +160,8 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                         el.scrollTop = el.scrollHeight;
                     });
                 """)
-                time.sleep(SLEEP_SCROLL)
+                if i < NUM_BOT_SCROLLS - 1:
+                    time.sleep(SLEEP_SCROLL)
             
             # Scrape <a href> via BeautifulSoup
             soup = BeautifulSoup(browser.page_source, 'html.parser')
@@ -173,14 +175,35 @@ def scrape4VidHref(channels:  List[ScrappedChannel], isDebug=False): # gets retu
                 if match and tag['href'] not in allHrefs:
                     allHrefs.append(match.group(1)) # /videos/1983739230
 
+            retry_count = 0 # reset
             channel.links = allHrefs[:vodsMax]
             everyChannel.append(channel)
-            logger.debug(f"Got {len(channel.links)} vids for {browser.title}")
+            logger.debug(f"  Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
         logger.error("An error occurred :(")
         logger.error(f"{e}")
         stack_trace = traceback.format_exc()
         logger.error(stack_trace)
+        if retry_count < MAX_RETRY:
+            logger.info("🚷 BANNED CHANNEL? or some error occured, trying again...")
+            msg_ = ""
+            if channel:
+                msg_ = msg_ + channel.name_id
+            if url and idx_print:
+                msg_ = msg_ + ":  " + url[:idx_print]
+            logger.info(msg_)
+            time.sleep(10)
+            scrape4VidHref(channels, index_aux + 1, retry_count + 1)
+        if retry_count >= MAX_RETRY:
+            ### SUBJECT
+            subject = f"Preper {os.getenv('ENV')} - (SCRAPE) Failed selenium scrap on a channel"
+            ### BODY
+            msg = f"Attempted but failed url={url}\n"
+            msg = msg + f"⚠ Maybe a banned channel??? \n"
+            msg = msg + f"Execeptions:\n"
+            msg = msg + f"f{e}\n"
+            logger.error(msg)
+            sendEmail(subject, msg)
     finally:
         # Ensure the browser is closed even if an error occurs
         if browser:

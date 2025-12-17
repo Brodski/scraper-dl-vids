@@ -51,11 +51,11 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     logger.info("000000000000                         00000000000000000")
 
     pageSize = 100
-    # num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
-    num_todo =  int(env_varz.NUM_VOD_PER_CHANNEL)
-    loopMax = math.ceil(num_todo / pageSize)
+    # prep_num_channels =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    prep_num_channels =  int(env_varz.PREP_NUM_CHANNELS)
+    loopMax = math.ceil(prep_num_channels / pageSize)
 
-    days = int(env_varz.PREP_SULLY_DAYS) # 14
+    days = int(env_varz.PREP_SULLY_DAYS) # 7 
     type = 3 # note '3' = most watched
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
@@ -65,7 +65,7 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     complete_json = { "data": accumilator}
     for i in range(loopMax):
         startAt = (i * pageSize) 
-        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/0/3/desc/0/100'
+        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/7/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
         logger.info("----------------------")
         logger.info("    " + url)
@@ -115,26 +115,26 @@ def instantiateJsonToClassObj(json_object):
     for channel in json_object['data']: 
         # logger.debug(channel)
         scrapped_channel = ScrappedChannel(
-            displayname = channel.get('displayname'), 
-            language = channel.get('language'), 
-            logo = channel.get('logo'), 
-            current_rank = channel.get('rownum'), 
-            twitchurl = channel.get('twitchurl'), 
-            name_id = channel.get('url'),
-            viewminutes = channel.get('viewminutes'),
-            streamedminutes = channel.get('streamedminutes'),
-            maxviewers = channel.get('maxviewers'),
-            avgviewers = channel.get('avgviewers'),
-            followers = channel.get('followers'),
-            followersgained = channel.get('followersgained'),
-            partner = channel.get('partner'),
-            affiliate = channel.get('affiliate'),
-            mature = channel.get('mature'),
-            previousviewminutes = channel.get('previousviewminutes'),
+            displayname             = channel.get('displayname'),
+            language                = channel.get('language'),
+            logo                    = channel.get('logo'),
+            current_rank            = channel.get('rownum'),
+            twitchurl               = channel.get('twitchurl'),
+            name_id                 = channel.get('url'),
+            viewminutes             = channel.get('viewminutes'),
+            streamedminutes         = channel.get('streamedminutes'),
+            maxviewers              = channel.get('maxviewers'),
+            avgviewers              = channel.get('avgviewers'),
+            followers               = channel.get('followers'),
+            followersgained         = channel.get('followersgained'),
+            partner                 = channel.get('partner'),
+            affiliate               = channel.get('affiliate'),
+            mature                  = channel.get('mature'),
+            previousviewminutes     = channel.get('previousviewminutes'),
             previousstreamedminutes = channel.get('previousstreamedminutes'),
-            previousmaxviewers = channel.get('previousmaxviewers'),
-            previousavgviewers = channel.get('previousavgviewers'),
-            previousfollowergain = channel.get('previousfollowergain')
+            previousmaxviewers      = channel.get('previousmaxviewers'),
+            previousavgviewers      = channel.get('previousavgviewers'),
+            previousfollowergain    = channel.get('previousfollowergain')
         )
         relevant_list.append(scrapped_channel)
     return relevant_list
@@ -154,28 +154,3 @@ def addVipList(json_object, isDebug=False):
     for vip in VIP_LIST:
         json_object['data'].insert(0, vip)
     return json_object
-
-    #     scrapped_channel = ScrappedChannel(
-    #         displayname=vip.get("displayname"),
-    #         language=vip.get("language"),
-    #         logo=vip.get("logo"),
-    #         twitchurl=vip.get("twitchurl"),
-    #         name_id=vip.get("url"),
-    #         current_rank=vip.get("rownum"),
-    #         viewminutes=vip.get("viewminutes"),
-    #         streamedminutes=vip.get("streamedminutes"),
-    #         maxviewers=vip.get("maxviewers"),
-    #         avgviewers=vip.get("avgviewers"),
-    #         followers=vip.get("followers"),
-    #         followersgained=vip.get("followersgained"),
-    #         partner=vip.get("partner"),
-    #         affiliate=vip.get("affiliate"),
-    #         mature=vip.get("mature"),
-    #         previousviewminutes=vip.get("previousviewminutes"),
-    #         previousstreamedminutes=vip.get("previousstreamedminutes"),
-    #         previousmaxviewers=vip.get("previousmaxviewers"),
-    #         previousavgviewers=vip.get("previousavgviewers"),
-    #         previousfollowergain=vip.get("previousfollowergain")
-    #     )
-    #     channels.insert(0,scrapped_channel)
-    # return channels

@@ -10,17 +10,15 @@ import os
 import time
 import torch
 import langcodes
-from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 import logging
 from utils.logging_config import LoggerConfig
 from datetime import datetime
 from models.Splitted import Splitted
 from utils.emailer import MetadataShitty
 
-# logger = Cloudwatch.log
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro", env_varz.WHSP_IS_CLOUDWATCH == "True").get_logger()
+logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 
 
@@ -56,6 +54,8 @@ class Audio2Text:
 
         metadata_ = MetadataShitty(vod=vod, model_size=model_size, compute_type=compute_type, cpu_threads=cpu_threads, device=device)
 
+        start_time_model = time.time()
+
         logger.debug("⌛ loading model........")
         if cls.model is None:
             cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
@@ -65,8 +65,9 @@ class Audio2Text:
             import ctypes
             ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
 
-        start_time_model = time.time()
         result = {  "segments": [] }
+        end_time_model = time.time() - start_time_model
+        start_time_vod = time.time()
 
         for i, split in enumerate(splitted_list):
             file_abspath = os.path.abspath(split.relative_path) # if relative_path =./assets/audio/ft.-v1964894986.opus then => file_abspath = C:\Users\BrodskiTheGreat\Desktop\desktop\Code\scraper-dl-vids\SSScrapey-rework\And_you_will_know_my_name_is_the_LORD-v40792901.opus
@@ -80,8 +81,6 @@ class Audio2Text:
 
             segments, info = cls.model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=False, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
 
-            end_time_model = time.time() - start_time_model
-            start_time_vod = time.time()
 
             cls.count_logger = 0
             offset = splitted_list[i-1].duration if i > 0 else 0
@@ -103,16 +102,16 @@ class Audio2Text:
         logger.debug("Complete!")
         logger.debug("model_size: " + model_size)
         logger.debug(f"Detected language {info.language} with probability {str(info.language_probability)}")
-        logger.debug("")
+        logger.debug("-")
         logger.debug(f"Channel: {vod.channels_name_id}")
         logger.debug(f"{vod.id}: {vod.title}")
-        logger.debug("")
+        logger.debug("-")
         logger.debug("Model load run time =" + str(end_time_model))
         logger.debug("Vod transcribe run time =" + str(end_time_vod))
         logger.debug("Model + Vod =" + str(end_time_model + end_time_vod))
         # logger.debug("")
         # logger.debug("Saved files: " + str(saved_caption_files))
-        logger.debug("")
+        logger.debug("-")
         logger.debug("========================================")
 
         metadata_.whsp_lang = info.language 

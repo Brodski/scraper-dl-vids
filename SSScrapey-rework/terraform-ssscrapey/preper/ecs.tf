@@ -8,7 +8,8 @@ resource "aws_ecs_task_definition" "preper_task" {
   requires_compatibilities = ["FARGATE"]
   # cpu                      = "256" # 0.25 vCPU
   cpu                      = "1024"
-  memory                   = "4096"
+  memory                   = "2048"
+  # memory                   = "4096"
   execution_role_arn       = var.iam_role_ecs_exec_arn
 
   runtime_platform {

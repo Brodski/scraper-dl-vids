@@ -3,8 +3,8 @@ name: Baby Build and Push Docker Image
 on:
   push:
     branches:
-      - mainX
-      - masterX
+      - main
+      - master
   workflow_dispatch:
     inputs:
       branch_build:
@@ -17,7 +17,6 @@ on:
       micro_serv:
         description: "Micro Service??"
         required: true
-        default: "preper"
         type: choice
         options:
           - preper

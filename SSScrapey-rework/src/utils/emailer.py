@@ -366,7 +366,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
 
     elapsed_time      = int(elapsed_time) if elapsed_time is not None else -1
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary   = f"TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours\n"
+    heading_summary   = f"\n🔥🔥 TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours🔥🔥\n"
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_array_global)
 
     summary_lines = build_summary_lines("Download", env_varz.DWN_BATCH_SIZE, len(metadata_array_global), vod_total_seconds, elapsed_time, status_counter)
@@ -429,7 +429,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
 
 
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary = f"TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours\n"
+    heading_summary = f"\n 🔥🔥TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours 🔥🔥\n"
 
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_arr)
     

@@ -24,7 +24,7 @@
             "justMyCode": true,
             "args": [
                 "--env",
-                "local"
+                "prod"
             ],
         },
         {
@@ -37,8 +37,9 @@
             "args": [
                 "--env",
                 "local",
-                "--dwn_batch_size",
-                "2",
+                // "--dwn_query_todo"
+                // "--dwn_batch_size",
+                // "2",
                 // "--dwn_is_short_dev_dl"
             ],
             "console": "integratedTerminal",
@@ -54,8 +55,26 @@
             "args": [
                 "--env",
                 "local",
-                "--transcriber_vods_per_instance",
-                "2"
+                "--transcriber_vods_per_instance", "2",
+                "--transcriber_num_instances", "1",
+                "--transcriber_instance_cnt", "1"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "All Local",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/kickAllBaby.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                "--env",
+                "local",
+                "--transcriber_vods_per_instance", "1",
+                "--transcriber_num_instances", "1",
+                "--transcriber_instance_cnt", "1"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

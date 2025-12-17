@@ -12,7 +12,7 @@ def logger():
 logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 def find_aws_logging_info():
-    if env_varz.ENV == "local":
+    if env_varz.ENV == "local" or env_varz.WHSP_IS_CLOUDWATCH == "True":
         return "<cloudwatch disabled or ENV=local>"
     try:
         metadata_uri = os.environ.get("ECS_CONTAINER_METADATA_URI_V4")

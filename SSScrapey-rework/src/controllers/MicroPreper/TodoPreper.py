@@ -51,9 +51,9 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     logger.info("000000000000                         00000000000000000")
 
     pageSize = 100
-    # num_todo =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
-    num_todo =  int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
-    loopMax = math.ceil(num_todo / pageSize)
+    # prep_num_channels =  int(env_varz.PREP_SELENIUM_NUM_VODS_PER)
+    prep_num_channels =  int(env_varz.PREP_NUM_CHANNELS)
+    loopMax = math.ceil(prep_num_channels / pageSize)
 
     days = int(env_varz.PREP_SULLY_DAYS) # 7 
     type = 3 # note '3' = most watched
@@ -65,7 +65,7 @@ def getTopChannelsSully(*, isDebug=False): # Returns big json: { "data": [ { "av
     complete_json = { "data": accumilator}
     for i in range(loopMax):
         startAt = (i * pageSize) 
-        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/14/0/0/3/desc/0/100'
+        # url = 'https://sullygnome.com/api/tables/channeltables/getchannels/7/0/0/3/desc/0/100'
         url = (f'https://sullygnome.com/api/tables/channeltables/getchannels/{str(days)}/0/{str(i)}/{type}/desc/{str(startAt)}/{str(pageSize)}')
         logger.info("----------------------")
         logger.info("    " + url)
@@ -115,26 +115,26 @@ def instantiateJsonToClassObj(json_object):
     for channel in json_object['data']: 
         # logger.debug(channel)
         scrapped_channel = ScrappedChannel(
-            displayname = channel.get('displayname'), 
-            language = channel.get('language'), 
-            logo = channel.get('logo'), 
-            current_rank = channel.get('rownum'), 
-            twitchurl = channel.get('twitchurl'), 
-            name_id = channel.get('url'),
-            viewminutes = channel.get('viewminutes'),
-            streamedminutes = channel.get('streamedminutes'),
-            maxviewers = channel.get('maxviewers'),
-            avgviewers = channel.get('avgviewers'),
-            followers = channel.get('followers'),
-            followersgained = channel.get('followersgained'),
-            partner = channel.get('partner'),
-            affiliate = channel.get('affiliate'),
-            mature = channel.get('mature'),
-            previousviewminutes = channel.get('previousviewminutes'),
+            displayname             = channel.get('displayname'),
+            language                = channel.get('language'),
+            logo                    = channel.get('logo'),
+            current_rank            = channel.get('rownum'),
+            twitchurl               = channel.get('twitchurl'),
+            name_id                 = channel.get('url'),
+            viewminutes             = channel.get('viewminutes'),
+            streamedminutes         = channel.get('streamedminutes'),
+            maxviewers              = channel.get('maxviewers'),
+            avgviewers              = channel.get('avgviewers'),
+            followers               = channel.get('followers'),
+            followersgained         = channel.get('followersgained'),
+            partner                 = channel.get('partner'),
+            affiliate               = channel.get('affiliate'),
+            mature                  = channel.get('mature'),
+            previousviewminutes     = channel.get('previousviewminutes'),
             previousstreamedminutes = channel.get('previousstreamedminutes'),
-            previousmaxviewers = channel.get('previousmaxviewers'),
-            previousavgviewers = channel.get('previousavgviewers'),
-            previousfollowergain = channel.get('previousfollowergain')
+            previousmaxviewers      = channel.get('previousmaxviewers'),
+            previousavgviewers      = channel.get('previousavgviewers'),
+            previousfollowergain    = channel.get('previousfollowergain')
         )
         relevant_list.append(scrapped_channel)
     return relevant_list

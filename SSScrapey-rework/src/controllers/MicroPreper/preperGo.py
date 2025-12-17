@@ -37,14 +37,21 @@ def prepare(isDebug=False, retry_count=0):
     start_time      = time.time()
     cli = find_aws_logging_info()
 
-    # Make http request to sullygnome. 3rd party website
-    topChannels = todoPreper.getTopChannelsSully() 
+    #####################
+    #                   #
+    #    SULLY GNOME    #
+    #                   #
+    #####################
+    topChannels = todoPreper.getTopChannelsSully()  # Make http request to sullygnome. 3rd party website
     topChannels = todoPreper.addVipList(topChannels, isDebug) # same ^ but with gera
-
-    # Convert json respone to objects
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
+    scrapped_channels = scrapped_channels[:int(env_varz.PREP_NUM_CHANNELS)]
 
-    # Via selenium & browser. Find videos's url, get anchor tags href
+    ##################
+    #                #
+    #    SELENIUM    #
+    #                #
+    ##################
     try:
         scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels) # returns -> /mocks/initHrefsData.py
     except Exception:
@@ -57,8 +64,20 @@ def prepare(isDebug=False, retry_count=0):
             return
         raise
         
-
+    ####################
+    #                  #
+    #       BOOM       #
+    #                  #
+    ####################
     updateShit(scrapped_channels)
+
+
+
+    ###################
+    #                 #            
+    #    WRAP IT UP   #
+    #                 #
+    ###################
     elapsed_time = math.ceil(time.time() - start_time)
     elapsed_time_MIN = round(elapsed_time / 60, 2)
     logger.info("++++++++++++++++++++++++++++")
@@ -87,8 +106,10 @@ def updateShit(scrapped_channels: List[ScrappedChannel]):
     if scrapped_channels is None:
         raise Exception("scrapped_channels is None, wtf man?")
     try:
-        doWithCallback(lambda: databasePreper.addNewChannelToDb(scrapped_channels), 0)
-        all_channels_minus_scrapped: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getNewOldChannelsFromDB(scrapped_channels), 0)
+        new_channels: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getNewChannelsNotInDb(scrapped_channels), 0)
+        doWithCallback(lambda: databasePreper.deleteOldDeadChannels(new_channels), 0)
+        doWithCallback(lambda: databasePreper.addNewChannelToDb(new_channels), 0)
+        all_channels_minus_scrapped: List[ScrappedChannel] = doWithCallback(lambda: databasePreper.getExistingChannelsFromDB(scrapped_channels), 0)
         doWithCallback(lambda: databasePreper.updateChannelDataByHtmlIteratively(all_channels_minus_scrapped + scrapped_channels), 0) # This gaurentees there will be no overlap.
         doWithCallback(lambda: databasePreper.updateChannelRankingLazily(scrapped_channels), 0)
         doWithCallback(lambda: databasePreper.updateVodsDb(scrapped_channels), 0)

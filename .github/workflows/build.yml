@@ -1,10 +1,6 @@
 name: Baby Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_dispatch:
     inputs:
       branch_build:
@@ -14,6 +10,14 @@ on:
         options:
           - dev
           - master
+      env_type:
+        description: "Environment to build (dev or prod)"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
       micro_serv:
         description: "Micro Service??"
         required: true
@@ -52,7 +56,7 @@ jobs:
       - name: Build and push multi-arch Docker image
         working-directory: "SSScrapey-rework/docker"
         run: |
-          ENV=${{ github.event.inputs.branch_build }}
+          ENV=${{ github.event.inputs.env_type  }}
           MICRO=${{ github.event.inputs.micro_serv }}
           docker buildx build \
             --platform linux/amd64,linux/arm64 \

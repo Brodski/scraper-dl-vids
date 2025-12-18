@@ -1,15 +1,23 @@
+###########################################
+#                                         # 
+#    ⚡💥⚡  NEW - Dec 2025  ⚡💥⚡    #
+#                                         # 
+# https://github.com/Brodski/scraper-dl-vids/actions/workflows/build.yml
+#                                        #
+###########################################
+
 ####################################################################
 # BUILD
-# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/downloader:official_v2 -f Dockerfile_ECS_downloader  .
+# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/downloader:official_v2_prod -f Dockerfile_ECS_downloader  .
 # docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/downloader:official_v2_dev -f Dockerfile_ECS_downloader  .
 
 # DEBUG `RUN`
-# docker run --env-file .\.env_docker_local -e ENV=dev cbrodski/downloader:official_v2
+# docker run --env-file .\.env_docker_local -e ENV=dev cbrodski/downloader:official_v2_prod
 # docker run --env-file .\.env_docker_local -e ENV=dev -it cbrodski/downloader:official_v2 /bin/bash
-# docker run -e ENV=dev -it cbrodski/downloader:official_v2 /bin/bash
+# docker run -e ENV=dev -it cbrodski/downloader:official_v2_prod /bin/bash
 
 # PUSH
-# docker push cbrodski/downloader:official_v2
+# docker push cbrodski/downloader:official_v2_prod
 # docker push cbrodski/downloader:official_v2_dev
 ####################################################################
 FROM python:3.10.13-bullseye

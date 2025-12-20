@@ -1,6 +1,6 @@
 import boto3
 import os
-
+from Configz import configz
 def sendEmail(subject, body):
     ses = boto3.client('ses', region_name='us-east-1')
     response = ses.send_email(
@@ -53,7 +53,7 @@ class MetadataVast():
         self.errorz         = []
 
     def send_fail_msg(self, trace=""):
-        env = os.getenv("ENV")
+        env = os.getenv("ENV") or configz.ENV
         subject = f"Vast-master/Lambda {env} Failed"
         body = self.format_msg()
         body = body + "\n\n\n" + trace
@@ -63,7 +63,7 @@ class MetadataVast():
         self.empty_singleton_bc_lambda()
 
     def send_success_msg(self):
-        env = os.getenv("ENV")
+        env = os.getenv("ENV") or configz.ENV
         subject = f"Vast-master/Lambda {env} Success"
         body = self.format_msg()
 
@@ -86,6 +86,12 @@ class MetadataVast():
         awslogs_group  = os.environ.get("AWS_LAMBDA_LOG_GROUP_NAME")
         awslogs_stream = os.environ.get("AWS_LAMBDA_LOG_STREAM_NAME")
         awslogs_region = os.environ.get("AWS_REGION")
+        if awslogs_group == None:
+            awslogs_group = "group_localzzz"
+        if awslogs_stream == None:
+            awslogs_stream = "stream_localzzz"
+        if awslogs_region == None:
+            awslogs_region = "region_localzzz"
         filename = awslogs_stream.replace("/", ".").replace("\\", ".")
         out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{filename}.txt"
         cli = "\n"

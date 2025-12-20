@@ -6,7 +6,14 @@
 #           $ docker push                           #
 #           $ git push                              #
 #     NEED TO RUN:                                  #
+#     NEED TO RUN:                                  #
+#     NEED TO RUN:                                  #
+#     NEED TO RUN:                                  #
 #           $ SSScrapy-rework/docker/build_all_ssscrapy_dev.ps1
+#                ⬆️                                 #
+#                ⬆️                                 #
+#                ⬆️                                 #
+#                ⬆️                                 #
 #                                                   #
 #####################################################
 #

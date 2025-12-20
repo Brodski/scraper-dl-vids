@@ -3,18 +3,18 @@ import time
 import urllib.request
 import urllib.parse
 import json
-from configz import *
+from Configz import configz
 
 def get_my_instance_baby(id):
-    url = f"https://console.vast.ai/api/v0/instances/{id}/?owner=me&api_key=" + VAST_API_KEY
+    url = f"https://console.vast.ai/api/v0/instances/{id}/?owner=me&api_key=" + configz.VAST_API_KEY
     with urllib.request.urlopen(url) as response:
         data = response.read()  # Read response bytes
         json_data = json.loads(data)  # Parse JSON
-    print(json_data)
+    # print(json_data[:50])
     return(json_data["instances"])
 
 def get_my_instances():
-    url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + VAST_API_KEY
+    url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + configz.VAST_API_KEY
     response = urllib.request.urlopen(url)
     if response.status != 200:
         print('sadge')

@@ -64,7 +64,7 @@ def get_aws_cli_view_logs(awslogs_stream, awslogs_group, awslogs_region):
         cli = cli + 'set PYTHONUTF8=1\n'
         cli = cli + 'aws logs get-log-events '
         cli = cli + f' --log-group-name "{awslogs_group}" '
-        cli = cli + f" --log-stream-name '{awslogs_stream}' "
+        cli = cli + f' --log-stream-name "{awslogs_stream}" '
         cli = cli + f' --region {awslogs_region} '
         cli = cli + f' --output text > "{out_}" \n\n'
 

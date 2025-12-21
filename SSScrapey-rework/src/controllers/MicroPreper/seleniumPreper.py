@@ -121,6 +121,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], index=0, retry_count=0): # 
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(WIDTH, HEIGHT)
         # for channel in channels:
+        channel: ScrappedChannel = None
         for i in range(index, len(channels)):
             print(f"i={i}, index={index}")
             index_aux = i

@@ -92,7 +92,7 @@ class MetadataVast():
             awslogs_stream = "stream_localzzz"
         if awslogs_region == None:
             awslogs_region = "region_localzzz"
-        filename = awslogs_stream.replace("/", ".").replace("\\", ".")
+        filename = awslogs_stream.replace("/", ".").replace("\\", ".").replace('[$LATEST]', '_')
         out_ = f"C:\\Users\\BrodskiTheGreat\\Desktop\\desktop\\Code\\scraper-dl-vids\\logs\\{filename}.txt"
         cli = "\n"
         cli = cli + "set PYTHONUTF8=1\n"

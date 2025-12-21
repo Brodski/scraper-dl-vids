@@ -103,6 +103,8 @@ def find_create_instance(rerun_count, to_create_num):
     if (rerun_count >= 3):
         print("  (find_create_xinstance) We have reran too many time,  ENDING!\n" * 3)
         return
+    if to_create_num <= 0:
+        return
 
     goodOffers = getOffers()
     
@@ -194,16 +196,11 @@ def pollxCompletion2():
         instance.status = Status.LOADING
     # AFTER LOOP
     for fail in failed_list:
-        id_contract = fail["id"]
-        data = fail["data"]
-        exec_time_minutes = fail["exec_time_minutes"]
-        try_again(id_contract, data, exec_time_minutes)
+        id_contract        = fail["id"]
+        data               = fail["data"]
+        exec_time_minutesX = fail["exec_time_minutes"]
+        try_again(id_contract, data, exec_time_minutesX)
     
-    # for instance in instance_v_global_list:
-    #     if instance.status == Status.LOADING:
-    #         print("Sleeping 60 sec, at least 1 instance still loading....")
-    #         time.sleep(60)
-    #         return pollxCompletion2() # must return failed_list
     return len(failed_list)
 
 
@@ -211,9 +208,6 @@ def pollxCompletion2():
 def getStatusVast(instance: Instance_V):
     print(f'----- Poll count: {instance.polling_count}: polling {str(instance.id_contract)} for completion -----')
 
-    # if instance.polling_count > 11: # 11 min
-    #     print(f"    (getStatusVast) Ending! instance.polling_count > 11. instance.polling_count={instance.polling_count}")
-    #     return False
     data = print_extra.get_my_instance_baby(instance.id_contract)
     return data
 
@@ -241,11 +235,11 @@ def nice_data(data):
         "actual_status"            : data.get("actual_status"),
     }
 
-def try_again(instance: Instance_V, data, status_msg_arr, exec_time_minutes):
+def try_again(instance: Instance_V, data, exec_time_minutes):
     ### METADATA ###
     status_msg: str    = data["status_msg"]
     actual_status: str = data["actual_status"]
-    status_msg_arr [f"id: {instance.id_contract}. status_msg: {status_msg}. actual_status: {actual_status}"]
+    status_msg_arr = [f"id: {instance.id_contract}. status_msg: {status_msg}. actual_status: {actual_status}"]
     dataX = nice_data(data)
     metadata_vast_global.try_again_arr.append({'id': instance.id_contract, 'status_msg_arr': status_msg_arr, 'exec_time_minutes': exec_time_minutes, **dataX })
 
@@ -312,6 +306,12 @@ def goBabyGo(to_create_num):
     }
 def handler_kickit(event, context):
     result = goBabyGo(configz.TRANSCRIBER_NUM_INSTANCES)
+    global bullshit_recursion_cnt
+    global instance_v_global_list
+    global id_tracker_trick    
+    bullshit_recursion_cnt = 0
+    instance_v_global_list: List[Instance_V] = []
+    id_tracker_trick = {}
     return result
 
 if __name__ == '__main__':

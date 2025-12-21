@@ -114,6 +114,7 @@ def scrape4VidHref(channels:  List[ScrappedChannel], index=0, retry_count=0): # 
     # options.add_argument('--autoplay-policy=no-user-gesture-required')
     options.profile = firefox_profile
 
+    channel: ScrappedChannel = None
     try:
         logger.debug('B running. scrap4vid.........')
         logger.debug(f"Selenium: Getting {channelMax} channels. Getting {vodsMax} vods per channel")
@@ -121,7 +122,6 @@ def scrape4VidHref(channels:  List[ScrappedChannel], index=0, retry_count=0): # 
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(WIDTH, HEIGHT)
         # for channel in channels:
-        channel: ScrappedChannel = None
         for i in range(index, len(channels)):
             print(f"i={i}, index={index}")
             index_aux = i
@@ -181,10 +181,10 @@ def scrape4VidHref(channels:  List[ScrappedChannel], index=0, retry_count=0): # 
             everyChannel.append(channel)
             logger.debug(f"  Got {len(channel.links)} vids for {browser.title}")
     except Exception as e:
-        logger.error("An error occurred :(")
-        logger.error(f"{e}")
         stack_trace = traceback.format_exc()
+        logger.error("An error occurred :(")
         logger.error(stack_trace)
+        logger.error(f"env_varz.PREP_SELENIUM_IS_HEADLESS={env_varz.PREP_SELENIUM_IS_HEADLESS}")
         if retry_count < MAX_RETRY:
             logger.info("🚷 BANNED CHANNEL? or some error occured, trying again...")
             msg_ = ""

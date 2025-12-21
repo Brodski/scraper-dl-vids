@@ -22,12 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ENV: ${{ fromJSON('{
-          "dev": "dev",
-          "master": "prod",
-          "staging": "staging",
-          "qa": "qa"
-        }')[inputs.branch_build] }}
+      ENV: ${{ fromJSON('{"dev":"dev","master":"prod","staging":"staging","qa":"qa"}')[inputs.branch_build] }}
 
     steps:
       - name: checkout code

@@ -1,6 +1,8 @@
 import argparse
+import sys
 import time
 import traceback
+from typing import List
 import urllib.request
 import urllib.parse
 import json
@@ -9,36 +11,29 @@ from urllib.parse import quote_plus  # Python 3+
 import boto3
 import os
 
-from configz import *
 import vast_api as vast_api
 import print_extra as print_extra
 from emailer_vast import sendEmail
 from emailer_vast import MetadataVast
-
-# import sys
-# target = os.path.abspath("../src/utils/")
-# sys.path.insert(0, target)
+from Configz import configz
+from Instance_V import Instance_V
+from Instance_V import Status
 
 #########################################################################
 #                                                                       #
-# Note: find_create_confirm_instance() is the "main()" Defined in lambda_vastai.tf    #
+# Note: find_create_instance() is the "main()" Defined in lambda_vastai.tf    #
 # Vars: vars_prod.tf locally on -> terraform -> lambda -> python        #  
 #                                                                       #
 #########################################################################
 
-metadata_vast: MetadataVast = MetadataVast()
+metadata_vast_global: MetadataVast = MetadataVast()
+instance_v_global_list: List[Instance_V] = []
+id_tracker_trick = {}
+for i in range(configz.TRANSCRIBER_NUM_INSTANCES):
+    id_tracker_trick[i] = False
 
-def find_create_confirm_instance(rerun_count, instance_num):
-    ############################
-    ###                      ###
-    ### FIND VIABLE INSTANCE ###
-    ###                      ###
-    ############################
-    print(f"  (find_create_confirm_instance) TOP rerun_count: {rerun_count}, instance_num: {instance_num}")
-    if (rerun_count >= 2):
-        print("  (find_create_confirm_instance) We have reran too many time,  ENDING!\n" * 3)
-        return
-
+def getOffers():
+    goodOffers = []
     everything_request = '''{
             "q":{ 
                 "verified": {"eq": true},
@@ -50,37 +45,36 @@ def find_create_confirm_instance(rerun_count, instance_num):
             }
         '''
     offers = vast_api.requestOffersHttp(json.loads(everything_request))
-    goodOffers = []
     for offer in offers:
         id = "id: " + str(offer.get("id"))
-        if offer.get("cuda_max_good") < int(cuda_vers):
+        if offer.get("cuda_max_good") < int(configz.cuda_vers):
             # print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
-        if offer.get("dph_total") > float(dph):
+        if offer.get("dph_total") > float(configz.dph):
             # print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue
-        if offer.get("cpu_ram") < float(cpu_ram):
+        if offer.get("cpu_ram") < float(configz.cpu_ram):
             # print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
             continue
-        if offer.get("disk_space") < float(disk_space):
+        if offer.get("disk_space") < float(configz.disk_space):
             # print(id + " skipping disk_space: " + str(offer.get("disk_space")))
             continue
-        if offer.get("gpu_ram") < float(gpu_ram):
+        if offer.get("gpu_ram") < float(configz.gpu_ram):
             # print(id + " skipping gpu_ram: " + str(offer.get("gpu_ram")))
             continue
-        if offer.get("storage_cost") > float(storage_cost):
+        if offer.get("storage_cost") > float(configz.storage_cost):
             # print(id + " skipping storage_cost: " + str(offer.get("storage_cost")))
             continue
-        if offer.get("inet_down_cost") > float(inet_down_cost):
+        if offer.get("inet_down_cost") > float(configz.inet_down_cost):
             # print(id + " skipping inet_down_cost: " + str(offer.get("inet_down_cost")))
             continue
-        if offer.get("inet_up_cost") > float(inet_up_cost):
+        if offer.get("inet_up_cost") > float(configz.inet_up_cost):
             # print(id + " skipping inet_up_cost: " + str(offer.get("inet_up_cost")))
             continue
-        if offer.get("gpu_name") in blacklist_gpus:
+        if offer.get("gpu_name") in configz.blacklist_gpus:
             # print(id + " skipping blacklist_gpus: " + str(offer.get("gpu_name")))
             continue
-        if str(offer.get("id")) in blacklist_ids:
+        if str(offer.get("id")) in configz.blacklist_ids:
             # print(id + " skipping blacklist_ids: " + str(offer.get("id")))
             continue
         # print("======================")
@@ -88,92 +82,134 @@ def find_create_confirm_instance(rerun_count, instance_num):
         goodOffers.append(offer)
     
     goodOffers = sorted(goodOffers, key=lambda x: x['dph_total'])
+    return goodOffers
 
+def get_good_instance_num_smart():
+    first_instance_not_created_trick = -1
+    for k,v in id_tracker_trick.items():
+        if v == False:
+            first_instance_not_created_trick = k
+            id_tracker_trick[k] = True
+            break
+    return first_instance_not_created_trick
+
+def find_create_instance(rerun_count, to_create_num):
+    ############################
+    ###                      ###
+    ### FIND VIABLE INSTANCE ###
+    ###                      ###
+    ############################
+    print(f"  (find_create_xinstance) TOP rerun_count: {rerun_count}")
+    if (rerun_count >= 3):
+        print("  (find_create_xinstance) We have reran too many time,  ENDING!\n" * 3)
+        return
+    if to_create_num <= 0:
+        return
+
+    goodOffers = getOffers()
+    
     if len(goodOffers) == 0:
         print("THERE ARE NO GOOD OFFERS!\n" * 9)
-        print("Gonna try again in 5 min")
-        time.sleep(150)
-        print('2.5 min passed ...')
-        time.sleep(150)
-        print('5 min passed ...')
-        find_create_confirm_instance(rerun_count + 1, instance_num)
+        print("Gonna try again in 4 min")
+        time.sleep(120)
+        print('2 min passed ...')
+        time.sleep(120)
+        print('4 min passed ...')
+        find_create_instance(rerun_count + 1, to_create_num)
         return
     
-
     ##################################
-    ####                          ####
-    #### INSTANTIATE VAST AI 'VM' ####
-    ####                          ####
+    ##   INSTANTIATE VAST AI 'VM'   ##
     ##################################
     print_extra.printAsTable(goodOffers)
-    instance_first = goodOffers[0]
+    instances_aux_list = goodOffers[:to_create_num] 
+    # instance_v_created: List[Instance_V] = []
 
-    try:
-        id_create   = instance_first.get("id")
-        ## BOOM 1 ##
-        id_contract = vast_api.create_instance(id_create, instance_num)
-        ## BOOM 2 ##
-        status      = pollCompletion(id_contract, time.time(), 0, instance_num)
-        if status == "success":
-            pass
-            # WE PRINT A LOT OF INFO
-            # print_extra.printDebug(id_contract)
-        else:
-            print("  (find_create_confirm_instance) POLL FAILED. id:", id_contract, " - STATUS:", status)
-            vast_api.destroy_instance(id_contract)
-    except Exception as e:
-        traceback.print_exc()
-        stacktrace_str = traceback.format_exc()
-        print(f"   (find_create_confirm_instance) Trying agian. Error creating instacne {e}")
-        metadata_vast.errorz.append({"rerun_count": rerun_count, "stacktrace_str": stacktrace_str})
-        find_create_confirm_instance(rerun_count + 1, instance_num)
+    for offer_i in instances_aux_list:
+        instance_num = get_good_instance_num_smart()
+        try:
+            id_create = offer_i.get("id")
+            # instance_num          = len(instance_v_global_list)
+            instance_num            = instance_num
+            id_contract             = vast_api.create_instance(id_create, instance_num)
+            instance_v              = Instance_V()
+            instance_v.id_contract  = id_contract
+            instance_v.status       = None # explicit
+            instance_v.time_created = time.time()
+            instance_v.instance_num = instance_num
+
+            instance_v_global_list.append(instance_v)
+
+        except Exception as e:
+            stacktrace_str = traceback.format_exc()
+            print(f"   (find_create_xinstance) Trying again. Error creating instance {e}")
+            print(stacktrace_str)
+
+            metadata_vast_global.errorz.append({"rerun_count": rerun_count, "stacktrace_str": stacktrace_str})
+
+            to_create_aux = to_create_num - len(instance_v_global_list)
+
+            find_create_instance(rerun_count + 1, to_create_aux)
+            return
+    return
             
-    return {
-        'statusCode': 200,
-        'body': json.dumps('Completed vastai init!! ')
-    }
 
-def pollCompletion(id_contract, start_time, counter_try_again, instance_num, status_msg_arr = []):
-    print(f'----- {counter_try_again}: polling {str(id_contract)} for completion -----')
 
-    if counter_try_again > 11: # 11 min
-        print(f"    (pollCompletion) Ending! counter_try_again > 11. counter_try_again={counter_try_again}")
-        return
-    status_msg          = None
-    actual_status       = None
-    exec_time_minutes   = (time.time() - start_time) / 60
-    id_contract         = str(id_contract)
-    # rows                = print_extra.get_my_instances()
-    data                = print_extra.get_my_instance_baby(id_contract)
-    status_msg : str    = data["status_msg"]
-    actual_status : str = data["actual_status"]
+def pollxCompletion2():
+    failed_list = []
+    for instance in instance_v_global_list:
+        if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING):
+            continue
+        instance: Instance_V = instance
+        status_msg          = None
+        actual_status       = None
+        exec_time_minutes   = instance.get_exec_time() # (time.time() - instance.time_created) / 60
+
+        data                = getStatusVast(instance)
+        status_msg : str    = data["status_msg"]
+        actual_status : str = data["actual_status"]
+        
+        print(f"    (getStatusVast) ...polling id {instance.id_contract}'s actual_status: ", actual_status)
     
-    print(f"    (pollCompletion) ...polling... {id_contract}'s actual_status: ", actual_status)
-    # "actual_status": "running",
-    # "status_msg": "success, running cbrodski/transcriber:official_v2_dev",
- 
-    status_msg_arr.append(f"status_msg: {status_msg}. actual_status: {actual_status}")
+        if status_msg and status_msg.lower().startswith("unexpected fault address"):
+            print("nope not ready, 'unexpected fault address' end it")
+            instance.status = Status.ERROR_1
+            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            continue
+        if status_msg and "unable to find image" in status_msg.lower():
+            print("nope not ready, end it")
+            instance.status = Status.ERROR_2
+            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            continue
+        if actual_status and actual_status.lower() == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
+            print(f"nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes: {exec_time_minutes}")
+            instance.status = Status.ERROR_3
+            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            continue
+        if actual_status and actual_status.lower() == "running":
+            print("Running. Transcriber app should be running. :)")
+            instance.status = Status.RUNNING
+            dataX = nice_data(data)
+            metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
+            continue
+        instance.polling_count += 1
+        instance.status = Status.LOADING
+    # AFTER LOOP
+    for fail in failed_list:
+        id_contract        = fail["id"]
+        data               = fail["data"]
+        exec_time_minutesX = fail["exec_time_minutes"]
+        try_again(id_contract, data, exec_time_minutesX)
+    
+    return len(failed_list)
 
 
-    if status_msg and status_msg.lower().startswith("unexpected fault address"):
-        print("    (pollCompletion) nope not ready, 'unexpected fault address' end it")
-        try_again(id_contract, instance_num, data, status_msg_arr, exec_time_minutes)
-        return
-    if status_msg and "unable to find image" in status_msg.lower():
-        print("    (pollCompletion) nope not ready, end it")
-        try_again(id_contract, instance_num, data, status_msg_arr, exec_time_minutes)
-        return
-    if actual_status and actual_status.lower() == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
-        print("    (pollCompletion) nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes:", exec_time_minutes)
-        try_again(id_contract, instance_num, data, status_msg_arr, exec_time_minutes)
-        return
-    if actual_status and actual_status.lower() == "running":
-        print("    (pollCompletion) Running. Transcriber app should be running. :)")
-        dataX = nice_data(data)
-        metadata_vast.successes.append({'id': id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
-        return "success"
-    time.sleep(60) 
-    return pollCompletion(id_contract, start_time, counter_try_again+1, instance_num)
+
+def getStatusVast(instance: Instance_V):
+    print(f'----- Poll count: {instance.polling_count}: polling {str(instance.id_contract)} for completion -----')
+
+    data = print_extra.get_my_instance_baby(instance.id_contract)
+    return data
 
 def nice_data(data):
     search = data.get("search", {}) #safety
@@ -199,39 +235,84 @@ def nice_data(data):
         "actual_status"            : data.get("actual_status"),
     }
 
-def try_again(id, instance_num, data, status_msg_arr, exec_time_minutes):
+def try_again(instance: Instance_V, data, exec_time_minutes):
     ### METADATA ###
+    status_msg: str    = data["status_msg"]
+    actual_status: str = data["actual_status"]
+    status_msg_arr = [f"id: {instance.id_contract}. status_msg: {status_msg}. actual_status: {actual_status}"]
     dataX = nice_data(data)
-    metadata_vast.try_again_arr.append({'id': id, 'status_msg_arr': status_msg_arr, 'exec_time_minutes': exec_time_minutes, **dataX })
+    metadata_vast_global.try_again_arr.append({'id': instance.id_contract, 'status_msg_arr': status_msg_arr, 'exec_time_minutes': exec_time_minutes, **dataX })
 
     ### DELETE ###
     print("   ! (try_again) stopping bad instance")
-    vast_api.destroy_instance(id)
-    blacklist_ids.append(id)
+    vast_api.destroy_instance(instance.id_contract)
+    configz.blacklist_ids.append(instance.id_contract)
 
-    ### RETRY ###
-    print("   ! (try_again) creating a new instance ...")
-    find_create_confirm_instance(0, instance_num)
+    idx = None
+    for i, v in enumerate(instance_v_global_list):
+        v: Instance_V = v
+        if v.id_contract == instance.id_contract:
+            idx = i
+            instance_v_global_list.pop(idx)
+            id_tracker_trick[instance.instance_num] = False # Make the key at instance_num available/False
+            print(f"   ! (try_again) popping at {idx}")
+            break
 
 
-def handler_kickit(event, context):
+bullshit_recursion_max = 20
+bullshit_recursion_cnt = 0
+def goBabyGo(to_create_num):
+    global bullshit_recursion_cnt
+    bullshit_recursion_cnt += 1
+    if bullshit_recursion_cnt > bullshit_recursion_max:
+        print(" ❗our recursion might be funked up for some reason")
+        metadata_vast_global.send_fail_msg()
+        sys.exit(1)
     try:
-        num_instances = 1 if TRANSCRIBER_NUM_INSTANCES is None else int(TRANSCRIBER_NUM_INSTANCES)
-        for i in range(num_instances):
-            print(f" -------------- {i} --------------")
-            print(f" ------- instance # {str(i + 1)} of {TRANSCRIBER_NUM_INSTANCES} -------")
-            print(f" --------------   --------------")
-            find_create_confirm_instance(0, i)
-            time.sleep(10) # I dont remember why i put this
-        metadata_vast.send_success_msg()
+        ############
+        #  BOOM 1  #
+        ############
+        find_create_instance(0, to_create_num)
+
+        if len(instance_v_global_list) < configz.TRANSCRIBER_NUM_INSTANCES:
+            to_create_remaining = configz.TRANSCRIBER_NUM_INSTANCES - len(instance_v_global_list)
+            time.sleep(10)      # Incase VastAI's api is slow/cached, i guess this might help
+            goBabyGo(to_create_remaining)
+            return              # Keep running goBabyGo() until all are completed
+
+        ############
+        #  BOOM 2  #
+        ############
+        num_failed = pollxCompletion2()
+        if num_failed > 0:
+            goBabyGo(num_failed)
+            return 
+
+        for instance in instance_v_global_list:
+            if instance.status == Status.LOADING:
+                print("Sleeping 60 sec, at least 1 instance still loading....")
+                time.sleep(60)
+                to_create_aux = 0
+                goBabyGo(to_create_aux)
+                return 
+        metadata_vast_global.send_success_msg()
     except:
         tr = traceback.format_exc()
-        metadata_vast.send_fail_msg(tr)
-        # env = os.getenv("ENV")
-        # subject = f"Vast-master/lambda {env} FAILED"
-        # body = tr
-        # sendEmail(subject, body)
-        # mes
+        metadata_vast_global.send_fail_msg(tr)
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Completed vastai init!! ')
+    }
+def handler_kickit(event, context):
+    result = goBabyGo(configz.TRANSCRIBER_NUM_INSTANCES)
+    global bullshit_recursion_cnt
+    global instance_v_global_list
+    global id_tracker_trick    
+    bullshit_recursion_cnt = 0
+    instance_v_global_list: List[Instance_V] = []
+    id_tracker_trick = {}
+    return result
 
 if __name__ == '__main__':
     handler_kickit(None, None)

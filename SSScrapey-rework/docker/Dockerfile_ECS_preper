@@ -1,14 +1,25 @@
+###########################################
+#                                         # 
+#    ⚡💥⚡  NEW - Dec 2025  ⚡💥⚡    #
+#                                          
+# https://github.com/Brodski/scraper-dl-vids/actions/workflows/build.yml
+#
+# ☢️ ---> STILL MUST BUILD transcriber @ Dockerfile_ECS_transcriber
+#                                         
+#                                         #
+###########################################
+
 ####################################################################
 # BUILD
-# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/preper:official_v2 -f Dockerfile_ECS_preper  .
+# docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/preper:official_v2_prod -f Dockerfile_ECS_preper  .
 # docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/preper:official_v2_dev -f Dockerfile_ECS_preper  .
 
 # DEBUG `RUN`
-# docker run --env-file .\.env_docker_local -it -e ENV=dev cbrodski/preper:official_v2 /bin/bash
+# docker run --env-file .\.env_docker_local -it -e ENV=dev cbrodski/preper:official_v2_prod /bin/bash
 # docker run --env-file .\.env_docker_local -it -e ENV=dev cbrodski/preper:official_v2_dev /bin/bash
 
 # PUSH
-# docker push cbrodski/preper:official_v2
+# docker push cbrodski/preper:official_v2_prod
 # docker push cbrodski/preper:official_v2_dev
 ####################################################################
 FROM python:3.10.13-bullseye

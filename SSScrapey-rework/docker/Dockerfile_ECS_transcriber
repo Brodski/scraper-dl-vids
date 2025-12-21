@@ -14,22 +14,22 @@
 #                                                          #
 ############################################################
 # Docker build
-#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2 -f Dockerfile_transcriber_faster_whisper  .
+#    docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2_prod -f Dockerfile_transcriber_faster_whisper  .
 #    docker build --build-arg ENV_TYPE=dev  --no-cache -t cbrodski/transcriber:official_v2_dev -f Dockerfile_transcriber_faster_whisper  .
 
 # Docker push
-#    docker push cbrodski/transcriber:official_v2
+#    docker push cbrodski/transcriber:official_v2_prod
 #    docker push cbrodski/transcriber:official_v2_dev
 
 # Docker run (local)
-#    docker run --env-file .env_docker_local -e ENV=dev cbrodski/transcriber:official_v2 
+#    docker run --env-file .env_docker_local -e ENV=dev cbrodski/transcriber:official_v2_prod 
 #    docker run --env-file .env_docker_local -e ENV=dev cbrodski/transcriber:official_v2_dev 
 
 # Docker run debug
-#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2
+#    docker run -e VAR1=123123123 -e VAR2=abcdef cbrodski/transcriber:official_v2_prod
 
 # Docker run debug 2
-#    docker run --env-file .env_docker_local -it cbrodski/transcriber:official_v2 /bin/bash
+#    docker run --env-file .env_docker_local -it cbrodski/transcriber:official_v2_prod /bin/bash
 #    docker run --env-file .env_docker_local -it cbrodski/transcriber:official_v2_dev /bin/bash
 
     
@@ -48,7 +48,7 @@
 #    ssh -p 40299 root@75.191.38.75 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 38758 root@ssh5.vast.ai -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 #    ssh -p 40717 root@199.195.151.121 -L 8080:localhost:8080 -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
-#    ssh -p 16913 root@72.53.108.99 -L 8080:localhost:8080  -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
+#    ssh -p 46296 root@70.68.84.2 -L 8080:localhost:8080   -i "C:\Users\BrodskiTheGreat\Desktop\desktop\Code\vult-ssh"
 
 
 # Deploy

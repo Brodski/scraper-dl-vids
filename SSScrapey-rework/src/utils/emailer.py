@@ -1,4 +1,5 @@
 from collections import Counter
+import os
 import traceback
 from typing import List
 import boto3
@@ -386,6 +387,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
     msg_lines.extend([
         "******* GPU *******",
+        f"💣 CONTAINER_ID! {os.getenv('CONTAINER_ID')} 💣"
         f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
         f"logical_cores: {logical_cores}\n"
         f"total_vram: {total_vram}\n"

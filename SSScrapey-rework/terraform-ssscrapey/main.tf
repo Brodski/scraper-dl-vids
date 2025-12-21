@@ -16,7 +16,7 @@ module "preper" {
     sg_name_id               = aws_security_group.my_sg.id
     sensitive_info           = var.sensitive_info
     preper_schedule_cron     = var.preper_schedule_cron
-    docker_image             = var.preper_docker_image # "cbrodski/preper:official_v2" or official_v2_dev
+    docker_image             = var.preper_docker_image # "cbrodski/preper:official_v2_prod" or official_v2_dev
 }
 
 module "downloader" {

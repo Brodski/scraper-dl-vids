@@ -1,10 +1,6 @@
 name: Baby Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_dispatch:
     inputs:
       branch_build:
@@ -25,15 +21,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ENV: ${{ fromJSON('{"dev":"dev","master":"prod","staging":"staging","qa":"qa"}')[inputs.branch_build] }}
+
     steps:
       - name: checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
-
-      # - name: Set working directory
-      #   working-directory: ${{ github.event.inputs.build_dir }}
-      #   run: echo "Building in $PWD"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,7 +47,6 @@ jobs:
       - name: Build and push multi-arch Docker image
         working-directory: "SSScrapey-rework/docker"
         run: |
-          ENV=${{ github.event.inputs.branch_build }}
           MICRO=${{ github.event.inputs.micro_serv }}
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
@@ -63,3 +57,4 @@ jobs:
             --push \
             .
     # --push Required for multi-arch images, because Buildx cant store them locally
+    # test 123

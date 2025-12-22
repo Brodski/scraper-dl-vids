@@ -30,10 +30,11 @@ def get_my_instance_baby(id):
     url = f"https://console.vast.ai/api/v0/instances/{id}/?owner=me&api_key=" + configz.VAST_API_KEY
     print("get_my_instance_baby - url")
     print(url)
+    # https://console.vast.ai/api/v0/instances/29095744/?owner=me&api_key=??????????????
+    # https://console.vast.ai/api/v0/instances/?owner=me&api_key=?????????????????????
     with urllib.request.urlopen(url) as response:
-        data = response.read()  # Read response bytes
-        json_data = json.loads(data)  # Parse JSON
-    # print(json_data[:50])
+        data = response.read()
+        json_data = json.loads(data)
     return(json_data["instances"])
 
 def get_my_instances():

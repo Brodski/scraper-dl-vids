@@ -163,7 +163,7 @@ def pollxCompletion2():
     failed_list = []
     vast_data_dictionary = print_extra.get_all_instances(instance_v_global_list)
     for instance in instance_v_global_list:
-        if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING):
+        if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING, Status.RUNNING_FAST_EXIT):
             continue
         instance: Instance_V = instance
         status_msg          = None
@@ -173,7 +173,6 @@ def pollxCompletion2():
             data            = vast_data_dictionary[instance.id_contract]
         except KeyError:
             instance.status = Status.RUNNING_FAST_EXIT
-            dataX = nice_data(data)
             metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
             continue
         # data                = getStatusVast(instance)

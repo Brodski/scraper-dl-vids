@@ -51,14 +51,14 @@ variable "downloader_num_instances" {
   type = number
 }
 variable "dwn_batch_size_override" {
-  type = number
+  type = string
 }
 ########################
 # Preper num instances #
 ########################
 variable "prep_num_channels_override" {
-  type = number
+  type = string
 }
 variable "prep_num_vod_per_channel_override" {
-  type = number
+  type = string
 }

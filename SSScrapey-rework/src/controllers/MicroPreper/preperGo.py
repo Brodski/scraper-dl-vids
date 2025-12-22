@@ -32,6 +32,8 @@ def printIntro():
 
 def prepare(isDebug=False, retry_count=0):
     logger.info("IN PREPER GO")
+    logger.info(f"env_varz.PREP_NUM_CHANNELS_OVERRIDE={env_varz.PREP_NUM_CHANNELS_OVERRIDE}")
+    logger.info(f"env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE={env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE}")
 
     printIntro()
     start_time      = time.time()

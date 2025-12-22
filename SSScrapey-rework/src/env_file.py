@@ -95,7 +95,7 @@ class EnvVars:
         #########
         # BAM 1 #
         #########
-        self.init_config_file(args)
+        self.init_argz_more(args)
 
 
         ##################################################################
@@ -107,7 +107,7 @@ class EnvVars:
                 setattr(self, key.upper(), value)
 
 
-    def init_config_file(self, args):
+    def init_argz_more(self, args):
         ###################################
         # LOAD SECRET SENSITIVE VARIABLES #
         ###################################

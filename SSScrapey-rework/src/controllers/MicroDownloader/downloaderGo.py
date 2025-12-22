@@ -50,6 +50,7 @@ def goDownloadBatch(isDebug=False):
     ########################
 
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
+    download_batch_size = int(env_varz.DWN_BATCH_SIZE_OVERRIDE) if env_varz.DWN_BATCH_SIZE_OVERRIDE and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0 else download_batch_size
 
     i = 0
     gaurdrail = 15

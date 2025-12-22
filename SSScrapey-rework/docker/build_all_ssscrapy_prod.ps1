@@ -14,5 +14,5 @@ docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/downloader:officia
 docker push cbrodski/downloader:official_v2_prod
 
 # Transcriber
-docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2_prod -f Dockerfile_transcriber_faster_whisper  .
+docker build --build-arg ENV_TYPE=prod --no-cache -t cbrodski/transcriber:official_v2_prod -f Dockerfile_Vast_transcriber  .
 docker push cbrodski/transcriber:official_v2_prod

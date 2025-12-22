@@ -10,6 +10,7 @@ class EnvVars:
     def __init__(self):
         self.DWN_IS_SHORT_DEV_DL = None
         self.DWN_BATCH_SIZE = None
+        self.DWN_BATCH_SIZE_OVERRIDE = None
         self.DWN_IS_SKIP_COMPRESS_AUDIO = None
         self.PREP_SELENIUM_IS_HEADLESS = None
         self.PREP_SULLY_DAYS = None
@@ -37,6 +38,8 @@ class EnvVars:
         self.DATABASE_USERNAME = None
         self.DATABASE_PASSWORD = None
         self.DATABASE_PORT = None
+        self.TWITCH_CLIENT_ID = None
+        self.TWITCH_CLIENT_SECRET = None
 
 
 
@@ -75,6 +78,8 @@ class EnvVars:
         parser.add_argument("--database_username")
         parser.add_argument("--database_password")
         parser.add_argument("--database_port")
+        parser.add_argument("--twitch_client_id")
+        parser.add_argument("--twitch_client_secret")
         
         ################################
         # FLAGS NOT IN THE CONFIG FILE #
@@ -138,6 +143,7 @@ class EnvVars:
         self.DWN_IS_SHORT_DEV_DL            = env_vars['DWN_IS_SHORT_DEV_DL']
         self.DWN_BATCH_SIZE                 = env_vars['DWN_BATCH_SIZE']
         self.DWN_IS_SKIP_COMPRESS_AUDIO     = env_vars['DWN_IS_SKIP_COMPRESS_AUDIO']
+        self.DWN_BATCH_SIZE_OVERRIDE        = os.getenv('DWN_BATCH_SIZE_OVERRIDE')
         self.PREP_SELENIUM_IS_HEADLESS      = env_vars['PREP_SELENIUM_IS_HEADLESS']
         self.PREP_SULLY_DAYS                = env_vars['PREP_SULLY_DAYS']
         self.PREP_NUM_CHANNELS              = env_vars['PREP_NUM_CHANNELS']
@@ -158,6 +164,8 @@ class EnvVars:
         self.IS_VIP_LIST                = env_vars['IS_VIP_LIST']
         self.IS_VIP_LIST_DEBUG          = env_vars['IS_VIP_LIST_DEBUG']
         self.S3_CAPTIONS_KEYBASE        = env_vars['S3_CAPTIONS_KEYBASE']
+        self.TWITCH_CLIENT_ID           = os.getenv('TWITCH_CLIENT_ID')
+        self.TWITCH_CLIENT_SECRET       = os.getenv('TWITCH_CLIENT_SECRET')
 
         ###############################################
         # "RELOAD" VARIABLES - from Terraform or .env #

@@ -50,3 +50,6 @@ variable "transcriber_vods_per_instance" {
 variable "downloader_num_instances" {
   type = number
 }
+variable "dwn_batch_size_override" {
+  type = number
+}

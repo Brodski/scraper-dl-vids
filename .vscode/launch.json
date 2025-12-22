@@ -63,6 +63,20 @@
             "justMyCode": true
         },
         {
+            "name": "Twitch API",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/SSScrapey-rework/src/kickApi.py",
+            "python": "${workspaceFolder}/SSScrapey-rework/src/venvFaster/Scripts/python",
+            "cwd": "${workspaceFolder}/SSScrapey-rework/src",
+            "args": [
+                "--env",
+                "local",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "All Local",
             "type": "debugpy",
             "request": "launch",

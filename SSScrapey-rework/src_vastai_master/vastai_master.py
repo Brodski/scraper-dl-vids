@@ -26,11 +26,14 @@ from Instance_V import Status
 #                                                                       #
 #########################################################################
 
+## INIT VARS ###
 metadata_vast_global: MetadataVast = MetadataVast()
 instance_v_global_list: List[Instance_V] = []
 id_tracker_trick = {}
 for i in range(configz.TRANSCRIBER_NUM_INSTANCES):
     id_tracker_trick[i] = False
+bullshit_recursion_max = 20
+bullshit_recursion_cnt = 0
 
 def getOffers():
     goodOffers = []
@@ -139,6 +142,7 @@ def find_create_instance(rerun_count, to_create_num):
             instance_v.instance_num = instance_num
 
             instance_v_global_list.append(instance_v)
+            time.sleep(60)
 
         except Exception as e:
             stacktrace_str = traceback.format_exc()
@@ -157,15 +161,21 @@ def find_create_instance(rerun_count, to_create_num):
 
 def pollxCompletion2():
     failed_list = []
+    vast_data_dictionary = print_extra.get_all_instances(instance_v_global_list)
     for instance in instance_v_global_list:
-        if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING):
+        if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING, Status.RUNNING_FAST_EXIT):
             continue
         instance: Instance_V = instance
         status_msg          = None
         actual_status       = None
         exec_time_minutes   = instance.get_exec_time() # (time.time() - instance.time_created) / 60
-
-        data                = getStatusVast(instance)
+        try:
+            data            = vast_data_dictionary[instance.id_contract]
+        except KeyError:
+            instance.status = Status.RUNNING_FAST_EXIT
+            metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
+            continue
+        # data                = getStatusVast(instance)
         status_msg : str    = data["status_msg"]
         actual_status : str = data["actual_status"]
         
@@ -259,8 +269,6 @@ def try_again(instance: Instance_V, data, exec_time_minutes):
             break
 
 
-bullshit_recursion_max = 20
-bullshit_recursion_cnt = 0
 def goBabyGo(to_create_num):
     global bullshit_recursion_cnt
     bullshit_recursion_cnt += 1
@@ -308,9 +316,10 @@ def handler_kickit(event, context):
     result = goBabyGo(configz.TRANSCRIBER_NUM_INSTANCES)
     global bullshit_recursion_cnt
     global instance_v_global_list
-    global id_tracker_trick    
+    global id_tracker_trick
+
     bullshit_recursion_cnt = 0
-    instance_v_global_list: List[Instance_V] = []
+    instance_v_global_list = []
     id_tracker_trick = {}
     return result
 

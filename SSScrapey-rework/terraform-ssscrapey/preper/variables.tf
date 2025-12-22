@@ -13,6 +13,12 @@ variable "docker_image" {
 variable "preper_schedule_cron" {
   type = string
 }
+variable "prep_num_channels_override" {
+  type = string
+}
+variable "prep_num_vod_per_channel_override" {
+  type = string
+}
 variable "sensitive_info" {
   type = object({
     MY_AWS_SECRET_ACCESS_KEY   = string

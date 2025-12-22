@@ -2,7 +2,7 @@ import math
 import sys
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 from models.Vod import Vod
-from typing import Dict, List
+from typing import Dict, Iterator, List
 import boto3
 import controllers.MicroTranscriber.transcriber as transcriber
 import controllers.MicroTranscriber.split_ffmpeg as split_ffmpeg
@@ -26,6 +26,7 @@ from utils.emailer import Status
 from utils.emailer import write_transcriber_email
 from utils.ecs_meta import find_aws_logging_info
 from utils.ecs_meta import find_aws_logging_info_transcriber
+import utils.generic_stuff as utils_generic
 
 def logger():
     pass
@@ -54,6 +55,14 @@ def goTranscribeBatch(isDebug=False):
     failed_vods_list:     List[Vod] = []
     metadata_arr:         List[MetadataShitty] = []
     metadataX: MetadataShitty = MetadataShitty()
+
+    vods_list                                  = transcriber.getTodoFromDb()
+    magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
+    fancy_generator                            = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
+    # OLD ↓ 
+    # vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
+
+
     for i in range(0, download_batch_size):
     #for vod in transcriber.getFromFancyMap(magical_ordered_map):
         # generator v
@@ -65,11 +74,10 @@ def goTranscribeBatch(isDebug=False):
         Audio2Text.current_num = i + 1
 
         try:
-            metadataX: MetadataShitty = transcribe(isDebug)
+            metadataX: MetadataShitty = transcribe(fancy_generator, isDebug)
             vod: Vod = metadataX.vod
         except KeyboardInterrupt:    
             logger.info("ending b/c ctrl + c")
-            # metadata_arr.append(metadataX)
             break
 
         logger.info(f"   (goTranscribeBatch) Finished Index {i}")
@@ -106,18 +114,10 @@ def goTranscribeBatch(isDebug=False):
     return "gg ending"
 
 
-import utils.generic_stuff as utils_generic
-def transcribe(isDebug=False) -> MetadataShitty:
+def transcribe(fancy_generator: Iterator[Vod], isDebug=False) -> MetadataShitty:
     ### GET THE VOD ###
     metadata_ = MetadataShitty()
-    vods_list = transcriber.getTodoFromDb()
-
-    magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
-    # OLD ↓ ➔
-    # vod: Vod        = vods_list[0] if len(vods_list) > 0 else None 
-    # NEW ↓
-    gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
-    vod: Vod        = next(gen, None)
+    vod: Vod        = next(fancy_generator, None)
     vod: Vod        = vod          if not isDebug        else getDebugVod(vod)
     start_time      = time.time()
     metadata_       = MetadataShitty(vod=vod)

@@ -12,7 +12,7 @@ logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 
 
-def getFromFancyMap(d: dict[int, list]):
+def getFromFancyMap(fancy_vod_map: dict[int, list]):
     # https://chatgpt.com/c/69278b8e-856c-8332-9475-66ce608d2298
     # data: Dict[int, List[Vod]] = {
     #     1: [a1,a2,a3],
@@ -21,13 +21,13 @@ def getFromFancyMap(d: dict[int, list]):
     # }
     # outputs -> 1 column, 2nd column, 3rd, ....
     # outputs -> a1,b1,c1, a2,b2,c2, a3,b3, b4, b5, b6   
-    if not d:
+    if not fancy_vod_map:
         return
-    keys = d.keys()
-    max_len = max(len(d[k]) for k in keys)
+    keys = fancy_vod_map.keys()
+    max_len = max(len(fancy_vod_map[k]) for k in keys)
     for x in range(max_len): # x = column
         for y in keys: # y = row
-            row = d[y]
+            row = fancy_vod_map[y]
             if x < len(row):
                 yield row[x] 
 

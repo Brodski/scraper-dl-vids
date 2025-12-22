@@ -47,13 +47,13 @@ def getConnection():
 # Get last "5" recent vods from EVERY channel. 
 # Take from the most popular channel
 # Does NOT care about status, eg 'todo', 'downloading' ect
-def getTodoFromDatabase(i, isDebug=False) -> List[Vod]:
-    return getTodoFromDatabase_aux(i, 'todo', isDebug)
+def getTodoFromDatabase() -> List[Vod]:
+    return getTodoFromDatabase_aux('todo')
 
-def getCompressNeedFromDatabase(i, isDebug=False) -> List[Vod]:
-    return getTodoFromDatabase_aux(i, "audio_need_opus", isDebug)
+def getCompressNeedFromDatabase() -> List[Vod]:
+    return getTodoFromDatabase_aux("audio_need_opus")
 
-def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
+def getTodoFromDatabase_aux(tr_status) -> List[Vod]:
     highest_priority_vod = None #
     resultsArr: List[Vod] = []
     connection = getConnection()
@@ -111,27 +111,27 @@ def getTodoFromDatabase_aux(i, tr_status, isDebug=False) -> List[Vod]:
     logger.info(f"resultsArr length! = {len(resultsArr)}")
     return resultsArr
 
-    #Recall, results arr is sorted by priority via smart sql query
-    highest_priority_vod: Vod = None
-    for vod in resultsArr:
-        if vod.transcript_status == "todo":
-            highest_priority_vod = vod
-            break
+    # #Recall, results arr is sorted by priority via smart sql query
+    # highest_priority_vod: Vod = None
+    # for vod in resultsArr:
+    #     if vod.transcript_status == "todo":
+    #         highest_priority_vod = vod
+    #         break
 
-    ###############
-    # DEBUG STUFF #
-    ###############
-    if i == 0: # i comes from parameter :/ onlly used in this line
-        for vod in resultsArr:
-            logger.debug(f"todos, in order of priority - {vod.channels_name_id}: prio {vod.priority}, {vod.id} - {vod.transcript_status}")
-        logger.debug("")
-    if isDebug:
-        # highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
-        logger.debug("DEBUG highest_priority_vod is :" + vod.channels_name_id, vod.id)
-        # highest_priority_vod.print()
-    return highest_priority_vod
+    # ###############
+    # # DEBUG STUFF #
+    # ###############
+    # if i == 0: # i comes from parameter :/ onlly used in this line
+    #     for vod in resultsArr:
+    #         logger.debug(f"todos, in order of priority - {vod.channels_name_id}: prio {vod.priority}, {vod.id} - {vod.transcript_status}")
+    #     logger.debug("")
+    # if isDebug:
+    #     # highest_priority_vod = Vod(id="2143646862", channels_name_id="kaicenat", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+    #     # highest_priority_vod = Vod(id="2017842017", channels_name_id="fps_shaka", transcript="todo", priority=0, channel_current_rank="-1") # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+    #     highest_priority_vod = Vod(id="40792901", channels_name_id="nmplol", transcript="todo", priority=-1, channel_current_rank=-1) # (Id, ChannelNameId, TranscriptStatus, Priority, ChanCurrentRank)
+    #     logger.debug("DEBUG highest_priority_vod is :" + vod.channels_name_id, vod.id)
+    #     # highest_priority_vod.print()
+    # return highest_priority_vod
 
 def lockVodDb(vod: Vod, isDebug=False):
     logger.debug("LOCKING VOD DB: " + str(vod.id))
@@ -142,7 +142,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             sql = f"SELECT Id, ChannelNameId, TranscriptStatus FROM Vods WHERE Id = {vod.id};"
             cursor.execute(sql)
             result = cursor.fetchone()  # Use fetchone() since we expect only one row for a specific id
-            logger.debug(f"GOT! {sql}")
+            # logger.debug(f"GOT! {sql}")
             # id = result[0]
             # channel_name_id = result[1]
             # transcript_status = result[2]
@@ -156,7 +156,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             values = (transcript_dl_status, vod.id)
             affected_count = cursor.execute(sql, values)
             connection.commit()
-            logger.debug(f"locked: {values}")
+            # logger.debug(f"locked: {values}")
         return True
     except Exception as e:
         logger.error(f"Error occurred: {e}")
@@ -319,8 +319,7 @@ def _execSubprocCmd(ffmpeg_command):
         # logger.debug(stdoutput)
         # logger.debug("    (exec) stderr:")
         # logger.debug(stderr)
-        logger.debug("    (exec) returncode:")
-        logger.debug(returncode)
+        logger.debug(f"    (exec) returncode: {returncode}")
         # stdoutput = stdoutput if stdoutput not in ("", None) else stderr
         return stdoutput, stderr, int(returncode)
     except subprocess.CalledProcessError as e:
@@ -379,11 +378,12 @@ def uploadAudioToS3_v2(downloaded_metadata, outfile, vod: Vod):
     s3 = boto3.client('s3')
     try:
         if env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == "False" or env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == False:
-            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
-            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
-            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
-            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
             s3.upload_file(os.path.abspath(outfile_aux), env_varz.BUCKET_NAME, s3fileKey, ExtraArgs={ 'ContentType': 'audio/mpeg'})
+        else:
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
+            logger.info("SKIPPING THE UPLOAD B/C WE ARE LOCAL")
         s3.put_object(Body=json.dumps(downloaded_metadata, default=lambda o: o.__dict__), ContentType="application/json; charset=utf-8", Bucket=env_varz.BUCKET_NAME, Key=s3metaKey)
         return s3fileKey
     except Exception as e:

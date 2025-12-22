@@ -46,6 +46,12 @@ resource "aws_ecs_task_definition" "preper_task" {
         { name = "DATABASE"
           value =var.sensitive_info.DATABASE 
         },
+        { name = "PREP_NUM_CHANNELS_OVERRIDE"
+          value = var.prep_num_channels_override
+        },
+        { name = "PREP_NUM_VOD_PER_CHANNEL_OVERRIDE"
+          value = var.prep_num_vod_per_channel_override
+        },        
       ]
       logConfiguration = {
         logDriver = "awslogs"

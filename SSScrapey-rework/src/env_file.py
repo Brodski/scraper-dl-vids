@@ -15,7 +15,9 @@ class EnvVars:
         self.PREP_SELENIUM_IS_HEADLESS = None
         self.PREP_SULLY_DAYS = None
         self.PREP_NUM_CHANNELS = None
+        self.PREP_NUM_CHANNELS_OVERRIDE = None
         self.PREP_NUM_VOD_PER_CHANNEL = None
+        self.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE  = None
         self.WHSP_A2T_ASSETS_AUDIO = None
         self.WHSP_A2T_ASSETS_CAPTIONS = None
         self.WHSP_COMPUTE_TYPE = None
@@ -147,7 +149,9 @@ class EnvVars:
         self.PREP_SELENIUM_IS_HEADLESS      = env_vars['PREP_SELENIUM_IS_HEADLESS']
         self.PREP_SULLY_DAYS                = env_vars['PREP_SULLY_DAYS']
         self.PREP_NUM_CHANNELS              = env_vars['PREP_NUM_CHANNELS']
+        self.PREP_NUM_CHANNELS_OVERRIDE     = os.getenv('PREP_NUM_CHANNELS')
         self.PREP_NUM_VOD_PER_CHANNEL       = env_vars['PREP_NUM_VOD_PER_CHANNEL']
+        self.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE  = os.getenv('PREP_NUM_VOD_PER_CHANNEL')
         self.WHSP_A2T_ASSETS_AUDIO          = "./assets/audio/"
         self.WHSP_A2T_ASSETS_CAPTIONS       = "./assets/captions/"
         self.WHSP_COMPUTE_TYPE              = env_vars['WHSP_COMPUTE_TYPE']
@@ -180,6 +184,9 @@ class EnvVars:
         # AWS_ACCESS_KEY_ID not loaded here. idk why
         # AWS_SECRET_ACCESS_KEY not loaded here. idk why
 
+        
+        self.PREP_NUM_CHANNELS        = env_varz.PREP_NUM_CHANNELS_OVERRIDE        if env_varz.PREP_NUM_CHANNELS_OVERRIDE        and int(env_varz.PREP_NUM_CHANNELS_OVERRIDE) >= 0        else env_varz.PREP_NUM_CHANNELS
+        self.PREP_NUM_VOD_PER_CHANNEL = env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE if env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE and int(env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE) >= 0 else env_varz.PREP_NUM_VOD_PER_CHANNEL
 
 
 

@@ -26,7 +26,7 @@ if __name__ == "__main__":
     start_time = time.time()
     isDebug=False
 
-    vods_list       = getCompressNeedFromDatabase(0, isDebug=isDebug) # "vod" is highest priority 'todo' vod
+    vods_list       = getCompressNeedFromDatabase() # "vod" is highest priority 'todo' vod
     magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
     gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
     vod: Vod        = next(gen, None)

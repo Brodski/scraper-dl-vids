@@ -3,7 +3,7 @@ import time
 import traceback
 import controllers.MicroDownloader.downloader as downloader
 from models.Vod import Vod
-from typing import Dict, List
+from typing import Dict, Iterator, List
 # import env_file as env_varz
 from env_file import env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
@@ -52,14 +52,19 @@ def goDownloadBatch(isDebug=False):
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
     download_batch_size = int(env_varz.DWN_BATCH_SIZE_OVERRIDE) if env_varz.DWN_BATCH_SIZE_OVERRIDE and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0 else download_batch_size
 
-    i = 0
-    gaurdrail = 15
-    while i < download_batch_size and i < gaurdrail:
-        gaurdrail -= 1
+    vods_list                                  = downloader.getTodoFromDatabase() # "vod" is highest priority 'todo' vod
+    magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
+    fancy_generator                            = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
+
+
+    for i in range(download_batch_size):
         logger.debug("===========================================")
         logger.debug(f"    ⚔️ DOWNLOAD BATCH - {i+1} of {download_batch_size}  ")
         logger.debug("===========================================")
-        dl_meta = download(i, isDebug)
+        
+        #### BOOM ####
+        dl_meta = download(fancy_generator, isDebug)
+
         if dl_meta == Errorz.TOO_BIG or dl_meta == Errorz.DELETED_404 or dl_meta == Errorz.UNAUTHORIZED_403 or dl_meta == None:
             logger.debug("We skipped a download, trying next entry. Error:" + str(dl_meta))
             i += 1
@@ -72,16 +77,12 @@ def goDownloadBatch(isDebug=False):
     write_downloader_report(metadata_array_global, str(int(elapsed_time)))
     return dl_meta
 
-def download(i, isDebug=False):
+def download(fancy_generator: Iterator[Vod], isDebug=False):
     try:
         ###########################
         # PRE-DOWNLOAD, GET TO-DO #
         ###########################
-
-        vods_list       = downloader.getTodoFromDatabase(i, isDebug=isDebug) # "vod" is highest priority 'todo' vod
-        magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
-        gen             = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
-        vod: Vod        = next(gen, None)
+        vod: Vod        = next(fancy_generator, None)
 
         ## Post maintenance
         if vod == None or vod.id == None:

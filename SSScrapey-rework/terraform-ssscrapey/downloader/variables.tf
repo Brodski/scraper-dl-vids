@@ -1,6 +1,9 @@
 variable "downloader_num_instances" {
     type        = number
 }
+variable "dwn_batch_size_override" {
+    type        = number
+}
 variable "iam_role_ecs_events_arn" {
     type        = string
 }

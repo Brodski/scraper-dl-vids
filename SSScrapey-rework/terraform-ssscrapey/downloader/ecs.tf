@@ -53,6 +53,9 @@ resource "aws_ecs_task_definition" "download_task" {
         { name = "DATABASE"
           value =var.sensitive_info.DATABASE 
         },
+        { name = "DWN_BATCH_SIZE_OVERRIDE"
+          value = var.dwn_batch_size_override
+        }
       ],
       logConfiguration = {
         logDriver = "awslogs"

@@ -149,9 +149,9 @@ class EnvVars:
         self.PREP_SELENIUM_IS_HEADLESS      = env_vars['PREP_SELENIUM_IS_HEADLESS']
         self.PREP_SULLY_DAYS                = env_vars['PREP_SULLY_DAYS']
         self.PREP_NUM_CHANNELS              = env_vars['PREP_NUM_CHANNELS']
-        self.PREP_NUM_CHANNELS_OVERRIDE     = os.getenv('PREP_NUM_CHANNELS')
+        self.PREP_NUM_CHANNELS_OVERRIDE     = os.getenv('PREP_NUM_CHANNELS_OVERRIDE')
         self.PREP_NUM_VOD_PER_CHANNEL       = env_vars['PREP_NUM_VOD_PER_CHANNEL']
-        self.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE  = os.getenv('PREP_NUM_VOD_PER_CHANNEL')
+        self.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE  = os.getenv('PREP_NUM_VOD_PER_CHANNEL_OVERRIDE')
         self.WHSP_A2T_ASSETS_AUDIO          = "./assets/audio/"
         self.WHSP_A2T_ASSETS_CAPTIONS       = "./assets/captions/"
         self.WHSP_COMPUTE_TYPE              = env_vars['WHSP_COMPUTE_TYPE']

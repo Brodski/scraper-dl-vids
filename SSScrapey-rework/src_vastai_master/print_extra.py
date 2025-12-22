@@ -1,12 +1,37 @@
 
 import time
+from typing import List
 import urllib.request
 import urllib.parse
 import json
 from Configz import configz
+from Instance_V import Instance_V
+from Instance_V import Status
+
+def get_all_instances(instance_v_list: List[Instance_V]):
+    url = f"https://console.vast.ai/api/v0/instances/?owner=me&api_key=" + configz.VAST_API_KEY
+    print("get_my_instance_baby - url")
+    print(url)
+    vast_data_dictionary: dict = {}
+    with urllib.request.urlopen(url) as response:
+        data = response.read()
+        json_data = json.loads(data)    
+        for instance in json_data["instances"]:
+            vast_data_dictionary[instance["id"]] = instance # { 12345: {data1}, 67890: {data2}  }
+
+        # x = json_data["instances"]
+        # instance_ids = {v.id_contract for v in instance_v_list}
+        # data_intersection = [
+        #     item for item in json_data["instances"] if item.get("id") in instance_ids
+        # ]
+    return vast_data_dictionary
 
 def get_my_instance_baby(id):
     url = f"https://console.vast.ai/api/v0/instances/{id}/?owner=me&api_key=" + configz.VAST_API_KEY
+    print("get_my_instance_baby - url")
+    print(url)
+    # https://console.vast.ai/api/v0/instances/29095744/?owner=me&api_key=cc6e359e54b0fb85559289d1e5ffb2551d14e45176ac12ae717e5b229a03b8f2
+    # https://console.vast.ai/api/v0/instances/?owner=me&api_key=cc6e359e54b0fb85559289d1e5ffb2551d14e45176ac12ae717e5b229a03b8f2
     with urllib.request.urlopen(url) as response:
         data = response.read()  # Read response bytes
         json_data = json.loads(data)  # Parse JSON

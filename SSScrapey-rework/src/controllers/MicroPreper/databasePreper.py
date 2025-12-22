@@ -436,6 +436,37 @@ def deleteOldDeadChannels(new_channels: List[ScrappedChannel]):
         connection.close()
 
 
+def getNewChannelsNotInDb(scrapped_channels: List[ScrappedChannel]):
+    connection = None
+    new_channels = None
+    try:
+        connection = getConnection()
+
+        with connection.cursor() as cursor:
+            # Make SQL Query
+            name_ids = [chn.name_id for chn in scrapped_channels]
+            formatted_ids = ', '.join([f"'{str(name)}'" for name in name_ids])
+            query = f"SELECT NameId FROM Channels WHERE NameId IN ({formatted_ids})"
+
+            cursor.execute(query)
+
+            # Get results
+            existing_name_ids = [row[0] for row in cursor.fetchall()]
+            non_existing_name_ids = set(name_ids) - set(existing_name_ids)
+            new_channels: List[ScrappedChannel] = [chan for chan in scrapped_channels if chan.name_id not in existing_name_ids]
+
+            logger.debug("Existing IDs:" +  str(existing_name_ids))
+            logger.debug("New IDs: " + str(new_channels))
+    except Exception as e:
+        logger.error(f"Error occurred (addNewChannelToDb): {e}")
+        logger.error(traceback.format_exc())
+        if connection:
+            connection.rollback()
+    finally:
+        if connection:
+            connection.close()
+    return new_channels
+
 
 # CREATE TABLE Channels (
 #     NameId VARCHAR(255),

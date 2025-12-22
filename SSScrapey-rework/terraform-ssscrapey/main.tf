@@ -28,6 +28,7 @@ module "downloader" {
     downloader_schedule_cron    = var.downloader_schedule_cron
     docker_image                = var.downloader_docker_image
     downloader_num_instances       = var.downloader_num_instances
+    dwn_batch_size_override     = var.dwn_batch_size_override
 }
 
 module "transcriber" {

@@ -20,4 +20,5 @@ class Status(Enum):
     ERROR_2 = "unable_to_find_image"
     ERROR_3 = "loading_stuck"
     RUNNING = "running"
+    RUNNING_FAST_EXIT = "running_fast_exit"
     LOADING = "loading"

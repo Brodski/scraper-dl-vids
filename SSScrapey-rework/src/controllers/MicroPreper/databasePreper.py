@@ -403,8 +403,6 @@ def deleteOldDeadChannels(new_channels: List[ScrappedChannel]):
     try:
         connection = getConnection()
         with connection.cursor() as cursor:
-            env_varz.PREP_NUM_CHANNELS
-
             
             new_channels  = [] if new_channels is None else new_channels
             chan_name_ids = []

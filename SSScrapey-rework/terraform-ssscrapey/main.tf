@@ -17,6 +17,8 @@ module "preper" {
     sensitive_info           = var.sensitive_info
     preper_schedule_cron     = var.preper_schedule_cron
     docker_image             = var.preper_docker_image # "cbrodski/preper:official_v2_prod" or official_v2_dev
+    prep_num_channels_override        = var.prep_num_channels_override
+    prep_num_vod_per_channel_override = var.prep_num_vod_per_channel_override    
 }
 
 module "downloader" {
@@ -27,7 +29,7 @@ module "downloader" {
     sensitive_info              = var.sensitive_info
     downloader_schedule_cron    = var.downloader_schedule_cron
     docker_image                = var.downloader_docker_image
-    downloader_num_instances       = var.downloader_num_instances
+    downloader_num_instances    = var.downloader_num_instances
     dwn_batch_size_override     = var.dwn_batch_size_override
 }
 

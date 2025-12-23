@@ -19,6 +19,7 @@ if __name__ == "__main__":
     topChannels = todoPreper.addVipList(topChannels, False) # same ^ but with gera
     scrapped_channels: List[ScrappedChannel] = todoPreper.instantiateJsonToClassObj(topChannels) # relevant_data = /mocks/initScrapData.py
     scrapped_channels = scrapped_channels[:int(env_varz.PREP_NUM_CHANNELS)]
+    twitchApi.getApiThing(scrapped_channels)
     twitchApi.getVods(scrapped_channels)
     #########
     # twitchApi.getApiThing()

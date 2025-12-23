@@ -427,6 +427,7 @@ def deleteOldDeadChannels(new_channels: List[ScrappedChannel]):
             logger.debug(sql)
             logger.debug(chan_name_ids)
             cursor.execute(sql, chan_name_ids)
+            logger.debug(f"Deleted {cursor.rowcount} rows from Channels")
     except Exception as e:
         logger.error(f"Error occurred (deleteOldTodos): {e}")
         connection.rollback()

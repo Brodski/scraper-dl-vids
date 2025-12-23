@@ -15,14 +15,17 @@ def logger():
 
 logger: logging.Logger = LoggerConfig("micro").get_logger()
 
-#
-# TODO -
-#       1. 
-#
-#
-#
-
 access_token = None
+
+
+
+def updateVidHref(scrapped_channels: List[ScrappedChannel]) -> List[ScrappedChannel]:
+    if access_token == None: # we are in lambda, 15 min timeout < access_token's timeout
+        initAccessToken()
+    getTwitchIdAll(scrapped_channels)
+    getVods(scrapped_channels)
+    return scrapped_channels
+
 def initAccessToken():
     client_id = env_varz.TWITCH_CLIENT_ID
     client_secret = env_varz.TWITCH_CLIENT_SECRET
@@ -42,27 +45,26 @@ def initAccessToken():
 
 
 
-def getApiThing(scrapped_channels_all: List[ScrappedChannel]):
+def getTwitchIdAll(scrapped_channels_all: List[ScrappedChannel]):
     global access_token
     client_id = env_varz.TWITCH_CLIENT_ID
 
     ### CREATE THE HTTP REQUEST + QUERY STRING ###
-    scrapped_channels_all = ['twitchdev', 'geranimo', 'Sanchez']
+    # scrapped_channels_all = ['twitchdev', 'geranimo', 'Sanchez']
 
-    max_twitch_query = 100
+    MAX_TWITCH_QUERY = 100
 
-    every_single_user = []
+    json_all_batches = []
 
-    for i in range(0, len(scrapped_channels_all), max_twitch_query):
+    for i in range(0, len(scrapped_channels_all), MAX_TWITCH_QUERY):
 
         ### SETUP AND EMPTY ##
-        user_login_list_aux= []
         query_string = "?"
 
         # We can only query 100 users per request
-        user_login_list_aux = scrapped_channels_all[i:i+max_twitch_query]
-        for user_login in user_login_list_aux:
-            query_string += f"login={user_login}&"
+        scrapped_channels_batch100: List[ScrappedChannel] = scrapped_channels_all[i:i+MAX_TWITCH_QUERY]
+        for chann in scrapped_channels_batch100:
+            query_string += f"login={chann.name_id}&"
 
         ### SEND REQUEST ###
         user_url = f'https://api.twitch.tv/helix/users{query_string}'
@@ -75,35 +77,27 @@ def getApiThing(scrapped_channels_all: List[ScrappedChannel]):
 
         ### EXTRACT INFO ###
         user_json = user_response.json()
+        # users_aux = [ { "id": 12345, "login": geranimo, "display_name": Geranimo }, {}, {}, ... ]
         users_aux = [
             {key: user[key] for key in ("id", "login", "display_name")}
             for user in user_json["data"]
         ]
-        every_single_user = every_single_user + users_aux
+        json_all_batches = json_all_batches + users_aux
         
-    for user in every_single_user:
+    ### ADD THE twitch_num_id TO EACH ScrappedChannel OBJECT ###
+    ### (this is an inefficent loop) ###
+    for user in json_all_batches:
         for i, channel in enumerate(scrapped_channels_all):
             channel: ScrappedChannel = channel
             if channel.name_id == user["login"]:
+                logger.debug(f"Twitch id: {user['id']} --- Channel: {channel.name_id}")
                 channel.twitch_num_id = user["id"]
                 break
-    return 
+    return
 
 
-    logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
-    logger.debug("----------")
-    logger.debug("----------")
-    logger.debug("----------")
-    for f in every_single_user:
-        logger.debug(f)
 
 def getVods(scrapped_channels: List[ScrappedChannel]):
-    # "SELECT NameId FROM Channels WHERE NameId IN ('geranimo', 'evelone2004', 'theburntpeanut', 'zackrawrr', 'kato_junichi0817', 'hasanabi', 'hjune', 'ohnepixel', 'ramzes', 'sasavot', 'illojuan', 'caseoh_', 'eliasn97', 'dota2_paragon_ru', 'jynxzi', 'xqc', 'plaqueboymax', 'esl_dota2', 'starladder_cs_en', 'tfue', 'stableronaldo', 'k3soju')"
-    # databasePreper.getNewChannelsNotInDb(scrapped_channels)
-    # return
-    everyChannel:List[ScrappedChannel] = []
-    
-
     global access_token
     client_id = env_varz.TWITCH_CLIENT_ID
     CHANNELS_MAX = int(env_varz.PREP_NUM_CHANNELS)
@@ -112,29 +106,27 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
     # channel: ScrappedChannel = None
 
     
-    max_twitch_query = 100
+    MAX_TWITCH_QUERY = 100
 
-    every_single_user = []
 
-    for i in range(0, len(scrapped_channels), max_twitch_query):
+    for i in range(0, len(scrapped_channels), MAX_TWITCH_QUERY):
         ### SETUP AND EMPTY ##
-        scrapped_channels_aux = []
-        query_string = "?"
-
+        logger.debug(f"-------- {i} --------")
+        scrapped_channels_batch100 = []
         # We can only query 100 users per request
-        scrapped_channels_aux: List[ScrappedChannel] = scrapped_channels[i:i+max_twitch_query]
+        scrapped_channels_batch100: List[ScrappedChannel] = scrapped_channels[i:i+MAX_TWITCH_QUERY]
 
-        for channel in scrapped_channels_aux: # up to 100
-            query_string += f"user_id={channel.twich_num_id}&"
+        ### QUERY STRING ###
+        for channel in scrapped_channels_batch100: # up to 100
+            channel: ScrappedChannel = channel
+            query_string = f"user_id={channel.twitch_num_id}"
 
-            videos_url = f'https://api.twitch.tv/helix/videos{query_string}'
-            headers = {
-                'Authorization': f'Bearer {access_token}',
-                'Client-Id': client_id
-            }
-            logger.debug(f"user_url={videos_url}")
+            api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'
+            headers = {'Authorization': f'Bearer {access_token}', 'Client-Id': client_id }
 
-            user_response = requests.get(videos_url, headers=headers)
+            logger.debug(f"api_videos_url={api_videos_url}")
+
+            user_response = requests.get(api_videos_url, headers=headers)
 
             ### EXTRACT INFO ###
             user_json = user_response.json()
@@ -142,7 +134,15 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
             #     {key: user[key] for key in ("id", "user_login", "user_name", "created_at", "thumbnail_url", "url")}
             #     for user in user_json["data"]
             # ]
-
             logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
+            logger.debug("------------------------")
 
-            channel.links = allHrefs[:VODS_MAX]
+            for u_json in user_json["data"]:
+                channel.links.append(u_json["id"])    
+                logger.debug(f"channel.links={channel.links}")
+            logger.debug("---")
+            logger.debug("---")
+            logger.debug("---")
+            logger.debug("---")
+
+        # channel.links = allHrefs[:VODS_MAX]

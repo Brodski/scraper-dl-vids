@@ -157,7 +157,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             affected_count = cursor.execute(sql, values)
             connection.commit()
             # logger.debug(f"locked: {values}")
-        return True
+            return True
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         connection.rollback()

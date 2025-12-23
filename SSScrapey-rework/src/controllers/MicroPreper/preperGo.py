@@ -7,6 +7,7 @@ from typing import List
 import controllers.MicroPreper.databasePreper as databasePreper
 import controllers.MicroPreper.seleniumPreper as seleniumPreper
 import controllers.MicroPreper.TodoPreper as todoPreper
+import controllers.MicroPreper.twitchApi as twitchApi
 
 from env_file import env_varz
 import os
@@ -55,7 +56,8 @@ def prepare(isDebug=False, retry_count=0):
     #                #
     ##################
     try:
-        scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels) # returns -> /mocks/initHrefsData.py
+        # scrapped_channels: List[ScrappedChannel] = seleniumPreper.scrape4VidHref(scrapped_channels) # returns -> /mocks/initHrefsData.py
+        scrapped_channels: List[ScrappedChannel] = twitchApi.updateVidHref(scrapped_channels)
     except Exception:
         tb = traceback.format_exc()
         logger.error("Something broke in our Firefox scraping :(")

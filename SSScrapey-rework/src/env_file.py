@@ -187,6 +187,7 @@ class EnvVars:
         
         self.PREP_NUM_CHANNELS        = env_varz.PREP_NUM_CHANNELS_OVERRIDE        if env_varz.PREP_NUM_CHANNELS_OVERRIDE        and int(env_varz.PREP_NUM_CHANNELS_OVERRIDE) >= 0        else env_varz.PREP_NUM_CHANNELS
         self.PREP_NUM_VOD_PER_CHANNEL = env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE if env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE and int(env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE) >= 0 else env_varz.PREP_NUM_VOD_PER_CHANNEL
+        self.DWN_BATCH_SIZE           = env_varz.DWN_BATCH_SIZE_OVERRIDE           if env_varz.DWN_BATCH_SIZE_OVERRIDE           and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0           else env_varz.PREP_NUM_VOD_PER_CHANNEL
 
 
 

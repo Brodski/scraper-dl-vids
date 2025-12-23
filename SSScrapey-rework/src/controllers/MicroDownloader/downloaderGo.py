@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import traceback
@@ -49,8 +50,12 @@ def goDownloadBatch(isDebug=False):
     # LOOP FOR X DOWNLOADS #
     ########################
 
+    logger.debug(f"env_varz.DWN_BATCH_SIZE_OVERRIDE={env_varz.DWN_BATCH_SIZE_OVERRIDE}")
+    logger.debug(f"os.getenv(DWN_BATCH_SIZE_OVERRIDE)={os.getenv('DWN_BATCH_SIZE_OVERRIDE')}")
+    logger.debug(f"env_varz.DWN_BATCH_SIZE={env_varz.DWN_BATCH_SIZE}")
+
     download_batch_size = int(env_varz.DWN_BATCH_SIZE)
-    download_batch_size = int(env_varz.DWN_BATCH_SIZE_OVERRIDE) if env_varz.DWN_BATCH_SIZE_OVERRIDE and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0 else download_batch_size
+    # download_batch_size = int(env_varz.DWN_BATCH_SIZE_OVERRIDE) if env_varz.DWN_BATCH_SIZE_OVERRIDE and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0 else download_batch_size
 
     vods_list                                  = downloader.getTodoFromDatabase() # "vod" is highest priority 'todo' vod
     magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)

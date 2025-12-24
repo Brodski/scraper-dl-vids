@@ -1,0 +1,40 @@
+
+
+
+
+@media (max-width: 768px) {
+    .channel_row img {
+        height: 38px;
+        width: 38px;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    tbody {
+        padding: 0;
+    }
+    th,
+    .table-subheader {
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+    td {
+        padding: 3px 6px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+    }
+    table td:not(.table_channel_name) {
+        font-size: 14px;
+    }
+    .channel_row h2 {
+        font-size: 16px;
+    }
+}

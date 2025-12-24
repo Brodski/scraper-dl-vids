@@ -95,6 +95,7 @@ def goTranscribeBatch(isDebug=False):
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("FINISHED! TOTAL TIME RUNNING= " + str(elapsed_time))
     logger.info("Completed: ")
+    
     ##############################
     # POST TRANSCRIBE DEBUG INFO #
     ##############################
@@ -105,10 +106,6 @@ def goTranscribeBatch(isDebug=False):
     for v in completed_vods_list:
         logger.info(f"COMPLETE: {v.channels_name_id} - {v.title} - id: {v.id}")
         # logger.info(f"Audio uploaded to: {env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
-    for t in Audio2Text.completed_uploaded_tscripts:
-        if t.endswith(".json"):
-            logger.debug(f"Transcripts @ {t}")
-            logger.debug(f"")
 
     logger.debug("gg ending")
     return "gg ending"
@@ -131,7 +128,10 @@ def transcribe(fancy_generator: Iterator[Vod], isDebug=False) -> MetadataShitty:
         return metadata_
     logger.debug(vod.print())
 
-    transcriber.setSemaphoreDb(vod) # Set TranscrptStatus = "transcribing"
+    is_pass = transcriber.setSemaphoreDb(vod) # Set TranscrptStatus = "transcribing"
+    if is_pass == "race_condition":
+        logger.info(f"'Race condition' check found issue on id: {vod.id}")
+        return transcribe(fancy_generator, isDebug)
 
     #######################
     # Do the transcribing #

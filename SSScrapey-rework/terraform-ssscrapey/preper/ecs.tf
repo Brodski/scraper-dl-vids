@@ -52,6 +52,12 @@ resource "aws_ecs_task_definition" "preper_task" {
         { name = "PREP_NUM_VOD_PER_CHANNEL_OVERRIDE"
           value = var.prep_num_vod_per_channel_override
         },        
+        { name = "TWITCH_CLIENT_ID"
+          value = var.sensitive_info.TWITCH_CLIENT_ID
+        },        
+        { name = "TWITCH_CLIENT_SECRET"
+          value = var.sensitive_info.TWITCH_CLIENT_SECRET
+        },        
       ]
       logConfiguration = {
         logDriver = "awslogs"

@@ -36,7 +36,7 @@ class Configz:
         self.disk           = 32.0                                                      # Gb
         self.image          = self.DOCKER
         self.storage_cost   = "0.3"
-        self.blacklist_gpus = ["GTX 1070", "RTX 2080 Ti", "GTX 1080 Ti", "RTX 2070S", "NVIDIA RTX PRO 4000 Blackwell" ] # Container not built for Blackwell -> "ERROR Transcribing vod: cuBLAS failed with status CUBLAS_STATUS_NOT_SUPPORTED"
+        self.blacklist_gpus = ["GTX 1070", "RTX 2080 Ti", "GTX 1080 Ti", "RTX 2070S", "NVIDIA RTX PRO 4000 Blackwell", "NVIDIA RTX PRO 4000 Blackwell" ] # Container not built for Blackwell -> "ERROR Transcribing vod: cuBLAS failed with status CUBLAS_STATUS_NOT_SUPPORTED"
         self.blacklist_ids  = []
         self.inet_down_cost = "0.05"
         self.inet_up_cost   = "0.05"

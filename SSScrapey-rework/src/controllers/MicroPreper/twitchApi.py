@@ -102,47 +102,31 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
     client_id = env_varz.TWITCH_CLIENT_ID
     CHANNELS_MAX = int(env_varz.PREP_NUM_CHANNELS)
     VODS_MAX = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
-    
-    # channel: ScrappedChannel = None
 
-    
-    MAX_TWITCH_QUERY = 100
+    ### QUERY STRING ###
+    for channel in scrapped_channels: # up to 100
+        channel: ScrappedChannel = channel
+        query_string = f"user_id={channel.twitch_num_id}"
 
+        api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'
+        headers = {'Authorization': f'Bearer {access_token}', 'Client-Id': client_id }
 
-    for i in range(0, len(scrapped_channels), MAX_TWITCH_QUERY):
-        ### SETUP AND EMPTY ##
-        logger.debug(f"-------- {i} --------")
-        scrapped_channels_batch100 = []
-        # We can only query 100 users per request
-        scrapped_channels_batch100: List[ScrappedChannel] = scrapped_channels[i:i+MAX_TWITCH_QUERY]
+        logger.debug(f"api_videos_url={api_videos_url}")
 
-        ### QUERY STRING ###
-        for channel in scrapped_channels_batch100: # up to 100
-            channel: ScrappedChannel = channel
-            query_string = f"user_id={channel.twitch_num_id}"
+        user_response = requests.get(api_videos_url, headers=headers)
 
-            api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'
-            headers = {'Authorization': f'Bearer {access_token}', 'Client-Id': client_id }
+        ### EXTRACT INFO ###
+        user_json = user_response.json()
+        # users_aux = [
+        #     {key: user[key] for key in ("id", "user_login", "user_name", "created_at", "thumbnail_url", "url")}
+        #     for user in user_json["data"]
+        # ]
+        # logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
+        # logger.debug("------------------------")
 
-            logger.debug(f"api_videos_url={api_videos_url}")
-
-            user_response = requests.get(api_videos_url, headers=headers)
-
-            ### EXTRACT INFO ###
-            user_json = user_response.json()
-            # users_aux = [
-            #     {key: user[key] for key in ("id", "user_login", "user_name", "created_at", "thumbnail_url", "url")}
-            #     for user in user_json["data"]
-            # ]
-            logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
-            logger.debug("------------------------")
-
-            for u_json in user_json["data"]:
-                channel.links.append(u_json["id"])    
-                logger.debug(f"channel.links={channel.links}")
-            logger.debug("---")
-            logger.debug("---")
-            logger.debug("---")
-            logger.debug("---")
+        for u_json in user_json["data"]:
+            channel.links.append(u_json["id"])    
+            logger.debug(f"channel.links={channel.links}")
+        logger.debug("---")
 
         # channel.links = allHrefs[:VODS_MAX]

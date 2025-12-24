@@ -129,10 +129,6 @@ def calculate_vod_metrics(metadata_array: List[MetadataShitty]) -> tuple[int, Co
     
     return vod_total_seconds, status_counter
 
-# def format_time_message(label: str, seconds: float) -> str:
-#     secs, mins, hours = format_time_units(seconds)
-#     return f"{label}: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours"
-
 def build_summary_lines(report_type: str, total_expected: int, actual_count: int, vod_total_seconds: int, elapsed_time: float, status_counter: Counter) -> List[str]:
     # report_type --> Downloader or Transcriber
     
@@ -140,7 +136,8 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     elapsed_time      = elapsed_time if elapsed_time != 0 else -1  # divide by zero :O
 
     summary_lines = [
-        f"{report_type} Report Summary:",
+        f"*** {report_type} Report Summary: ***",
+        f"{'LOCAL GPU RUN' if env_varz.LOCAL_GPU_RUN else ''}",
         f"Total expected items: {total_expected}",
         f"Total actual item {actual_count}"
     ]
@@ -191,7 +188,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
 
     elapsed_time      = int(elapsed_time) if elapsed_time is not None else -1
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary   = f"\n🔥🔥 TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours🔥🔥\n"
+    heading_summary   = f"\n🔥🔥 TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours🔥🔥"
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_array_global)
 
     summary_lines = build_summary_lines("Download", env_varz.DWN_BATCH_SIZE, len(metadata_array_global), vod_total_seconds, elapsed_time, status_counter)
@@ -199,11 +196,11 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     cli = find_aws_logging_info()
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
-    sendEmail(f"Downloader {env_varz.ENV} report", report_message)
+    is_local = " local-" if env_varz.LOCAL_GPU_RUN else ""
+    sendEmail(f"Downloader {is_local}{env_varz.ENV} report", report_message)
     logger.info(report_message)
 
-def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_uploaded_tscripts, elapsed_time):
-
+def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_uploaded_tscripts: dict[int, str], elapsed_time):
 
     msg_lines = []
     
@@ -232,11 +229,10 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         runtime_model_ts  = int(metadata.runtime_model_ts) if metadata.runtime_model_ts else 0
         runtime_ts        = int(metadata.runtime_ts)        if metadata.runtime_ts else 0
         
-        transcript_url = None
-        for t in completed_uploaded_tscripts:
-            if t.endswith(".json"):
-                transcript_url = t
-        
+        transcript_url = ""
+        if vod_title != "(no vod)":
+            transcript_url = completed_uploaded_tscripts[vod_id]
+            
         msg_lines.append(
             f"-------------{idx}--------------\n"
             f"Status: {metadata.status}\n"
@@ -259,10 +255,12 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
 
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_arr)
     
+
     summary_lines = build_summary_lines("Transcriber", env_varz.TRANSCRIBER_VODS_PER_INSTANCE, len(metadata_arr), vod_total_seconds, elapsed_time, status_counter)
 
     cli = find_aws_logging_info_transcriber()
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
-    sendEmail(f"Transcriber {env_varz.ENV} report", report_message)
+    is_local = " local-" if env_varz.LOCAL_GPU_RUN else ""
+    sendEmail(f"Transcriber {is_local}{env_varz.ENV} report", report_message)
     logger.info(report_message)

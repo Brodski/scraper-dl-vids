@@ -131,6 +131,16 @@ def setSemaphoreDb(vod: Vod):
     t_status = "transcribing"
     try:
         with connection.cursor() as cursor:
+            ### PART 1 ###
+            # TODO, sloppy way to hope we dont race condition transcriptions (see lockVodDb() in downloader)
+            sql = f"SELECT Id, ChannelNameId, TranscriptStatus FROM Vods WHERE Id = {vod.id};"
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            
+            ### PART 2 ###
+            if (result is None or result[2] != "audio2text_need"):
+                return "race_condition"
+
             sql = """
                 UPDATE Vods
                 SET TranscriptStatus = %s
@@ -244,7 +254,8 @@ def uploadCaptionsToS3(saved_caption_files: List[str], vod: Vod):
         try:
             s3.upload_file(file_abs, env_varz.BUCKET_NAME, s3CapFileKey, ExtraArgs={ 'ContentType': content_type })
             transcripts_s3_key_arr.append(s3CapFileKey)
-            Audio2Text.completed_uploaded_tscripts.append(f"{env_varz.BUCKET_DOMAIN}/{s3CapFileKey}")
+            if s3CapFileKey.endswith(".json"):
+                Audio2Text.completed_uploaded_tscripts[vod.id] = f"{env_varz.BUCKET_DOMAIN}/{s3CapFileKey}"
         except Exception as e:
             logger.error(f"failed to upload: {file_abs}. Error {str(e)}")
 

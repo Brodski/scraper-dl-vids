@@ -75,20 +75,20 @@ def getExistingChannelsFromDB(scrapped_channels: List[ScrappedChannel]):
         scrapped_id = {ch.name_id for ch in scrapped_channels}
         all_channels_minus_scrapped = [ch1 for ch1 in channels_all_in_db if ch1.name_id not in scrapped_id]
 
-        logger.debug("")
+        logger.debug("-")
         logger.debug("scrapped_channels:")
         logger.debug([ch.name_id for ch in scrapped_channels])
-        logger.debug("")
+        logger.debug("-")
         logger.debug("matching_channels (no one new: the scrapped_channels has no new entries)")
         logger.debug([ch.name_id for ch in matching_channels])
-        logger.debug("")
+        logger.debug("-")
         logger.debug("channels_all_in_db:")
         logger.debug([ch.name_id for ch in channels_all_in_db])
-        logger.debug("")
+        logger.debug("-")
         logger.debug("all_channels_minus_scrapped:")
         logger.debug([ch.name_id for ch in all_channels_minus_scrapped])
 
-        logger.debug("")
+        logger.debug("-")
         return all_channels_minus_scrapped
 
 def getNewChannelsNotInDb(scrapped_channels: List[ScrappedChannel]):
@@ -288,7 +288,7 @@ def updateVodsDb(scrapped_channels: List[ScrappedChannel]):
             logger.debug("Links: " + str(vod_ids))
             logger.debug("Updating priorities on IDs (already in DB): " +  str((previous_existing_ids)))
             logger.debug("Adding new IDs :" +  str(non_existing_ids))
-            logger.debug("")
+            logger.debug("-")
 
             # Add new vods to the Vods table
             if non_existing_ids:

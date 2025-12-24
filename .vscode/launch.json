@@ -24,7 +24,7 @@
             "justMyCode": true,
             "args": [
                 "--env",
-                "prod"
+                "local"
             ],
         },
         {

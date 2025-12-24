@@ -30,5 +30,7 @@ variable "sensitive_info" {
     DATABASE_PORT           = string
     DATABASE                = string
     VAST_API_KEY            = string
+    TWITCH_CLIENT_ID        = string
+    TWITCH_CLIENT_SECRET    = string    
   })
 }

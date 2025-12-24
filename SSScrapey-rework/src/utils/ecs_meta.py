@@ -19,7 +19,7 @@ def find_aws_logging_info():
         if not metadata_uri:
             # raise EnvironmentError("ECS_CONTAINER_METADATA_URI_V4 is not set")
             logger.info("ECS_CONTAINER_METADATA_URI_V4 is not set")
-            return 
+            return  "ECS_CONTAINER_METADATA_URI_V4 is not set"
 
         response = requests.get(f"{metadata_uri}/task")
         response.raise_for_status()

@@ -99,6 +99,9 @@ def download(fancy_generator: Iterator[Vod], isDebug=False):
         if not isSuccess:
             logger.debug("No VODS todo!")
             return "No VODS todo!"
+        if isSuccess == "race_condition":
+            logger.info(f"'Race condition' check found issue on id: {vod.id}. Go again")
+            return download(fancy_generator, isDebug)
 
         logger.debug(f"Going to download: {vod.channels_name_id} - {vod.id}")
 

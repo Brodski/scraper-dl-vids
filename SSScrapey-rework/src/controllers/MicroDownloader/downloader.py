@@ -139,6 +139,8 @@ def lockVodDb(vod: Vod, isDebug=False):
     transcript_dl_status = "downloading"
     try:
         with connection.cursor() as cursor:
+            ### PART 1 ###
+            # TODO, sloppy way to hope we dont race condition downloads (see setSemaphoreDb() in transcriber)
             sql = f"SELECT Id, ChannelNameId, TranscriptStatus FROM Vods WHERE Id = {vod.id};"
             cursor.execute(sql)
             result = cursor.fetchone()  # Use fetchone() since we expect only one row for a specific id
@@ -146,8 +148,12 @@ def lockVodDb(vod: Vod, isDebug=False):
             # id = result[0]
             # channel_name_id = result[1]
             # transcript_status = result[2]
-            if (result is None or result[2] != "todo") and isDebug != True:
+            if result is None:
                 return False
+            if result[2] != "todo" and isDebug != True:
+                return "race_condition"
+            
+            ### PART 2 ###
             sql = """
                 UPDATE Vods
                 SET TranscriptStatus = %s
@@ -157,7 +163,7 @@ def lockVodDb(vod: Vod, isDebug=False):
             affected_count = cursor.execute(sql, values)
             connection.commit()
             # logger.debug(f"locked: {values}")
-        return True
+            return True
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         connection.rollback()
@@ -259,7 +265,7 @@ def downloadTwtvVidFAST(vod: Vod, is_hls_retry=False):
         logger.debug(f"     YT_DLP: downloading - {vod.channels_name_id}, vodId: {vod.id} ")
         logger.debug("     YT_DLP: downloading url: " + vidUrl)
         logger.debug("\n     yt_dlp_cmd: " + str(yt_dlp_cmd))
-        logger.debug("")
+        logger.debug("-")
         metax, stderr, returncode = _execSubprocCmd(yt_dlp_cmd)
         meta = json.loads(metax)
         if returncode == 1 and "ERROR: Initialization fragment found after media fragments, unable to download" in stderr:
@@ -270,7 +276,7 @@ def downloadTwtvVidFAST(vod: Vod, is_hls_retry=False):
         traceback.print_exc()
         raise
     runtime = time.time() - start_time
-    logger.info('\n    (dlTwtvVid) Download complete: time (seconds)=' + str(int(runtime)))
+    logger.info('    (dlTwtvVid) Download complete: time (seconds)=' + str(int(runtime)))
     logger.info('    (dlTwtvVid) Download complete: time (seconds)=' + str(int(runtime)))
     logger.info('    (dlTwtvVid) Download complete: time (seconds)=' + str(int(runtime)))
     return meta, runtime
@@ -648,13 +654,14 @@ def updateErrorVod(vod: Vod, error_msg: str):
         connection.close()
 
 def cleanUpDownloads(downloaded_metadata):
-    if env_varz.ENV == "local":
+    # if env_varz.ENV == "local" or env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == "True" or env_varz.DWN_IS_SKIP_COMPRESS_AUDIO == True:
+    if env_varz.ENV == "local" or env_varz.DWN_IS_SKIP_DONT_DELETE == "True" or env_varz.DWN_IS_SKIP_DONT_DELETE == True:
         logger.debug("Local Env. NOT cleaning up files")
         return
-    extenstions = ['.mp3', '.mp4', '.opus']
+    extensions = ['.mp3', '.mp4', '.opus']
     filename = downloaded_metadata.get('_filename') 
     last_dot_index = filename.rfind('.')
-    for ex in extenstions:
+    for ex in extensions:
         file_ = filename[:last_dot_index] + ex
         file_abs = os.path.abspath(file_)
         if os.path.exists(file_abs) and os.path.isfile(file_abs):

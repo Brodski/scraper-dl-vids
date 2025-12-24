@@ -82,6 +82,7 @@ class MetadataP:
         logger.info(body)
 
         sendEmail(subject, body)
+        logger.info(f"TOTAL RUNTIME = {elapsed_time_MIN} min")
         return body
 
 

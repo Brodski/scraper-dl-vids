@@ -9,6 +9,7 @@ class ScrappedChannel:
     logo         = str   # "https://static-cdn.jtvnw.net/jtv_user_pictures/e4d9bf96-311d-487a-b5eb-9f9a94e0f795-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
     current_rank = int   # 22
     twitchurl    = str   # twitchurl
+    twitch_num_id = str
 
     viewminutes     = int
     streamedminutes = int
@@ -31,7 +32,7 @@ class ScrappedChannel:
         self.name_id                 = kwargs.get('name_id')
         self.displayname             = kwargs.get('displayname')
         self.language                = kwargs.get('language')
-        self.links                   = kwargs.get('links')
+        self.links                   = kwargs.get('links') or []
         self.logo                    = kwargs.get('logo')
         self.current_rank            = kwargs.get('current_rank')
         self.twitchurl               = kwargs.get('twitchurl')
@@ -49,6 +50,7 @@ class ScrappedChannel:
         self.previousmaxviewers      = kwargs.get('previousmaxviewers')
         self.previousavgviewers      = kwargs.get('previousavgviewers')
         self.previousfollowergain    = kwargs.get('previousfollowergain')
+        self.twitch_num_id           = kwargs.get('twitch_num_id')
 
     def print(self):
         print(self)

@@ -42,6 +42,9 @@ class EnvVars:
         self.DATABASE_PORT = None
         self.TWITCH_CLIENT_ID = None
         self.TWITCH_CLIENT_SECRET = None
+        #
+        self.LOCAL_GPU_RUN = None
+        self.DWN_IS_SKIP_DONT_DELETE = None
 
 
 

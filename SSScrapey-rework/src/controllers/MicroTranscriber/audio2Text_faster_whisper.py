@@ -28,7 +28,7 @@ class Audio2Text:
     current_num = None
     download_batch_size = None
     model = None
-    completed_uploaded_tscripts = []
+    completed_uploaded_tscripts = {}
 
     @classmethod
     def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted]) -> tuple[List[str], MetadataShitty]:

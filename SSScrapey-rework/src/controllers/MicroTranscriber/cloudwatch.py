@@ -45,7 +45,7 @@ class Cloudwatch(logging.Handler):
         # Create Log Stream
         try:
             res2 = self.cw_client.create_log_stream(logGroupName=self.LOG_GROUP_NAME, logStreamName=self.LOG_STREAM_NAME)
-            print('res2', res2)
+            # print('res2', res2)
         except self.cw_client.exceptions.ResourceAlreadyExistsException as e:
             print('\nLog stream already exists:', self.LOG_STREAM_NAME)
         except Exception as e:

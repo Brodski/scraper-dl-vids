@@ -109,6 +109,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
         if channel.twitch_num_id == None or channel.twitch_num_id == "None" or channel.twitch_num_id == "":
             logger.debug(f"Skipping {channel.name_id}. twitch_num_id is None for some reason")
             continue
+
         query_string = f"user_id={channel.twitch_num_id}"
 
         api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'

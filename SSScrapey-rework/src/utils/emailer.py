@@ -1,5 +1,6 @@
 from collections import Counter
 import os
+import time
 import traceback
 from typing import List
 import boto3
@@ -11,12 +12,17 @@ from utils.ecs_meta import find_aws_logging_info_transcriber
 from collections import Counter
 from typing import List, Callable, Optional
 
+from enum import Enum
+from models.Vod import Vod
+from env_file import env_varz
+
 def logger():
     pass
 
 logger: logging.Logger = LoggerConfig("micro").get_logger()
 
 def sendEmail(subject, body):
+    time.sleep(1.1) # SES sends max 1 email a sec for me
     ses = boto3.client('ses', region_name='us-east-1')
 
     # Send the email
@@ -40,12 +46,9 @@ def sendEmail(subject, body):
             }
         }
     )
-    # print(response)
-    # print("Email sent: " + subject)
-
-from enum import Enum
-from models.Vod import Vod
-from env_file import env_varz
+    print(response)
+    print("Email sent: " + subject)
+    return
 
 class Status(Enum):
     FAILED = "failed"

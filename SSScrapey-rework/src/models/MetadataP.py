@@ -67,12 +67,12 @@ class MetadataP:
             f"Elapsed Time: {self.elapsed_time} = {elapsed_time_MIN} min",
             f"New Channels: {msg_chan}",
             # f"New VODs: \n{self.new_vods}",
-            f"msg_vods_updated (prev_existing = not new): \n{msg_vods_updated}",
             f"Deleted Old Items count: {self.deleted_olds_num}",
             f"Expected PREP_NUM_CHANNELS: {env_varz.PREP_NUM_CHANNELS}",
             f"Expected PREP_NUM_VOD_PER_CHANNEL: {env_varz.PREP_NUM_VOD_PER_CHANNEL}",
             f"Expected num chans updated via Sully updated : {self.num_channels_updated_via_sully}",
             f"Actual chan's updated via Sully updated : {self.num_channels_updated_via_sully_actual}",
+            f"msg_vods_updated (prev_existing = not new): \n{msg_vods_updated}",
             f"cli = \n{cli}",
         ]
 
@@ -84,12 +84,3 @@ class MetadataP:
         sendEmail(subject, body)
         logger.info(f"TOTAL RUNTIME = {elapsed_time_MIN} min")
         return body
-
-
-    # Example methods
-    def set(self, key, value):
-        self.settings[key] = value
-    def get(self, key):
-        return self.settings.get(key)
-    def info(self):
-        return f"env={self.environment}, version={self.version}"

@@ -134,7 +134,9 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     
     vod_total_seconds = int(vod_total_seconds)
     elapsed_time      = elapsed_time if elapsed_time != 0 else -1  # divide by zero :O
-
+    seconds_per_vod   = (elapsed_time / actual_count) if actual_count != 0 else -1  # divide by zero :O
+    min_per_vod       = seconds_per_vod / 60
+    hour_per_vod      = min_per_vod / 60
     summary_lines = [
         f"*** {report_type} Report Summary: ***",
         f"{'LOCAL GPU RUN' if env_varz.LOCAL_GPU_RUN else ''}",
@@ -149,7 +151,13 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     avg_secs, avg_mins, avg_hours = format_time_units(average_runtime)
 
 
-    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours = {vod_total_mins:.2f} min = {vod_total_secs:.2f} sec")
+    summary_lines.append(f"elapsed_time = {elapsed_time}")
+    summary_lines.append(f"actual_count = {actual_count}")
+    summary_lines.append(f"x̄ time_per_vod = {hour_per_vod:.2f} hours")
+    summary_lines.append(f"               = {min_per_vod:.2f} min")
+    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours")
+    summary_lines.append(f"                  = {vod_total_mins:.2f} min")
+    summary_lines.append(f"                  = {vod_total_secs:.2f} sec")
     summary_lines.append(f"📐 ratio = {avg_secs:.2f} vod secs per compute seconds")
     summary_lines.append(f"          = vod min / compute min = vod hours / compute hour")
     summary_lines.append(f"          = vod_total_seconds / total_runtime = {vod_total_seconds:.2f} / {elapsed_time:.2f}")
@@ -196,7 +204,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     cli = find_aws_logging_info()
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
-    is_local = " local-" if env_varz.LOCAL_GPU_RUN else ""
+    is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
     sendEmail(f"Downloader {is_local}{env_varz.ENV} report", report_message)
     logger.info(report_message)
 
@@ -229,8 +237,8 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         runtime_model_ts  = int(metadata.runtime_model_ts) if metadata.runtime_model_ts else 0
         runtime_ts        = int(metadata.runtime_ts)        if metadata.runtime_ts else 0
         
-        transcript_url = ""
-        if vod_title != "(no vod)":
+        transcript_url = "(failed transcription?)"
+        if vod_title != "(no vod)" and vod_id in completed_uploaded_tscripts:
             transcript_url = completed_uploaded_tscripts[vod_id]
             
         msg_lines.append(
@@ -261,6 +269,6 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     cli = find_aws_logging_info_transcriber()
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
-    is_local = " local-" if env_varz.LOCAL_GPU_RUN else ""
+    is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
     sendEmail(f"Transcriber {is_local}{env_varz.ENV} report", report_message)
     logger.info(report_message)

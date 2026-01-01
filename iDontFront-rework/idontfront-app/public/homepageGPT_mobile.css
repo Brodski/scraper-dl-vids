@@ -1,0 +1,123 @@
+
+
+
+
+@media (max-width: 768px) {
+    .streamer-name-linkXXX img{
+        order: 2;
+        margin-left: 16px;
+    }
+
+    td[data-label]::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #d3d3d3;
+        margin-right: 10px;
+        text-align: left;
+        width: 50%;
+    }
+
+
+
+    #streamer-table {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    table, thead, tbody, tr, td, th {
+        display: block;
+        width: 100%;
+        border: none;
+        box-sizing: border-box;
+    }
+    thead {
+        display: none;
+    }
+
+    tbody {
+        padding: 0;
+    }
+
+    tbody tr {
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    tbody tr:hover {
+        background-color: #333;
+    }
+
+    tbody td {
+        margin-bottom: 10px;
+        padding: 0;
+        font-size: 16px;
+    }
+
+    tbody td:last-child {
+        margin-bottom: 0;
+    }
+
+    .streamer-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+
+    td[data-label="Streamer"] {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    td[data-label="Streamer"] .streamer-pic {
+        margin-right: 15px;
+    }
+
+    td[data-label] {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #444;
+    }
+
+    /* td[data-label]:last-child {
+        border-bottom: none;
+    } */
+
+    td[data-label]::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #d3d3d3;
+        margin-right: 10px;
+        text-align: left;
+        width: 50%;
+    }
+
+    td {
+        text-align: right;
+        color: #ffffff;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+    }
+
+    table td:not(.table_channel_name) {
+        font-size: 14px;
+    }
+}
+
+
+

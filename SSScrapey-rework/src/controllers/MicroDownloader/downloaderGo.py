@@ -60,7 +60,7 @@ def goDownloadBatch(isDebug=False):
     vods_list                                  = downloader.getTodoFromDatabase() # "vod" is highest priority 'todo' vod
     magical_ordered_map: Dict[int, List[Vod]]  = utils_generic.convertToFancyMap(vods_list)
     fancy_generator                            = utils_generic.getFromFancyMap(magical_ordered_map)      # <--- smart
-
+    dl_meta                                    = None
 
     for i in range(download_batch_size):
         logger.debug("===========================================")

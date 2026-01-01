@@ -203,9 +203,9 @@ def downloadAudio(vod: Vod):
     relative_filename = WHSP_A2T_ASSETS_AUDIO +  audio_name
     relative_filename_aux = relative_filename.rsplit(".opus", 1)
     relative_filename_mp4 = ".mp4".join(relative_filename_aux)
-    logger.debug("relative_filename_mp4------------- " +   relative_filename_mp4)
+    # logger.debug("relative_filename_mp4------------- " +   relative_filename_mp4)
     logger.debug("audio_url: " + str( audio_url))
-    logger.debug("audio_name: " + str( audio_name))
+    # logger.debug("audio_name: " + str( audio_name))
     
     # Check if file is already present
     if os.path.exists(relative_filename):
@@ -219,12 +219,13 @@ def downloadAudio(vod: Vod):
     try:
         relative_path, headers  = urllib.request.urlretrieve(audio_url, relative_filename) # audio_url = Calculated-v123123.ogg
     except:
-        stack_trace = traceback.format_exc()
+        # stack_trace = traceback.format_exc()
         logger.error("    (downloadAudio) FAILED!!!! (audio_url, relative_filename) =" + str( (audio_url, relative_filename)))
-        logger.error(stack_trace)
-        logger.error("    (downloadAudio) FAILED sleeping 1 min for some reason....")
-        time.sleep(60)
-        return None
+        # logger.error(stack_trace)
+        logger.error("    (downloadAudio) FAILED sleeping 20 sec for some reason....")
+        time.sleep(20)
+        raise
+        # return None
 
     return relative_path
 

@@ -106,13 +106,16 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
     ### QUERY STRING ###
     for channel in scrapped_channels: # up to 100
         channel: ScrappedChannel = channel
+        if channel.twitch_num_id == None or channel.twitch_num_id == "None" or channel.twitch_num_id == "":
+            logger.debug(f"Skipping {channel.name_id}. twitch_num_id is None for some reason")
+            continue
+
         query_string = f"user_id={channel.twitch_num_id}"
 
         api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'
         headers = {'Authorization': f'Bearer {access_token}', 'Client-Id': client_id }
 
         logger.debug(f"api_videos_url={api_videos_url}")
-
         user_response = requests.get(api_videos_url, headers=headers)
 
         ### EXTRACT INFO ###
@@ -126,7 +129,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
 
         for u_json in user_json["data"]:
             channel.links.append(u_json["id"])    
-            logger.debug(f"channel.links={channel.links}")
+        logger.debug(f"channel.links={channel.links}")
         logger.debug("---")
 
         # channel.links = allHrefs[:VODS_MAX]

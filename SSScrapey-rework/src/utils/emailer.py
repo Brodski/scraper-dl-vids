@@ -204,11 +204,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     cli = find_aws_logging_info()
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
-<<<<<<< HEAD
     is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
-=======
-    is_local = " local-" if env_varz.LOCAL_GPU_RUN else ""
->>>>>>> 36f076c0511bcf2c8a171caea233dd96baeaea8f
     sendEmail(f"Downloader {is_local}{env_varz.ENV} report", report_message)
     logger.info(report_message)
 

@@ -157,10 +157,8 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
 
     summary_lines.append(f"elapsed_time = {elapsed_time_hours:.2f} hours")
     summary_lines.append(f"actual_count = {actual_count}")
-    summary_lines.append(f"x̄ time_per_vod = {hour_per_vod:.2f} hours")
-    summary_lines.append(f"               = {min_per_vod:.2f} min")
-    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours")
-    summary_lines.append(f"                  = {vod_total_mins:.2f} min")
+    summary_lines.append(f"x̄ time_per_vod = {hour_per_vod:.2f} hours = {min_per_vod:.2f} min")
+    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours = {vod_total_mins:.2f} min")
     # summary_lines.append(f"                  = {vod_total_secs:.2f} sec")
     summary_lines.append(f"📐 ratio = {avg_secs:.2f} vod secs per compute seconds")
     # summary_lines.append(f"          = vod min / compute min = vod hours / compute hour")
@@ -274,7 +272,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
 
     cli = find_aws_logging_info_transcriber()
 
-    report_message = "\n".join(heading_aux + [heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
+    report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
     is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
     sendEmail(f"Transcriber {is_local}{env_varz.ENV} report", report_message)

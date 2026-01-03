@@ -18,6 +18,7 @@ class Configz:
         self.VAST_API_KEY                  = os.environ.get('VAST_API_KEY')
         self.TRANSCRIBER_NUM_INSTANCES     = int(os.environ.get('TRANSCRIBER_NUM_INSTANCES'))
         self.TRANSCRIBER_VODS_PER_INSTANCE = int(os.environ.get('TRANSCRIBER_VODS_PER_INSTANCE'))
+        self.TRANSCRIBER_MODEL_SIZE_OVERRIDE = os.environ.get('TRANSCRIBER_MODEL_SIZE_OVERRIDE')
         self.AWS_SECRET_ACCESS_KEY         = os.environ.get('MY_AWS_SECRET_ACCESS_KEY')
         self.AWS_ACCESS_KEY_ID             = os.environ.get('MY_AWS_ACCESS_KEY_ID')
         self.ENV                           = os.environ.get('ENV')

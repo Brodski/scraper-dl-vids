@@ -137,6 +137,7 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     
     vod_total_seconds = int(vod_total_seconds)
     elapsed_time      = elapsed_time if elapsed_time != 0 else -1  # divide by zero :O
+    elapsed_time_hours = elapsed_time / 3600
     seconds_per_vod   = (elapsed_time / actual_count) if actual_count != 0 else -1  # divide by zero :O
     min_per_vod       = seconds_per_vod / 60
     hour_per_vod      = min_per_vod / 60
@@ -154,17 +155,15 @@ def build_summary_lines(report_type: str, total_expected: int, actual_count: int
     avg_secs, avg_mins, avg_hours = format_time_units(average_runtime)
 
 
-    summary_lines.append(f"elapsed_time = {elapsed_time}")
+    summary_lines.append(f"elapsed_time = {elapsed_time_hours:.2f} hours")
     summary_lines.append(f"actual_count = {actual_count}")
-    summary_lines.append(f"x̄ time_per_vod = {hour_per_vod:.2f} hours")
-    summary_lines.append(f"               = {min_per_vod:.2f} min")
-    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours")
-    summary_lines.append(f"                  = {vod_total_mins:.2f} min")
-    summary_lines.append(f"                  = {vod_total_secs:.2f} sec")
+    summary_lines.append(f"x̄ time_per_vod = {hour_per_vod:.2f} hours = {min_per_vod:.2f} min")
+    summary_lines.append(f"∑ Vod total hours = {vod_total_hours:.2f} hours = {vod_total_mins:.2f} min")
+    # summary_lines.append(f"                  = {vod_total_secs:.2f} sec")
     summary_lines.append(f"📐 ratio = {avg_secs:.2f} vod secs per compute seconds")
-    summary_lines.append(f"          = vod min / compute min = vod hours / compute hour")
-    summary_lines.append(f"          = vod_total_seconds / total_runtime = {vod_total_seconds:.2f} / {elapsed_time:.2f}")
-    summary_lines.append(f"          ---> (x seconds completed per 1 second of compute)")
+    # summary_lines.append(f"          = vod min / compute min = vod hours / compute hour")
+    # summary_lines.append(f"          = vod_total_seconds / total_runtime = {vod_total_seconds:.2f} / {elapsed_time:.2f}")
+    # summary_lines.append(f"          ---> (x seconds completed per 1 second of compute)")
     
     for status, count in status_counter.items():
         summary_lines.append(f"{status}: {count}")
@@ -192,14 +191,15 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
             f"Channel ID: {channel}\n"
             f"VOD Title: {vod_title}\n"
             f"VOD ID: {vod_id}\n"
-            f"runtime_ffmpeg_dl (sec): {float(runtime_ffmpeg_dl):.2f}\n"
-            f"runtime_dl (sec): {float(runtime_dl):.2f}\n"
+            f"runtime: {float(runtime_ffmpeg_dl + runtime_dl):.2f}\n"
+            f"       runtime_ffmpeg_dl (sec): {float(runtime_ffmpeg_dl):.2f}\n"
+            f"       runtime_dl (sec): {float(runtime_dl):.2f}\n"
             f"Message: {message}\n"
         )
 
     elapsed_time      = int(elapsed_time) if elapsed_time is not None else -1
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary   = f"\n🔥🔥 TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours🔥🔥"
+    heading_summary   = f"\n⬇️ TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours⬇️"
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_array_global)
 
     summary_lines = build_summary_lines("Download", env_varz.DWN_BATCH_SIZE, len(metadata_array_global), vod_total_seconds, elapsed_time, status_counter)
@@ -217,16 +217,16 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     
     # GPU & CPU info
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
-    msg_lines.extend([
+    msg_lines.append([
         "******* GPU *******",
         f"💣 CONTAINER_ID! {os.getenv('CONTAINER_ID')} 💣\n"
         f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
-        f"logical_cores: {logical_cores}\n"
-        f"total_vram: {total_vram}\n"
-        f"cpu_manufacturer: {cpu_manufacturer}\n"
-        f"cpu_model: {cpu_model}\n"
-        f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
-        f"cpu_cache: {cpu_cache}\n",
+        # f"logical_cores: {logical_cores}\n"
+        # f"total_vram: {total_vram}\n"
+        # f"cpu_manufacturer: {cpu_manufacturer}\n"
+        # f"cpu_model: {cpu_model}\n"
+        # f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
+        # f"cpu_cache: {cpu_cache}\n",
         "*******************"
     ])
     
@@ -249,20 +249,21 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
             f"Status: {metadata.status}\n"
             f"Vod Duration: {vod.duration_string}\n"
             f"Total Transcription time: {runtime_model_ts + runtime_ts}s\n"     
-            f"      Model load time: {runtime_model_ts}s\n"
-            f"      Whisper transcription time: {runtime_ts}s\n"    
+            # f"      Model load time: {runtime_model_ts}s\n"
+            # f"      Whisper transcription time: {runtime_ts}s\n"    
             f"Channel ID: {channel}\n"
-            f"      VOD Title: {vod_title}\n"
-            f"      VOD ID: {vod_id}\n"
-            f"      Whisper Lang: {metadata.whsp_lang}\n"
-            f"Device: {metadata.device}\n"
+            f"      Title: {vod_title}\n"
+            f"      ID: {vod_id}\n"
+            # f"      Whisper Lang: {metadata.whsp_lang}\n"
+            # f"Device: {metadata.device}\n"
             f"Transcript @: {transcript_url}\n"
             f"Message: {metadata.msg}\n"
         )
 
 
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary = f"\n 🔥🔥TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours 🔥🔥\n"
+
+    heading_summary = f"\n📜TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours 📜\n"
 
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_arr)
     
@@ -270,6 +271,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     summary_lines = build_summary_lines("Transcriber", env_varz.TRANSCRIBER_VODS_PER_INSTANCE, len(metadata_arr), vod_total_seconds, elapsed_time, status_counter)
 
     cli = find_aws_logging_info_transcriber()
+
     report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
     
     is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""

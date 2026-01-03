@@ -38,6 +38,7 @@ module "transcriber" {
     sensitive_info              = var.sensitive_info
     transcriber_schedule_cron   = var.transcriber_schedule_cron
     transcriber_num_instances   = var.transcriber_num_instances # Note, we also have a muliplier in `/SScrapey-rework/.env_public_prod`
-    transcriber_vods_per_instance = var.transcriber_vods_per_instance
-    docker_image                = var.transcriber_docker_image
+    transcriber_vods_per_instance     = var.transcriber_vods_per_instance
+    docker_image                      = var.transcriber_docker_image
+    transcriber_model_size_override   = var.transcriber_model_size_override
 }

@@ -13,6 +13,9 @@ variable "transcriber_vods_per_instance" {
 variable "transcriber_schedule_cron" {
   type = string
 }
+variable "transcriber_model_size_override" {
+  type = string
+}
 variable "IS_VASTAI_CREATE_INSTANCE" {
   type = string
   default = "true"

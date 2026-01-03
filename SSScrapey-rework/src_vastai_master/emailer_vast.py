@@ -77,8 +77,9 @@ class MetadataVast():
             msg = ""
             for thing in items:
                 for key, value in thing.items():
-                    msg += f"{key}: {value}\n"
-                msg += "\n"
+                    if key in ("id", "exec_time_minutes", "cpu_name", "gpu_name", "status_msg", "actual_status", "geolocation", "dph_total"):
+                        msg += f"{key}: {value}\n"
+                        msg += "\n"
             return msg
         ######################
         ### AWS CLI HELPER ###

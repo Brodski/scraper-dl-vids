@@ -46,6 +46,9 @@ variable "transcriber_num_instances" {
 variable "transcriber_vods_per_instance" {
   type = string
 }
+variable "transcriber_model_size_override" {
+  type = string
+}
 #############################
 # Downloader  num instances #
 #############################

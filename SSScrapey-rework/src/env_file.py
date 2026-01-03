@@ -160,6 +160,7 @@ class EnvVars:
         self.WHSP_COMPUTE_TYPE              = env_vars['WHSP_COMPUTE_TYPE']
         self.WHSP_CPU_THREADS               = env_vars['WHSP_CPU_THREADS']
         self.WHSP_MODEL_SIZE                = env_vars['WHSP_MODEL_SIZE']
+        self.TRANSCRIBER_MODEL_SIZE_OVERRIDE  = os.getenv('TRANSCRIBER_MODEL_SIZE_OVERRIDE')
         self.WHSP_IS_CLOUDWATCH             = env_vars['WHSP_IS_CLOUDWATCH']
         self.WHSP_IS_BIG_FILES_ENABLED      = env_vars['WHSP_IS_BIG_FILES_ENABLED']
         self.TRANSCRIBER_NUM_INSTANCES      = int(os.getenv("TRANSCRIBER_NUM_INSTANCES") if os.getenv("TRANSCRIBER_NUM_INSTANCES") else 1)
@@ -190,9 +191,11 @@ class EnvVars:
         
         self.PREP_NUM_CHANNELS        = env_varz.PREP_NUM_CHANNELS_OVERRIDE        if env_varz.PREP_NUM_CHANNELS_OVERRIDE        and int(env_varz.PREP_NUM_CHANNELS_OVERRIDE) >= 0        else env_varz.PREP_NUM_CHANNELS
         self.PREP_NUM_VOD_PER_CHANNEL = env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE if env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE and int(env_varz.PREP_NUM_VOD_PER_CHANNEL_OVERRIDE) >= 0 else env_varz.PREP_NUM_VOD_PER_CHANNEL
-        self.DWN_BATCH_SIZE           = env_varz.DWN_BATCH_SIZE_OVERRIDE           if env_varz.DWN_BATCH_SIZE_OVERRIDE           and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0           else env_varz.PREP_NUM_VOD_PER_CHANNEL
+        self.DWN_BATCH_SIZE           = env_varz.DWN_BATCH_SIZE_OVERRIDE           if env_varz.DWN_BATCH_SIZE_OVERRIDE           and int(env_varz.DWN_BATCH_SIZE_OVERRIDE) >= 0           else env_varz.DWN_BATCH_SIZE
+        # ↓ https://github.com/SYSTRAN/faster-whisper/blob/master/faster_whisper/utils.py
+        self.WHSP_MODEL_SIZE          = env_varz.TRANSCRIBER_MODEL_SIZE_OVERRIDE   if env_varz.TRANSCRIBER_MODEL_SIZE_OVERRIDE   in ("tiny", "tiny.en", "base", "base.en", "small", "small.en", "distil-small.en", "medium", "medium.en", "distil-medium.en", "large-v1", "large-v2", "large-v3", "large", "distil-large-v2", "distil-large-v3") else env_varz.WHSP_MODEL_SIZE
 
-
+            
 
 ####################################
 # BAM                              #

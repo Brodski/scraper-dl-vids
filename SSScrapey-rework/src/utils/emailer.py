@@ -219,7 +219,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     
     # GPU & CPU info
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
-    heading_aux = [
+    msg_lines.append([
         "******* GPU *******",
         f"💣 CONTAINER_ID! {os.getenv('CONTAINER_ID')} 💣\n"
         f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
@@ -230,7 +230,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         # f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
         # f"cpu_cache: {cpu_cache}\n",
         "*******************"
-    ]
+    ])
     
     for idx, metadata in enumerate(metadata_arr):
         vod: Vod          = metadata.vod if metadata.vod is not None else Vod()

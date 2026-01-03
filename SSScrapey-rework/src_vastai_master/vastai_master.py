@@ -1,4 +1,5 @@
 import argparse
+import copy
 import sys
 import time
 import traceback
@@ -184,17 +185,17 @@ def pollxCompletion2():
         if status_msg and status_msg.lower().startswith("unexpected fault address"):
             print("nope not ready, 'unexpected fault address' end it")
             instance.status = Status.ERROR_1
-            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
             continue
         if status_msg and "unable to find image" in status_msg.lower():
             print("nope not ready, end it")
             instance.status = Status.ERROR_2
-            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
             continue
         if actual_status and actual_status.lower() == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
             print(f"nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes: {exec_time_minutes}")
             instance.status = Status.ERROR_3
-            failed_list.append({"id": instance.id_contract, "data": data, "exec_time_minutes": exec_time_minutes})
+            failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
             continue
         if actual_status and actual_status.lower() == "running":
             print("Running. Transcriber app should be running. :)")
@@ -206,10 +207,10 @@ def pollxCompletion2():
         instance.status = Status.LOADING
     # AFTER LOOP
     for fail in failed_list:
-        id_contract        = fail["id"]
+        instance           = fail["instance"]
         data               = fail["data"]
         exec_time_minutesX = fail["exec_time_minutes"]
-        try_again(id_contract, data, exec_time_minutesX)
+        try_again(instance, data, exec_time_minutesX)
     
     return len(failed_list)
 
@@ -256,15 +257,15 @@ def try_again(instance: Instance_V, data, exec_time_minutes):
     ### DELETE ###
     print("   ! (try_again) stopping bad instance")
     vast_api.destroy_instance(instance.id_contract)
-    configz.blacklist_ids.append(instance.id_contract)
+    configz.blacklist_ids.append(str(instance.id_contract))
 
     idx = None
     for i, v in enumerate(instance_v_global_list):
         v: Instance_V = v
-        if v.id_contract == instance.id_contract:
+        if str(v.id_contract) == str(instance.id_contract):
             idx = i
             instance_v_global_list.pop(idx)
-            id_tracker_trick[instance.instance_num] = False # Make the key at instance_num available/False
+            id_tracker_trick[int(instance.instance_num)] = False # Make the key at instance_num available/False
             print(f"   ! (try_again) popping at {idx}")
             break
 

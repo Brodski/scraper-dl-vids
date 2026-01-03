@@ -44,10 +44,6 @@ class MetadataP:
         for chan in self.new_channels:
             chan: ScrappedChannel = chan
             msg_chan = msg_chan + f"{chan.name_id}, "
-        msg_vod = ""
-        # for vod in self.new_vods:
-        #     vod: Vod = vod
-        #     msg_vod = msg_vod + f"{vod.channels_name_id} - {vod.id}\n"
 
         msg_vods_updated = ""
         count = 0
@@ -62,7 +58,7 @@ class MetadataP:
         cli = find_aws_logging_info()
             
         lines = [
-            "Metadata Summary",
+            "🤖 Metadata Summary 🤖",
             "----------------",
             f"Elapsed Time: {self.elapsed_time} = {elapsed_time_MIN} min",
             f"New Channels: {msg_chan}",

@@ -54,6 +54,7 @@ resource "aws_lambda_function" "vast_lambda" {
       DOCKER                        = var.docker_image
       TRANSCRIBER_NUM_INSTANCES     = var.transcriber_num_instances
       TRANSCRIBER_VODS_PER_INSTANCE = var.transcriber_vods_per_instance
+      TRANSCRIBER_MODEL_SIZE_OVERRIDE  = var.transcriber_model_size_override
     }
   }
 }

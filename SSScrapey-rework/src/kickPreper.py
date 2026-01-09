@@ -21,4 +21,5 @@ import controllers.MicroPreper.preperGo as preperGo
 # BEGIN                                              #
 ######################################################
 if __name__ == "__main__":
+    env_varz.MICRO_APP_TYPE = "preper"
     preperGo.prepare()

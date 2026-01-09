@@ -205,7 +205,13 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
     summary_lines = build_summary_lines("Download", env_varz.DWN_BATCH_SIZE, len(metadata_array_global), vod_total_seconds, elapsed_time, status_counter)
 
     cli = find_aws_logging_info()
-    report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
+    try:
+        report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
+    except Exception:
+        report_message = heading_summary + cli
+        report_message += "\n\nplus expection b/c random error"
+        pass
+    
     
     is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
     sendEmail(f"Downloader {is_local}{env_varz.ENV} report", report_message)
@@ -271,8 +277,13 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     summary_lines = build_summary_lines("Transcriber", env_varz.TRANSCRIBER_VODS_PER_INSTANCE, len(metadata_arr), vod_total_seconds, elapsed_time, status_counter)
 
     cli = find_aws_logging_info_transcriber()
-
-    report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
+    report_message = "...report, probably nothing todo b/c execcption"
+    try:
+        report_message = "\n".join([heading_summary] + [""] + summary_lines + [""] + msg_lines) + "\n" + cli
+    except Exception:
+        report_message = heading_summary + cli
+        report_message += "\n\nplus expection b/c random error"
+        pass
     
     is_local = " L-" if env_varz.LOCAL_GPU_RUN else ""
     sendEmail(f"Transcriber {is_local}{env_varz.ENV} report", report_message)

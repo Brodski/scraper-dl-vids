@@ -7,13 +7,11 @@ from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
 class LoggerConfig:
     def __init__(self, name, is_cloudwatch_logs=False):
-        is_cloudwatch_logs = env_varz.WHSP_IS_CLOUDWATCH == "True"
         self.logger = logging.getLogger(name)
         self.logger.setLevel(self.get_log_level()) # Both the logger and the handler must be set (handler >= logger)
             
         dateformat = '%H:%M:%S'
         formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(filename)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
-        # formatter_cues_transcribing: logging.Formatter = logging.Formatter('%(asctime)s| %(message)s', dateformat)
 
         if not self.logger.handlers:  # prevent duplicate handlers
             console_handler = logging.StreamHandler()
@@ -23,7 +21,10 @@ class LoggerConfig:
             self.logger.addHandler(console_handler)
             
             # Add CloudWatch
-            if is_cloudwatch_logs == True:
+            # we hardcoded "/scraper/transcriber.." as the log_group
+            is_cloudwatch_logs = env_varz.WHSP_IS_CLOUDWATCH == "True"
+            is_transcriber = env_varz.MICRO_APP_TYPE == "transcriber"
+            if is_cloudwatch_logs and is_transcriber:
                 print("Adding CloudWatch")
                 cloudwatch = Cloudwatch()
                 cloudwatch.setFormatter(formatter_bski) # cloudwatch.formatter is inherited from "logging.Handler" (the python lib)
@@ -44,7 +45,6 @@ class LoggerConfig:
         if LOG_LEVEL == "CRITICAL":
             level = logging.CRITICAL
         return level
-
 
     def get_logger(self) -> logging.Logger:
         return self.logger

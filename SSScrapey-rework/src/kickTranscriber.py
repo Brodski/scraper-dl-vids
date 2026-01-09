@@ -12,4 +12,5 @@ from env_file import env_varz
 
 if __name__ == "__main__":
     print("transcriberGo gogogo!")
+    env_varz.MICRO_APP_TYPE = "transcriber"
     transcriberGo.goTranscribeBatch(False)

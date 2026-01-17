@@ -9,6 +9,9 @@ from utils.logging_config import LoggerConfig
 import json
 from models.ScrappedChannel import ScrappedChannel
 import controllers.MicroPreper.databasePreper as databasePreper
+from datetime import datetime, timedelta, timezone
+import re
+
 
 def logger():
     pass
@@ -97,12 +100,15 @@ def getTwitchIdAll(scrapped_channels_all: List[ScrappedChannel]):
 
 
 
+# https://dev.twitch.tv/docs/api/reference#get-videos
+# https://dev.twitch.tv/docs/api/reference#get-videos
+# https://dev.twitch.tv/docs/api/reference#get-videos
+
 def getVods(scrapped_channels: List[ScrappedChannel]):
     global access_token
     client_id = env_varz.TWITCH_CLIENT_ID
     CHANNELS_MAX = int(env_varz.PREP_NUM_CHANNELS)
     VODS_MAX = int(env_varz.PREP_NUM_VOD_PER_CHANNEL)
-
     ### QUERY STRING ###
     for channel in scrapped_channels: # up to 100
         channel: ScrappedChannel = channel
@@ -115,7 +121,8 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
         api_videos_url = f'https://api.twitch.tv/helix/videos?type=archive&sort=time&first={VODS_MAX}&{query_string}'
         headers = {'Authorization': f'Bearer {access_token}', 'Client-Id': client_id }
 
-        logger.debug(f"api_videos_url={api_videos_url}")
+        logger.debug(f"{channel.name_id} api_videos_url={api_videos_url}")
+        logger.debug(f"{channel.name_id} headers={headers}")
         user_response = requests.get(api_videos_url, headers=headers)
 
         ### EXTRACT INFO ###
@@ -125,11 +132,51 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
         #     for user in user_json["data"]
         # ]
         # logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
-        # logger.debug("------------------------")
+        logger.debug("------------------------")
 
         for u_json in user_json["data"]:
-            channel.links.append(u_json["id"])    
+            duration =   u_json["duration"]
+            created_at = u_json["created_at"]
+            # id = u_json["id"]
+            is_person_online = isPersonOnlineApi(created_at, duration)
+            if not is_person_online:
+                channel.links.append(u_json["id"])
+            # logger.debug(f"id: {id}")
+            # logger.debug(f"duration: {duration}")
+            # logger.debug(f"created_at: {created_at}")
+            # logger.debug(f"is_person_online: {is_person_online}")
+            # logger.debug("---")
+
+
         logger.debug(f"channel.links={channel.links}")
         logger.debug("---")
 
         # channel.links = allHrefs[:VODS_MAX]
+
+
+
+def isPersonOnlineApi(created_at, duration):
+    start = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+    
+    hours = minutes = seconds = 0
+    
+    if "h" in duration:
+        hours_part, duration = duration.split("h", 1)
+        hours = int(hours_part)
+    if "m" in duration:
+        minutes_part, duration = duration.split("m", 1)
+        minutes = int(minutes_part)
+    if "s" in duration:
+        seconds = int(duration.rstrip("s"))
+
+    end_time = start + timedelta(hours=hours, minutes=minutes, seconds=seconds,)
+    
+    now = datetime.now(timezone.utc)
+    # da_diff = abs(end_time - now)
+    # logger.debug(f"da_diff: {da_diff}")
+    is_within_30_minutes = abs(end_time - now) <= timedelta(minutes=15)
+    return is_within_30_minutes
+
+
+# end_time = isPersonOnlineApi(c2, d2)
+

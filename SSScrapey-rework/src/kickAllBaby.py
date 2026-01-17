@@ -17,7 +17,7 @@ from models.Vod import Vod
 #
 #############################################################################################################################################
 LOOPER                                 = 2
-env_varz.DWN_BATCH_SIZE                = "0"
+env_varz.DWN_BATCH_SIZE                = "1"
 env_varz.TRANSCRIBER_VODS_PER_INSTANCE = 20
 env_varz.TRANSCRIBER_NUM_INSTANCES     = "1"
 env_varz.TRANSCRIBER_INSTANCE_CNT      = "1_localx"

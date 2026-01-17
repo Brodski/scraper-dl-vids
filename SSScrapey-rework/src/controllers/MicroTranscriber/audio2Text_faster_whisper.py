@@ -62,8 +62,11 @@ class Audio2Text:
         else:
             logger.info("✅ Model is loaded already")
         if env_varz.ENV == "local":
+            # download cuDNN v8.9.7 for cuda 12.x. Put it somewhere. Then add the path to $PATH env var
+            # https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/windows-x86_64/
+            # https://github.com/m-bain/whisperX/issues/899#issuecomment-2549063502
             import ctypes
-            ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v9.13/bin/13.0/cudnn_ops_infer64_8.dll")
+            ctypes.CDLL("C:/Program Files/NVIDIA/CUDNN/v8.9.7_cuda12/bin/cudnn_ops_infer64_8.dll")
 
         result = {  "segments": [] }
         end_time_model = time.time() - start_time_model

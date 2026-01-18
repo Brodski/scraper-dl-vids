@@ -27,10 +27,11 @@ def sendEmail(subject, body):
 
     # Send the email
     response = ses.send_email(
-        Source='noreply@dev-captions.bski.one', # TODO update "dev"-catpions
+        Source=f'noreply@{env_varz.ENV}-captions.bski.one', # TODO update "dev"-catpions
         Destination={
             'ToAddresses': [
-                'loganwallace.smash@gmail.com',
+                'cbrodski@gmail.com',
+                # 'loganwallace.smash@gmail.com',
             ],
         },
         Message={

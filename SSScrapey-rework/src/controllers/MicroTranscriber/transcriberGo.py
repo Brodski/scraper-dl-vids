@@ -20,7 +20,6 @@ from typing import List
 import logging
 from utils.logging_config import LoggerConfig
 from models.Splitted import Splitted
-from datetime import datetime
 from utils.emailer import MetadataShitty
 from utils.emailer import Status
 from utils.emailer import write_transcriber_email
@@ -115,7 +114,7 @@ def transcribe(fancy_generator: Iterator[Vod], isDebug=False) -> MetadataShitty:
     ### GET THE VOD ###
     metadata_ = MetadataShitty()
     vod: Vod        = next(fancy_generator, None)
-    vod: Vod        = vod          if not isDebug        else getDebugVod(vod)
+    vod: Vod        = vod          if not isDebug else getDebugVod(vod)
     start_time      = time.time()
     metadata_       = MetadataShitty(vod=vod)
 
@@ -180,6 +179,8 @@ def getDebugVod(vod: Vod):
     tuple =  ('40792901', 'nmplol', 'And you will know my name is the LORD', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2013, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/nmplol/40792901/And_you_will_know_my_name_is_the_LORD-v40792901.opus', '-1', 'English')
     # tuple =  ('1964894986', 'jd_onlymusic', '夜市特攻隊「永和樂華夜市」ft. 陳老師', '732', '12:12', 1205, 'https://www.twitch.tv/videos/1964894986',datetime.datetime(2023, 10, 2, 18, 26, 30),'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/jd_onlymusic/1964894986/ft.-v1964894986.opus','-3', 'Chinese')
     # tuple =  ('28138895', 'geranimo', 'The Geraniproject! I Love You Guys!!!', '1047', '17:26', 786, 'https://www.twitch.tv/videos/28138895',datetime.datetime(2023, 10, 2, 18, 26, 30),'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d3vd9lfkzbru3h/e8c73b0847f78c0231fc_jd_onlymusic_40759279447_1698755215//thumb/thumb0-90x60.jpg', datetime.datetime(2023, 12, 27, 5, 37), 'channels/vod-audio/geranimo/28138895/The_Geraniproject_I_Love_You_Guys-v28138895.opus','-2', 'English')
+    # V very shity
+    tuple =  ('2668418939', 'geranimo', 'Journey to Challenger! Almost Masters Time to LOCK IN //  NA vs EU !rivality', '78', '1:18', 39744, 'https://www.twitch.tv/videos/40792901', datetime.datetime(2069, 8, 2, 18, 26, 30), 'audio2text_need', 1, 'https://static-cdn.jtvnw.net/cf_vods/d2nvs31859zcd8/511e8d0d2a/nmplol_6356312704_6356312704/thumb/thumb0-90x60.jpg', datetime.datetime(2026, 1, 17, 5, 37), 'channels/vod-audio/geranimo/2668418939/Journey_to_Challenger_Almost_Masters_Time_to_LOCK_IN_NA_vs_EU_rivality-v2668418939.opus', '-1', 'English')
     Id, ChannelNameId, Title, Duration, DurationString,ViewCount,WebpageUrl,StreamDate, TranscriptStatus, Priority, Thumbnail,TodoDate,S3Audio,ChanCurrentRank,Language  = tuple
     vod = Vod(id=Id, title=Title, channels_name_id=ChannelNameId, transcript_status=TranscriptStatus, priority=Priority, channel_current_rank=ChanCurrentRank, todo_date=TodoDate, stream_date=StreamDate, s3_audio=S3Audio, language=Language)
     return vod

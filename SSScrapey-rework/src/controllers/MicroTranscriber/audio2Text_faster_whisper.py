@@ -46,11 +46,29 @@ class Audio2Text:
         ###############
         #### SETUP ####
         ###############
-        lang_code       = get_language_code(vod.language)
         model_size      = env_varz.WHSP_MODEL_SIZE
         compute_type    = env_varz.WHSP_COMPUTE_TYPE
         cpu_threads     = int(env_varz.WHSP_CPU_THREADS)
+
+        lang_code       = get_language_code(vod.language)
+        # model_size      = "small"
+        # compute_type    = "int8" # float16 is faster on GPU, int8 for CPU  .......... https://github.com/SYSTRAN/faster-whisper/issues/33#issuecomment-1463604195
+        beam_size       = 2
+        best_of         = 2
+        vad_filter      = False
+        condition_on_previous_text  = False
         device          = "cuda" if torch.cuda.is_available() else "cpu"
+        device = device if os.getenv("WHSP_DEVICE_TYPE") == None else os.getenv("WHSP_DEVICE_TYPE")
+        logger.debug(f"device= {device}")
+        logger.debug(f"model_size= {model_size}")
+        logger.debug(f"compute_type= {compute_type}")
+        logger.debug(f"cpu_threads= {cpu_threads}")
+        logger.debug(f"beam_size= {beam_size}")
+        logger.debug(f"best_of= {best_of}")
+        logger.debug(f"vad_filter= {vad_filter}")
+        logger.debug(f"condition_on_previous_text= {condition_on_previous_text}")
+        logger.debug(f"device= {device}")
+
 
         metadata_ = MetadataShitty(vod=vod, model_size=model_size, compute_type=compute_type, cpu_threads=cpu_threads, device=device)
 
@@ -79,10 +97,14 @@ class Audio2Text:
             logger.debug("    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
             logger.debug("    Channel=" + vod.channels_name_id)
             logger.debug("    file_abspath=" + file_abspath)
-            logger.debug("    torch.cuda.is_available(): " + str(torch.cuda.is_available()))
-            logger.debug("    model_size: " + model_size)
-
-            segments, info = cls.model.transcribe(file_abspath, language=lang_code, condition_on_previous_text=False, vad_filter=False, beam_size=2, best_of=2) # vad_filter = something to prevents bugs. long loops being stuck
+            segments, info = cls.model.transcribe(file_abspath, 
+                language=lang_code, 
+                condition_on_previous_text=condition_on_previous_text, 
+                # hallucination_silence_threshold=0.2,
+                vad_filter=vad_filter, 
+                beam_size=beam_size, 
+                best_of=best_of
+            ) # vad_filter = something to prevents bugs. long loops being stuck
 
 
             cls.count_logger = 0

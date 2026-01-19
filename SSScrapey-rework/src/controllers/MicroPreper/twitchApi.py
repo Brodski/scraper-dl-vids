@@ -132,7 +132,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
         #     for user in user_json["data"]
         # ]
         # logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
-        logger.debug("------------------------")
+        # logger.debug("------------------------")
 
         for u_json in user_json["data"]:
             duration =   u_json["duration"]
@@ -149,7 +149,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
 
 
         logger.debug(f"channel.links={channel.links}")
-        logger.debug("---")
+        logger.debug("--------------------")
 
         # channel.links = allHrefs[:VODS_MAX]
 

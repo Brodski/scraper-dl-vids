@@ -21,10 +21,7 @@ class LoggerConfig:
             self.logger.addHandler(console_handler)
             
             # Add CloudWatch
-            # we hardcoded "/scraper/transcriber.." as the log_group
-            is_cloudwatch_logs = env_varz.WHSP_IS_CLOUDWATCH == "True"
-            is_transcriber = env_varz.MICRO_APP_TYPE == "transcriber"
-            if is_cloudwatch_logs and is_transcriber:
+            if env_varz.WHSP_IS_CLOUDWATCH == "True":
                 print("Adding CloudWatch")
                 cloudwatch = Cloudwatch()
                 cloudwatch.setFormatter(formatter_bski) # cloudwatch.formatter is inherited from "logging.Handler" (the python lib)

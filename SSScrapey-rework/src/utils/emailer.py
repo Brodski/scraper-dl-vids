@@ -200,7 +200,7 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
 
     elapsed_time      = int(elapsed_time) if elapsed_time is not None else -1
     secs, mins, hours = format_time_units(elapsed_time)
-    heading_summary   = f"\n⬇️ TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours⬇️"
+    heading_summary   = f"\n⬇️ TOTAL TIME: {hours:.2f} hours = {mins:.2f} min = {secs:.2f} secs ⬇️"
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_array_global)
 
     summary_lines = build_summary_lines("Download", env_varz.DWN_BATCH_SIZE, len(metadata_array_global), vod_total_seconds, elapsed_time, status_counter)
@@ -224,8 +224,8 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
     
     # GPU & CPU info
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
-    msg_lines.append([
-        "******* GPU *******",
+    msg_lines.append(
+        "******* GPU *******\n"
         f"💣 CONTAINER_ID! {os.getenv('CONTAINER_ID')} 💣\n"
         f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
         # f"logical_cores: {logical_cores}\n"
@@ -235,7 +235,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
         # f"cpu_frequency_mhz: {cpu_frequency_mhz}\n"
         # f"cpu_cache: {cpu_cache}\n",
         "*******************"
-    ])
+    )
     
     for idx, metadata in enumerate(metadata_arr):
         vod: Vod          = metadata.vod if metadata.vod is not None else Vod()
@@ -270,7 +270,7 @@ def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_upload
 
     secs, mins, hours = format_time_units(elapsed_time)
 
-    heading_summary = f"\n📜TOTAL TIME: {secs:.2f} secs = {mins:.2f} min = {hours:.2f} hours 📜\n"
+    heading_summary = f"\n📜TOTAL TIME:  {hours:.2f} hours = {mins:.2f} min = {secs:.2f} secs📜\n"
 
     vod_total_seconds, status_counter = calculate_vod_metrics(metadata_arr)
     

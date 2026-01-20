@@ -2,12 +2,15 @@ import boto3
 import os
 from Configz import configz
 def sendEmail(subject, body):
+    env = os.getenv("ENV") or configz.ENV
     ses = boto3.client('ses', region_name='us-east-1')
     response = ses.send_email(
-        Source='noreply@dev-captions.bski.one', # TODO update "dev"-catpions
+        Source=f'noreply@{env}-captions.bski.one', # TODO update "dev"-catpions
+        # Source=f'noreply@{env_varz.ENV}-captions.bski.one', # TODO update "dev"-catpions
         Destination={
             'ToAddresses': [
-                'loganwallace.smash@gmail.com',
+                'cbrodski@gmail.com',
+                # 'loganwallace.smash@gmail.com',
             ],
         },
         Message={
@@ -75,11 +78,14 @@ class MetadataVast():
     def format_msg(self):
         def appender(items):
             msg = ""
-            for thing in items:
+            for i, thing in enumerate(items):
+                if i >= 1: 
+                    msg += "------------------------\n"
                 for key, value in thing.items():
-                    if key in ("id", "exec_time_minutes", "cpu_name", "gpu_name", "status_msg", "actual_status", "geolocation", "dph_total"):
+                    # if key in ("id", "exec_time_minutes", "cpu_name", "gpu_name", "status_msg", "actual_status", "geolocation", "dph_total"):
+                    if key in ("id", "exec_time_minutes", "cpu_name", "gpu_name", "actual_status", "geolocation", "dph_total"):
                         msg += f"{key}: {value}\n"
-                        msg += "\n"
+                        # msg += "\n"
             return msg
         ######################
         ### AWS CLI HELPER ###

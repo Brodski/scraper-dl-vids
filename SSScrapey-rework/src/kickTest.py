@@ -24,7 +24,6 @@ def getDebugVod():
 
 if __name__ == "__main__":
     print("transcriberGo gogogo!")
-    env_varz.MICRO_APP_TYPE = "transcriber"
     vod: Vod        = getDebugVod()
     start_time      = time.time()
     # metadata_       = MetadataShitty(vod=vod)

@@ -77,7 +77,7 @@ def create_instance(instance_id, instance_num):
         response_data = response.read()
         res_json = json.loads(response_data.decode('utf-8'))
         ### THE RESPONE DATA IS VERY SMALL  = {new_contract: 123, <1 other field>}##
-        print(    "(create_instance) res_json: ", res_json)
+        # print(    "(create_instance) res_json: ", res_json)
         id = res_json.get("new_contract")
 
         ### METADATA ###

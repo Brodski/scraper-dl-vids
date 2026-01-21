@@ -3,13 +3,11 @@ import time
 from typing import List
 from env_file import env_varz
 env_varz.init_argz()
-from utils.logging_config import LoggerConfig
 import controllers.MicroTranscriber.transcriberGo as transcriberGo
 from env_file import env_varz
 from models.Vod import Vod
 import controllers.MicroTranscriber.transcriber as transcriber
 import controllers.MicroTranscriber.split_ffmpeg as split_ffmpeg
-from utils.logging_config import LoggerConfig
 from models.Splitted import Splitted
 from controllers.MicroTranscriber.audio2Text_faster_whisper import Audio2Text 
 

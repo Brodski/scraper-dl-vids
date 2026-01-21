@@ -33,7 +33,7 @@ class Audio2Text:
     completed_uploaded_tscripts = {}
 
     @classmethod
-    def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted]) -> tuple[List[str], MetadataShitty]:
+    def doWhisperStuff(cls, vod: Vod, splitted_list: List[Splitted], is_float_retry = False) -> tuple[List[str], MetadataShitty]:
         logger.debug("#######################")
         logger.debug("Starting WhisperStuff!")
         logger.debug("#######################")
@@ -50,6 +50,7 @@ class Audio2Text:
         ###############
         model_size      = env_varz.WHSP_MODEL_SIZE
         compute_type    = env_varz.WHSP_COMPUTE_TYPE
+        compute_type    = "float16" if is_float_retry == False else "int8"
         cpu_threads     = int(env_varz.WHSP_CPU_THREADS)
 
         lang_code       = get_language_code(vod.language)
@@ -77,10 +78,18 @@ class Audio2Text:
         start_time_model = time.time()
 
         logger.debug("⌛ loading model........")
-        if cls.model is None:
-            cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
-        else:
-            logger.info("✅ Model is loaded already")
+        try:
+            if cls.model is None:
+                cls.model = faster_whisper.WhisperModel(model_size, device=device, compute_type=compute_type,  cpu_threads=cpu_threads) # 4 default
+            else:
+                logger.info("✅ Model is loaded already")
+        except ValueError as e:
+            logger.info("Device does not support float16, trying with int8")
+            if is_float_retry == False:
+                cls.doWhisperStuff(vod, splitted_list, True)
+            else:
+                raise
+            
         if env_varz.ENV == "local":
             # download cuDNN v8.9.7 for cuda 12.x. Put it somewhere. Then add the path to $PATH env var
             # https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/windows-x86_64/

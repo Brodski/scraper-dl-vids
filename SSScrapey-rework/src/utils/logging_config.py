@@ -8,13 +8,13 @@ from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 class LoggerConfig:
     instanceX = None
 
-    def __new__(cls, name: str, is_cloudwatch_logs=False):
+    def __new__(cls):
         # if name not in cls._instances:
         if not cls.instanceX:
             cls.instanceX = super().__new__(cls)
         return cls.instanceX
     
-    def __init__(self, name, is_cloudwatch_logs=False):
+    def __init__(self, name):
         if not hasattr(self, 'initialized'):
             self.initialized = True
             self.logger = logging.getLogger(name)

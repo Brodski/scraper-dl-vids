@@ -1,6 +1,5 @@
 from env_file import env_varz
 env_varz.init_argz()
-from utils.logging_config import LoggerConfig
 # ↑            
 # ↑ 
 # ↑ 

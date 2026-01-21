@@ -174,7 +174,8 @@ def pollxCompletion2():
             data            = vast_data_dictionary[instance.id_contract]
         except KeyError:
             instance.status = Status.RUNNING_FAST_EXIT
-            metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
+            # metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes, **dataX})
+            metadata_vast_global.successes.append({'id': instance.id_contract, "exec_time_minutes": exec_time_minutes})
             continue
         # data                = getStatusVast(instance)
         status_msg : str    = data["status_msg"]

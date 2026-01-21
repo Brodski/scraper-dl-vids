@@ -6,26 +6,36 @@ import os
 from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 
 class LoggerConfig:
+    instanceX = None
+
+    def __new__(cls, name: str, is_cloudwatch_logs=False):
+        # if name not in cls._instances:
+        if not cls.instanceX:
+            cls.instanceX = super().__new__(cls)
+        return cls.instanceX
+    
     def __init__(self, name, is_cloudwatch_logs=False):
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(self.get_log_level()) # Both the logger and the handler must be set (handler >= logger)
-            
-        dateformat = '%H:%M:%S'
-        formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(filename)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
+        if not hasattr(self, 'initialized'):
+            self.initialized = True
+            self.logger = logging.getLogger(name)
+            self.logger.setLevel(self.get_log_level()) # Both the logger and the handler must be set (handler >= logger)
+                
+            dateformat = '%H:%M:%S'
+            formatter_bski: logging.Formatter = logging.Formatter('%(asctime)s.%(msecs)03d |%(filename)-6.6s %(funcName)-10.10s| %(message)s', dateformat)
 
-        if not self.logger.handlers:  # prevent duplicate handlers
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(self.get_log_level())
+            if not self.logger.handlers:  # prevent duplicate handlers
+                console_handler = logging.StreamHandler()
+                console_handler.setLevel(self.get_log_level())
 
-            console_handler.setFormatter(formatter_bski)
-            self.logger.addHandler(console_handler)
-            
-            # Add CloudWatch
-            if env_varz.WHSP_IS_CLOUDWATCH == "True":
-                print("Adding CloudWatch")
-                cloudwatch = Cloudwatch()
-                cloudwatch.setFormatter(formatter_bski) # cloudwatch.formatter is inherited from "logging.Handler" (the python lib)
-                self.logger.addHandler(cloudwatch)
+                console_handler.setFormatter(formatter_bski)
+                self.logger.addHandler(console_handler)
+                
+                # Add CloudWatch
+                if env_varz.WHSP_IS_CLOUDWATCH == "True" and os.getenv("MICRO_APP_TYPE") == "transcriber":
+                    print("Adding CloudWatch")
+                    cloudwatch = Cloudwatch()
+                    cloudwatch.setFormatter(formatter_bski) # cloudwatch.formatter is inherited from "logging.Handler" (the python lib)
+                    self.logger.addHandler(cloudwatch)
 
 
     def get_log_level(self):
@@ -45,3 +55,5 @@ class LoggerConfig:
 
     def get_logger(self) -> logging.Logger:
         return self.logger
+    
+loggerX = LoggerConfig("micro").get_logger()

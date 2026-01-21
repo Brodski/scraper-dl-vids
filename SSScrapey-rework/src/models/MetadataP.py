@@ -4,13 +4,15 @@ from models.Vod import Vod
 from models.ScrappedChannel import ScrappedChannel
 from utils.emailer import sendEmail
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from utils.ecs_meta import find_aws_logging_info
 
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 
 class MetadataP:

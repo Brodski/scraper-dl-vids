@@ -3,13 +3,15 @@ import traceback
 import requests
 
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from env_file import env_varz
 
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 def find_aws_logging_info():
     if env_varz.ENV == "local" or env_varz.WHSP_IS_CLOUDWATCH != "True":

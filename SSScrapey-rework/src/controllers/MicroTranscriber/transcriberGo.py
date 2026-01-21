@@ -18,7 +18,8 @@ import urllib.parse
 import urllib.request
 from typing import List
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from models.Splitted import Splitted
 from utils.emailer import MetadataShitty
 from utils.emailer import Status
@@ -29,7 +30,7 @@ import utils.generic_stuff as utils_generic
 
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 

@@ -5,6 +5,7 @@ import traceback
 from typing import List
 from models.Vod import Vod
 from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from controllers.MicroTranscriber.utils import TOO_BIG_LENGTH
 # import env_file as env_varz
 from env_file import env_varz
@@ -15,7 +16,8 @@ import bisect
 
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+
+logger: logging.Logger = loggerX
 
 
 # NOISE

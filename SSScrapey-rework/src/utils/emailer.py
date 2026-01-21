@@ -6,7 +6,7 @@ from typing import List
 import boto3
 
 import logging
-from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from utils.ecs_meta import find_aws_logging_info
 from utils.ecs_meta import find_aws_logging_info_transcriber
 from collections import Counter
@@ -19,7 +19,8 @@ from env_file import env_varz
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 def sendEmail(subject, body):
     time.sleep(1.1) # SES sends max 1 email a sec for me

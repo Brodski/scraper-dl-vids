@@ -16,13 +16,13 @@ import os
 import re
 import time
 import logging
-from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from utils.emailer import sendEmail
 
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 ###
 # Assembly AI multi lingual speech recognition

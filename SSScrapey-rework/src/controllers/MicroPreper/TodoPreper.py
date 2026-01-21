@@ -10,12 +10,13 @@ import os
 import requests
 import time
 import logging
-from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
+
 
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 
 

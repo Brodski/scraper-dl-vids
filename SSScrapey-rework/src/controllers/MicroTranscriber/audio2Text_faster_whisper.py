@@ -11,14 +11,16 @@ import time
 import torch
 import langcodes
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from datetime import datetime
 from models.Splitted import Splitted
 from utils.emailer import MetadataShitty
 
+
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 
 

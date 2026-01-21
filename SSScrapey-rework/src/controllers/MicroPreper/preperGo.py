@@ -13,6 +13,7 @@ from env_file import env_varz
 import os
 import logging
 from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from utils.emailer import sendEmail
 from models.MetadataP import MetadataP
 from utils.ecs_meta import find_aws_logging_info
@@ -22,7 +23,8 @@ metadata_p: MetadataP = MetadataP()
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 def printIntro():
     logger.debug("IT'S RUNNING! WOOOOOOOOOO")

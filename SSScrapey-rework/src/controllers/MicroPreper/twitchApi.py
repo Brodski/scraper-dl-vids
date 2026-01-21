@@ -5,18 +5,18 @@ import json
 import os
 import requests
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 import json
 from models.ScrappedChannel import ScrappedChannel
 import controllers.MicroPreper.databasePreper as databasePreper
 from datetime import datetime, timedelta, timezone
-import re
+
 
 
 def logger():
     pass
-
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 access_token = None
 

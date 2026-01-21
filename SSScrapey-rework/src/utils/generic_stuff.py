@@ -1,14 +1,16 @@
 from env_file import env_varz
 from models.Vod import Vod
 from typing import Dict, List
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 import logging
 import re
 import unicodedata
 
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 
 

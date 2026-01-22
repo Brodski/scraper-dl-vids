@@ -1,10 +1,13 @@
+body {
+    margin-bottom: 150px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    margin-bottom: 150px;
     /* margin-top: 16px;     */
 }
 
@@ -192,4 +195,12 @@ tbody td[data-labelX] {
 .homepage_col_pipe {
     color: grey;
     font-size: 30px;
+}
+
+
+#find_me_on_twitter {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid;
+    margin: 13px;
 }

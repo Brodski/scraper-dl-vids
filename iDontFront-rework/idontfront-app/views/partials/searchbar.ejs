@@ -8,10 +8,11 @@
     </div>
 </section>
 <script type="module">
-    let searcher = document.querySelector("#table_search");
-    let homepage_table = document.querySelector("#homepage_table tbody");
-    let clearBtn = document.querySelector("#clear_button")
-    let allRows = homepage_table.querySelectorAll("tr")
+    let searcher          = document.querySelector("#table_search");
+    let homepage_table    = document.querySelector("#homepage_table tbody");
+    let clearBtn          = document.querySelector("#clear_button")
+    let allRows           = homepage_table.querySelectorAll("tr")
+    let me_on_twitter_msg = document.querySelector("#find_me_on_twitter")
     document.addEventListener("DOMContentLoaded", (e) => {
         let clearBtn = document.querySelector("#clear_button")
         clearBtn.addEventListener("click", e => {
@@ -36,7 +37,9 @@
             })
             return
         }
-        let result = homepage_table.querySelectorAll(`[data-channel*='${query}']`);
+
+
+        let result      = homepage_table.querySelectorAll(`[data-channel*='${query}']`);
         let not_results = homepage_table.querySelectorAll(`tr:not([data-channel*='${query}'])`)
         result.forEach( ele => {
             ele.classList.remove("d-none");
@@ -46,6 +49,12 @@
         })
 
         clearBtn.classList.remove("d-none")
-
+        
+        if (result.length == 0) {
+            me_on_twitter_msg.classList.remove("d-none")
+        } else {
+            me_on_twitter_msg.classList.add("d-none")
+        }
+            
     }
 </script>

@@ -1,6 +1,5 @@
 from env_file import env_varz
 env_varz.init_argz()
-from utils.logging_config import LoggerConfig
 # ↑            
 # ↑ 
 # ↑ 
@@ -12,5 +11,4 @@ from env_file import env_varz
 
 if __name__ == "__main__":
     print("transcriberGo gogogo!")
-    env_varz.MICRO_APP_TYPE = "transcriber"
     transcriberGo.goTranscribeBatch(False)

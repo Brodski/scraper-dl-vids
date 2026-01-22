@@ -10,6 +10,7 @@ from env_file import env_varz
 from controllers.MicroDownloader.errorEnum import Errorz
 import logging
 from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from utils.emailer import write_downloader_report
 from utils.emailer import sendEmail
 from utils.emailer import Status
@@ -19,8 +20,7 @@ import utils.generic_stuff as utils_generic
 
 def logger():
     pass
-
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 def printIntro():
     logger.debug("db      =" + env_varz.DATABASE)

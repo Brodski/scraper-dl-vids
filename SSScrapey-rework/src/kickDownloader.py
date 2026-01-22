@@ -13,7 +13,6 @@ from models.Vod import Vod
 
 if __name__ == "__main__":
     print('starting go download batch...')
-    env_varz.MICRO_APP_TYPE = "downloader"
     
     ############
     # CLI ARGS #

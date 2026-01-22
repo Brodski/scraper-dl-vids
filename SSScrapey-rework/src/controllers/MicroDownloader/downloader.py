@@ -21,16 +21,15 @@ from controllers.MicroDownloader.errorEnum import Errorz
 from utils.emailer import sendEmail
 import logging
 from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
+from env_file import env_varz
 
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 
-# load_dotenv()
-# import env_file as env_varz
-from env_file import env_varz
 
 def getConnection():
     connection = MySQLdb.connect(

@@ -49,7 +49,8 @@ def create_instance(instance_id, instance_num):
                 'TRANSCRIBER_NUM_INSTANCES': configz.TRANSCRIBER_NUM_INSTANCES,
                 'TRANSCRIBER_VODS_PER_INSTANCE': configz.TRANSCRIBER_VODS_PER_INSTANCE,
                 'TRANSCRIBER_INSTANCE_CNT': (instance_num + 1),
-                'TRANSCRIBER_MODEL_SIZE_OVERRIDE': configz.TRANSCRIBER_MODEL_SIZE_OVERRIDE
+                'TRANSCRIBER_MODEL_SIZE_OVERRIDE': configz.TRANSCRIBER_MODEL_SIZE_OVERRIDE,
+                'MICRO_APP_TYPE': 'transcriber'
             },
         "price": None, 
         "disk": configz.disk, 
@@ -77,7 +78,7 @@ def create_instance(instance_id, instance_num):
         response_data = response.read()
         res_json = json.loads(response_data.decode('utf-8'))
         ### THE RESPONE DATA IS VERY SMALL  = {new_contract: 123, <1 other field>}##
-        print(    "(create_instance) res_json: ", res_json)
+        # print(    "(create_instance) res_json: ", res_json)
         id = res_json.get("new_contract")
 
         ### METADATA ###

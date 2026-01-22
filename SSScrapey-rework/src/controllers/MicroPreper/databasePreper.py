@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import requests
 from models.ScrappedChannel import ScrappedChannel
 from utils.emailer import sendEmail
-from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from typing import List
 # import env_file as env_varz
 from env_file import env_varz
@@ -20,7 +20,8 @@ metadata_p = MetadataP()
 def logger():
     pass
 
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+# logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 def getConnection():
     connection = MySQLdb.connect(

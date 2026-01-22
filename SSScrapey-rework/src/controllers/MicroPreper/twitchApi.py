@@ -5,18 +5,18 @@ import json
 import os
 import requests
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 import json
 from models.ScrappedChannel import ScrappedChannel
 import controllers.MicroPreper.databasePreper as databasePreper
 from datetime import datetime, timedelta, timezone
-import re
+
 
 
 def logger():
     pass
-
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+logger: logging.Logger = loggerX
 
 access_token = None
 
@@ -132,7 +132,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
         #     for user in user_json["data"]
         # ]
         # logger.debug("User info:\n%s", json.dumps(user_json, indent=4))
-        logger.debug("------------------------")
+        # logger.debug("------------------------")
 
         for u_json in user_json["data"]:
             duration =   u_json["duration"]
@@ -149,7 +149,7 @@ def getVods(scrapped_channels: List[ScrappedChannel]):
 
 
         logger.debug(f"channel.links={channel.links}")
-        logger.debug("---")
+        logger.debug("--------------------")
 
         # channel.links = allHrefs[:VODS_MAX]
 

@@ -1,0 +1,26 @@
+
+
+
+.twitter_wrap {
+    padding: 7px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    background-color: #000000;
+}
+.twitter_wrap a {
+    color: rgb(29, 155, 240);
+    text-decoration: none;
+}
+.twitter_icon {
+    height: auto;
+    width: 20px;
+    /* color: white; */
+    filter: invert(1);
+    margin-right: 6px;
+}
+
+
+.msg_content p {
+    font-size: 18px;
+    margin: 4px 0;
+}

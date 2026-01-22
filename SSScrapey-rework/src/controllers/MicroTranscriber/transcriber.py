@@ -18,14 +18,16 @@ import time
 import urllib.parse
 import urllib.request
 import logging
-from utils.logging_config import LoggerConfig
+# from utils.logging_config import LoggerConfig
+from utils.logging_config import loggerX
 from controllers.MicroTranscriber.utils import TOO_BIG_LENGTH
 
 
 # logger = Cloudwatch.log
 def logger():
     pass
-logger: logging.Logger = LoggerConfig("micro").get_logger()
+
+logger: logging.Logger = loggerX
 
 
 def getConnectionDb():

@@ -45,7 +45,6 @@ class EnvVars:
         #
         self.LOCAL_GPU_RUN = None
         self.DWN_IS_SKIP_DONT_DELETE = None
-        self.MICRO_APP_TYPE = None # Downloader, Transcriber, Preper
 
 
 

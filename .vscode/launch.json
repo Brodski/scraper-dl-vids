@@ -55,7 +55,7 @@
             "args": [
                 "--env",
                 "local",
-                "--transcriber_vods_per_instance", "2",
+                "--transcriber_vods_per_instance", "1",
                 "--transcriber_num_instances", "1",
                 "--transcriber_instance_cnt", "1"
             ],

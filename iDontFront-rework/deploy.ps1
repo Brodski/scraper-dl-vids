@@ -48,17 +48,19 @@ terraform init -reconfigure -backend-config="key=${TF_ENVIRONMENT}/idontfront/te
 # Docker build #
 ################
 cd "../idontfront-app"
-docker build --no-cache -t "idontfront:$tag_name" -f Dockerfile_idontfront .
+docker build  --provenance=false  --no-cache -t "idontfront:$tag_name" -f Dockerfile_idontfront .
 
 ###############
 # Docker push #
 ###############
 echo "cd './terraform-idontfront'"
 echo "terraform init -reconfigure -backend-config='key=${TF_ENVIRONMENT}/idontfront/terraform.tfstate'"
+
 echo "cd '../idontfront-app'"
 echo "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 144262561154.dkr.ecr.us-east-1.amazonaws.com"
 echo "docker tag idontfront:$tag_name 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
 echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"
+
 echo "cd '../terraform-idontfront'"
 echo "terraform apply --var-file='vars_${TF_ENVIRONMENT}.tfvars'  -var 'docker_tag_name=$tag_name' --auto-approve"
 echo "docker push 144262561154.dkr.ecr.us-east-1.amazonaws.com/idontfront:$tag_name"

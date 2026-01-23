@@ -8,7 +8,7 @@ from controllers.MicroTranscriber.cloudwatch import Cloudwatch
 class LoggerConfig:
     instanceX = None
 
-    def __new__(cls):
+    def __new__(cls, name):
         # if name not in cls._instances:
         if not cls.instanceX:
             cls.instanceX = super().__new__(cls)

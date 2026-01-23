@@ -4,8 +4,12 @@ locals {
   region    = local.arn_parts[3]
   api_id    = local.arn_parts[5]
   origin_id = "${var.ENV}-bski-origin-id"
-  cache_long = ( var.ENV == "dev"  ? 300 :                     # 5 minutes
-                 var.ENV == "prod" ? 86400 : "default_value" ) # 1 days
+  cache_30min       = ( var.ENV == "dev"  ? 200 :
+                        var.ENV == "prod" ? 1800 : "default_value" )
+  cache_1day        = ( var.ENV == "dev"  ? 300 :                     # 5 minutes
+                        var.ENV == "prod" ? 86400 : "default_value" ) # 1 days
+  cache_2month_long = ( var.ENV == "dev"  ? 600 :                     # 10 minutes
+                        var.ENV == "prod" ? 5184000 : "default_value" ) # 60 days
 }
 
 ### CLOUDFRONT LAMBDA
@@ -31,17 +35,18 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
-  # Good condition table: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
+  # Good condition table:
   # docs: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
     target_origin_id = local.origin_id
 
-    default_ttl = local.cache_long     # 1 days - applies when origin does not add HTTP headers _
-    max_ttl     = local.cache_long     # 1 days - applies when origin adds headers: Cache-Control max-age, Cache-Control, ect
-    min_ttl     = 0                    # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
+    default_ttl = local.cache_2month_long                      # 1 days - applies when origin does not add HTTP headers _
+    max_ttl     = local.cache_2month_long + local.cache_1day   # 1 days - applies when origin adds headers: Cache-Control max-age, Cache-Control, ect ..... https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html#stale-while-revalidate
+    min_ttl     = 0                                            # 0 minute - 0 acts differently then greater than 0. (0 is like a null, does diff things)
 
+    viewer_protocol_policy = "redirect-to-https"
     compress = true # compress when header: `Accept-Encoding: gzip`
 
     function_association {
@@ -55,12 +60,127 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
         forward = "none" 
       }
     }
-    viewer_protocol_policy = "redirect-to-https"
   }
+
+  ####################################################
+  # STATIC CACHE                                     #
+  #                                                  #
+  # ORDER MATTERS THIS MUST BE ABOVE /channel/*      #
+  ####################################################
+  # Cache behavior with precedence 0
+  ordered_cache_behavior {
+    path_pattern           = "/channel/*/*"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    target_origin_id       = local.origin_id
+
+    default_ttl = local.cache_2month_long
+    max_ttl     = local.cache_2month_long + local.cache_1day
+    min_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  ###############
+  #  CHANNEL/*  #
+  ###############
+  ordered_cache_behavior {
+    path_pattern           = "/channel/*"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    target_origin_id       = local.origin_id
+
+    default_ttl = local.cache_30min
+    max_ttl     = local.cache_30min + local.cache_1day
+    min_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  ##################
+  # HOMEPAGE CACHE #
+  ##################
+  ordered_cache_behavior {
+    path_pattern           = "/"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    target_origin_id       = local.origin_id
+
+    default_ttl = local.cache_30min
+    max_ttl     = local.cache_30min + local.cache_1day
+    min_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  # Cache sitemap
+  ordered_cache_behavior {
+    path_pattern           = "/sitemap.xml"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    target_origin_id       = local.origin_id
+
+    default_ttl = local.cache_1day
+    max_ttl     = local.cache_1day + local.cache_1day
+    min_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+
+
+
 
   custom_error_response {
     error_code            = 404
-    error_caching_min_ttl = 300  # Cache the 400 response for 5 minutes
+    error_caching_min_ttl = 600  # Cache the 400 response for 5 minutes
+  }
+  custom_error_response {
+    error_code            = 500
+    error_caching_min_ttl = 600
+  }
+
+  custom_error_response {
+    error_code            = 502
+    error_caching_min_ttl = 600
+  }
+
+  custom_error_response {
+    error_code            = 503
+    error_caching_min_ttl = 600
+  }
+
+  custom_error_response {
+    error_code            = 504
+    error_caching_min_ttl = 600
   }
 
   restrictions {

@@ -10,7 +10,7 @@ exports.sitemap = async (req, res) => {
     let channelsList = [...channelsStreamed, ...channelsZeroStreamed]
     let vods = resultsVods.map( x => new Vod(x))
     res.type("application/xml")
-    res.set('Cache-Control', `${res.getHeader("cache-control")}, s-maxage=3600`); // 1 hours
+    // res.set('Cache-Control', `${res.getHeader("cache-control")}, s-maxage=3600`); // 1 hours
     res.render("../views/sitemap", {
         "vods": vods,
         "channels": channelsList

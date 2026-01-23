@@ -54,6 +54,8 @@ def getOffers():
         if offer.get("cuda_max_good") < int(configz.cuda_vers):
             # print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
+        if offer.get("dph_total") < float(configz.dph_min):
+            continue
         if offer.get("dph_total") > float(configz.dph):
             # print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue

@@ -33,7 +33,7 @@ app.use(minifyHTML({
 
 app.use((req, res, next) => {
     // res.set('Cache-Control', 'stale-while-revalidate=300, stale-if-error=86400'); // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
-    res.set('Cache-Control', ' stale-while-revalidate=86400, stale-if-error=86400'); // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+    res.set('Cache-Control', 'stale-while-revalidate=86400, stale-if-error=86400'); // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     next();
 });
 app.set('view engine', 'ejs');

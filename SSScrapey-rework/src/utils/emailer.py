@@ -222,13 +222,14 @@ def write_downloader_report(metadata_array_global: List[MetadataShitty], elapsed
 def write_transcriber_email(metadata_arr: List[MetadataShitty], completed_uploaded_tscripts: dict[int, str], elapsed_time):
 
     msg_lines = []
-    
+    meta_dph = os.getenv("META_DPH") if os.getenv("META_DPH") else ""
     # GPU & CPU info
     logical_cores, gpu_name, total_vram, cpu_manufacturer, cpu_model, cpu_frequency_mhz, cpu_cache = extra_data_about_instance()
     msg_lines.append(
         "******* GPU *******\n"
         f"💣 CONTAINER_ID! {os.getenv('CONTAINER_ID')} 💣\n"
         f"💣 BOOM 💣 gpu_name: {gpu_name}\n"
+        f"💲 Dollar / hour💲: {meta_dph}\n"
         # f"logical_cores: {logical_cores}\n"
         # f"total_vram: {total_vram}\n"
         # f"cpu_manufacturer: {cpu_manufacturer}\n"

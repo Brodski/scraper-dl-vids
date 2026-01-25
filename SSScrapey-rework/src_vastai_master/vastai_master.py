@@ -54,6 +54,8 @@ def getOffers():
         if offer.get("cuda_max_good") < int(configz.cuda_vers):
             # print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
             continue
+        if offer.get("dph_total") < float(configz.dph_min):
+            continue
         if offer.get("dph_total") > float(configz.dph):
             # print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue
@@ -132,10 +134,9 @@ def find_create_instance(rerun_count, to_create_num):
     for offer_i in instances_aux_list:
         instance_num = get_good_instance_num_smart()
         try:
-            id_create = offer_i.get("id")
             # instance_num          = len(instance_v_global_list)
             instance_num            = instance_num
-            id_contract             = vast_api.create_instance(id_create, instance_num)
+            id_contract             = vast_api.create_instance(offer_i, instance_num)
             instance_v              = Instance_V()
             instance_v.id_contract  = id_contract
             instance_v.status       = None # explicit
@@ -196,6 +197,11 @@ def pollxCompletion2():
         if actual_status and actual_status.lower() == "loading" and exec_time_minutes > 7: # 7 minutes. Image is stuck loading
             print(f"nope not ready and exec_time_minutes > 7 min, end it. exec_time_minutes: {exec_time_minutes}")
             instance.status = Status.ERROR_3
+            failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
+            continue
+        if status_msg and status_msg.lower().startswith("Error response from daemon: failed to create task for container"):
+            print("nope not ready, 'failed to create shim task: OCI runtime' end it")
+            instance.status = Status.ERROR_4
             failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
             continue
         if actual_status and actual_status.lower() == "running":

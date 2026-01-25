@@ -19,6 +19,7 @@ class Status(Enum):
     ERROR_1 = "unexpected_fault_address"
     ERROR_2 = "unable_to_find_image"
     ERROR_3 = "loading_stuck"
+    ERROR_4 = "failed_to_create_shim_task_OCI_runtime"
     RUNNING = "running"
     RUNNING_FAST_EXIT = "running_fast_exit"
     LOADING = "loading"

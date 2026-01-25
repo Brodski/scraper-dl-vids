@@ -32,7 +32,9 @@ def requestOffersHttp(query_args):
     json_data = json.loads(data)
     return json_data.get("offers")
 
-def create_instance(instance_id, instance_num):
+def create_instance(offer_i, instance_num, meta_dph):
+    instance_id = offer_i.get("id")
+    dph         = offer_i.get("dph_total")
     url = "https://console.vast.ai/api/v0/asks/" + str(instance_id) + "/?api_key=" + configz.VAST_API_KEY
     data_dict =  {  
         "client_id": "me",
@@ -50,7 +52,8 @@ def create_instance(instance_id, instance_num):
                 'TRANSCRIBER_VODS_PER_INSTANCE': configz.TRANSCRIBER_VODS_PER_INSTANCE,
                 'TRANSCRIBER_INSTANCE_CNT': (instance_num + 1),
                 'TRANSCRIBER_MODEL_SIZE_OVERRIDE': configz.TRANSCRIBER_MODEL_SIZE_OVERRIDE,
-                'MICRO_APP_TYPE': 'transcriber'
+                'MICRO_APP_TYPE': 'transcriber',
+                'META_DPH': dph
             },
         "price": None, 
         "disk": configz.disk, 

@@ -200,6 +200,11 @@ def pollxCompletion2():
             instance.status = Status.ERROR_3
             failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
             continue
+        if status_msg and status_msg.lower().startswith("Error response from daemon: failed to create task for container"):
+            print("nope not ready, 'failed to create shim task: OCI runtime' end it")
+            instance.status = Status.ERROR_4
+            failed_list.append({"instance": copy.copy(instance), "data": data, "exec_time_minutes": exec_time_minutes})
+            continue
         if actual_status and actual_status.lower() == "running":
             print("Running. Transcriber app should be running. :)")
             instance.status = Status.RUNNING

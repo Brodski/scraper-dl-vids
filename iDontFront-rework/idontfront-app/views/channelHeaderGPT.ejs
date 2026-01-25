@@ -3,6 +3,11 @@
     <img class="channel__profile_pic" src="<%= channel.logo %>" alt="Streamer Profile Picture">
     <div class="channel__streamer_details">
         <h2><%= channel.displayName %></h2>
+        <div class="d-inflex">
+            <img class="channel__twitch_logo" src="/imgs/twitch_logo.svg" alt="twitch channel for <%= channel.displayName %>"/> 
+            <a class="channel__twitch_link" href="https://www.twitch.tv/<%=channel.nameId%>" target="_blank" rel="me noopener"> twitch.tv/<%=channel.nameId%> </div>
+
+        </div>
         <!-- <a href="/" class="back-link">View All Channels</a> -->
     </div>
 </section>

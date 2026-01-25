@@ -152,10 +152,9 @@
                 %>
                 <div id="page_<%= n %>" class="vod_paginate <%= class_display %>">
                     <%
-                    let i = 0;
+                    let count = 0;
                     for (let segment of transcript_json_aux) {
-                        // if (i==0) { console.log("vod's first segment: ", segment) }
-                        i++
+                        count = count + 1;
                         let sec = String(parseInt(segment.start) % 60).padStart(2,0); // -> 03
                         let min = Math.floor(parseInt(segment.start) / 60)
                         let timestamp = min + "m" + sec + "s";
@@ -169,6 +168,12 @@
                             <span class="timestamp" onclick="(() => seekIframe(<%= iframe_time %>))()">[<%= start %>]</span>
                             <span class="cue"> <%= segment.text %> </span>
                         </div>
+                        <% if (count == 40)  { %> 
+                            <%- include('ads_google/captions_text_square.ejs') %>
+                        <% } %> 
+                        <% if (count % 40 == 0)  { %> 
+                            <%- // include('ads_google/captions_text_in_article.ejs') %>
+                        <% } %> 
                     <% } %>
                 </div>
             <% } %>

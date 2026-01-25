@@ -134,10 +134,9 @@ def find_create_instance(rerun_count, to_create_num):
     for offer_i in instances_aux_list:
         instance_num = get_good_instance_num_smart()
         try:
-            id_create = offer_i.get("id")
             # instance_num          = len(instance_v_global_list)
             instance_num            = instance_num
-            id_contract             = vast_api.create_instance(id_create, instance_num)
+            id_contract             = vast_api.create_instance(offer_i, instance_num)
             instance_v              = Instance_V()
             instance_v.id_contract  = id_contract
             instance_v.status       = None # explicit

@@ -57,7 +57,6 @@
         </section>
         <div class="homepage__subtext">Not affiliated with Twitch.tv</div>
         <hr/>
-
         <!-- SEARCH BAR -->
         <%- include('partials/searchbar') %>
         
@@ -82,15 +81,18 @@
             <tbody>
             <%
             let isHiatusDividerAdded = false;
-            for (let chann of channelsList) { %>  
+            let count = 0
+            for (let chann of channelsList) {
+                count = count + 1;
+                %>
                 <% if (chann.viewMinutes == 0 && !isHiatusDividerAdded) { 
                     isHiatusDividerAdded = true
-                %>
-                <tr class="table-divider">
-                    <th colspan="9"> Channels that did not stream recently: </th>
-                </tr>
+                    %>
+                    <tr class="table-divider">
+                        <th colspan="9"> Channels that did not stream recently: </th>
+                    </tr>
                 <% } %>
-
+                
                 <% let dataChannel = chann.nameId.toLowerCase() == chann.displayName.toLowerCase() ? chann.nameId : `${chann.nameId}_${chann.displayName}` %>
                 <tr class="channel_row img" data-channel="<%= dataChannel %>">
                     <td data-labelX class="table_channel_name ">
@@ -109,6 +111,9 @@
                     <% /* <td data-label="Recently Transcribed / Total" class="homepage_special_col"> <div>  <span> [%=] chann.completedCount ?? 0 %] </span> <span class="homepage_col_pipe">-</span>  <span> [%=] chann.totalCompletedCount %] </span> </div> </td>  */ %>
                     <% /* <td data-label="Broadcasts Transcribed">   [%=] // chann.completedCount ?? 0 []  </td> */ %>
                 </tr>
+                <% if (count == 30)  { %> <%- include('ads_google/home_list1_square.ejs') %> <% } %> 
+                <% if (count == 60) { %> <%- include('ads_google/home_list2_square.ejs') %> <% } %> 
+                <% if (count % 60 == 0 && (count > 60))  { %> <%- include('ads_google/home_listX_square.ejs') %> <% } %> 
             <% } %> 
             </tbody>
         </table>

@@ -35,8 +35,15 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
-  # Good condition table:
+  ####################################################################################################################
+  #
+  # Good condition table:  https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
   # docs: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html
+  #
+  #
+  # CACHE BTW ---> /iDontFront-app.js .... stale-while-revalidate=86400
+  #
+  #####################################################################################################################
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]

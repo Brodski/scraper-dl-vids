@@ -51,12 +51,6 @@ console.log("BUCKET_DOMAIN=", process.env.BUCKET_DOMAIN)
 // process.env.LD_LIBRARY_PATH = process.env.LAMBDA_TASK_ROOT + "/lib"
 
 
-// doDebug();
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 if (process.env.IS_LAMBDA == "true") {
     const img_exts = new Set([".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp"]);
     module.exports.lambdaHandler = async (event, context) => {

@@ -151,7 +151,7 @@ resource "aws_cloudfront_distribution" "lambda_distribution" {
     target_origin_id       = local.origin_id
 
     default_ttl = local.cache_1day
-    max_ttl     = local.cache_1day + local.cache_1day
+    max_ttl     = local.cache_1day + local.cache_30min
     min_ttl     = 0
 
     forwarded_values {

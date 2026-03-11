@@ -1,14 +1,36 @@
 
 
-vip_list = {
-    "displayname": "Geranimo",
-    "language": "English",
-    "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
-    "twitchurl": "https://www.twitch.tv/geranimo",
-    "url": "geranimo",
-    "rownum": -21,
-}
+vip_list_prod = [
+    {
+        "displayname": "HunterMarchShow",
+        "language": "English",
+        "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/796ff247-1425-4ef3-9630-4878dcb7f92c-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+        "twitchurl": "https://www.twitch.tv/huntermarchshow",
+        "url": "huntermarchshow",
+        "rownum": -1,
+    },
+    {
+        "displayname": "Netflix",
+        "language": "English",
+        "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/e65ce7aa-5b49-431f-b00e-a2e610c42f54-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+        "twitchurl": "https://www.twitch.tv/netflix",
+        "url": "netflix",
+        "rownum": -2,
+    },
+]
 
+
+
+vip_list_dev = [
+    {
+        "displayname": "Geranimo",
+        "language": "English",
+        "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/4d5cbbf5-a535-4e50-a433-b9c04eef2679-profile_image-150x150.png?imenable=1&impolicy=user-profile-picture&imwidth=100",
+        "twitchurl": "https://www.twitch.tv/geranimo",
+        "url": "geranimo",
+        "rownum": -21,
+    }
+]
 
 vip_list_debug = [
     {

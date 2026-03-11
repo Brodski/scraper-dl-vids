@@ -142,15 +142,19 @@ def instantiateJsonToClassObj(json_object):
 
 def addVipList(json_object, isDebug=False):
     import controllers.MicroPreper.seleniumPreper as seleniumPreper
-    from controllers.MicroPreper.vip_list import vip_list, vip_list_debug
+    from controllers.MicroPreper.vip_list import vip_list_prod, vip_list_dev, vip_list_debug
 
     VIP_LIST = []
 
-    if os.getenv("ENV") == "local" or os.getenv("ENV") == "dev":
-        VIP_LIST = VIP_LIST + [vip_list]
 
-    if os.getenv("ENV") == "local" and isDebug:
-        VIP_LIST = VIP_LIST + vip_list_debug  
+    if env_varz.IS_VIP_LIST and env_varz.IS_VIP_LIST.upper() == "TRUE" and os.getenv("ENV") == "local":
+        VIP_LIST = VIP_LIST + vip_list_dev
+
+    if env_varz.IS_VIP_LIST and env_varz.IS_VIP_LIST.upper() == "TRUE" and os.getenv("ENV") == "dev":
+        VIP_LIST = VIP_LIST + vip_list_dev
+
+    if env_varz.IS_VIP_LIST and env_varz.IS_VIP_LIST.upper() == "TRUE" and os.getenv("ENV") == "prod":
+        VIP_LIST = VIP_LIST + vip_list_prod
 
     for vip in VIP_LIST:
         json_object['data'].insert(0, vip)

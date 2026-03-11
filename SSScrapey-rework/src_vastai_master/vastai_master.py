@@ -49,7 +49,13 @@ def getOffers():
             }
         '''
     offers = vast_api.requestOffersHttp(json.loads(everything_request))
+    print("0----------")
+    print("configz.dph_min=", configz.dph_min)
+    print("configz.dph=", configz.dph)
+    print("0----------")
     for offer in offers:
+        dphx = offer.get("dph_total")
+        print(f'offer.get("dph_total")={dphx}')
         id = "id: " + str(offer.get("id"))
         if offer.get("cuda_max_good") < int(configz.cuda_vers):
             # print(id + " skipping cuda_max_good: " + str(offer.get("cuda_max_good")))
@@ -57,10 +63,8 @@ def getOffers():
         if offer.get("dph_total") < float(configz.dph_min):
             continue
         if offer.get("dph_total") > float(configz.dph):
-            # print(id + " skipping dph: " + str(offer.get("dph_total")))
             continue
         if offer.get("cpu_ram") < float(configz.cpu_ram):
-            # print(id + " skipping cpu_ram: " + str(offer.get("cpu_ram")))
             continue
         if offer.get("disk_space") < float(configz.disk_space):
             # print(id + " skipping disk_space: " + str(offer.get("disk_space")))
@@ -128,10 +132,10 @@ def find_create_instance(rerun_count, to_create_num):
     ##   INSTANTIATE VAST AI 'VM'   ##
     ##################################
     print_extra.printAsTable(goodOffers)
-    instances_aux_list = goodOffers[:to_create_num] 
+    goodOffers_X = goodOffers[:to_create_num] 
     # instance_v_created: List[Instance_V] = []
 
-    for offer_i in instances_aux_list:
+    for offer_i in goodOffers_X:
         instance_num = get_good_instance_num_smart()
         try:
             # instance_num          = len(instance_v_global_list)

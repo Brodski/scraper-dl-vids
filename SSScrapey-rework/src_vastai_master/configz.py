@@ -31,7 +31,7 @@ class Configz:
 
         self.dph            = "0.30"  # 0.30 dollars / hour            
                                       # dph = "0.12"
-        self.dph_min        = "0.04"  # 0.04 dollars / hour            
+        self.dph_min        = "0.05"  # 0.05 dollars / hour            
         self.cuda_vers      = "12"
         self.cpu_ram        = "16000.0"
         self.disk_space     = "32"

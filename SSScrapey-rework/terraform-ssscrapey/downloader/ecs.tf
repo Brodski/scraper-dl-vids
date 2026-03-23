@@ -28,6 +28,7 @@ resource "aws_ecs_task_definition" "download_task" {
       name              = "downloader_container",
       essential         = true
       image             = var.docker_image
+      # stopTimeout       = 86400 # 1 day # DOES NOT WORK, ONLY 2 MIN IS MAX
       environment = [
         { name = "AWS_SECRET_ACCESS_KEY"
           value =var.sensitive_info.MY_AWS_SECRET_ACCESS_KEY 

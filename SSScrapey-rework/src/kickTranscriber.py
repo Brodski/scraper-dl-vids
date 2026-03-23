@@ -7,8 +7,21 @@ env_varz.init_argz()
 #
 import controllers.MicroTranscriber.transcriberGo as transcriberGo
 from env_file import env_varz
+import threading
+import os
+
+def timeout():
+    print("Timeout! Exiting.")
+    os._exit(1)
 
 
 if __name__ == "__main__":
     print("transcriberGo gogogo!")
-    transcriberGo.goTranscribeBatch(False)
+    timer = threading.Timer(43200, timeout)  # 12 hours = 43200 seconds
+    timer.start()
+
+    try:
+        transcriberGo.goTranscribeBatch(False)
+        pass
+    finally:
+        timer.cancel()

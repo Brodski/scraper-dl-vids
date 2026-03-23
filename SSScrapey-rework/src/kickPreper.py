@@ -2,6 +2,8 @@ from env_file import env_varz
 env_varz.init_argz()
 
 import controllers.MicroPreper.preperGo as preperGo
+import threading
+import os
 
 
 
@@ -20,5 +22,18 @@ import controllers.MicroPreper.preperGo as preperGo
 ######################################################
 # BEGIN                                              #
 ######################################################
+
+def timeout():
+    print("Timeout! Exiting.")
+    # sys.exit(1)
+    print("gg ending with os._exit")
+    os._exit(1)
+
 if __name__ == "__main__":
-    preperGo.prepare()
+    timer = threading.Timer(5400, timeout)  # 1.5 hours = 5400 seconds
+    timer.start()
+
+    try:
+        preperGo.prepare()
+    finally:
+        timer.cancel()

@@ -21,6 +21,8 @@ resource "aws_ecs_task_definition" "preper_task" {
       name              = "${var.sensitive_info.ENV}_preper_container"
       essential         = true # this is required. S/t with aws
       image             = var.docker_image
+      # stopTimeout       = 3600 # 1 hour
+
       environment = [
         { name = "AWS_SECRET_ACCESS_KEY"
           value =var.sensitive_info.MY_AWS_SECRET_ACCESS_KEY 

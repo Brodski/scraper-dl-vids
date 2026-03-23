@@ -8,8 +8,12 @@ import controllers.MicroDownloader.downloaderGo as downloadGo
 import controllers.MicroDownloader.downloader as downloadDb
 import utils.generic_stuff as utils_generic
 from models.Vod import Vod
+import threading
+import os
 
-
+def timeout():
+    print("Timeout! Exiting.")
+    os._exit(1)
 
 if __name__ == "__main__":
     print('starting go download batch...')
@@ -28,7 +32,13 @@ if __name__ == "__main__":
     ##############
     start_time = time.time()
     isDebug=False
-    downloadGo.goDownloadBatch(isDebug)
+    timer = threading.Timer(43200, timeout)  # 12 hours = 43200 seconds
+    timer.start()
+
+    try:
+        downloadGo.goDownloadBatch(isDebug)
+    finally:
+        timer.cancel()
 
     elapsed_time = time.time() - start_time
 

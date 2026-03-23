@@ -189,6 +189,10 @@ def updateChannelDataByHtmlIteratively(all_channels_plus_scrapped: List[Scrapped
                 msg = msg + f"1. Google search missing channel. eg '{chan.name_id} twitch' \n"
                 msg = msg + f"2. Go to HeidiSQL -> find NameId='{chan.name_id}' -> update 'NameID' and maybe 'DisplayName'.\n"
                 msg = msg + f"3. Done \n"
+                msg = msg + f"-\n"
+                msg = msg + f"SET FOREIGN_KEY_CHECKS = 0;\n"
+                msg = msg + f"UPDATE Vods SET ChannelNameId = 'new_value' WHERE ChannelNameId = 'old_value';\n"
+                msg = msg + f"SET FOREIGN_KEY_CHECKS = 1;\n"
                 logger.error(msg)
                 sendEmail(subject, msg)
                 continue

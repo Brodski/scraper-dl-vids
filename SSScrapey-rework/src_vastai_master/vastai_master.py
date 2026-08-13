@@ -1,6 +1,5 @@
 import argparse
 import copy
-import sys
 import time
 import traceback
 from typing import List
@@ -33,8 +32,21 @@ instance_v_global_list: List[Instance_V] = []
 id_tracker_trick = {}
 for i in range(configz.TRANSCRIBER_NUM_INSTANCES):
     id_tracker_trick[i] = False
-bullshit_recursion_max = 20
+# goBabyGo recurses once per "still creating" / "still polling" / "still loading" pass,
+# so this needs headroom for TRANSCRIBER_NUM_INSTANCES instances each legitimately
+# taking several passes to come up, not just for genuine error loops. A flat 20 was
+# getting tripped by normal-sized batches and firing false-alarm failure emails.
+bullshit_recursion_max = max(20, configz.TRANSCRIBER_NUM_INSTANCES * 6)
 bullshit_recursion_cnt = 0
+# 900s is the Lambda timeout (see lambda_vastai.tf). The budget check only runs at
+# the top of goBabyGo, and the longest sleep between checks is the two 120s sleeps
+# in find_create_instance's "no offers" branch (240s). So worst case we check in
+# at 600s, then immediately hit a 240s sleep -> land at 840s, still under 900s with
+# ~60s margin. That leaves time to return normally with ONE clean fail email, instead
+# of getting hard-killed by Lambda, which marks the invocation "failed" and triggers
+# AWS's automatic retry -- silently multiplying our failure emails to 2-3x per run.
+gobabygo_time_budget_sec = 600
+gobabygo_start_time = None
 
 def getOffers():
     goodOffers = []
@@ -132,9 +144,10 @@ def find_create_instance(rerun_count, to_create_num):
     ##   INSTANTIATE VAST AI 'VM'   ##
     ##################################
     print_extra.printAsTable(goodOffers)
-    goodOffers_X = goodOffers[:to_create_num] 
+    goodOffers_X = goodOffers[:to_create_num]
     # instance_v_created: List[Instance_V] = []
 
+    created_count = 0
     for offer_i in goodOffers_X:
         instance_num = get_good_instance_num_smart()
         try:
@@ -148,6 +161,7 @@ def find_create_instance(rerun_count, to_create_num):
             instance_v.instance_num = instance_num
 
             instance_v_global_list.append(instance_v)
+            created_count += 1
             time.sleep(60)
 
         except Exception as e:
@@ -157,10 +171,13 @@ def find_create_instance(rerun_count, to_create_num):
 
             metadata_vast_global.errorz.append({"rerun_count": rerun_count, "stacktrace_str": stacktrace_str})
 
-            to_create_aux = to_create_num - len(instance_v_global_list)
+            # Release the slot we optimistically reserved for the offer that failed,
+            # otherwise it's stuck "taken" forever and we lose an instance_num permanently.
+            id_tracker_trick[int(instance_num)] = False
 
-            find_create_instance(rerun_count + 1, to_create_aux)
-            return
+    to_create_aux = to_create_num - created_count
+    if to_create_aux > 0:
+        find_create_instance(rerun_count + 1, to_create_aux)
     return
             
 
@@ -168,7 +185,10 @@ def find_create_instance(rerun_count, to_create_num):
 def pollxCompletion2():
     failed_list = []
     vast_data_dictionary = print_extra.get_all_instances(instance_v_global_list)
-    for instance in instance_v_global_list:
+    # Iterate a snapshot: try_again() (called after this loop, below) pops entries out of
+    # instance_v_global_list, so looping over the live list here would be unsafe if that
+    # deletion logic were ever moved inline instead of deferred to the "AFTER LOOP" pass.
+    for instance in list(instance_v_global_list):
         if instance.status in (Status.ERROR_1, Status.ERROR_2, Status.ERROR_3, Status.RUNNING, Status.RUNNING_FAST_EXIT):
             continue
         instance: Instance_V = instance
@@ -253,8 +273,6 @@ def nice_data(data):
         "geolocation"              : data.get("geolocation"),
         "reliability"              : data.get("reliability"),
         "dph_total"                : data.get("dph_total"),
-        "actual_status"            : data.get("actual_status"),
-        "actual_status"            : data.get("actual_status"),
     }
 
 def try_again(instance: Instance_V, data, exec_time_minutes):
@@ -282,12 +300,21 @@ def try_again(instance: Instance_V, data, exec_time_minutes):
 
 
 def goBabyGo(to_create_num):
-    global bullshit_recursion_cnt
+    global bullshit_recursion_cnt, gobabygo_start_time
+    if gobabygo_start_time is None:
+        gobabygo_start_time = time.time()
     bullshit_recursion_cnt += 1
-    if bullshit_recursion_cnt > bullshit_recursion_max:
-        print(" ❗our recursion might be funked up for some reason")
+    elapsed = time.time() - gobabygo_start_time
+    if bullshit_recursion_cnt > bullshit_recursion_max or elapsed > gobabygo_time_budget_sec:
+        print(f" ❗giving up: recursion_cnt={bullshit_recursion_cnt} elapsed={elapsed:.0f}s")
         metadata_vast_global.send_fail_msg()
-        sys.exit(1)
+        # Return normally (not sys.exit) so Lambda sees a completed invocation.
+        # sys.exit() raises SystemExit, which Lambda treats as an unhandled error
+        # and retries automatically -- multiplying this same fail email 2-3x.
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Gave up: exceeded recursion/time budget')
+        }
     try:
         ############
         #  BOOM 1  #
@@ -312,9 +339,8 @@ def goBabyGo(to_create_num):
             if instance.status == Status.LOADING:
                 print("Sleeping 60 sec, at least 1 instance still loading....")
                 time.sleep(60)
-                to_create_aux = 0
-                goBabyGo(to_create_aux)
-                return 
+                goBabyGo(0)  # 0 == nothing left to create, just re-poll what's loading
+                return
         metadata_vast_global.send_success_msg()
     except:
         tr = traceback.format_exc()
@@ -325,14 +351,20 @@ def goBabyGo(to_create_num):
         'body': json.dumps('Completed vastai init!! ')
     }
 def handler_kickit(event, context):
-    result = goBabyGo(configz.TRANSCRIBER_NUM_INSTANCES)
     global bullshit_recursion_cnt
     global instance_v_global_list
     global id_tracker_trick
+    global gobabygo_start_time
 
-    bullshit_recursion_cnt = 0
-    instance_v_global_list = []
-    id_tracker_trick = {}
+    # finally guarantees global state resets even if something unexpected slips
+    # past goBabyGo's own catch-all, so a bad run can't corrupt the next invocation.
+    try:
+        result = goBabyGo(configz.TRANSCRIBER_NUM_INSTANCES)
+    finally:
+        bullshit_recursion_cnt = 0
+        instance_v_global_list = []
+        id_tracker_trick = {}
+        gobabygo_start_time = None
     return result
 
 if __name__ == '__main__':

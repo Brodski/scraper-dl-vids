@@ -22,12 +22,11 @@ def requestOffersHttp(query_args):
     query_args["api_key"] = configz.VAST_API_KEY
     query_json = "&".join("{x}={y}".format(x=x, y=quote_plus(y if isinstance(y, str) else json.dumps(y))) for x, y in query_args.items())
     # https://console.vast.ai/api/v0/bundles?q=%7B%22verified%22%3A+%7B%22eq%22%3A+true%7D%2C+%22external%22%3A+%7B%22eq%22%3A+false%7D%2C+%22rentable%22%3A+%7B%22eq%22%3A+true%7D%2C+%22dph%22%3A+%7B%22lt%22%3A+%220.12%22%7D%2C+%22dph_total%22%3A+%7B%22lt%22%3A+%220.12%22%7D%2C+%22cuda_vers%22%3A+%7B%22gte%22%3A+%2212%22%7D%2C+%22cuda_max_good%22%3A+%7B%22gte%22%3A+%2212%22%7D%2C+%22cpu_ram%22%3A+%7B%22gt%22%3A+16000.0%7D%2C+%22order%22%3A+%5B%5B%22cpu_ram%22%2C+%22asc%22%5D%5D%2C+%22type%22%3A+%22on-demand%22%7D&api_key=999999999999999999
-    theRequest = "https://console.vast.ai/api/v0/bundles?" + query_json 
+    theRequest = "https://console.vast.ai/api/v0/bundles?" + query_json
     url = theRequest
     response = urllib.request.urlopen(url)
     if response.status != 200:
-        print('exiting, status not 200')
-        exit()
+        raise RuntimeError(f"requestOffersHttp: vast.ai returned status {response.status}")
     data = response.read()
     json_data = json.loads(data)
     return json_data.get("offers")
@@ -77,12 +76,30 @@ def create_instance(offer_i, instance_num):
     request = urllib.request.Request(url, data=data_json, method='PUT')
 
     id = None
+    response_data = None
     with urllib.request.urlopen(request) as response:
-        response_data = response.read()
-        res_json = json.loads(response_data.decode('utf-8'))
-        ### THE RESPONE DATA IS VERY SMALL  = {new_contract: 123, <1 other field>}##
-        # print(    "(create_instance) res_json: ", res_json)
-        id = res_json.get("new_contract")
+        # If parsing fails below, vast.ai may have already rented the instance server-side
+        # even though we never recover its id, which would leave it untracked forever
+        # (never polled, never destroyed, still billing). Surface the raw bytes in the
+        # exception so the caller's failure email/log has enough info for manual cleanup.
+        try:
+            response_data = response.read()
+            res_json = json.loads(response_data.decode('utf-8'))
+            ### THE RESPONE DATA IS VERY SMALL  = {new_contract: 123, <1 other field>}##
+            # print(    "(create_instance) res_json: ", res_json)
+            id = res_json.get("new_contract")
+        except Exception as e:
+            raise RuntimeError(
+                f"(create_instance) offer {instance_id}: request sent (vast.ai may have "
+                f"rented it) but response could not be parsed. Manual cleanup may be "
+                f"needed. Raw response: {response_data!r}"
+            ) from e
+
+        if id is None:
+            raise RuntimeError(
+                f"(create_instance) offer {instance_id}: response parsed but had no "
+                f"'new_contract' field. Manual cleanup may be needed. Response: {res_json!r}"
+            )
 
         ### METADATA ###
         metadata_vast.created.append({'id': id, 'status_code': str(response.status)})

@@ -34,8 +34,7 @@ def get_my_instances():
     url = "https://console.vast.ai/api/v0/instances?owner=me&api_key=" + configz.VAST_API_KEY
     response = urllib.request.urlopen(url)
     if response.status != 200:
-        print('sadge')
-        exit()
+        raise RuntimeError(f"get_my_instances: vast.ai returned status {response.status}")
     data = response.read()
     json_data = json.loads(data)
     rows = json_data.get("instances")

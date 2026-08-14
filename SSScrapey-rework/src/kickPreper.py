@@ -25,8 +25,6 @@ import os
 
 def timeout():
     print("Timeout! Exiting.")
-    # sys.exit(1)
-    print("gg ending with os._exit")
     os._exit(1)
 
 if __name__ == "__main__":

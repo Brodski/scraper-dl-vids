@@ -1,0 +1,104 @@
+<!-- BEST MOMENTS -->
+<% if (process.env.NODE_ENV == "local" || process.env.NODE_ENV == "dev") { %>
+    <%
+        let clips_base_url = "https://marble-parcel-jhf3.here.now";
+        let vod_clips_base_url = `${clips_base_url}/${channel.nameId}/v${vod.id}`;
+        let clips_per_group = 4;
+
+        let clip_groups = [
+            { label: "Mad",     base_url: vod_clips_base_url },
+            { label: "Ticket",  base_url: `${vod_clips_base_url}/mentions` },
+        ];
+
+        let clips = [];
+        for (let group of clip_groups) {
+            for (let i = 1; i <= clips_per_group; i++) {
+                clips.push({ label: `${group.label} ${i}`, url: `${group.base_url}/${i}.mp4` });
+            }
+        }
+    %>
+    <section id="best-moments">
+        <h3>Best Moments</h3>
+        <div class="carousel">
+            <div class="carousel-track" id="carousel-track">
+                <% clips.forEach((clip, i) => { %>
+                    <div class="carousel-slide" data-index="<%= i %>">
+                        <p class="carousel-slide-label"><%= clip.label %></p>
+                        <video
+                            src="<%= clip.url %>"
+                            controls
+                            preload="metadata"
+                            playsinline
+                            onerror="handleClipError(this)"
+                        ></video>
+                    </div>
+                <% }) %>
+            </div>
+            <button type="button" class="carousel-btn carousel-btn-prev" id="carousel-prev" aria-label="Previous clip">&#10094;</button>
+            <button type="button" class="carousel-btn carousel-btn-next" id="carousel-next" aria-label="Next clip">&#10095;</button>
+            <div class="carousel-dots" id="carousel-dots">
+                <% clips.forEach((clip, i) => { %>
+                    <span class="carousel-dot <%= i == 0 ? 'active' : '' %>" data-index="<%= i %>"></span>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <script>
+        let handleClipError;
+        (() => {
+            const section = document.querySelector("#best-moments");
+            const track = document.querySelector("#carousel-track");
+            const dotsContainer = document.querySelector("#carousel-dots");
+            const prevBtn = document.querySelector("#carousel-prev");
+            const nextBtn = document.querySelector("#carousel-next");
+            let index = 0;
+
+            function slides() {
+                return Array.from(track.querySelectorAll(".carousel-slide"));
+            }
+            function dots() {
+                return Array.from(dotsContainer.querySelectorAll(".carousel-dot"));
+            }
+
+            function goTo(newIndex) {
+                const total = slides().length;
+                if (total == 0) return;
+                index = (newIndex + total) % total;
+                track.style.transform = `translateX(-${index * 100}%)`;
+                dots().forEach((dot, i) => dot.classList.toggle("active", i == index));
+                slides().forEach((slide, i) => {
+                    if (i != index) slide.querySelector("video")?.pause();
+                });
+            }
+
+            handleClipError = (video) => {
+                const slide = video.closest(".carousel-slide");
+                const removedIndex = slides().indexOf(slide);
+                if (removedIndex == -1) return;
+
+                slide.remove();
+                dots()[removedIndex]?.remove();
+
+                const remaining = slides().length;
+                if (remaining == 0) {
+                    section.remove();
+                    return;
+                }
+
+                dots().forEach((dot, i) => dot.dataset.index = i);
+
+                if (index > removedIndex) index -= 1;
+                if (index >= remaining) index = remaining - 1;
+                goTo(index);
+            };
+
+            prevBtn.addEventListener("click", () => goTo(index - 1));
+            nextBtn.addEventListener("click", () => goTo(index + 1));
+            dotsContainer.addEventListener("click", e => {
+                if (e.target.classList.contains("carousel-dot")) {
+                    goTo(Number(e.target.dataset.index));
+                }
+            });
+        })();
+    </script>
+<% } %>

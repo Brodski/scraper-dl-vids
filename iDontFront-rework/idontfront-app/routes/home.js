@@ -6,6 +6,7 @@ exports.homepage = async (req, res) => {
     let channelsList = [...channelsStreamed, ...channelsZeroStreamed]
     // res.set('Cache-Control', `${res.getHeader("cache-control")}, s-maxage=3600`); // 1 hours
     res.render("../views/homepage", {
-        "channelsList": channelsList
-    }) 
+        "channelsList": channelsList,
+        "streamedCount": channelsStreamed.length
+    })
 }

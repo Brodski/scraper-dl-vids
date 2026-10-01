@@ -85,7 +85,7 @@
             for (let chann of channelsList) {
                 count = count + 1;
                 %>
-                <% if (chann.viewMinutes == 0 && !isHiatusDividerAdded) { 
+                <% if (count > streamedCount && !isHiatusDividerAdded) {
                     isHiatusDividerAdded = true
                     %>
                     <tr class="table-divider">

@@ -165,8 +165,10 @@ class DatabaseSingleton {
 
             const [results, fields] = await this.pool.query(sqlQuery);
             let resultChannelObj = results.map( chan => new Channel(chan));
-            let channelsStreamed = resultChannelObj.filter( chan => chan.viewMinutes > 0); 
-            let channelsZeroStreamed = resultChannelObj.filter( chan => chan.viewMinutes == 0); 
+            // "streamed recently" = sully has watch time OR we have a vod from the last 7 days (VIP channels may have NULL sully stats)
+            const isStreamedRecently = chan => chan.viewMinutes > 0 || chan.broadcastCount > 0;
+            let channelsStreamed = resultChannelObj.filter( chan => isStreamedRecently(chan));
+            let channelsZeroStreamed = resultChannelObj.filter( chan => !isStreamedRecently(chan));
 
             // resultChannelObj.sort( (a,b) => {
             //     return (b.viewMinutes - a.viewMinutes) || (b.previousViewMinutes - a.previousViewMinutes) ||  (b.followers - a.followers)
